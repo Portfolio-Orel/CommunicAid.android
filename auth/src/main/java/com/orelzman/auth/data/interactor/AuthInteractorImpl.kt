@@ -1,19 +1,15 @@
 package com.orelzman.auth.data.interactor
 
-import android.content.Context
 import com.google.firebase.auth.FirebaseUser
 import com.orelzman.auth.data.repository.AuthRepository
 import com.orelzman.auth.domain.exception.UsernamePasswordAuthException
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.auth.domain.model.User
-import dagger.hilt.android.qualifiers.ApplicationContext
-import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class AuthInteractorImpl @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val authRepository: AuthRepository
 ) : AuthInteractor {
 
@@ -30,7 +26,7 @@ class AuthInteractorImpl @Inject constructor(
         try {
             val authResult = authRepository.auth(email, password).await()
             if (isSaveCredentials) authRepository.saveCredentials(email, password)
-            return User.firebaseUserToUser(authResult.user)
+            return User(authResult.user)
         } catch (exception: Exception) {
             throw(UsernamePasswordAuthException(exception))
         }

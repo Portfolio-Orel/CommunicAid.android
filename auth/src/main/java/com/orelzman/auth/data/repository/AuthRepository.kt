@@ -8,11 +8,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 
-class AuthRepository @Inject constructor(
-    @ApplicationContext private val context: Context,
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
-) {
+class AuthRepository {
 
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
     val user: FirebaseUser?
         get() = auth.currentUser
@@ -28,11 +26,11 @@ class AuthRepository @Inject constructor(
 //
 //    }
 
-    fun saveCredentials(email: String, password: String) { // TODO ask user if wants
-        val credential: Credential = Credential.Builder(email)
+    fun saveCredentials(email: String, password: String) =
+        Credential.Builder(email)
             .setPassword(password)
             .build()
-    }
+
 
     fun signOut() {
         auth.signOut()
