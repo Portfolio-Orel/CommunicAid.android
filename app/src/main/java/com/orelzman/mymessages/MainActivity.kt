@@ -11,17 +11,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.orelzman.auth.data.interactor.AuthInteractorImpl
-import com.orelzman.auth.data.repository.AuthRepository
-import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.domain.model.Folder
 import com.orelzman.mymessages.domain.model.Message
 import com.orelzman.mymessages.presentation.main.FolderView
 import com.orelzman.mymessages.presentation.main.MessageView
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val authInteractor: AuthInteractor = AuthInteractorImpl(AuthRepository())
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

@@ -1,11 +1,8 @@
 package com.orelzman.auth.data.repository
 
-import android.content.Context
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
 
 
 class AuthRepository {

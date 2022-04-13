@@ -1,17 +1,14 @@
 package com.orelzman.auth.di
 
 import com.orelzman.auth.data.repository.AuthRepository
-import dagger.Module
-import dagger.Provides
+import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 
-@Module
+@EntryPoint
 @InstallIn(SingletonComponent::class)
-object Module {
+interface AuthModuleDependencies {
 
     @com.orelzman.auth.di.AuthRepository
-    @Provides
-    fun provideAuthRepository(authRepository: AuthRepository): AuthRepository =
-        authRepository
+    fun provideAuthRepository(authRepository: AuthRepository)
 }
