@@ -18,9 +18,10 @@ class LoginViewModel @Inject constructor(
     var state by mutableStateOf(LoginState())
 
     fun login(email: String = "1@2.com", password: String = "o123456") {
+        state = state.copy(isLoadingLogin = true)
         viewModelScope.launch {
             val user = interactor.auth(email = email, password = password)
-            state = state.copy(user = user)
+            state = state.copy(user = user, isLoadingLogin = false)
         }
     }
 }
