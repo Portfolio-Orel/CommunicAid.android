@@ -32,6 +32,15 @@ class AuthInteractorImpl @Inject constructor(
         }
     }
 
+    override suspend fun loginWithGmail(): User {
+        try {
+//            val authResult = authRepository.googleAuth().await()
+            return User()
+        } catch (exception: Exception) {
+            throw(exception)
+        }
+    }
+
 //    override suspend fun googleAuth(): Completable =
 //        authRepository.googleAuth().doOnComplete { }
 

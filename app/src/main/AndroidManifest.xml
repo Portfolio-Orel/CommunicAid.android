@@ -12,6 +12,10 @@
         android:theme="@style/Theme.MyMessages">
         <activity
             android:name=".MainActivity"
+            android:exported="false"
+            android:label="@string/title_activity_main"
+            android:theme="@style/Theme.MyMessages" />
+        <activity
             android:exported="true"
             android:theme="@style/Theme.MyMessages.NoActionBar">
             <intent-filter>

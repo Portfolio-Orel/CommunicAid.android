@@ -8,6 +8,16 @@ import com.google.firebase.auth.FirebaseUser
 class AuthRepository {
 
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+//
+//    val signInRequest = BeginSignInRequest.builder()
+//    .setGoogleIdTokenRequestOptions(
+//    BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
+//    .setSupported(true)
+//    // Your server's client ID, not your Android client ID.
+//    .setServerClientId(getString(R.string.your_web_client_id))
+//    // Only show accounts previously used to sign in.
+//    .setFilterByAuthorizedAccounts(true)
+//    .build())
 
     val user: FirebaseUser?
         get() = auth.currentUser
@@ -19,9 +29,7 @@ class AuthRepository {
         auth.signInWithEmailAndPassword(email, password)
 
 
-//    fun googleAuth(): Completable {
-//
-//    }
+//    fun googleAuth() = auth.
 
     fun saveCredentials(email: String, password: String) =
         Credential.Builder(email)

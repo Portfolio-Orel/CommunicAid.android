@@ -21,10 +21,19 @@ interface AuthInteractor {
 
     /**
      * Authenticates a user by [email] and [password].
-     * @return Single with User entity as type emitted.
      * @author Orel Zilberman, 19.11.2021.
      */
-    suspend fun auth(email: String, password: String, isSaveCredentials: Boolean): User
+    suspend fun auth(
+        email: String,
+        password: String,
+        isSaveCredentials: Boolean = false
+    ): User
+
+    /**
+     * Authenticates a user with his mail.
+     * @author Orel Zilberman, 15.4.2021
+     */
+    suspend fun loginWithGmail(): User
 
     /**
      * Authenticates a user with Google.

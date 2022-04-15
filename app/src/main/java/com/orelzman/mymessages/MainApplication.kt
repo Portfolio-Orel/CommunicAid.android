@@ -5,7 +5,7 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class MainApplication: Application() {
-//    init {
+    init {
 //        FirebaseApp.initializeApp(this)
-//    }
+    }
 }

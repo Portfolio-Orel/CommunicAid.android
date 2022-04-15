@@ -12,6 +12,6 @@ object Module {
 
     @com.orelzman.auth.di.AuthRepository
     @Provides
-    fun provideAuthRepository(authRepository: AuthRepository): AuthRepository =
-        authRepository
+    fun provideAuthRepository(): AuthRepository =
+        AuthRepository()
 }
