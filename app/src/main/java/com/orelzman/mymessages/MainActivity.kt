@@ -10,7 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.orelzman.mymessages.presentation.login.NavGraphs
+import com.orelzman.mymessages.presentation.NavGraphs
 import com.orelzman.mymessages.util.ui.theme.MyMessagesTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import dagger.hilt.android.AndroidEntryPoint

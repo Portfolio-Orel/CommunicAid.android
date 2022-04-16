@@ -3,6 +3,7 @@ package com.orelzman.mymessages.di
 import android.app.Application
 import androidx.room.Room
 import com.orelzman.mymessages.data.local.LocalDatabase
+import com.orelzman.mymessages.data.local.type_converters.Converters
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,6 +20,8 @@ object AppModule {
             app,
             LocalDatabase::class.java,
             "mymessagesdb.db"
-        ).build()
+        )
+            .addTypeConverter(Converters())
+            .build()
 
 }

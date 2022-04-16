@@ -31,7 +31,7 @@ class AuthRepository {
 
 //    fun googleAuth() = auth.
 
-    fun saveCredentials(email: String, password: String) =
+    fun saveCredentials(email: String, password: String): Credential =
         Credential.Builder(email)
             .setPassword(password)
             .build()

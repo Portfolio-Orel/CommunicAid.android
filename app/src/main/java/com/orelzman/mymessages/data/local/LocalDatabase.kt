@@ -2,13 +2,22 @@ package com.orelzman.mymessages.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.orelzman.mymessages.data.local.dao.MessagesDao
-import com.orelzman.mymessages.data.local.entities.MessageEntity
+import androidx.room.TypeConverters
+import com.orelzman.mymessages.data.dto.Folder
+import com.orelzman.mymessages.data.dto.Message
+import com.orelzman.mymessages.data.local.dao.FolderDao
+import com.orelzman.mymessages.data.local.dao.MessageDao
+import com.orelzman.mymessages.data.local.type_converters.Converters
 
 @Database(
-    entities = [MessageEntity::class],
-    version = 1
+    entities = [
+        Message::class,
+        Folder::class,
+    ],
+    version = 2
 )
-abstract class LocalDatabase: RoomDatabase() {
-    abstract val messageDao: MessagesDao
+@TypeConverters(Converters::class)
+abstract class LocalDatabase : RoomDatabase() {
+    abstract val messageDao: MessageDao
+    abstract val folderDao: FolderDao
 }

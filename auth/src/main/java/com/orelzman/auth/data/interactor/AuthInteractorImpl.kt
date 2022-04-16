@@ -4,7 +4,6 @@ import com.google.firebase.auth.FirebaseUser
 import com.orelzman.auth.data.repository.AuthRepository
 import com.orelzman.auth.domain.exception.UsernamePasswordAuthException
 import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.auth.domain.model.User
 import io.reactivex.rxjava3.core.Single
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -22,24 +21,24 @@ class AuthInteractorImpl @Inject constructor(
         email: String,
         password: String,
         isSaveCredentials: Boolean
-    ): User {
+    ): FirebaseUser? {
         try {
             val authResult = authRepository.auth(email, password).await()
             if (isSaveCredentials) authRepository.saveCredentials(email, password)
-            return User(authResult.user)
+            return authResult.user
         } catch (exception: Exception) {
             throw(UsernamePasswordAuthException(exception))
         }
     }
-
-    override suspend fun loginWithGmail(): User {
-        try {
-//            val authResult = authRepository.googleAuth().await()
-            return User()
-        } catch (exception: Exception) {
-            throw(exception)
-        }
-    }
+//
+//    override suspend fun loginWithGmail(): FirebaseUser {
+//        try {
+////            val authResult = authRepository.googleAuth().await()
+//
+//        } catch (exception: Exception) {
+//            throw(exception)
+//        }
+//    }
 
 //    override suspend fun googleAuth(): Completable =
 //        authRepository.googleAuth().doOnComplete { }

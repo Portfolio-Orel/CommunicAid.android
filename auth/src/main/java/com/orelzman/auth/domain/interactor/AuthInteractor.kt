@@ -1,7 +1,6 @@
 package com.orelzman.auth.domain.interactor
 
 import com.google.firebase.auth.FirebaseUser
-import com.orelzman.auth.domain.model.User
 import io.reactivex.rxjava3.core.Single
 
 interface AuthInteractor {
@@ -27,13 +26,13 @@ interface AuthInteractor {
         email: String,
         password: String,
         isSaveCredentials: Boolean = false
-    ): User
+    ): FirebaseUser?
 
     /**
      * Authenticates a user with his mail.
      * @author Orel Zilberman, 15.4.2021
      */
-    suspend fun loginWithGmail(): User
+//    suspend fun loginWithGmail(): FirebaseUser
 
     /**
      * Authenticates a user with Google.

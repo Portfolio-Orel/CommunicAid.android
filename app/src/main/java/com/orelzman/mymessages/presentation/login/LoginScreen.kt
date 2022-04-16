@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -25,6 +26,11 @@ fun LoginScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        if(viewModel.state.user != null) {
+            navigator.navigate(MainScreenDestination)
+        } else {
+            Text(text = "!LoggedIn")
+        }
         Button(
             modifier =
             Modifier
