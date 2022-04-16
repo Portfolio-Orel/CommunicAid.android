@@ -9,9 +9,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
+@Destination(start = true)
 fun LoginScreen(
+    navigator: DestinationsNavigator,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
 
@@ -28,8 +32,10 @@ fun LoginScreen(
                 .height(48.dp)
 
             ,
-            onClick = { viewModel.login() }) {
-            if(!state.isLoadingLogin) {
+            onClick = {
+                viewModel.onEvent(LoginEvents.AuthWithEmailAndPassowrd())
+            }) {
+            if(!state.isLoading) {
                 Text("Login")
             } else {
                 CircularProgressIndicator(
@@ -37,10 +43,6 @@ fun LoginScreen(
                     color = Color.White
                 )
             }
-        }
-        state.user?.firebaseUser?.uid.let {
-            Text("User:")
-            Text("$it")
         }
     }
 }

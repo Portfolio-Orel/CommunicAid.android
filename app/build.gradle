@@ -4,6 +4,18 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'com.google.gms.google-services'
+    id 'com.google.devtools.ksp' version '1.6.10-1.0.2'
+}
+
+kotlin {
+    sourceSets {
+        debug {
+            kotlin.srcDir("build/generated/ksp/debug/kotlin")
+        }
+        release {
+            kotlin.srcDir("build/generated/ksp/release/kotlin")
+        }
+    }
 }
 
 android {
@@ -32,6 +44,12 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+//    composeOptions {
+//        kotlinCompilerVersion "1.5.10"
+//        kotlinCompilerExtensionVersion "1.0.0-beta08"
+//    }
+
     kotlinOptions {
         jvmTarget = '1.8'
         useIR = true
@@ -87,6 +105,10 @@ dependencies {
 
     // Kotlin Extensions and Coroutines support for Room
     implementation "androidx.room:room-ktx:2.4.2"
+
+    // Navigation
+    implementation 'io.github.raamcosta.compose-destinations:core:1.1.2-beta'
+    ksp 'io.github.raamcosta.compose-destinations:ksp:1.1.2-beta'
 
     // Auth
     implementation project(':auth')
