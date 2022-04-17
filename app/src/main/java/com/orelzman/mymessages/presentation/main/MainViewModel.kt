@@ -4,20 +4,28 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.mymessages.data.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    private val repository: Repository,
+    private val authInteractor: AuthInteractor
     ): ViewModel() {
     var state by mutableStateOf(MainState())
 
     init {
-//        println(savedStateHandle.get<String?>("uid"))
-//        state = if(savedStateHandle.get<String?>("uid") == null) {
-//            state.copy(isLoggedIn = false)
-//        } else {
-//            state.copy(isLoggedIn = true)
-//        }
+
+    }
+
+    fun getFolders() {
+        viewModelScope.launch {
+            val x = authInteractor.user?.let { repository.getFolders(it.uid) }
+            val y = 4
+        }
     }
 }

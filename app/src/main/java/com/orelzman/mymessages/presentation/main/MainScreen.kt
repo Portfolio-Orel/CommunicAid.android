@@ -1,5 +1,7 @@
 package com.orelzman.mymessages.presentation.main
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -12,5 +14,9 @@ fun MainScreen(
     navigator: DestinationsNavigator,
     viewModel: MainViewModel = hiltViewModel()
 ) {
-    Text("This is main screen")
+    Column() {
+        Button(onClick = { viewModel.getFolders() }) {
+            Text("Get folders")
+        }
+    }
 }

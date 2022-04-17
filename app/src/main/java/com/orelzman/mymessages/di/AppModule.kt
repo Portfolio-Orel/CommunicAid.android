@@ -23,5 +23,4 @@ object AppModule {
         )
             .addTypeConverter(Converters())
             .build()
-
 }
