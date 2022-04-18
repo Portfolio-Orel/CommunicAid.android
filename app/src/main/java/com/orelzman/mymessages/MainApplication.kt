@@ -6,6 +6,7 @@ import dagger.hilt.android.HiltAndroidApp
 @HiltAndroidApp
 class MainApplication: Application() {
     init {
-//        FirebaseApp.initializeApp(this)
+//        val mixpanel: MixpanelAPI =
+//            MixpanelAPI.getInstance(this, "1922ffdaa9090167dd5b313cdd3a64b6")
     }
 }

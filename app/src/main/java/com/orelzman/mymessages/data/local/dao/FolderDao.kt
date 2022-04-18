@@ -8,14 +8,19 @@ import com.orelzman.mymessages.data.dto.Folder
 
 @Dao
 interface FolderDao {
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertFolder(folder: Folder)
+    suspend fun insert(folder: Folder)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(folders: List<Folder>)
 
     @Query("""
         SELECT *
         FROM Folder
     """)
     suspend fun getFolders(): List<Folder>
+
 
     @Query("DELETE FROM Folder")
     suspend fun clear()

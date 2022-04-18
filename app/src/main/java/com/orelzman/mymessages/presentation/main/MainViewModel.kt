@@ -6,26 +6,41 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.mymessages.data.repository.Repository
+import com.orelzman.mymessages.data.dto.Folder
+import com.orelzman.mymessages.data.dto.Message
+import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractor
+import com.orelzman.mymessages.data.local.interactors.message.MessageInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: Repository,
+    private val folderInteractor: FolderInteractor,
+    private val messageInteractor: MessageInteractor,
     private val authInteractor: AuthInteractor
     ): ViewModel() {
-    var state by mutableStateOf(MainState())
+    private var state by mutableStateOf(MainState(folders = emptyList(), messages = emptyList()))
 
-    init {
-
+    fun getMessages() {
+        viewModelScope.launch {
+            val messages = authInteractor.user?.let { messageInteractor.getMessages(it.uid) }
+            if(messages != null) {
+                copyState(state.folders, messages)
+            }
+        }
     }
 
     fun getFolders() {
         viewModelScope.launch {
-            val x = authInteractor.user?.let { repository.getFolders(it.uid) }
-            val y = 4
+            val folders = authInteractor.user?.let { folderInteractor.getFolders(it.uid) }
+            if(folders != null) {
+                copyState(folders, state.messages)
+            }
         }
+    }
+
+    private fun copyState(folders: List<Folder>, messages: List<Message>) {
+        state = state.copy(messages = messages, folders = folders)
     }
 }

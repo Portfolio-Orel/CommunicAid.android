@@ -9,7 +9,10 @@ import com.orelzman.mymessages.data.dto.Message
 @Dao
 interface MessageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMessage(message: Message)
+    suspend fun insert(message: Message)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(messages: List<Message>)
 
     @Query("""
         SELECT *

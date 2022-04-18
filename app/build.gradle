@@ -115,4 +115,7 @@ dependencies {
 
     // Auth
     implementation project(':auth')
+
+    // Mixpanel
+//    api 'com.mixpanel.android:mixpanel-android:6.0'
 }

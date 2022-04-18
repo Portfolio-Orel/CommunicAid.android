@@ -4,18 +4,17 @@ import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.orelzman.mymessages.data.dto.Message
 
 @ProvidedTypeConverter
 class Converters {
 
-    private val messageListType = object : TypeToken<List<Message>?>() {}.type
+    private val messageListType = object : TypeToken<List<String>?>() {}.type
     @TypeConverter
-    fun stringToMessage(strings: String?): List<Message> =
+    fun stringToMessage(strings: String?): List<String> =
         Gson().fromJson(strings, messageListType)
 
     @TypeConverter
-    fun messageToString(messages: List<Message>?): String =
+    fun messageToString(messages: List<String>?): String =
         Gson().toJson(messages)
 
 

@@ -14,9 +14,13 @@ fun MainScreen(
     navigator: DestinationsNavigator,
     viewModel: MainViewModel = hiltViewModel()
 ) {
-    Column() {
+    Column {
         Button(onClick = { viewModel.getFolders() }) {
             Text("Get folders")
         }
+        Button(onClick = { viewModel.getMessages() }) {
+            Text("Get messages")
+        }
+
     }
 }

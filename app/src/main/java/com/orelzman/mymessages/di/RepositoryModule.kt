@@ -2,6 +2,10 @@ package com.orelzman.mymessages.di
 
 import com.orelzman.auth.data.interactor.AuthInteractorImpl
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractor
+import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractorImpl
+import com.orelzman.mymessages.data.local.interactors.message.MessageInteractor
+import com.orelzman.mymessages.data.local.interactors.message.MessageInteractorImpl
 import com.orelzman.mymessages.data.repository.Repository
 import com.orelzman.mymessages.data.repository.firebase.FirebaseRepository
 import dagger.Binds
@@ -21,12 +25,20 @@ abstract class RepositoryModule {
     ): AuthInteractor
 
     /**
+     * Instructions are irrelevant until further noticed.
      * @Instructions
      * Has to be injected after login was successful!
      * ( Not in the login screen or before)
      */
     @Binds
     @Singleton
-    abstract fun provideFirebaseRepository(firebaseRepository: FirebaseRepository): Repository
+    abstract fun provideRepository(firebaseRepository: FirebaseRepository): Repository
 
+    @Binds
+    @Singleton
+    abstract fun provideFolderInteractor(interactor: MessageInteractorImpl): MessageInteractor
+
+    @Binds
+    @Singleton
+    abstract fun provideMessageInteractor(interactor: FolderInteractorImpl): FolderInteractor
 }
