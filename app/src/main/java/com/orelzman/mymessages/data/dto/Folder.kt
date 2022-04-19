@@ -8,7 +8,7 @@ data class Folder(
     val folderTitle: String,
     val messages: List<String> = emptyList(),
     val isActive: Boolean = true,
-    val folderTimesUsed: Int = 0,
+    val folderTimesUsed: Long = 0,
     @PrimaryKey val id: String = "",
 ) {
 
@@ -37,12 +37,11 @@ val List<Map<String, Any>?>.folders: List<Folder>
         for(item in this) {
             folders.add(
                 Folder(
-                    item?.get("folderTitle") as String,
-                    if(item["messageIDs"] is List<*>) item["messageIDs"] as List<String>
-                    else emptyList(),
-                    item["isActive"] as Boolean,
-                    (item["folderTimesUsed"] as Long).toInt(),
-                    item["id"] as String,
+                    item?.get("folderTitle") as? String ?: "",
+                    item?.get("messageIDs") as? List<String>  ?: emptyList(),
+                    item?.get("isActive") as? Boolean ?: true,
+                    item?.get("folderTimesUsed") as? Long ?: 0,
+                    item?.get("id") as? String ?: "",
                 )
             )
         }

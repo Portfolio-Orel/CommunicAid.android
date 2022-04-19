@@ -8,7 +8,7 @@ data class Message(
     val messageTitle: String,
     val messageShortTitle: String,
     val messageBody: String,
-    val messageTimesUsed: Int = 0,
+    val messageTimesUsed: Long = 0,
     val isActive: Boolean = true,
     @PrimaryKey val id: String = ""
 ) {
@@ -38,12 +38,12 @@ val List<Map<String, Any>?>.messages: List<Message>
         for (item in this) {
             messages.add(
                 Message(
-                    messageTitle = item?.get("messageTitle") as String,
-                    messageShortTitle = item["messageShortTitle"] as String,
-                    messageBody = item["messageBody"] as String,
-                    messageTimesUsed = item["messageTimesUsed"] as Int,
-                    isActive = item["isActive"] as Boolean,
-                    item["id"] as String,
+                    messageTitle = item?.get("messageTitle") as? String ?: "",
+                    messageShortTitle = item?.get("messageShortTitle") as? String ?: "",
+                    messageBody = item?.get("messageBody") as? String ?: "",
+                    messageTimesUsed = item?.get("messageTimesUsed") as? Long ?: 0,
+                    isActive = item?.get("isActive") as Boolean,
+                    id = item["id"] as? String ?: "",
                 )
             )
         }
