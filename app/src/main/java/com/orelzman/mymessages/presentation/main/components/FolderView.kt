@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.main
+package com.orelzman.mymessages.presentation.main.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -11,11 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.orelzman.mymessages.domain.model.Folder
+import com.orelzman.mymessages.data.dto.Folder
 
 
 @Composable
-fun FolderView(folder: Folder, isSelected: Boolean,  modifier: Modifier = Modifier) {
+fun FolderView(folder: Folder, isSelected: Boolean, modifier: Modifier = Modifier) {
     Box(modifier =
     modifier
         .fillMaxSize()
@@ -28,7 +28,7 @@ fun FolderView(folder: Folder, isSelected: Boolean,  modifier: Modifier = Modifi
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = folder.title,
+            text = folder.folderTitle,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
         )

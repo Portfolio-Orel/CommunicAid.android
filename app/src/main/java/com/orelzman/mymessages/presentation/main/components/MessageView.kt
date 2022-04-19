@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.main
+package com.orelzman.mymessages.presentation.main.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable

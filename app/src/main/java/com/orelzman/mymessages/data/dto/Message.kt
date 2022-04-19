@@ -49,3 +49,6 @@ val List<Map<String, Any>?>.messages: List<Message>
         }
         return messages
     }
+
+fun List<Message>.getByIds(ids: List<String>): List<Message> =
+    filter { ids.contains(it.id) }

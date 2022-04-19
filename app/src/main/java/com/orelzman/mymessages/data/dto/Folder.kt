@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Folder(
-    val folderTitle: String,
+    val folderTitle: String = "",
     val messages: List<String> = emptyList(),
     val isActive: Boolean = true,
     val folderTimesUsed: Long = 0,
