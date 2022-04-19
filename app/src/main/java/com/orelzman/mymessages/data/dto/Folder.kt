@@ -15,7 +15,7 @@ data class Folder(
     constructor(folder: Folder, id: String) : this(
         folderTitle = folder.folderTitle,
         messages = folder.messages,
-        isActive =  folder.isActive,
+        isActive = folder.isActive,
         folderTimesUsed = folder.folderTimesUsed,
         id = id
     )
@@ -34,11 +34,11 @@ data class Folder(
 val List<Map<String, Any>?>.folders: List<Folder>
     get() {
         val folders = ArrayList<Folder>()
-        for(item in this) {
+        for (item in this) {
             folders.add(
                 Folder(
                     item?.get("folderTitle") as? String ?: "",
-                    item?.get("messageIDs") as? List<String>  ?: emptyList(),
+                    item?.get("messageIDs") as? List<String> ?: emptyList(),
                     item?.get("isActive") as? Boolean ?: true,
                     item?.get("folderTimesUsed") as? Long ?: 0,
                     item?.get("id") as? String ?: "",
