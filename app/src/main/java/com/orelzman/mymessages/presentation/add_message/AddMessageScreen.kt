@@ -1,9 +1,6 @@
 package com.orelzman.mymessages.presentation.add_message
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -11,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -36,7 +34,7 @@ fun AddMessageScreen(
             },
         )
         OutlinedTextField(
-            value = state.shortTitle,
+            value = viewModel.state.shortTitle,
             onValueChange = { viewModel.setShortTitle(it) },
             modifier = Modifier
                 .padding(16.dp)
@@ -55,15 +53,14 @@ fun AddMessageScreen(
                 Text(text = "טקסט")
             },
             maxLines = 30,
-            isError = state.body == ""
         )
-//        DropdownMenu(expanded = true, onDismissRequest = { print("dismiss") }) {
-//            viewModel.state.folders.forEach {
-//                    Text(it.folderTitle)
-//            }
-//        }
-        Button(onClick = { viewModel.addMessage() }) {
-            
+        Row() {
+            Button(onClick = { viewModel.addMessage() }) {
+                Text("שמור")
+            }
+            Button(onClick = { navigator.navigate(MainScreenDestination)}) {
+                Text("בטל")
+            }
         }
     }
 }
