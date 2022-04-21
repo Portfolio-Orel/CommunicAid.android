@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.room.Room
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.type_converters.Converters
+import com.orelzman.mymessages.domain.service.PhoneCallManager
+import com.orelzman.mymessages.domain.service.PhoneCallManagerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,4 +25,8 @@ object AppModule {
         )
             .addTypeConverter(Converters())
             .build()
+    @Provides
+    @Singleton
+    fun providePhoneCallManager(phoneCallManager: PhoneCallManagerImpl): PhoneCallManager = phoneCallManager
+
 }

@@ -1,9 +1,6 @@
 package com.orelzman.mymessages.data.local.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.orelzman.mymessages.data.dto.Folder
 
 @Dao
@@ -21,6 +18,15 @@ interface FolderDao {
     """)
     suspend fun getFolders(): List<Folder>
 
+    @Update
+    suspend fun updateFolder(folder: Folder)
+
+    @Query("""
+        SELECT *
+        FROM Folder
+        WHERE id = :folderId
+    """)
+    suspend fun get(folderId: String): Folder
 
     @Query("DELETE FROM Folder")
     suspend fun clear()

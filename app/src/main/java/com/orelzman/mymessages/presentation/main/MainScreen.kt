@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orelzman.mymessages.data.dto.getByIds
+import com.orelzman.mymessages.presentation.destinations.AddFolderScreenDestination
 import com.orelzman.mymessages.presentation.destinations.AddMessageScreenDestination
 import com.orelzman.mymessages.presentation.main.components.FolderView
 import com.ramcosta.composedestinations.annotation.Destination
@@ -43,7 +44,11 @@ fun MainScreen(
                 Text(it.messageTitle)
             }
 
-        Button(onClick = {  }) {
+        Button(onClick = {
+            navigator.navigate(
+                AddFolderScreenDestination()
+            )
+        }) {
             Text(text = "Add Folder")
         }
 

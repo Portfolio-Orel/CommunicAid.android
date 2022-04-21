@@ -43,18 +43,18 @@ class FirebaseRepository @Inject constructor() : Repository {
         return attachID(result)
     }
 
-    override suspend fun addMessage(uid: String, data: Map<String, Any>, folderId: String): String {
-        val docRef = Collections.Messages
+    override suspend fun saveMessage(uid: String, data: Map<String, Any>, folderId: String): String {
+        val messageDocRef = Collections.Messages
             .get(uid)
             .document()
         val folderDocRef = Collections.Folders.get(uid).document(folderId)
         val folderData =
-            mapOf(FIELD_ARRAY_MESSAGES_IN_FOLDERS to FieldValue.arrayUnion(docRef.id))
+            mapOf(FIELD_ARRAY_MESSAGES_IN_FOLDERS to FieldValue.arrayUnion(messageDocRef.id))
         db.runBatch {
-            it.set(docRef, data)
+            it.set(messageDocRef, data)
             it.set(folderDocRef, folderData, SetOptions.merge())
         }.await()
-        return docRef.id
+        return messageDocRef.id
     }
 
     override suspend fun addFolder(uid: String, data: Map<String, Any>): String {

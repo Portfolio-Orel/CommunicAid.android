@@ -74,7 +74,7 @@ fun AddMessageScreen(
 
         Row {
             Button(
-                onClick = { viewModel.addMessage() },
+                onClick = { viewModel.saveMessage() },
                 modifier = Modifier.padding(start = 32.dp, bottom = 32.dp)
             ) {
                 if (state.isLoading) {

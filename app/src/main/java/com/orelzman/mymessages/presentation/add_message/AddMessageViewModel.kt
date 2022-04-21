@@ -45,12 +45,12 @@ class AddMessageViewModel @Inject constructor(
         state = state.copy(folderId = value)
     }
 
-    fun addMessage() {
+    fun saveMessage() {
         if(state.isReadyForSave) {
             state = state.copy(isLoading = true)
             viewModelScope.launch {
                 authInteractor.user?.uid?.let {
-                    messageInteractor.addMessage(
+                    messageInteractor.saveMessage(
                         uid = it,
                         message = Message(
                             state.title,
