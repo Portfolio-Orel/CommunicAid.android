@@ -4,12 +4,12 @@ import java.util.*
 
 data class PhoneCall(
     val number: String = "",
-    val startDate: Date = Date(),
-    val endDate: Date = Date(),
-    val name: String = "",
+    var startDate: Date = Date(),
+    var endDate: Date = Date(),
+    var name: String = "",
     val isIncoming: Boolean = false,
     val isWaiting: Boolean = false,
-    val isRejected: Boolean = false,
+    var isRejected: Boolean = false,
     val messagesSent: List<String> = emptyList()
 ) : DTO {
 
@@ -25,6 +25,14 @@ data class PhoneCall(
             "isRejected" to isRejected,
             "messagesSent" to messagesSent
         )
+
+    fun missed() {
+        isRejected = false
+    }
+
+    fun rejected() {
+        isRejected = true
+    }
 
     companion object {
         fun waiting(number: String) =

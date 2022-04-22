@@ -25,6 +25,7 @@ object AppModule {
         )
             .addTypeConverter(Converters())
             .build()
+
     @Provides
     @Singleton
     fun providePhoneCallInteractor(phoneCallInteractorImpl: PhoneCallInteractorImpl): PhoneCallInteractor = phoneCallInteractorImpl

@@ -19,9 +19,9 @@ class PhonecallReceiver @Inject constructor(private val phoneCallManager: PhoneC
                     intent.extras?.getString(TelephonyManager.EXTRA_INCOMING_NUMBER)
                         ?: return
                 when (stateStr) {
-                    TelephonyManager.EXTRA_STATE_IDLE -> phoneCallManager.onIdleState()
-                    TelephonyManager.EXTRA_STATE_RINGING -> phoneCallManager.onRingingState(number, context)
-                    TelephonyManager.EXTRA_STATE_OFFHOOK -> phoneCallManager.onOffHookState(number, context)
+                    TelephonyManager.EXTRA_STATE_IDLE -> phoneCallManager.onIdleState(context = context)
+                    TelephonyManager.EXTRA_STATE_RINGING -> phoneCallManager.onRingingState(number = number, context = context)
+                    TelephonyManager.EXTRA_STATE_OFFHOOK -> phoneCallManager.onOffHookState(number = number, context = context)
                 }
             }
         } catch (ex: Exception) {

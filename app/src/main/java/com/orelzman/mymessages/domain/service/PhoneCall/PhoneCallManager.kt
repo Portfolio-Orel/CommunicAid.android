@@ -9,7 +9,7 @@ interface PhoneCallManager {
     val callOnTheLine: MutableStateFlow<PhoneCall?>
     val callsBacklog: MutableStateFlow<List<PhoneCall>>
 
-    fun onIdleState()
+    fun onIdleState(context: Context)
     fun onRingingState(number: String, context: Context)
     fun onOffHookState(number: String, context: Context)
 

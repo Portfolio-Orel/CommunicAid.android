@@ -1,8 +1,10 @@
 package com.orelzman.mymessages.domain.service.PhoneCall
 
 import android.content.Context
+import android.provider.CallLog
 import com.orelzman.mymessages.data.dto.PhoneCall
 import kotlinx.coroutines.flow.MutableStateFlow
+import java.util.*
 
 
 class PhoneCallManagerImpl : PhoneCallManager {
@@ -15,8 +17,8 @@ class PhoneCallManagerImpl : PhoneCallManager {
     private val backgroundCall: MutableStateFlow<PhoneCall?> = MutableStateFlow(null)
     private var _callsBacklog: MutableStateFlow<List<PhoneCall>> = MutableStateFlow(ArrayList())
 
-    override fun onIdleState() {
-        sendBacklog()
+    override fun onIdleState(context: Context) {
+        sendBacklog(context = context)
         resetStates()
     }
 
@@ -81,9 +83,10 @@ class PhoneCallManagerImpl : PhoneCallManager {
         _callsBacklog.value = backlog
     }
 
-    private fun sendBacklog() {
+    private fun sendBacklog(context: Context) {
         // Start background and send it callsBacklog -> It will be started from the broadcast receiver
-        // callsBacklog.value = _callsBacklog.value
+        callsBacklog.value.map { it.update(context) }
+        callsBacklog.value = _callsBacklog.value
     }
 
     private fun resetStates() {
@@ -93,4 +96,41 @@ class PhoneCallManagerImpl : PhoneCallManager {
         backgroundCall.value = null
         _callsBacklog.value = emptyList()
     }
+}
+
+/**
+ * Updates values according to the call log
+ * *** Test call in background, removed and called again to see if the backlog catches both from the calllog
+ */
+private fun PhoneCall.update(context: Context) {
+    val details = arrayOf(
+        CallLog.Calls.NUMBER,
+        CallLog.Calls.TYPE,
+        CallLog.Calls.DURATION,
+        CallLog.Calls.CACHED_NAME,
+        CallLog.Calls.DATE
+    )
+    context.contentResolver
+        .query(
+            CallLog.Calls.CONTENT_URI,
+            details,
+            null,
+            null,
+            CallLog.Calls.DATE + " DESC"
+        )
+        ?.use {
+            while (it.moveToNext()) {
+                if (number == it.getString(0)) {
+                    val type = it.getString(1)
+                    val duration = it.getString(2) as? Long ?: 0
+                    name = it.getString(3) ?: ""
+                    startDate = it.getString(4) as? Date ?: Date()
+                    endDate = Date(startDate.time + duration)
+                    when (type.toInt()) {
+                        CallLog.Calls.MISSED_TYPE -> missed()
+                        CallLog.Calls.REJECTED_TYPE -> rejected()
+                    }
+                }
+            }
+        }
 }
