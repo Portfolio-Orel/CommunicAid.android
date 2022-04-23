@@ -7,7 +7,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 interface PhoneCallManager {
 
     val callOnTheLine: MutableStateFlow<PhoneCall?>
-    val callsBacklog: MutableStateFlow<List<PhoneCall>>
+
+    fun getCallsBacklog(clearAfterRead: Boolean = true): List<PhoneCall>
 
     fun onIdleState(context: Context)
     fun onRingingState(number: String, context: Context)

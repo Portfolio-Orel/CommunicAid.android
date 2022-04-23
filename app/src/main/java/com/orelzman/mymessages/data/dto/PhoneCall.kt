@@ -1,5 +1,6 @@
 package com.orelzman.mymessages.data.dto
 
+import com.orelzman.mymessages.domain.service.inSeconds
 import java.util.*
 
 data class PhoneCall(
@@ -14,7 +15,7 @@ data class PhoneCall(
 ) : DTO {
 
     val isAnswered: Boolean
-        get() = (startDate != endDate)
+        get() = (startDate.time.inSeconds != endDate.time.inSeconds)
 
     override val data: Map<String, Any> =
         mapOf(

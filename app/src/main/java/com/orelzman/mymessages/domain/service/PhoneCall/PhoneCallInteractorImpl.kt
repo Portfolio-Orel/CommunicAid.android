@@ -12,6 +12,7 @@ class PhoneCallInteractorImpl @Inject constructor(
     override val numberOnTheLine: StateFlow<PhoneCall?>
         get() = phoneCallManager.callOnTheLine.asStateFlow()
 
-    override val callsBacklog: StateFlow<List<PhoneCall>>
-        get() = phoneCallManager.callsBacklog.asStateFlow()
+    override fun getCallsBacklog(clearAfteRead: Boolean): List<PhoneCall> =
+        phoneCallManager.getCallsBacklog(clearAfterRead = clearAfteRead).sortedBy { it.startDate }
+
 }

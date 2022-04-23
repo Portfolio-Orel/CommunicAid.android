@@ -20,22 +20,14 @@ class MainViewModel @Inject constructor(
     private val folderInteractor: FolderInteractor,
     private val messageInteractor: MessageInteractor,
     private val authInteractor: AuthInteractor,
-    phoneCallInteractor: PhoneCallInteractor,
-    ): ViewModel() {
+    private val phoneCallInteractor: PhoneCallInteractor,
+) : ViewModel() {
     var state by mutableStateOf(MainState(folders = emptyList(), messages = emptyList()))
 
     init {
         getMessages()
         getFolders()
-        viewModelScope.launch {
-            phoneCallInteractor.numberOnTheLine.collectLatest {
-                state = state.copy(callOnTheLine = it?.number ?: "No Call")
-            }
-        }
-        viewModelScope.launch {
-            phoneCallInteractor.callsBacklog.collectLatest {
-            }
-        }
+        observeNumberOnTheLine()
     }
 
     fun setSelectedFolder(folder: Folder) {
@@ -45,7 +37,7 @@ class MainViewModel @Inject constructor(
     private fun getMessages() {
         viewModelScope.launch {
             val messages = authInteractor.user?.let { messageInteractor.getMessages(it.uid) }
-            if(messages != null) {
+            if (messages != null) {
                 state = state.copy(messages = messages)
             }
         }
@@ -54,8 +46,16 @@ class MainViewModel @Inject constructor(
     private fun getFolders() {
         viewModelScope.launch {
             val folders = authInteractor.user?.let { folderInteractor.getFolders(it.uid) }
-            if(folders != null) {
+            if (folders != null) {
                 state = state.copy(folders = folders, selectedFolder = folders[0])
+            }
+        }
+    }
+
+    private fun observeNumberOnTheLine() {
+        viewModelScope.launch {
+            phoneCallInteractor.numberOnTheLine.collectLatest {
+                state = state.copy(callOnTheLine = it?.number ?: "No Call")
             }
         }
     }

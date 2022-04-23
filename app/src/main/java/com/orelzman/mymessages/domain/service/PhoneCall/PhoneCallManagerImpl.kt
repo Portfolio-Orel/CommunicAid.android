@@ -1,23 +1,27 @@
 package com.orelzman.mymessages.domain.service.PhoneCall
 
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.provider.CallLog
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.data.dto.PhoneCall
+import com.orelzman.mymessages.domain.service.CallsService
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.absoluteValue
 
 
+@ExperimentalPermissionsApi
 class PhoneCallManagerImpl @Inject constructor() : PhoneCallManager {
     override val callOnTheLine: MutableStateFlow<PhoneCall?> = MutableStateFlow(null)
 
     // These are calls that went to the background while answering other calls.
-    override val callsBacklog: MutableStateFlow<List<PhoneCall>> = MutableStateFlow(emptyList())
+    val callsBacklog: MutableStateFlow<List<PhoneCall>> = MutableStateFlow(emptyList())
 
     val state = MutableStateFlow(CallState.IDLE)
     val callInTheBackground: MutableStateFlow<PhoneCall?> = MutableStateFlow(null)
-    private var _callsBacklog: MutableStateFlow<List<PhoneCall>> = MutableStateFlow(ArrayList())
 
     override fun onIdleState(context: Context) {
         sendBacklog(context = context)
@@ -55,6 +59,14 @@ class PhoneCallManagerImpl @Inject constructor() : PhoneCallManager {
         }
     }
 
+    override fun getCallsBacklog(clearAfterRead: Boolean): List<PhoneCall> {
+        val list = callsBacklog.value
+        if (clearAfterRead) {
+            callsBacklog.value = emptyList()
+        }
+        return list
+    }
+
     private fun setBackgroundCall(phoneCall: PhoneCall?) {
         callInTheBackground.value = phoneCall
         addToBacklog(phoneCall = phoneCall)
@@ -88,27 +100,34 @@ class PhoneCallManagerImpl @Inject constructor() : PhoneCallManager {
 
     private fun addToBacklog(phoneCall: PhoneCall?) {
         if (phoneCall == null) return
-        if (_callsBacklog.value.any { it.startDate == phoneCall.startDate }) return // Contains the call
+        if (callsBacklog.value.any { it.startDate == phoneCall.startDate }) return // Contains the call
 
-        val backlog = ArrayList(_callsBacklog.value)
+        val backlog = ArrayList(callsBacklog.value)
         backlog.add(phoneCall)
-        _callsBacklog.value = ArrayList(backlog)
+        callsBacklog.value = ArrayList(backlog)
     }
 
     private fun sendBacklog(context: Context) {
         // Start background and send it callsBacklog -> It will be started from the broadcast receiver
-        callsBacklog.value = _callsBacklog.value
+        callsBacklog.value = callsBacklog.value
             .sortedByDescending { it.startDate }
             .map { it.update(context) }
+        startBackgroudnService(context)
+    }
+
+    private fun startBackgroudnService(context: Context) {
+        val intent = Intent(context, CallsService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(intent)
+        } else {
+            context.startService(intent)
+        }
     }
 
     private fun resetStates() {
         state.value = CallState.IDLE
-        // Testing: to test the backlog comment this line
-//        callsBacklog.value = emptyList()
         callOnTheLine.value = null
         callInTheBackground.value = null
-//        _callsBacklog.value = emptyList()
     }
 }
 
