@@ -9,7 +9,9 @@ import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.data.dto.Folder
 import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractor
 import com.orelzman.mymessages.data.local.interactors.message.MessageInteractor
+import com.orelzman.mymessages.domain.service.PhoneCall.PhoneCallInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,13 +19,23 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val folderInteractor: FolderInteractor,
     private val messageInteractor: MessageInteractor,
-    private val authInteractor: AuthInteractor
+    private val authInteractor: AuthInteractor,
+    phoneCallInteractor: PhoneCallInteractor,
     ): ViewModel() {
     var state by mutableStateOf(MainState(folders = emptyList(), messages = emptyList()))
 
     init {
         getMessages()
         getFolders()
+        viewModelScope.launch {
+            phoneCallInteractor.numberOnTheLine.collectLatest {
+                state = state.copy(callOnTheLine = it?.number ?: "No Call")
+            }
+        }
+        viewModelScope.launch {
+            phoneCallInteractor.callsBacklog.collectLatest {
+            }
+        }
     }
 
     fun setSelectedFolder(folder: Folder) {

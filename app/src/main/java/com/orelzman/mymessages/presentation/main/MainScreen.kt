@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.data.dto.getByIds
 import com.orelzman.mymessages.presentation.destinations.AddFolderScreenDestination
 import com.orelzman.mymessages.presentation.destinations.AddMessageScreenDestination
@@ -20,17 +19,20 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Destination
 fun MainScreen(
     navigator: DestinationsNavigator,
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: MainViewModel = hiltViewModel(),
 ) {
+    val state = viewModel.state
+
     Column {
+            Text(state.callOnTheLine)
         Row(
             modifier = Modifier
                 .padding(8.dp)
         ) {
-            viewModel.state.folders.forEach {
+            state.folders.forEach {
                 FolderView(
                     folder = it,
-                    isSelected = viewModel.state.selectedFolder.id == it.id,
+                    isSelected =state.selectedFolder.id == it.id,
                     modifier = Modifier
                         .height(40.dp)
                         .width(120.dp)
@@ -40,7 +42,7 @@ fun MainScreen(
         }
 
         viewModel.state.messages
-            .getByIds(viewModel.state.selectedFolder.messages)
+            .getByIds(state.selectedFolder.messages)
             .forEach {
                 Text(it.messageTitle)
             }

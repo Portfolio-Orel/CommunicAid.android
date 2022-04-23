@@ -5,7 +5,7 @@ import java.util.*
 data class PhoneCall(
     val number: String = "",
     var startDate: Date = Date(),
-    var endDate: Date = Date(),
+    var endDate: Date = startDate,
     var name: String = "",
     val isIncoming: Boolean = false,
     val isWaiting: Boolean = false,
@@ -13,18 +13,22 @@ data class PhoneCall(
     val messagesSent: List<String> = emptyList()
 ) : DTO {
 
+    val isAnswered: Boolean
+        get() = (startDate != endDate)
+
     override val data: Map<String, Any> =
         mapOf(
             "phoneNumber" to number,
             "contactName" to name,
             "startDate" to startDate,
             "endDate" to endDate,
-            "isAnswered" to (startDate != endDate),
+            "isAnswered" to isAnswered,
             "isIncoming" to isIncoming,
             "isWaiting" to isWaiting,
             "isRejected" to isRejected,
             "messagesSent" to messagesSent
         )
+
 
     fun missed() {
         isRejected = false

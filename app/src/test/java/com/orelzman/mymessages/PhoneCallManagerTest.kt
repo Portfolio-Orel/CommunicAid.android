@@ -1,34 +1,90 @@
 package com.orelzman.mymessages
 
 import android.content.Context
-import androidx.test.platform.app.InstrumentationRegistry
 import com.orelzman.mymessages.domain.service.PhoneCall.CallState
 import com.orelzman.mymessages.domain.service.PhoneCall.PhoneCallManagerImpl
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito.mock
+import org.mockito.junit.MockitoJUnitRunner
 
+
+@RunWith(MockitoJUnitRunner::class)
 class PhoneCallManagerTest {
 
+    private val number = "testNumber"
+    private val number2 = "testNumber2"
     private val phoneCallManager = PhoneCallManagerImpl()
-    private val context: Context =
-        InstrumentationRegistry.getInstrumentation().context
+
+    @Mock
+    private lateinit var mockContext: Context
+
+    @Before
+    fun setUp() {
+        mockContext = mock(Context::class.java)
+        phoneCallManager.onIdleState(context = mockContext)
+    }
 
     private fun endCall() {
-        phoneCallManager.onIdleState(context = context)
+
+        phoneCallManager.onIdleState(context = mockContext)
         assertEquals(phoneCallManager.state.value, CallState.IDLE)
     }
 
-    private fun isBacklogContains(number: String) =
-        phoneCallManager.callsBacklog.value.any { it.number == number }
+    private fun `Check if backlog contains a number`(number: String) =
+        try {
+            assertTrue(phoneCallManager.callsBacklog.value.any { it.number == number })
+        } catch(excpetion: AssertionError) {
+            throw Exception("Did you comment backlog.value = emptyList() in resetValues?")
+        }
 
+    private fun testState(state: CallState) =
+        assertEquals(phoneCallManager.state.value, state)
+
+    private fun testCallOnTheLine(number: String) =
+        assertEquals(phoneCallManager.callOnTheLine.value?.number, number)
+
+    private fun testBackgroundCall(number: String) =
+        assertEquals(phoneCallManager.callInTheBackground.value?.number, number)
+
+    private fun `Check if call in backlog is outgoing`(number: String) =
+        assertFalse(phoneCallManager.callsBacklog.value.first { it.number == number }.isIncoming)
+
+    private fun `Check if call in backlog is incoming`(number: String) =
+        assertTrue(phoneCallManager.callsBacklog.value.first { it.number == number }.isIncoming)
+
+    private fun `Check if call in backlog is answered`(number: String) =
+        assertTrue(phoneCallManager.callsBacklog.value.first { it.number == number }.isAnswered)
+
+    private fun `Check if call in backlog is missed`(number: String) =
+        assertFalse(phoneCallManager.callsBacklog.value.first { it.number == number }.isAnswered)
 
     @Test
-    fun outgoing() {
-        phoneCallManager.onOffHookState("testNumber", context)
-        assertEquals(phoneCallManager.state.value, CallState.OUTGOING)
-        assertEquals(phoneCallManager.callOnTheLine.value, "testNumber")
+    fun `Test an outgoing call`() {
+        phoneCallManager.onOffHookState(number, mockContext)
+        testState(CallState.OUTGOING)
+        testCallOnTheLine(number)
         endCall()
-        assertTrue(isBacklogContains("testNumber"))
+        `Check if backlog contains a number`(number)
+        `Check if call in backlog is outgoing`(number)
     }
+
+    @Test
+    fun `Test an incoming call`() {
+        phoneCallManager.onRingingState(number, mockContext)
+        testState(CallState.INCOMING)
+        testCallOnTheLine(number)
+        endCall()
+        `Check if backlog contains a number`(number)
+        `Check if call in backlog is incoming`(number)
+    }
+
+    fun `Test waiting call`() {
+        phoneCallManager.onRingingState(number, mockContext)
+
+    }
+
 }

@@ -9,24 +9,37 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class PhonecallReceiver @Inject constructor(private val phoneCallManager: PhoneCallManager) : BroadcastReceiver() {
+class PhonecallReceiver : BroadcastReceiver() {
+
+    @Inject
+    lateinit var phoneCallManager: PhoneCallManager
 
     override fun onReceive(context: Context, intent: Intent?) {
-        try {
-            if (intent != null) {
+        when (intent?.action) {
+            PHONE_STATE -> {
                 val stateStr = intent.extras?.getString(TelephonyManager.EXTRA_STATE)
                 @Suppress("DEPRECATION") val number =
                     intent.extras?.getString(TelephonyManager.EXTRA_INCOMING_NUMBER)
                         ?: return
                 when (stateStr) {
-                    TelephonyManager.EXTRA_STATE_IDLE -> phoneCallManager.onIdleState(context = context)
-                    TelephonyManager.EXTRA_STATE_RINGING -> phoneCallManager.onRingingState(number = number, context = context)
-                    TelephonyManager.EXTRA_STATE_OFFHOOK -> phoneCallManager.onOffHookState(number = number, context = context)
+                    TelephonyManager.EXTRA_STATE_IDLE -> phoneCallManager.onIdleState(
+                        context = context
+                    )
+                    TelephonyManager.EXTRA_STATE_RINGING -> phoneCallManager.onRingingState(
+                        number = number,
+                        context = context
+                    )
+                    TelephonyManager.EXTRA_STATE_OFFHOOK -> phoneCallManager.onOffHookState(
+                        number = number,
+                        context = context
+                    )
                 }
             }
-        } catch (ex: Exception) {
         }
     }
 
-
+    companion object {
+        val PHONE_STATE: String
+            get() = "android.intent.action.PHONE_STATE"
+    }
 }

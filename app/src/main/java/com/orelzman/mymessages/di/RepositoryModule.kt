@@ -8,6 +8,8 @@ import com.orelzman.mymessages.data.local.interactors.message.MessageInteractor
 import com.orelzman.mymessages.data.local.interactors.message.MessageInteractorImpl
 import com.orelzman.mymessages.data.repository.Repository
 import com.orelzman.mymessages.data.repository.firebase.FirebaseRepository
+import com.orelzman.mymessages.domain.service.PhoneCall.PhoneCallInteractor
+import com.orelzman.mymessages.domain.service.PhoneCall.PhoneCallInteractorImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -41,4 +43,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun provideMessageInteractor(interactor: FolderInteractorImpl): FolderInteractor
+
+    @Binds
+    @Singleton
+    abstract fun providePhoneCallInteractor(phoneCallInteractorImpl: PhoneCallInteractorImpl): PhoneCallInteractor
 }
