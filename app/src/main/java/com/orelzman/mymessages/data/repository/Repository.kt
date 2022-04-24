@@ -17,12 +17,18 @@ interface Repository {
     /**
      * Adds a message to the db and to the folder's messages and returns its id.
      */
-    suspend fun addMessage(uid: String, data: Map<String, Any>, folderId: String): String
+    suspend fun saveMessage(uid: String, data: Map<String, Any>, folderId: String): String
 
     /**
      * Adds a folder to the db and returns its id.
      */
-    suspend fun addFolder(uid: String, data: Map<String, Any>): String
+    suspend fun saveFolder(uid: String, data: Map<String, Any>): String
+
+    suspend fun deleteMessage(uid: String, id: String)
+
+    suspend fun deleteFolder(uid: String, id: String)
+
+    suspend fun addPhoneCalls(uid: String, dataList: List<Map<String, Any>>)
 
     val folderExistsException: FolderExistsException
 }

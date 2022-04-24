@@ -1,0 +1,119 @@
+package com.orelzman.mymessages.domain.service.PhoneCall
+
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import android.telephony.TelephonyManager
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.orelzman.mymessages.data.dto.PhoneCall
+import com.orelzman.mymessages.data.dto.PhoneCallStatistics
+import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractor
+import com.orelzman.mymessages.domain.service.CallsService
+import kotlinx.coroutines.flow.MutableStateFlow
+import javax.inject.Inject
+
+
+@ExperimentalPermissionsApi
+class PhoneCallManagerImpl @Inject constructor(
+    private val phoneCallStatisticsInteractor: PhoneCallStatisticsInteractor,
+) : PhoneCallManager {
+    override val callOnTheLine: MutableStateFlow<PhoneCall?> = MutableStateFlow(null)
+    val callInTheBackground: MutableStateFlow<PhoneCall?> = MutableStateFlow(null)
+
+    val state = MutableStateFlow(CallState.IDLE)
+
+    override fun onStateChanged(state: String, number: String, context: Context) {
+        when (state) {
+            TelephonyManager.EXTRA_STATE_IDLE -> onIdleState()
+            TelephonyManager.EXTRA_STATE_RINGING -> onRingingState(number)
+            TelephonyManager.EXTRA_STATE_OFFHOOK -> onOffHookState(number)
+        }
+        startBackgroundService(context)
+    }
+
+    fun onIdleState() {
+        resetStates()
+    }
+
+    fun onRingingState(number: String) {
+        when (state.value) {
+            CallState.IDLE -> {
+                incomingCall(number = number)
+            }
+            CallState.INCOMING -> {
+                waiting(number = number)
+            }
+            else -> throw Exception("Weird exception - onRingingState: $number ${state.value}")
+        }
+    }
+
+    fun onOffHookState(number: String) {
+        when (state.value) {
+            CallState.WAITING -> {
+                if (callOnTheLine.value?.number != number) { // Waiting answered.
+                    waitingAnswered()
+                } else {
+                    state.value = CallState.INCOMING
+                }
+            }
+            CallState.IDLE -> {
+                outgoingCall(number = number)
+            }
+            CallState.INCOMING -> { // incoming answered
+//                incomingCall(number = number)
+            }
+            else -> throw Exception("Weird exception - onOffHookState: $number ${state.value}")
+        }
+    }
+
+    private fun setBackgroundCall(phoneCall: PhoneCall?) {
+        callInTheBackground.value = phoneCall
+        addToBacklog(phoneCall = phoneCall)
+    }
+
+    private fun setCallOnLine(phoneCall: PhoneCall?) {
+        callOnTheLine.value = phoneCall
+        addToBacklog(phoneCall = phoneCall)
+    }
+
+    private fun outgoingCall(number: String) {
+        state.value = CallState.OUTGOING
+        setCallOnLine(PhoneCall.outgoing(number = number))
+    }
+
+    private fun incomingCall(number: String) {
+        state.value = CallState.INCOMING
+        setCallOnLine(PhoneCall.incoming(number = number))
+    }
+
+    private fun waitingAnswered() {
+        val backgroundCallHolder = callInTheBackground.value
+        setBackgroundCall(callOnTheLine.value)
+        setCallOnLine(backgroundCallHolder)
+    }
+
+    private fun waiting(number: String) {
+        state.value = CallState.WAITING
+        setBackgroundCall(PhoneCall.waiting(number = number))
+    }
+
+    private fun addToBacklog(phoneCall: PhoneCall?) {
+        if (phoneCall == null) return
+        phoneCallStatisticsInteractor.cachePhoneCall(PhoneCallStatistics(phoneCall = phoneCall))
+    }
+
+    private fun startBackgroundService(context: Context) {
+        val intent = Intent(context, CallsService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(intent)
+        } else {
+            context.startService(intent)
+        }
+    }
+
+    private fun resetStates() {
+        state.value = CallState.IDLE
+        callOnTheLine.value = null
+        callInTheBackground.value = null
+    }
+}

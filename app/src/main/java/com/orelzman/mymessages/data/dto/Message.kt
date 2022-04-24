@@ -11,8 +11,9 @@ data class Message(
     val messageTimesUsed: Long = 0,
     val isActive: Boolean = true,
     @PrimaryKey val id: String = ""
-) {
-    val data: Map<String, Any>
+): DTO {
+
+    override val data: Map<String, Any>
         get() = mapOf(
             "messageTitle" to messageTitle,
             "messageShortTitle" to messageShortTitle,
@@ -29,6 +30,17 @@ data class Message(
         isActive = message.isActive,
         id = id
     )
+
+    companion object {
+        val default = Message(
+            messageTitle = "Title",
+            messageShortTitle = "Short title",
+            messageBody = "Body",
+            messageTimesUsed = 4,
+            isActive = true,
+            id = "id"
+        )
+    }
 
 }
 

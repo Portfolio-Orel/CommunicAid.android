@@ -24,8 +24,8 @@ class AddMessageViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             authInteractor.user?.uid?.let {
-                folderInteractor.getFolders(it)
-
+                val folders = folderInteractor.getFolders(it)
+                state = state.copy(folders = folders)
             }
         }
     }
@@ -45,12 +45,12 @@ class AddMessageViewModel @Inject constructor(
         state = state.copy(folderId = value)
     }
 
-    fun addMessage() {
+    fun saveMessage() {
         if(state.isReadyForSave) {
             state = state.copy(isLoading = true)
             viewModelScope.launch {
                 authInteractor.user?.uid?.let {
-                    messageInteractor.addMessage(
+                    messageInteractor.saveMessage(
                         uid = it,
                         message = Message(
                             state.title,
@@ -59,7 +59,7 @@ class AddMessageViewModel @Inject constructor(
                         ),
                         folderId = state.folderId
                     )
-                    state = state.copy(isLoading = false)
+                    state = state.copy(isLoading = false, isMessageSaved = true)
                 }
             }
         } else {

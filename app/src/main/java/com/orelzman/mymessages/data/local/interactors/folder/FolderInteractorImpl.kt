@@ -24,8 +24,14 @@ class FolderInteractorImpl @Inject constructor(
     }
 
     override suspend fun addFolder(uid: String, folder: Folder): String {
-        val folderId = repository.addFolder(uid, folder.data)
+        val folderId = repository.saveFolder(uid, folder.data)
         db.insert(Folder(folder, folderId))
         return folderId
+    }
+
+    override suspend fun saveMessageInFolder(messageId: String, folderId: String) {
+        val folder = db.get(folderId = folderId)
+        (folder.messages as ArrayList<String>).add(messageId)
+        db.updateFolder(folder = folder)
     }
 }

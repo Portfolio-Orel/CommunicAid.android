@@ -4,13 +4,13 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class Folder(
+data class Folder (
     val folderTitle: String = "",
     val messages: List<String> = emptyList(),
     val isActive: Boolean = true,
     val folderTimesUsed: Long = 0,
     @PrimaryKey val id: String = "",
-) {
+): DTO {
 
     constructor(folder: Folder, id: String) : this(
         folderTitle = folder.folderTitle,
@@ -20,7 +20,7 @@ data class Folder(
         id = id
     )
 
-    val data: Map<String, Any>
+    override val data: Map<String, Any>
         get() =
             mapOf(
                 "folderTitle" to folderTitle,

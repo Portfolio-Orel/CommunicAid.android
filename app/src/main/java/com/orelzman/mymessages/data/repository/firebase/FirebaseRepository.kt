@@ -3,7 +3,9 @@ package com.orelzman.mymessages.data.repository.firebase
 import com.google.firebase.firestore.*
 import com.orelzman.mymessages.data.repository.FolderExistsException
 import com.orelzman.mymessages.data.repository.Repository
+import com.orelzman.mymessages.data.repository.firebase.exceptions.BadStartDateFromDataException
 import kotlinx.coroutines.tasks.await
+import java.util.*
 import javax.inject.Inject
 
 class FirebaseRepository @Inject constructor() : Repository {
@@ -43,21 +45,25 @@ class FirebaseRepository @Inject constructor() : Repository {
         return attachID(result)
     }
 
-    override suspend fun addMessage(uid: String, data: Map<String, Any>, folderId: String): String {
-        val docRef = Collections.Messages
+    override suspend fun saveMessage(
+        uid: String,
+        data: Map<String, Any>,
+        folderId: String
+    ): String {
+        val messageDocRef = Collections.Messages
             .get(uid)
             .document()
         val folderDocRef = Collections.Folders.get(uid).document(folderId)
         val folderData =
-            mapOf(FIELD_ARRAY_MESSAGES_IN_FOLDERS to FieldValue.arrayUnion(docRef.id))
+            mapOf(FIELD_ARRAY_MESSAGES_IN_FOLDERS to FieldValue.arrayUnion(messageDocRef.id))
         db.runBatch {
-            it.set(docRef, data)
+            it.set(messageDocRef, data)
             it.set(folderDocRef, folderData, SetOptions.merge())
         }.await()
-        return docRef.id
+        return messageDocRef.id
     }
 
-    override suspend fun addFolder(uid: String, data: Map<String, Any>): String {
+    override suspend fun saveFolder(uid: String, data: Map<String, Any>): String {
         val existFolder = Collections.Folders
             .get(uid)
             .whereEqualTo("folderTitle", data["folderTitle"])
@@ -73,6 +79,80 @@ class FirebaseRepository @Inject constructor() : Repository {
         return docRef.id
     }
 
+    override suspend fun deleteMessage(uid: String, id: String) {
+        Collections.Messages
+            .get(uid)
+            .document(id)
+            .deleteDocument()
+    }
+
+    override suspend fun deleteFolder(uid: String, id: String) {
+        Collections.Folders
+            .get(uid)
+            .document(id)
+            .deleteDocument()
+    }
+
+
+    override suspend fun addPhoneCalls(uid: String, dataList: List<Map<String, Any>>) {
+        val colRef = Collections.PhoneCalls
+            .get(uid)
+        val batch = db.batch()
+        dataList.forEach {
+            val docRef = colRef.document()
+            batch.set(docRef, it, SetOptions.merge())
+        }
+        batch.commit().await()
+        dataList.forEach {
+            updateStatistics(uid, it)
+        }
+    }
+
+    
+    private suspend fun updateStatistics(uid: String, data: Map<String, Any>) {
+        try {
+            val cal = Calendar.getInstance()
+            cal.time = data["startDate"] as? Date ?: throw BadStartDateFromDataException()
+            val formattedDate =
+                "${cal.get(Calendar.DAY_OF_MONTH)}/${cal.get(Calendar.MONTH) + 1}/${cal.get(Calendar.YEAR)}"
+            updateCallsPerDayStatistics(uid, data, formattedDate)
+
+//            if ((data["messagesSent"] as? List<String>)?.size > 0) {
+//                updatePotentialClientsStatistics(uid, phoneCall, formattedDate)
+//            }
+//            if (phoneCall.messagesSent.size > 0) {
+//                updateMessagesSentPerHour(
+//                    uid,
+//                    phoneCall.messagesSent,
+//                    phoneCall.startDate,
+//                    formattedDate,
+//                )
+//            }
+        } catch (exception: Exception) {
+//            AppUtils.reportCrash(exception)
+        }
+    }
+
+    private suspend fun updateCallsPerDayStatistics(
+        uid: String,
+        data: Map<String, Any>,
+        formattedDate: String,
+    ) {
+        val col = Collections.PhoneCallsPerDay.get(uid)
+        val res = col.whereEqualTo("formattedDate", formattedDate).get().await()
+        if (res.isEmpty) { // First statistics update for today.
+            val statisticsData = hashMapOf(
+                "formattedDate" to formattedDate,
+                "date" to data["startDate"],
+                "callsCount" to 1
+            )
+            col.document().set(statisticsData).await()
+        } else {
+            col.document(res.documents[0].id)
+                .update("callsCount", FieldValue.increment(1)).await()
+        }
+    }
+    
     private fun Collections.get(uid: String): CollectionReference =
         if (this == Collections.Users) db.collection(value)
         else db.collection(Collections.Users.value).document(uid).collection(value)
@@ -101,5 +181,12 @@ class FirebaseRepository @Inject constructor() : Repository {
 private enum class Collections(val value: String) {
     Messages("messages"),
     Folders("folders"),
+    PhoneCalls("phoneCalls"),
+    PhoneCallsPerDay("phoneCallsPerDay"),
+    MessagesSentPerDay("messagesSentPerHour"),
+    PotentialClients("potentialClients"),
     Users("users"),
 }
+
+suspend fun DocumentReference.deleteDocument(): Void =
+    update("isActive", false).await()
