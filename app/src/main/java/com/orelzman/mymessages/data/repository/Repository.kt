@@ -24,6 +24,8 @@ interface Repository {
      */
     suspend fun addFolder(uid: String, data: Map<String, Any>): String
 
+    suspend fun addPhoneCalls(uid: String, dataList: List<Map<String, Any>>)
+
     val folderExistsException: FolderExistsException
 }
 

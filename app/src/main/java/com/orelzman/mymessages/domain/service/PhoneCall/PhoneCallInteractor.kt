@@ -5,6 +5,4 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface PhoneCallInteractor {
     val numberOnTheLine: StateFlow<PhoneCall?>
-
-    fun getCallsBacklog(clearAfteRead: Boolean = true): List<PhoneCall>
 }

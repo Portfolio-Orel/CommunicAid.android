@@ -1,17 +1,20 @@
 package com.orelzman.mymessages.data.dto
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.orelzman.mymessages.domain.service.inSeconds
 import java.util.*
 
+@Entity
 data class PhoneCall(
     val number: String = "",
-    var startDate: Date = Date(),
+    @PrimaryKey var startDate: Date = Date(),
     var endDate: Date = startDate,
     var name: String = "",
     val isIncoming: Boolean = false,
     val isWaiting: Boolean = false,
     var isRejected: Boolean = false,
-    val messagesSent: List<String> = emptyList()
+    var messagesSent: List<String> = emptyList()
 ) : DTO {
 
     val isAnswered: Boolean

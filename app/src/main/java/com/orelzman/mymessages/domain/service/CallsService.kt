@@ -1,6 +1,7 @@
 package com.orelzman.mymessages.domain.service
 
 import android.app.*
+import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -9,11 +10,17 @@ import android.os.PowerManager
 import android.provider.CallLog
 import androidx.annotation.RequiresApi
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.MainActivity
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.data.dto.PhoneCall
+import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractor
 import com.orelzman.mymessages.domain.service.PhoneCall.PhoneCallInteractor
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.absoluteValue
@@ -26,9 +33,16 @@ class CallsService : Service() {
     private lateinit var currentNotification: Notification
     private val notificationID = 1
     private val notificationChannelId = "MyMessages"
+    private val scope = CoroutineScope(Job() + Dispatchers.Main)
 
     @Inject
     lateinit var phoneCallInteractor: PhoneCallInteractor
+
+    @Inject
+    lateinit var phoneCallStatisticsInteractor: PhoneCallStatisticsInteractor
+
+    @Inject
+    lateinit var authInteractor: AuthInteractor
 
     override fun onBind(p0: Intent?): IBinder? =
         null
@@ -85,12 +99,20 @@ class CallsService : Service() {
         val closeIntent = Intent(this, CallsService::class.java)
         closeIntent.action = Actions.STOP.toString()
         val closePendingIntent =
-            PendingIntent.getService(this, 0, closeIntent, 0)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PendingIntent.getService(this, 0, closeIntent, FLAG_IMMUTABLE)
+            } else {
+                PendingIntent.getService(this, 0, closeIntent, 0)
+            }
         val pendingIntent: PendingIntent =
             Intent(this, MainActivity::class.java).let { notificationIntent ->
                 notificationIntent.flags =
                     Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-                PendingIntent.getActivity(this, 0, notificationIntent, 0)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    PendingIntent.getActivity(this, 0, notificationIntent, FLAG_IMMUTABLE)
+                } else {
+                    PendingIntent.getActivity(this, 0, notificationIntent, 0)
+                }
             }
 
         val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -129,9 +151,17 @@ class CallsService : Service() {
     }
 
     private fun uploadCalls() {
-        val callsLog = phoneCallInteractor.getCallsBacklog()
-            .map { it.update(this) }
-
+        val callsLog = phoneCallStatisticsInteractor
+            .getAll()
+            .map { it.phoneCall.update(this) }
+        scope.launch {
+            authInteractor.user?.uid?.let {
+                phoneCallStatisticsInteractor.addPhoneCalls(
+                    it,
+                    callsLog
+                )
+            }
+        }
     }
 }
 
@@ -139,7 +169,6 @@ enum class Actions {
     START,
     STOP
 }
-
 
 /**
  * Updates values according to the call log

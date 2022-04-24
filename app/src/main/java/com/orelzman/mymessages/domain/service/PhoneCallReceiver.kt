@@ -21,19 +21,7 @@ class PhonecallReceiver : BroadcastReceiver() {
                 @Suppress("DEPRECATION") val number =
                     intent.extras?.getString(TelephonyManager.EXTRA_INCOMING_NUMBER)
                         ?: return
-                when (stateStr) {
-                    TelephonyManager.EXTRA_STATE_IDLE -> phoneCallManager.onIdleState(
-                        context = context
-                    )
-                    TelephonyManager.EXTRA_STATE_RINGING -> phoneCallManager.onRingingState(
-                        number = number,
-                        context = context
-                    )
-                    TelephonyManager.EXTRA_STATE_OFFHOOK -> phoneCallManager.onOffHookState(
-                        number = number,
-                        context = context
-                    )
-                }
+                stateStr?.let { phoneCallManager.onStateChanged(it, number, context) }
             }
         }
     }

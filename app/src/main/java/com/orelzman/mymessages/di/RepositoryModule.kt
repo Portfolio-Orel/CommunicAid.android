@@ -6,6 +6,8 @@ import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractor
 import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractorImpl
 import com.orelzman.mymessages.data.local.interactors.message.MessageInteractor
 import com.orelzman.mymessages.data.local.interactors.message.MessageInteractorImpl
+import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractor
+import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractorImpl
 import com.orelzman.mymessages.data.repository.Repository
 import com.orelzman.mymessages.data.repository.firebase.FirebaseRepository
 import com.orelzman.mymessages.domain.service.PhoneCall.PhoneCallInteractor
@@ -19,7 +21,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
- // Here I will bind firestore repository and the auth.
+    // Here I will bind firestore repository and the auth.
     @Binds
     @Singleton
     abstract fun bindAuthInteractor(
@@ -43,6 +45,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun provideMessageInteractor(interactor: FolderInteractorImpl): FolderInteractor
+
+    @Binds
+    @Singleton
+    abstract fun providePhoneCallStatisticsInteractor(interactor: PhoneCallStatisticsInteractorImpl): PhoneCallStatisticsInteractor
 
     @Binds
     @Singleton
