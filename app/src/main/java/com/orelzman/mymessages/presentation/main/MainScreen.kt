@@ -6,8 +6,10 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.flowlayout.FlowRow
 import com.orelzman.mymessages.data.dto.getByIds
 import com.orelzman.mymessages.presentation.destinations.AddFolderScreenDestination
 import com.orelzman.mymessages.presentation.destinations.AddMessageScreenDestination
@@ -23,6 +25,9 @@ fun MainScreen(
     viewModel: MainViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state
+    val screen = LocalConfiguration.current
+    val boxWidth = (screen.screenWidthDp * 0.8F)/state.maxMessagesInRow
+    val boxHeight = boxWidth + 5
 
     Column {
         Text(state.callOnTheLine)
@@ -42,20 +47,33 @@ fun MainScreen(
             }
         }
 
-        viewModel.state.messages
-            .getByIds(state.selectedFolder.messages)
-            .forEach {
-                MessageView(
-                    message = it,
-                    onClick = { message, context -> viewModel.sendMessage(message, context) })
-            }
+        FlowRow(modifier = Modifier.fillMaxWidth()
+            .padding(bottom = 16.dp, start = 30.dp, end = 30.dp)
+            .fillMaxHeight(0.8F)
+            .fillMaxWidth(0.9F),
+        ) {
+            viewModel.state.messages
+                .getByIds(state.selectedFolder.messages)
+                .forEach {
+                    MessageView(
+                        message = it,
+                        modifier = Modifier
+                            .width(boxWidth.dp)
+                            .height(boxHeight.dp)
+                            .padding(8.dp)
+                        ,
+                        onClick = { message, context ->
+                            viewModel.sendMessage(message, context)
+                        })
+                }
+        }
 
         Button(onClick = {
             navigator.navigate(
                 AddFolderScreenDestination()
             )
         }) {
-            Text(text = "Add Folder")
+            Text(text = "הוסף תיקייה")
         }
 
         Button(onClick = {
@@ -63,7 +81,7 @@ fun MainScreen(
                 AddMessageScreenDestination()
             )
         }) {
-            Text(text = "Add Message")
+            Text(text = "הוסף הודעה")
         }
     }
 }

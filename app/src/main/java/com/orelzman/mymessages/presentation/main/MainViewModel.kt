@@ -72,7 +72,7 @@ class MainViewModel @Inject constructor(
     private fun observeNumberOnTheLine() {
         viewModelScope.launch {
             phoneCallInteractor.numberOnTheLine.collectLatest {
-                state = state.copy(callOnTheLine = it?.number ?: "No Call")
+                state = state.copy(callOnTheLine = it?.number ?: "אין שיחה")
             }
         }
     }

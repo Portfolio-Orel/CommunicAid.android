@@ -35,6 +35,7 @@ class AddMessageViewModel @Inject constructor(
     }
 
     fun setShortTitle(value: String) {
+        if(value.length > 3) return // ToDo set error
         state = state.copy(shortTitle = value)
     }
 

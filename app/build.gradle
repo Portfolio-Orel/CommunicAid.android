@@ -120,6 +120,10 @@ dependencies {
     // Permissions
     implementation "com.google.accompanist:accompanist-permissions:0.21.1-beta"
 
+    // FlowRow
+    implementation "com.google.accompanist:accompanist-flowlayout:0.17.0"
+
+
     // Mixpanel
 //    api 'com.mixpanel.android:mixpanel-android:6.0'
 }

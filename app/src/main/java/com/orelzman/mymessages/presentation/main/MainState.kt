@@ -10,4 +10,5 @@ data class MainState(
     val callOnTheLine: String = "",
     val isLoading: Boolean = false,
     val isLoggedIn: Boolean = false,
+    val maxMessagesInRow: Int = 4,
 )

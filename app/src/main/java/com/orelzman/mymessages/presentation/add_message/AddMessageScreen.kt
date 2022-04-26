@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.toSize
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orelzman.mymessages.data.dto.Folder
 import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
+import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -28,70 +29,78 @@ fun AddMessageScreen(
 ) {
     val state = viewModel.state
 
-    if(state.isMessageSaved) {
+    if (state.isMessageSaved) {
         navigator.navigate(MainScreenDestination)
     }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        OutlinedTextField(
-            value = state.title,
-            onValueChange = { viewModel.setTitle(it) },
+    MyMessagesTheme {
+        Column(
             modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            placeholder = {
-                Text(text = "כותרת")
-            },
-        )
-        OutlinedTextField(
-            value = state.shortTitle,
-            onValueChange = { viewModel.setShortTitle(it) },
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            placeholder = {
-                Text(text = "כותרת קצרה")
+                .fillMaxSize()
+        ) {
+            OutlinedTextField(
+                value = state.title,
+                onValueChange = { viewModel.setTitle(it) },
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                placeholder = {
+                    Text(text = "כותרת")
+                },
+            )
+            Column {
+                OutlinedTextField(
+                    value = state.shortTitle,
+                    onValueChange = { viewModel.setShortTitle(it) },
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    placeholder = {
+                        Text(text = "כותרת קצרה")
+                    },
+                )
+                Text(
+                    "מקסימום 3 תווים",
+                    modifier = Modifier
+                        .size(16.dp)
+                )
             }
-        )
-        OutlinedTextField(
-            value = state.body,
-            onValueChange = { viewModel.setBody(it) },
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            placeholder = {
-                Text(text = "טקסט")
-            },
-            maxLines = 30,
-            isError = state.body == ""
-        )
+            OutlinedTextField(
+                value = state.body,
+                onValueChange = { viewModel.setBody(it) },
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                placeholder = {
+                    Text(text = "טקסט")
+                },
+                maxLines = 30,
+                isError = state.body == ""
+            )
 
-        Dropdown(folders = state.folders) { viewModel.setFolderId(it) }
-        Spacer(modifier = Modifier.weight(1f))
-
-        Row {
-            Button(
-                onClick = { viewModel.saveMessage() },
-                modifier = Modifier.padding(start = 32.dp, bottom = 32.dp)
-            ) {
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.padding(bottom = 12.dp),
-                        color = Color.White
-                    )
-                } else {
-                    Text("שמור")
-                }
-            }
+            Dropdown(folders = state.folders) { viewModel.setFolderId(it) }
             Spacer(modifier = Modifier.weight(1f))
-            Button(
-                onClick = { navigator.navigate(MainScreenDestination) },
-                modifier = Modifier.padding(end = 32.dp, bottom = 32.dp)
-            ) {
-                Text("בטל")
+
+            Row {
+                Button(
+                    onClick = { viewModel.saveMessage() },
+                    modifier = Modifier.padding(start = 32.dp, bottom = 32.dp)
+                ) {
+                    if (state.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.padding(bottom = 12.dp),
+                            color = Color.White
+                        )
+                    } else {
+                        Text("שמור")
+                    }
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                Button(
+                    onClick = { navigator.navigate(MainScreenDestination) },
+                    modifier = Modifier.padding(end = 32.dp, bottom = 32.dp)
+                ) {
+                    Text("בטל")
+                }
             }
         }
     }
