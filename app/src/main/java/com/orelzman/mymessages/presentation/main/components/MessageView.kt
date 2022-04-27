@@ -9,12 +9,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.orelzman.mymessages.data.dto.Message
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
+import com.orelzman.mymessages.util.extension.advancedShadow
 
 @Composable
 fun MessageView(
@@ -24,14 +25,15 @@ fun MessageView(
 ) {
     val context = LocalContext.current
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .advancedShadow(color = Color.Red)
+        ,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize(0.7f)
                 .clip(RoundedCornerShape(4.dp))
-                .shadow(2.dp)
                 .clickable {
                     onClick(message, context)
                 },
