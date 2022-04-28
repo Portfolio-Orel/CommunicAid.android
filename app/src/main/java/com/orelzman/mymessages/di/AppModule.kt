@@ -32,6 +32,4 @@ object AppModule {
     @Provides
     @Singleton
     fun providePhoneCallManagr(phoneCallManagerImpl: PhoneCallManagerImpl): PhoneCallManager = phoneCallManagerImpl
-
-
 }

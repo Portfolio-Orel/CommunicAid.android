@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -23,14 +24,13 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import dagger.hilt.android.AndroidEntryPoint
 
 @ExperimentalPermissionsApi
+@OptIn(ExperimentalMaterialApi::class)
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MyMessagesTheme {
-
                 val permissionsState = rememberMultiplePermissionsState(
                     permissions = listOf(
                         Manifest.permission.READ_CALL_LOG,
@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
                     key1 = lifecycleOwner,
                     effect = {
                         val observer = LifecycleEventObserver { _, event ->
-                            if(event == Lifecycle.Event.ON_START) {
+                            if (event == Lifecycle.Event.ON_START) {
                                 permissionsState.launchMultiplePermissionRequest()
                             }
                         }
@@ -67,6 +67,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 
 @Composable
 fun Greeting2(name: String) {

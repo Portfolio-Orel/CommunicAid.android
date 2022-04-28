@@ -21,6 +21,7 @@ fun AddFolderScreen(
     viewModel: AddFolderViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
+
     if(state.isFolderAdded) {
         navigator.navigate(MainScreenDestination)
     }

@@ -1,5 +1,7 @@
 package com.orelzman.auth.domain.interactor
 
+import android.content.Context
+import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.firebase.auth.FirebaseUser
 import io.reactivex.rxjava3.core.Single
 
@@ -10,6 +12,12 @@ interface AuthInteractor {
      * @author Orel Zilberman, 19.11.2021
      */
     val user: FirebaseUser?
+
+    /**
+     * Used for google authentication.
+     * @author Orel Zilberman, 28.4.2021
+     */
+    val signInRequest: BeginSignInRequest
 
     /**
      * Checks if there is an authenticated user.
@@ -36,10 +44,9 @@ interface AuthInteractor {
 
     /**
      * Authenticates a user with Google.
-     * @return Single with User entity as type emitted.
      * @author Orel Zilberman, 19.11.2021.
      */
-//    suspend fun googleAuth(): Completable
+    suspend fun googleAuth(context: Context)
 
     /**
      * Checks if the credentials entered are valid

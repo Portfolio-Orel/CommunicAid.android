@@ -108,34 +108,31 @@ class FirebaseRepository @Inject constructor() : Repository {
         }
     }
 
-    
-    private suspend fun updateStatistics(uid: String, data: Map<String, Any>) {
-        try {
-            val cal = Calendar.getInstance()
-            cal.time = data["startDate"] as? Date ?: throw BadStartDateFromDataException()
-            val formattedDate =
-                "${cal.get(Calendar.DAY_OF_MONTH)}/${cal.get(Calendar.MONTH) + 1}/${cal.get(Calendar.YEAR)}"
-            updateCallsPerDayStatistics(uid, data, formattedDate)
 
-//            if ((data["messagesSent"] as? List<String>)?.size > 0) {
-//                updatePotentialClientsStatistics(uid, phoneCall, formattedDate)
-//            }
-//            if (phoneCall.messagesSent.size > 0) {
-//                updateMessagesSentPerHour(
-//                    uid,
-//                    phoneCall.messagesSent,
-//                    phoneCall.startDate,
-//                    formattedDate,
-//                )
-//            }
-        } catch (exception: Exception) {
-//            AppUtils.reportCrash(exception)
+    @Suppress("UNCHECKED_CAST")
+    private suspend fun updateStatistics(uid: String, data: Map<String, Any>) {
+        val cal = Calendar.getInstance()
+        val startDate = data["startDate"] as? Date ?: throw BadStartDateFromDataException()
+        val number = data["phoneNumber"] as String
+        cal.time = startDate
+        val formattedDate =
+            "${cal.get(Calendar.DAY_OF_MONTH)}/${cal.get(Calendar.MONTH) + 1}/${cal.get(Calendar.YEAR)}"
+        val messagesSent = (data["messagesSent"] as? List<String> ?: emptyList())
+        updateCallsPerDayStatistics(uid, startDate, formattedDate)
+        if (messagesSent.isNotEmpty()) {
+            updatePotentialClientsStatistics(uid, number, startDate, formattedDate)
+            updateMessagesSentPerHour(
+                uid,
+                messagesSent,
+                startDate,
+                formattedDate,
+            )
         }
     }
 
     private suspend fun updateCallsPerDayStatistics(
         uid: String,
-        data: Map<String, Any>,
+        startDate: Date,
         formattedDate: String,
     ) {
         val col = Collections.PhoneCallsPerDay.get(uid)
@@ -143,7 +140,7 @@ class FirebaseRepository @Inject constructor() : Repository {
         if (res.isEmpty) { // First statistics update for today.
             val statisticsData = hashMapOf(
                 "formattedDate" to formattedDate,
-                "date" to data["startDate"],
+                "date" to startDate,
                 "callsCount" to 1
             )
             col.document().set(statisticsData).await()
@@ -152,7 +149,61 @@ class FirebaseRepository @Inject constructor() : Repository {
                 .update("callsCount", FieldValue.increment(1)).await()
         }
     }
-    
+
+    private suspend fun updatePotentialClientsStatistics(
+        uid: String,
+        number: String,
+        startDate: Date,
+        formattedDate: String,
+    ) {
+        val col = Collections.PotentialClients.get(uid)
+        val statisticsData: MutableMap<String, Any?> = mutableMapOf(
+            "formattedDate" to formattedDate,
+            "date" to startDate, // The actual date it is added on is the endDate
+            "clientsCount" to 1,
+            "phoneNumbers" to number
+        )
+        val potentialClientAddedRes =
+            col.whereArrayContains(
+                "phoneNumbers",
+                number.formatNoSignsOrPrefix()
+            ).get()
+                .await()
+        if (!potentialClientAddedRes.isEmpty) return
+        val res = col.whereEqualTo("formattedDate", formattedDate).get().await()
+        if (res.isEmpty) { // First statistics update for today.
+            col.document().set(statisticsData).await()
+        } else {
+            col.document(res.documents[0].id)
+                .update("clientsCount", FieldValue.increment(1)).await()
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private suspend fun updateMessagesSentPerHour(
+        uid: String,
+        messagesSent: List<String>,
+        date: Date,
+        formattedDate: String
+    ) {
+        val col = Collections.MessagesSentPerDay.get(uid)
+        val data = hashMapOf(
+            "date" to date,
+            "formattedDate" to formattedDate,
+            "messageIDs" to messagesSent,
+        )
+        val res = col.whereEqualTo("formattedDate", formattedDate).get().await()
+        if (res.isEmpty) {
+            col.document().set(data).await()
+        } else {
+            val messageIdsFromDB =
+                res.documents[0]["messageIDs"] as? ArrayList<String> ?: ArrayList<String>()
+            messageIdsFromDB.addAll(messagesSent)
+            col.document(res.documents[0].id)
+                .update("messageIDs", messageIdsFromDB).await()
+        }
+    }
+
     private fun Collections.get(uid: String): CollectionReference =
         if (this == Collections.Users) db.collection(value)
         else db.collection(Collections.Users.value).document(uid).collection(value)
@@ -190,3 +241,7 @@ private enum class Collections(val value: String) {
 
 suspend fun DocumentReference.deleteDocument(): Void =
     update("isActive", false).await()
+
+private fun String.formatNoSignsOrPrefix() = removeNumberPrefix().removeSigns()
+private fun String.removeNumberPrefix() = replace("+972", "0")
+private fun String.removeSigns() = replace("\\D+", "")

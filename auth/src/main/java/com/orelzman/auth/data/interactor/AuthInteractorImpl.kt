@@ -1,5 +1,9 @@
 package com.orelzman.auth.data.interactor
 
+import android.content.Context
+import com.google.android.gms.auth.api.identity.BeginSignInRequest
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseUser
 import com.orelzman.auth.data.repository.AuthRepository
 import com.orelzman.auth.domain.exception.UsernamePasswordAuthException
@@ -30,6 +34,14 @@ class AuthInteractorImpl @Inject constructor(
             throw(UsernamePasswordAuthException(exception))
         }
     }
+
+    override suspend fun googleAuth(context: Context) {
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("670361895848-0jildiu2ebiip55tqnkdtuhm1oq5mujc.apps.googleusercontent.com")
+                .requestEmail()
+                .build()
+            val client =  GoogleSignIn.getClient(context, gso).signInIntent
+    }
 //
 //    override suspend fun loginWithGmail(): FirebaseUser {
 //        try {
@@ -45,4 +57,7 @@ class AuthInteractorImpl @Inject constructor(
 
     override fun isValidCredentials(email: String, password: String): Boolean =
         email.isNotBlank() && password.isNotBlank()
+
+    override val signInRequest: BeginSignInRequest
+        get() = authRepository.signInRequest
 }

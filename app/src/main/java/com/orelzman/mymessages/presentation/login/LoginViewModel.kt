@@ -13,7 +13,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val interactor: AuthInteractor
+    private val interactor: AuthInteractor,
+
 ) : ViewModel() {
     var state by mutableStateOf(LoginState())
 
@@ -26,7 +27,12 @@ class LoginViewModel @Inject constructor(
     fun onEvent(event: LoginEvents) {
         when (event) {
             is LoginEvents.AuthWithEmailAndPassowrd -> login(event.email, event.password)
+            is LoginEvents.AuthWithGmail -> googleSignIn()
         }
+    }
+
+    private fun googleSignIn() {
+
     }
 
     private fun login(email: String, password: String) {
