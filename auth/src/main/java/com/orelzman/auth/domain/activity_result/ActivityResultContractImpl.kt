@@ -1,5 +1,6 @@
 package com.orelzman.auth.domain.activity_result
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
@@ -17,7 +18,7 @@ class ActivityResultContractImpl : ActivityResultContract<Int, Task<GoogleSignIn
 
     override fun parseResult(resultCode: Int, intent: Intent?): Task<GoogleSignInAccount>? {
         return when (resultCode) {
-            0 -> GoogleSignIn.getSignedInAccountFromIntent(intent)
+            Activity.RESULT_OK -> GoogleSignIn.getSignedInAccountFromIntent(intent)
             else -> null
         }
     }
