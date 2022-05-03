@@ -1,13 +1,12 @@
 package com.orelzman.auth.data.interactor
 
-import android.content.Context
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.FirebaseUser
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.orelzman.auth.data.repository.AuthRepository
+import com.orelzman.auth.domain.exception.TaskException
 import com.orelzman.auth.domain.exception.UsernamePasswordAuthException
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.auth.domain.model.User
 import io.reactivex.rxjava3.core.Single
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -16,8 +15,8 @@ class AuthInteractorImpl @Inject constructor(
     private val authRepository: AuthRepository
 ) : AuthInteractor {
 
-    override val user: FirebaseUser?
-        get() = authRepository.user
+    override val user: User?
+        get() = authRepository.user?.uid?.let { User(uid = it) }
 
     override fun isAuth(): Single<Boolean> = Single.just(authRepository.isAuth())
 
@@ -25,35 +24,21 @@ class AuthInteractorImpl @Inject constructor(
         email: String,
         password: String,
         isSaveCredentials: Boolean
-    ): FirebaseUser? {
+    ): User? {
         try {
             val authResult = authRepository.auth(email, password).await()
             if (isSaveCredentials) authRepository.saveCredentials(email, password)
-            return authResult.user
+            return authResult.user?.uid?.let { User(uid = it) }
         } catch (exception: Exception) {
             throw(UsernamePasswordAuthException(exception))
         }
     }
 
-    override suspend fun googleAuth(context: Context) {
-            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("670361895848-0jildiu2ebiip55tqnkdtuhm1oq5mujc.apps.googleusercontent.com")
-                .requestEmail()
-                .build()
-            val client =  GoogleSignIn.getClient(context, gso).signInIntent
+    override fun googleAuth(account: GoogleSignInAccount) {
+        val result = account.idToken?.let { authRepository.googleAuth(it) }
+            ?.getResult(TaskException::class.java)
+        println(result)
     }
-//
-//    override suspend fun loginWithGmail(): FirebaseUser {
-//        try {
-////            val authResult = authRepository.googleAuth().await()
-//
-//        } catch (exception: Exception) {
-//            throw(exception)
-//        }
-//    }
-
-//    override suspend fun googleAuth(): Completable =
-//        authRepository.googleAuth().doOnComplete { }
 
     override fun isValidCredentials(email: String, password: String): Boolean =
         email.isNotBlank() && password.isNotBlank()

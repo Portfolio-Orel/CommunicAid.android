@@ -1,8 +1,8 @@
 package com.orelzman.auth.domain.interactor
 
-import android.content.Context
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
-import com.google.firebase.auth.FirebaseUser
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.orelzman.auth.domain.model.User
 import io.reactivex.rxjava3.core.Single
 
 interface AuthInteractor {
@@ -11,7 +11,7 @@ interface AuthInteractor {
      * The authenticated user.
      * @author Orel Zilberman, 19.11.2021
      */
-    val user: FirebaseUser?
+    val user: User?
 
     /**
      * Used for google authentication.
@@ -34,7 +34,7 @@ interface AuthInteractor {
         email: String,
         password: String,
         isSaveCredentials: Boolean = false
-    ): FirebaseUser?
+    ): User?
 
     /**
      * Authenticates a user with his mail.
@@ -43,10 +43,10 @@ interface AuthInteractor {
 //    suspend fun loginWithGmail(): FirebaseUser
 
     /**
-     * Authenticates a user with Google.
+     * Saves a gmail sign in session.
      * @author Orel Zilberman, 19.11.2021.
      */
-    suspend fun googleAuth(context: Context)
+    fun googleAuth(account: GoogleSignInAccount)
 
     /**
      * Checks if the credentials entered are valid

@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.auth.domain.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,13 +28,13 @@ class LoginViewModel @Inject constructor(
     fun onEvent(event: LoginEvents) {
         when (event) {
             is LoginEvents.AuthWithEmailAndPassowrd -> login(event.email, event.password)
-            is LoginEvents.AuthWithGmail -> googleSignIn()
+            is LoginEvents.AuthWithGmail -> googleSignIn(event.signInAccount)
         }
     }
 
-    private fun googleSignIn() {
+    private fun googleSignIn(account: GoogleSignInAccount) =
+        interactor.googleAuth(account = account)
 
-    }
 
     private fun login(email: String, password: String) {
         state = state.copy(isLoading = true)

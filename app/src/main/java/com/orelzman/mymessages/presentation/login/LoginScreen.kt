@@ -13,6 +13,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.android.gms.common.api.ApiException
 import com.orelzman.auth.domain.activity_result.ActivityResultContractImpl
+import com.orelzman.auth.domain.exception.TaskException
 import com.orelzman.mymessages.presentation.login.components.LoginButton
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -31,12 +32,16 @@ fun LoginScreen(
 
     val authResultLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContractImpl()) { task ->
-                val account = task?.getResult(ApiException::class.java)
+            try {
+                val account = task?.getResult(TaskException::class.java)
                 if (account == null) {
 
                 } else {
-                        viewModel.onEvent(LoginEvents.AuthWithGmail)
-                    }
+                    viewModel.onEvent(LoginEvents.AuthWithGmail(account))
+                }
+            } catch(e: ApiException) {
+                println(e.message)
+            }
         }
 
     Column(
