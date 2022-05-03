@@ -3,7 +3,6 @@ package com.orelzman.auth.data.interactor
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.orelzman.auth.data.repository.AuthRepository
-import com.orelzman.auth.domain.exception.TaskException
 import com.orelzman.auth.domain.exception.UsernamePasswordAuthException
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.auth.domain.model.User
@@ -34,9 +33,10 @@ class AuthInteractorImpl @Inject constructor(
         }
     }
 
-    override fun googleAuth(account: GoogleSignInAccount) {
+    override suspend fun googleAuth(account: GoogleSignInAccount) {
         val result = account.idToken?.let { authRepository.googleAuth(it) }
-            ?.getResult(TaskException::class.java)
+            ?.await()
+//            ?.getResult(TaskException::class.java)
         println(result)
     }
 

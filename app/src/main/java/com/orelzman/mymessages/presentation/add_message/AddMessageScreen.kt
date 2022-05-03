@@ -58,11 +58,11 @@ fun AddMessageScreen(
                         Text(text = "כותרת קצרה")
                     },
                 )
-                Text(
-                    "מקסימום 3 תווים",
-                    modifier = Modifier
-                        .size(16.dp)
-                )
+//                Text(
+//                    "מקסימום 3 תווים",
+//                    modifier = Modifier
+//                        .size(16.dp)
+//                )
             }
             OutlinedTextField(
                 value = state.body,

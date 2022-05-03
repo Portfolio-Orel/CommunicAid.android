@@ -9,6 +9,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.auth.domain.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,7 +18,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val interactor: AuthInteractor,
 
-) : ViewModel() {
+    ) : ViewModel() {
     var state by mutableStateOf(LoginState())
 
     init {
@@ -33,7 +35,9 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun googleSignIn(account: GoogleSignInAccount) =
-        interactor.googleAuth(account = account)
+        CoroutineScope(Dispatchers.IO).launch {
+            interactor.googleAuth(account = account)
+        }
 
 
     private fun login(email: String, password: String) {

@@ -1,21 +1,21 @@
 package com.orelzman.mymessages.presentation.main.components
 
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.orelzman.mymessages.data.dto.Message
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
-import com.orelzman.mymessages.util.extension.advancedShadow
 
 @Composable
 fun MessageView(
@@ -25,24 +25,30 @@ fun MessageView(
 ) {
     val context = LocalContext.current
     Column(
-        modifier = modifier
-            .advancedShadow(color = Color.Red)
-        ,
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize(0.7f)
+                .fillMaxHeight(0.7f)
+                .fillMaxWidth()
                 .clip(RoundedCornerShape(4.dp))
                 .clickable {
                     onClick(message, context)
-                },
+                }
+                .background(MaterialTheme.colors.secondary),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text = message.messageShortTitle)
+            Text(
+                text = message.messageShortTitle,
+                style = MaterialTheme.typography.body1
+            )
         }
-        Text(text = message.messageTitle)
+        Text(
+            text = message.messageTitle,
+            style = MaterialTheme.typography.body1
+        )
     }
 }
 

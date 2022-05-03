@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
+import com.orelzman.mymessages.util.ui.theme.MyMessagesTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -25,43 +26,43 @@ fun AddFolderScreen(
     if(state.isFolderAdded) {
         navigator.navigate(MainScreenDestination)
     }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        OutlinedTextField(
-            value = state.title,
-            onValueChange = { viewModel.setTitle(it) },
+    MyMessagesTheme {
+        Column(
             modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            placeholder = {
-                Text(text = "כותרת")
-            },
-        )
-        Row {
-            Button(
-                onClick = { viewModel.saveFolder() },
-                modifier = Modifier.padding(start = 32.dp, bottom = 32.dp)
-            ) {
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.padding(bottom = 12.dp),
-                        color = Color.White
-                    )
-                } else {
-                    Text("שמור")
+                .fillMaxSize()
+        ) {
+            OutlinedTextField(
+                value = state.title,
+                onValueChange = { viewModel.setTitle(it) },
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                placeholder = {
+                    Text(text = "כותרת")
+                },
+            )
+            Row {
+                Button(
+                    onClick = { viewModel.saveFolder() },
+                    modifier = Modifier.padding(start = 32.dp, bottom = 32.dp)
+                ) {
+                    if (state.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.padding(bottom = 12.dp),
+                            color = Color.White
+                        )
+                    } else {
+                        Text("שמור")
+                    }
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                Button(
+                    onClick = { navigator.navigate(MainScreenDestination) },
+                    modifier = Modifier.padding(end = 32.dp, bottom = 32.dp)
+                ) {
+                    Text("בטל")
                 }
             }
-            Spacer(modifier = Modifier.weight(1f))
-            Button(
-                onClick = { navigator.navigate(MainScreenDestination) },
-                modifier = Modifier.padding(end = 32.dp, bottom = 32.dp)
-            ) {
-                Text("בטל")
-            }
         }
-
-
     }
 }

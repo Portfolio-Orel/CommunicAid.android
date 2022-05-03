@@ -15,6 +15,8 @@ import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatist
 import com.orelzman.mymessages.domain.service.PhoneCall.PhoneCallInteractor
 import com.orelzman.mymessages.util.Whatsapp.sendWhatsapp
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,7 +30,6 @@ class MainViewModel @Inject constructor(
     private val phoneCallStatisticsInteractor: PhoneCallStatisticsInteractor,
 ) : ViewModel() {
     var state by mutableStateOf(MainState(folders = emptyList(), messages = emptyList()))
-
     init {
         getMessages()
         getFolders()
@@ -52,7 +53,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun getMessages() {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.Main).launch {
             val messages = authInteractor.user?.let { messageInteractor.getMessages(it.uid) }
             if (messages != null) {
                 state = state.copy(messages = messages)
@@ -61,9 +62,9 @@ class MainViewModel @Inject constructor(
     }
 
     private fun getFolders() {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.Main).launch {
             val folders = authInteractor.user?.let { folderInteractor.getFolders(it.uid) }
-            if (folders != null) {
+            if (folders != null && folders.isNotEmpty()) {
                 state = state.copy(folders = folders, selectedFolder = folders[0])
             }
         }

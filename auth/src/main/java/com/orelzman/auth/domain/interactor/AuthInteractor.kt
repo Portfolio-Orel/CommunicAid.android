@@ -46,7 +46,7 @@ interface AuthInteractor {
      * Saves a gmail sign in session.
      * @author Orel Zilberman, 19.11.2021.
      */
-    fun googleAuth(account: GoogleSignInAccount)
+    suspend fun googleAuth(account: GoogleSignInAccount)
 
     /**
      * Checks if the credentials entered are valid

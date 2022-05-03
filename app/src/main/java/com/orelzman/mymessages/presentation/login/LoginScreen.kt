@@ -14,7 +14,9 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.android.gms.common.api.ApiException
 import com.orelzman.auth.domain.activity_result.ActivityResultContractImpl
 import com.orelzman.auth.domain.exception.TaskException
+import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
 import com.orelzman.mymessages.presentation.login.components.LoginButton
+import com.orelzman.mymessages.util.ui.theme.MyMessagesTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -44,19 +46,21 @@ fun LoginScreen(
             }
         }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        if(viewModel.state.user != null) {
-//            navigator.navigate(MainScreenDestination)
-        } else {
-            Text(text = "!LoggedIn")
-        }
-        LoginButton(text = "Login", isLoading = false) {
-            authResultLauncher.launch(signInRequest)
-        }
+    MyMessagesTheme{
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                if (state.user != null) {
+                    navigator.navigate(MainScreenDestination)
+                } else {
+                    Text(text = "!LoggedIn")
+                }
+                LoginButton(text = "Login", isLoading = false) {
+                    authResultLauncher.launch(signInRequest)
+                }
+            }
 //        Button(
 //            modifier =
 //            Modifier
