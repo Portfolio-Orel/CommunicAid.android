@@ -9,7 +9,10 @@ import com.orelzman.mymessages.data.dto.PhoneCall
 import com.orelzman.mymessages.data.dto.PhoneCallStatistics
 import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractor
 import com.orelzman.mymessages.domain.service.CallsService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -99,7 +102,9 @@ class PhoneCallManagerImpl @Inject constructor(
 
     private fun addToBacklog(phoneCall: PhoneCall?) {
         if (phoneCall == null) return
-        phoneCallStatisticsInteractor.cachePhoneCall(PhoneCallStatistics(phoneCall = phoneCall))
+        CoroutineScope(Dispatchers.IO).launch {
+            phoneCallStatisticsInteractor.cachePhoneCall(PhoneCallStatistics(phoneCall = phoneCall))
+        }
     }
 
     private fun startBackgroundService(context: Context) {

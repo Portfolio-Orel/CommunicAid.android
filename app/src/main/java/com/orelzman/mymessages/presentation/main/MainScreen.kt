@@ -13,6 +13,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
+import com.google.accompanist.flowlayout.MainAxisAlignment
+import com.google.accompanist.flowlayout.SizeMode
 import com.orelzman.mymessages.data.dto.getByIds
 import com.orelzman.mymessages.presentation.destinations.AddFolderScreenDestination
 import com.orelzman.mymessages.presentation.destinations.AddMessageScreenDestination
@@ -31,9 +33,11 @@ fun MainScreen(
     val state = viewModel.state
     val screen = LocalConfiguration.current
     val boxWidth = ((screen.screenWidthDp) / state.maxMessagesInRow).dp
-    val boxHeight = (boxWidth * 1.3f)
+    val boxHeight = (boxWidth * 1.5f)
     MyMessagesTheme {
-        Column {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
@@ -64,13 +68,15 @@ fun MainScreen(
 
             FlowRow(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp, start = 30.dp, end = 30.dp)
+                    .padding(start = 10.dp, end = 5.dp)
+                    .fillMaxWidth(0.9f)
                     .fillMaxHeight(0.8F)
                     .fillMaxWidth(0.9F),
-                mainAxisSpacing = 16.dp
+                mainAxisSpacing = 25.dp,
+                mainAxisAlignment = MainAxisAlignment.Start,
+                mainAxisSize = SizeMode.Wrap
             ) {
-                viewModel.state.messages
+                state.messages
                     .getByIds(state.selectedFolder.messages)
                     .forEach {
                         MessageView(
@@ -84,6 +90,30 @@ fun MainScreen(
                             })
                     }
             }
+//
+//            FlowRow(
+//                modifier = Modifier
+//                    .fillMaxWidth(0.9f)
+//                    .fillMaxHeight(0.8F)
+//                    .fillMaxWidth(0.9F),
+//                mainAxisSpacing = 14.dp,
+//                mainAxisAlignment = MainAxisAlignment.Start,
+//                mainAxisSize = SizeMode.Wrap
+//            ) {
+//                for (i in calculateMinIndexForSecondFlowRow
+//                    (state.messages.size,
+//                    state.maxMessagesInRow
+//                ) .. state.messages.size)
+//                    MessageView(
+//                        message = state.messages[i],
+//                        modifier = Modifier
+//                            .width(boxWidth)
+//                            .height(boxHeight)
+//                            .padding(0.dp),
+//                        onClick = { message, context ->
+//                            viewModel.sendMessage(message, context)
+//                        })
+//            }
 
             Button(onClick = {
                 navigator.navigate(
@@ -103,3 +133,6 @@ fun MainScreen(
         }
     }
 }
+
+private fun calculateMinIndexForSecondFlowRow(itemsCount: Int, maxItems: Int): Int =
+    itemsCount - itemsCount % maxItems

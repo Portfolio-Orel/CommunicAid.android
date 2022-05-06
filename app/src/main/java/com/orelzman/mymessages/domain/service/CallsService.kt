@@ -151,10 +151,10 @@ class CallsService : Service() {
     }
 
     private fun uploadCalls() {
-        val callsLog = phoneCallStatisticsInteractor
-            .getAll()
-            .map { it.phoneCall.update(this) }
-        scope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
+            val callsLog = phoneCallStatisticsInteractor
+                .getAll()
+                .map { it.phoneCall.update(this@CallsService) }
             authInteractor.user?.uid?.let {
                 phoneCallStatisticsInteractor.addPhoneCalls(
                     it,
