@@ -1,5 +1,6 @@
 package com.orelzman.mymessages.domain.service
 
+import android.annotation.SuppressLint
 import android.app.*
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Context
@@ -19,7 +20,6 @@ import com.orelzman.mymessages.domain.service.PhoneCall.PhoneCallInteractor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -33,7 +33,6 @@ class CallsService : Service() {
     private lateinit var currentNotification: Notification
     private val notificationID = 1
     private val notificationChannelId = "MyMessages"
-    private val scope = CoroutineScope(Job() + Dispatchers.Main)
 
     @Inject
     lateinit var phoneCallInteractor: PhoneCallInteractor
@@ -48,14 +47,7 @@ class CallsService : Service() {
         null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent != null) {
-            when (intent.action) {
-                Actions.START.name -> {
-                    startService()
-                }
-                Actions.STOP.name -> stopService()
-            }
-        }
+        uploadCalls()
         // by returning this we make sure the service is restarted if the system kills the service
         return START_STICKY
     }
@@ -92,18 +84,12 @@ class CallsService : Service() {
         }
     }
 
+    @SuppressLint("UnspecifiedImmutableFlag")
+    @Suppress("DEPRECATION")
     private fun createNotification(): Notification {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationAfter26()
         }
-        val closeIntent = Intent(this, CallsService::class.java)
-        closeIntent.action = Actions.STOP.toString()
-        val closePendingIntent =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                PendingIntent.getService(this, 0, closeIntent, FLAG_IMMUTABLE)
-            } else {
-                PendingIntent.getService(this, 0, closeIntent, 0)
-            }
         val pendingIntent: PendingIntent =
             Intent(this, MainActivity::class.java).let { notificationIntent ->
                 notificationIntent.flags =
@@ -127,11 +113,6 @@ class CallsService : Service() {
             .setColor(0x7d0000)
             .setTicker("Ticker text")
             .setOnlyAlertOnce(true)
-            .addAction(
-                android.R.drawable.btn_plus,
-                ("עצור" as CharSequence),
-                closePendingIntent
-            )
             .build()
     }
 
@@ -161,13 +142,10 @@ class CallsService : Service() {
                     callsLog
                 )
             }
+            stopService()
         }
+        println()
     }
-}
-
-enum class Actions {
-    START,
-    STOP
 }
 
 /**

@@ -3,7 +3,7 @@ package com.orelzman.mymessages.presentation.login.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -12,8 +12,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import com.orelzman.mymessages.ui.theme.Shapes
 
-
-@ExperimentalMaterialApi
 @Composable
 fun LoginButton(
     text: String,
@@ -22,8 +20,8 @@ fun LoginButton(
     isLoading: Boolean = false,
     shape: Shape = Shapes.medium,
     borderColor: Color = Color.LightGray,
-    backgroundColor: Color = MaterialTheme.colors.surface,
-    progressIndicatorColor: Color = MaterialTheme.colors.primary,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
+    progressIndicatorColor: Color = MaterialTheme.colorScheme.primary,
     onClick: () -> Unit
 ) {
     Surface(

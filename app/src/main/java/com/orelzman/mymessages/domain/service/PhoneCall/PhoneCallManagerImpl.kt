@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.domain.service.PhoneCall
+package com.orelzman.mymessages.domain.manager.PhoneCall
 
 import android.content.Context
 import android.content.Intent
@@ -9,6 +9,9 @@ import com.orelzman.mymessages.data.dto.PhoneCall
 import com.orelzman.mymessages.data.dto.PhoneCallStatistics
 import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractor
 import com.orelzman.mymessages.domain.service.CallsService
+import com.orelzman.mymessages.domain.service.PhoneCall.CallState
+import com.orelzman.mymessages.domain.service.PhoneCall.PhoneCallManager
+import com.orelzman.mymessages.util.extension.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,24 +24,25 @@ class PhoneCallManagerImpl @Inject constructor(
     private val phoneCallStatisticsInteractor: PhoneCallStatisticsInteractor,
 ) : PhoneCallManager {
     override val callOnTheLine: MutableStateFlow<PhoneCall?> = MutableStateFlow(null)
-    val callInTheBackground: MutableStateFlow<PhoneCall?> = MutableStateFlow(null)
+    private val callInTheBackground: MutableStateFlow<PhoneCall?> = MutableStateFlow(null)
 
-    val state = MutableStateFlow(CallState.IDLE)
+    val state = MutableStateFlow(CallState.IDLE) // ToDo add _state to be viewd by other classes
 
     override fun onStateChanged(state: String, number: String, context: Context) {
         when (state) {
-            TelephonyManager.EXTRA_STATE_IDLE -> onIdleState()
+            TelephonyManager.EXTRA_STATE_IDLE -> onIdleState(context)
             TelephonyManager.EXTRA_STATE_RINGING -> onRingingState(number)
             TelephonyManager.EXTRA_STATE_OFFHOOK -> onOffHookState(number)
         }
         startBackgroundService(context)
     }
 
-    fun onIdleState() {
+    private fun onIdleState(context: Context) {
+        startBackgroundService(context)
         resetStates()
     }
 
-    fun onRingingState(number: String) {
+    private fun onRingingState(number: String) {
         when (state.value) {
             CallState.IDLE -> {
                 incomingCall(number = number)
@@ -50,7 +54,7 @@ class PhoneCallManagerImpl @Inject constructor(
         }
     }
 
-    fun onOffHookState(number: String) {
+    private fun onOffHookState(number: String) {
         when (state.value) {
             CallState.WAITING -> {
                 if (callOnTheLine.value?.number != number) { // Waiting answered.
@@ -109,10 +113,14 @@ class PhoneCallManagerImpl @Inject constructor(
 
     private fun startBackgroundService(context: Context) {
         val intent = Intent(context, CallsService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(intent)
-        } else {
-            context.startService(intent)
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent)
+            } else {
+                context.startService(intent)
+            }
+        } catch (exception: Exception) { // ForegroundServiceStartNotAllowedException
+            exception.log()
         }
     }
 

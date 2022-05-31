@@ -4,8 +4,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -16,11 +15,10 @@ import com.orelzman.auth.domain.activity_result.ActivityResultContractImpl
 import com.orelzman.auth.domain.exception.TaskException
 import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
 import com.orelzman.mymessages.presentation.login.components.LoginButton
-import com.orelzman.mymessages.util.ui.theme.MyMessagesTheme
+import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
-@ExperimentalMaterialApi
 @ExperimentalPermissionsApi
 @Composable
 @Destination(start = true)
@@ -36,31 +34,29 @@ fun LoginScreen(
         rememberLauncherForActivityResult(contract = ActivityResultContractImpl()) { task ->
             try {
                 val account = task?.getResult(TaskException::class.java)
-                if (account == null) {
-
-                } else {
+                if (account != null) {
                     viewModel.onEvent(LoginEvents.AuthWithGmail(account))
                 }
-            } catch(e: ApiException) {
+            } catch (e: ApiException) {
                 println(e.message)
             }
         }
 
-    MyMessagesTheme{
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                if (state.user != null) {
-                    navigator.navigate(MainScreenDestination)
-                } else {
-                    Text(text = "!LoggedIn")
-                }
-                LoginButton(text = "Login", isLoading = false) {
-                    authResultLauncher.launch(signInRequest)
-                }
+    MyMessagesTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            if (state.user != null) {
+                navigator.navigate(MainScreenDestination)
+            } else {
+                Text(text = "!LoggedIn")
             }
+            LoginButton(text = "Login", isLoading = false) {
+                authResultLauncher.launch(signInRequest)
+            }
+        }
 //        Button(
 //            modifier =
 //            Modifier

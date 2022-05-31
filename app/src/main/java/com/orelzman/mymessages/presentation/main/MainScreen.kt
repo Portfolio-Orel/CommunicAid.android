@@ -2,10 +2,10 @@ package com.orelzman.mymessages.presentation.main
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,11 +44,11 @@ fun MainScreen(
             ) {
                 Text(
                     state.callOnTheLine,
-                    style = MaterialTheme.typography.h3
+                    style = MaterialTheme.typography.titleSmall
                 )
             }
             Divider(
-                color = MaterialTheme.colors.primary.copy(alpha = 0.05f)
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
             )
             Row(
                 modifier = Modifier

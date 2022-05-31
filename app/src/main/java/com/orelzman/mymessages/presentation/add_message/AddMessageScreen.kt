@@ -2,10 +2,10 @@ package com.orelzman.mymessages.presentation.add_message
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
@@ -144,13 +144,13 @@ fun Dropdown(folders: List<Folder>, onSelected: (String) -> Unit) {
                 .width(with(LocalDensity.current) { textfieldSize.width.toDp() })
         ) {
             folders.forEach { folder ->
-                DropdownMenuItem(onClick = {
+                DropdownMenuItem(
+                    text = { Text(text = folder.folderTitle) },
+                    onClick = {
                     selectedText = folder.folderTitle
                     onSelected(folder.id)
                     expanded = false
-                }) {
-                    Text(text = folder.folderTitle)
-                }
+                })
             }
         }
     }
