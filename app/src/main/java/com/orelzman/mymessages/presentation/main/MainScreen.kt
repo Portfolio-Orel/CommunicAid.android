@@ -10,11 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
+import com.orelzman.mymessages.R
 import com.orelzman.mymessages.data.dto.getByIds
 import com.orelzman.mymessages.presentation.destinations.AddFolderScreenDestination
 import com.orelzman.mymessages.presentation.destinations.AddMessageScreenDestination
@@ -120,7 +122,7 @@ fun MainScreen(
                     AddFolderScreenDestination()
                 )
             }) {
-                Text(text = "הוסף תיקייה")
+                Text(text = stringResource(R.string.add_folder))
             }
 
             Button(onClick = {
@@ -128,7 +130,7 @@ fun MainScreen(
                     AddMessageScreenDestination()
                 )
             }) {
-                Text(text = "הוסף הודעה")
+                Text(text = stringResource(R.string.add_message))
             }
         }
     }

@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
 import android.provider.CallLog
-import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.auth.domain.interactor.AuthInteractor
@@ -18,6 +17,7 @@ import com.orelzman.mymessages.R
 import com.orelzman.mymessages.data.dto.PhoneCall
 import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractor
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallInteractor
+import com.orelzman.mymessages.util.extension.Log
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,7 +55,7 @@ class CallsService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         currentState = intent?.extras?.get(INTENT_STATE_VALUE) as ServiceState
-        Log.v("MyMessages", "Service onStartCommand: $currentState")
+        Log.vCustom("Service onStartCommand: $currentState")
         if (currentState == ServiceState.UPLOAD_LOGS) {
             uploadCalls()
         }
@@ -64,7 +64,7 @@ class CallsService : Service() {
 
 
     override fun onCreate() {
-        Log.v("MyMessages", "Service onCreate")
+        Log.vCustom("Service onCreate")
         super.onCreate()
         currentNotification = createNotification()
         startForeground(notificationID, currentNotification)
@@ -146,7 +146,7 @@ class CallsService : Service() {
             val callsLog = phoneCallStatisticsInteractor
                 .getAll()
                 .map { it.phoneCall.update(this@CallsService) }
-            Log.v("MyMessages", "upload calls: $callsLog")
+            Log.vCustom("upload calls: $callsLog")
             authInteractor.user?.uid?.let {
                 phoneCallStatisticsInteractor.addPhoneCalls(
                     it,
@@ -154,9 +154,9 @@ class CallsService : Service() {
                 )
             }
         }.invokeOnCompletion {
-            Log.v("MyMessages", "About to finish service")
+            Log.vCustom("About to finish service")
             stopService()
-            Log.v("MyMessages", "Service stopped.")
+            Log.vCustom("Service stopped.")
         }
     }
 }
