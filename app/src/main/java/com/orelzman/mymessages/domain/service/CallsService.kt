@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
 import android.provider.CallLog
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.auth.domain.interactor.AuthInteractor
@@ -29,6 +30,12 @@ import kotlin.math.absoluteValue
 @ExperimentalPermissionsApi
 class CallsService : Service() {
 
+    companion object {
+        const val INTENT_STATE_VALUE = "background_service_state_value"
+
+        var currentState: ServiceState = ServiceState.NOT_ALIVE
+    }
+
     private var wakeLock: PowerManager.WakeLock? = null
     private lateinit var currentNotification: Notification
     private val notificationID = 1
@@ -47,17 +54,20 @@ class CallsService : Service() {
         null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        uploadCalls()
-        // by returning this we make sure the service is restarted if the system kills the service
-        return START_STICKY
+        currentState = intent?.extras?.get(INTENT_STATE_VALUE) as ServiceState
+        Log.v("MyMessages", "Service onStartCommand: $currentState")
+        if (currentState == ServiceState.UPLOAD_LOGS) {
+            uploadCalls()
+        }
+        return START_NOT_STICKY
     }
 
 
     override fun onCreate() {
+        Log.v("MyMessages", "Service onCreate")
         super.onCreate()
         currentNotification = createNotification()
         startForeground(notificationID, currentNotification)
-        uploadCalls()
     }
 
     private fun startService() {
@@ -136,15 +146,18 @@ class CallsService : Service() {
             val callsLog = phoneCallStatisticsInteractor
                 .getAll()
                 .map { it.phoneCall.update(this@CallsService) }
+            Log.v("MyMessages", "upload calls: $callsLog")
             authInteractor.user?.uid?.let {
                 phoneCallStatisticsInteractor.addPhoneCalls(
                     it,
                     callsLog
                 )
             }
+        }.invokeOnCompletion {
+            Log.v("MyMessages", "About to finish service")
             stopService()
+            Log.v("MyMessages", "Service stopped.")
         }
-        println()
     }
 }
 
@@ -209,3 +222,10 @@ val Long.date: Date
 
 fun Date.notEquals(date: Date, maxDifferenceInSeconds: Long = 5): Boolean =
     (time.inSeconds - date.time.inSeconds).absoluteValue >= maxDifferenceInSeconds
+
+
+enum class ServiceState(val value: Int) {
+    UPLOAD_LOGS(0),
+    ALIVE(1),
+    NOT_ALIVE(2)
+}

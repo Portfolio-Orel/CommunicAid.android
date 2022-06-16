@@ -4,11 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.telephony.TelephonyManager
+import android.util.Log
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.data.dto.PhoneCall
 import com.orelzman.mymessages.data.dto.PhoneCallStatistics
 import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractor
 import com.orelzman.mymessages.domain.service.CallsService
+import com.orelzman.mymessages.domain.service.CallsService.Companion.INTENT_STATE_VALUE
+import com.orelzman.mymessages.domain.service.ServiceState
 import com.orelzman.mymessages.domain.service.phone_call.CallState
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManager
 import com.orelzman.mymessages.util.extension.log
@@ -35,6 +38,7 @@ class PhoneCallManagerImpl @Inject constructor(
     val state = _state.asStateFlow()
 
     override fun onStateChanged(state: String, number: String, context: Context) {
+        Log.v("MyMessages", "state: $state \n number: $number")
         when (state) {
             TelephonyManager.EXTRA_STATE_IDLE -> onIdleState(context)
             TelephonyManager.EXTRA_STATE_RINGING -> onRingingState(number)
@@ -44,7 +48,7 @@ class PhoneCallManagerImpl @Inject constructor(
     }
 
     private fun onIdleState(context: Context) {
-        startBackgroundService(context)
+        startBackgroundService(context, ServiceState.UPLOAD_LOGS)
         resetStates()
     }
 
@@ -127,8 +131,16 @@ class PhoneCallManagerImpl @Inject constructor(
         }
     }
 
-    private fun startBackgroundService(context: Context) {
+    private fun startBackgroundService(
+        context: Context,
+        state: ServiceState = ServiceState.ALIVE
+    ) {
+        // Avoid starting the service twice for the same purpose
+        if (state == CallsService.currentState) {
+            return
+        }
         val intent = Intent(context, CallsService::class.java)
+        intent.putExtra(INTENT_STATE_VALUE, state)
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent)
