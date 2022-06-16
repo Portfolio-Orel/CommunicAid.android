@@ -5,45 +5,54 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.orelzman.mymessages.data.dto.Message
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MessageView(
     message: Message,
     modifier: Modifier = Modifier,
-    onClick: (Message, Context) -> Unit
+    onClick: (Message, Context) -> Unit,
+    onLongClick: (Message, Context) -> Unit = {_, _ ->}
 ) {
     val context = LocalContext.current
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
+        Card(
             modifier = Modifier
                 .fillMaxHeight(0.7f)
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(4.dp))
+                .clip(RoundedCornerShape(12.dp))
                 .clickable {
                     onClick(message, context)
                 }
                 .background(MaterialTheme.colorScheme.secondary),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            elevation = CardDefaults.elevatedCardElevation(),
         ) {
-            Text(
-                text = message.messageShortTitle,
-                style = MaterialTheme.typography.bodyLarge
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(Alignment.Center)
+                    .padding(12.dp)
+            ) {
+                Text(
+                    text = message.messageShortTitle,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
         }
         Text(
             text = message.messageTitle,
@@ -58,13 +67,22 @@ fun DefaultPreview() {
     MyMessagesTheme {
         Column(
             modifier = Modifier
-                .height(80.dp)
-                .width(70.dp)
+                .fillMaxSize()
+                .background(Color.White),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            MessageView(
-                message = Message.default,
-                onClick = { _, _ -> }
-            )
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                MessageView(
+                    message = Message.default,
+                    modifier = Modifier
+                        .height(80.dp)
+                        .width(70.dp),
+                    onClick = { _, _ -> }
+                )
+            }
         }
     }
 }

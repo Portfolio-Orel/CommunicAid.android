@@ -1,8 +1,8 @@
-package com.orelzman.mymessages.presentation.add_message
+package com.orelzman.mymessages.presentation.details_message
 
 import com.orelzman.mymessages.data.dto.Folder
 
-data class AddMessageState(
+data class DetailsMessageState(
     val folders: List<Folder> = emptyList(),
     val title: String = "",
     val shortTitle: String = "",
@@ -12,6 +12,7 @@ data class AddMessageState(
     val isLoading: Boolean = false, // Message is being uploaded
     val error: String = "",
     val isMessageSaved: Boolean = false,
+    val messageId: String? = null
 ) {
     val isReadyForSave: Boolean =
         title.isNotBlank() && shortTitle.isNotBlank() && body.isNotBlank() && folderId.isNotBlank()

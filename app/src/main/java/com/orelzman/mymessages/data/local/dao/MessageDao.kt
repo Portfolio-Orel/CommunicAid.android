@@ -22,4 +22,11 @@ interface MessageDao {
 
     @Query("DELETE FROM Message")
     suspend fun clear()
+
+    @Query("""
+        SELECT * 
+        FROM Message
+        WHERE id = :messageId
+    """)
+    suspend fun getMessage(messageId: String): Message
 }

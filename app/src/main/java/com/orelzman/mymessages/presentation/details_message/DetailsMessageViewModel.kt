@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.add_message
+package com.orelzman.mymessages.presentation.details_message
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.mymessages.data.dto.Folder
 import com.orelzman.mymessages.data.dto.Message
 import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractor
 import com.orelzman.mymessages.data.local.interactors.message.MessageInteractor
@@ -14,12 +15,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddMessageViewModel @Inject constructor(
+class DetailsMessageViewModel @Inject constructor(
     private val messageInteractor: MessageInteractor,
     private val folderInteractor: FolderInteractor,
     private val authInteractor: AuthInteractor
-): ViewModel() {
-    var state by mutableStateOf(AddMessageState())
+) : ViewModel() {
+    var state by mutableStateOf(DetailsMessageState())
 
     init {
         viewModelScope.launch {
@@ -30,24 +31,45 @@ class AddMessageViewModel @Inject constructor(
         }
     }
 
+    fun setEdit(messageId: String?) {
+        if (messageId == null) {
+            return
+        }
+        viewModelScope.launch {
+            val message = messageInteractor.getMessage(messageId = messageId)
+            val folder = folderInteractor.getFolderWithMessageId(messageId = messageId)
+            setEditValues(message = message, folder = folder)
+        }
+    }
+
+    private fun setEditValues(message: Message, folder: Folder) {
+        state = state.copy(
+            title = message.messageTitle,
+            body = message.messageBody,
+            shortTitle = message.messageShortTitle,
+            folderId = folder.id
+        )
+    }
+
     fun setTitle(value: String) {
         state = state.copy(title = value)
     }
 
     fun setShortTitle(value: String) {
-        if(value.length > 3) return // ToDo set error
+        if (value.length > 3) return // ToDo set error
         state = state.copy(shortTitle = value)
     }
 
     fun setBody(value: String) {
         state = state.copy(body = value)
     }
+
     fun setFolderId(value: String) {
         state = state.copy(folderId = value)
     }
 
     fun saveMessage() {
-        if(state.isReadyForSave) {
+        if (state.isReadyForSave) {
             state = state.copy(isLoading = true)
             viewModelScope.launch {
                 authInteractor.user?.uid?.let {

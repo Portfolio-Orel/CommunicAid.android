@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.add_folder
+package com.orelzman.mymessages.presentation.details_folder
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,11 +13,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddFolderViewModel @Inject constructor(
+class DetailsFolderViewModel @Inject constructor(
     private val folderInteractor: FolderInteractor,
     private val authInteractor: AuthInteractor
 ) : ViewModel() {
-    var state by mutableStateOf(AddFolderState())
+    var state by mutableStateOf(DetailsFolderState())
 
     fun setTitle(value: String) {
         state = state.copy(title = value)

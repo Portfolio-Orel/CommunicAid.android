@@ -10,7 +10,7 @@ import javax.inject.Inject
 class FolderInteractorImpl @Inject constructor(
     private val repository: Repository,
     database: LocalDatabase,
-): FolderInteractor {
+) : FolderInteractor {
 
     private val db: FolderDao = database.folderDao
 
@@ -31,7 +31,11 @@ class FolderInteractorImpl @Inject constructor(
 
     override suspend fun saveMessageInFolder(messageId: String, folderId: String) {
         val folder = db.get(folderId = folderId)
-        (folder.messages as ArrayList<String>).add(messageId)
+        (folder.messageIds as ArrayList<String>).add(messageId)
         db.updateFolder(folder = folder)
     }
+
+    override suspend fun getFolderWithMessageId(messageId: String): Folder =
+        db.getFolders().first { it.messageIds.contains(messageId) }
+
 }

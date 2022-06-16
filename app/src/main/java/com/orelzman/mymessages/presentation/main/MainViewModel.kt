@@ -14,6 +14,7 @@ import com.orelzman.mymessages.data.local.interactors.message.MessageInteractor
 import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractor
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallInteractor
 import com.orelzman.mymessages.util.Whatsapp.sendWhatsapp
+import com.orelzman.mymessages.util.extension.copyToClipboard
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,27 +30,52 @@ class MainViewModel @Inject constructor(
     private val phoneCallInteractor: PhoneCallInteractor,
     private val phoneCallStatisticsInteractor: PhoneCallStatisticsInteractor,
 ) : ViewModel() {
+
     var state by mutableStateOf(MainState(folders = emptyList(), messages = emptyList()))
+
     init {
         getMessages()
         getFolders()
         observeNumberOnTheLine()
     }
 
-    fun sendMessage(message: Message, context: Context) {
-        val phoneCall = phoneCallInteractor.numberOnTheLine.value ?: return
-        phoneCallStatisticsInteractor.addMessageSent(
-            phoneCall,
-            message.id
-        )
-        context.sendWhatsapp(
-            phoneCall.number,
-            message.messageBody
-        )
+    fun onMessageClick(message: Message, context: Context) {
+        val phoneCall = phoneCallInteractor.numberOnTheLine.value
+        if (phoneCall != null) {
+            phoneCallStatisticsInteractor.addMessageSent(
+                phoneCall,
+                message.id
+            )
+            context.sendWhatsapp(
+                phoneCall.number,
+                message.messageBody
+            )
+        } else {
+            goToEditMessage(message = message)
+        }
+    }
+
+    fun onMessageLongClick(message: Message, context: Context) {
+        val phoneCall = phoneCallInteractor.numberOnTheLine.value
+        if (phoneCall != null) {
+            goToEditMessage(message)
+        } else {
+            context.copyToClipboard(label = message.messageTitle, value = message.messageBody)
+        }
     }
 
     fun setSelectedFolder(folder: Folder) {
         state = state.copy(selectedFolder = folder)
+    }
+
+    fun onFolderLongClick(folder: Folder) = goToEditFolder(folder)
+
+    private fun goToEditMessage(message: Message) {
+        state = state.copy(messageToEdit = message)
+    }
+
+    private fun goToEditFolder(folder: Folder) {
+        state = state.copy(folderToEdit = folder)
     }
 
     private fun getMessages() {

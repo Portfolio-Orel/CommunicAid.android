@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.add_folder
+package com.orelzman.mymessages.presentation.details_folder
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
@@ -17,9 +17,9 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Destination
 @Composable
-fun AddFolderScreen(
+fun DetailsFolderScreen(
     navigator: DestinationsNavigator,
-    viewModel: AddFolderViewModel = hiltViewModel()
+    viewModel: DetailsFolderViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
 

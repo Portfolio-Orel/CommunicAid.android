@@ -11,4 +11,6 @@ data class MainState(
     val isLoading: Boolean = false,
     val isLoggedIn: Boolean = false,
     val maxMessagesInRow: Int = 6,
+    val messageToEdit: Message? = null,
+    val folderToEdit: Folder? = null
 )

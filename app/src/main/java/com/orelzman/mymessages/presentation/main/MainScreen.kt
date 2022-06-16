@@ -1,6 +1,5 @@
 package com.orelzman.mymessages.presentation.main
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
@@ -18,8 +17,8 @@ import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.data.dto.getByIds
-import com.orelzman.mymessages.presentation.destinations.AddFolderScreenDestination
-import com.orelzman.mymessages.presentation.destinations.AddMessageScreenDestination
+import com.orelzman.mymessages.presentation.destinations.DetailsFolderScreenDestination
+import com.orelzman.mymessages.presentation.destinations.DetailsMessageScreenDestination
 import com.orelzman.mymessages.presentation.main.components.FolderView
 import com.orelzman.mymessages.presentation.main.components.MessageView
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
@@ -36,6 +35,13 @@ fun MainScreen(
     val screen = LocalConfiguration.current
     val boxWidth = ((screen.screenWidthDp) / state.maxMessagesInRow).dp
     val boxHeight = (boxWidth * 1.5f)
+    
+    if(state.messageToEdit != null) {
+        navigator.navigate(
+            DetailsFolderScreenDestination()
+        )
+    }
+    
     MyMessagesTheme {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
@@ -56,14 +62,15 @@ fun MainScreen(
                 modifier = Modifier
                     .padding(8.dp)
             ) {
-                state.folders.forEach {
+                state.folders.forEach { folder ->
                     FolderView(
-                        folder = it,
-                        isSelected = state.selectedFolder.id == it.id,
+                        folder = folder,
+                        isSelected = state.selectedFolder.id == folder.id,
                         modifier = Modifier
                             .height(50.dp)
-                            .width(120.dp)
-                            .clickable { viewModel.setSelectedFolder(it) }
+                            .width(120.dp),
+                        onClick = { viewModel.setSelectedFolder(it) },
+                        onLongClick = { viewModel.onFolderLongClick(it) }
                     )
                 }
             }
@@ -79,7 +86,7 @@ fun MainScreen(
                 mainAxisSize = SizeMode.Wrap
             ) {
                 state.messages
-                    .getByIds(state.selectedFolder.messages)
+                    .getByIds(state.selectedFolder.messageIds)
                     .forEach {
                         MessageView(
                             message = it,
@@ -88,38 +95,17 @@ fun MainScreen(
                                 .height(boxHeight)
                                 .padding(0.dp),
                             onClick = { message, context ->
-                                viewModel.sendMessage(message, context)
-                            })
+                                viewModel.onMessageClick(message, context)
+                            },
+                            onLongClick = { message, context ->
+                                viewModel.onMessageLongClick(message, context)
+                            }
+                        )
                     }
             }
-//
-//            FlowRow(
-//                modifier = Modifier
-//                    .fillMaxWidth(0.9f)
-//                    .fillMaxHeight(0.8F)
-//                    .fillMaxWidth(0.9F),
-//                mainAxisSpacing = 14.dp,
-//                mainAxisAlignment = MainAxisAlignment.Start,
-//                mainAxisSize = SizeMode.Wrap
-//            ) {
-//                for (i in calculateMinIndexForSecondFlowRow
-//                    (state.messages.size,
-//                    state.maxMessagesInRow
-//                ) .. state.messages.size)
-//                    MessageView(
-//                        message = state.messages[i],
-//                        modifier = Modifier
-//                            .width(boxWidth)
-//                            .height(boxHeight)
-//                            .padding(0.dp),
-//                        onClick = { message, context ->
-//                            viewModel.sendMessage(message, context)
-//                        })
-//            }
-
             Button(onClick = {
                 navigator.navigate(
-                    AddFolderScreenDestination()
+                    DetailsFolderScreenDestination()
                 )
             }) {
                 Text(text = stringResource(R.string.add_folder))
@@ -127,7 +113,7 @@ fun MainScreen(
 
             Button(onClick = {
                 navigator.navigate(
-                    AddMessageScreenDestination()
+                    DetailsMessageScreenDestination()
                 )
             }) {
                 Text(text = stringResource(R.string.add_message))

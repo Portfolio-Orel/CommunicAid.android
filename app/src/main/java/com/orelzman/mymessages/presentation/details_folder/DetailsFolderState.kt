@@ -1,6 +1,6 @@
-package com.orelzman.mymessages.presentation.add_folder
+package com.orelzman.mymessages.presentation.details_folder
 
-data class AddFolderState(
+data class DetailsFolderState(
     val title: String = "",
     val isLoading: Boolean = false,
     val isFolderAdded: Boolean = false,

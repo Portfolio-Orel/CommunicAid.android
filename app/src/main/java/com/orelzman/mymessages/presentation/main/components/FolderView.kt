@@ -1,6 +1,7 @@
 package com.orelzman.mymessages.presentation.main.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,17 +18,26 @@ import com.orelzman.mymessages.data.dto.Folder
 
 
 @Composable
-fun FolderView(folder: Folder, isSelected: Boolean, modifier: Modifier = Modifier) {
-    Box(modifier =
-    modifier
-        .fillMaxSize()
-        .padding(8.dp)
-        .clip(RoundedCornerShape(4.dp))
-        .background(if(isSelected) {
-            MaterialTheme.colorScheme.secondary
-        } else {
-            MaterialTheme.colorScheme.background
-        }),
+fun FolderView(
+    folder: Folder,
+    isSelected: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: (Folder) -> Unit,
+    onLongClick: (Folder) -> Unit = {}
+) {
+    Box(
+        modifier =
+        modifier
+            .fillMaxSize()
+            .padding(8.dp)
+            .clip(RoundedCornerShape(4.dp))
+            .background(
+                if (isSelected) {
+                    MaterialTheme.colorScheme.secondary
+                } else {
+                    MaterialTheme.colorScheme.background
+                }
+            ).clickable { onClick(folder) },
         contentAlignment = Alignment.Center
     ) {
         Text(

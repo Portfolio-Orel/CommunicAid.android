@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class Folder (
     val folderTitle: String = "",
-    val messages: List<String> = emptyList(),
+    val messageIds: List<String> = emptyList(),
     val isActive: Boolean = true,
     val folderTimesUsed: Long = 0,
     @PrimaryKey val id: String = "",
@@ -14,7 +14,7 @@ data class Folder (
 
     constructor(folder: Folder, id: String) : this(
         folderTitle = folder.folderTitle,
-        messages = folder.messages,
+        messageIds = folder.messageIds,
         isActive = folder.isActive,
         folderTimesUsed = folder.folderTimesUsed,
         id = id
@@ -26,7 +26,7 @@ data class Folder (
                 "folderTitle" to folderTitle,
                 "folderTimesUsed" to folderTimesUsed,
                 "isActive" to isActive,
-                "messageIDs" to messages
+                "messageIDs" to messageIds
             )
 }
 

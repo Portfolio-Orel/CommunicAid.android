@@ -31,6 +31,8 @@ class MessageInteractorImpl @Inject constructor(
         return messageId
     }
 
+    override suspend fun getMessage(messageId: String): Message =
+        db.getMessage(messageId = messageId)
 
 
 

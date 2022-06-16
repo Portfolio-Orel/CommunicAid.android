@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.add_message
+package com.orelzman.mymessages.presentation.details_message
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,15 +23,19 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
 @Destination
-fun AddMessageScreen(
+fun DetailsMessageScreen(
     navigator: DestinationsNavigator,
-    viewModel: AddMessageViewModel = hiltViewModel()
+    viewModel: DetailsMessageViewModel = hiltViewModel(),
+    messageId: String? = null
 ) {
     val state = viewModel.state
 
     if (state.isMessageSaved) {
         navigator.navigate(MainScreenDestination)
     }
+
+    viewModel.setEdit(messageId = messageId)
+
     MyMessagesTheme {
         Column(
             modifier = Modifier
