@@ -16,7 +16,7 @@ import com.orelzman.mymessages.MainActivity
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.data.dto.PhoneCall
 import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractor
-import com.orelzman.mymessages.domain.service.PhoneCall.PhoneCallInteractor
+import com.orelzman.mymessages.domain.service.phone_call.PhoneCallInteractor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

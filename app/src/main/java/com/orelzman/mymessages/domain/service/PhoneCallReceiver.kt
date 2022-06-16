@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.telephony.TelephonyManager
-import com.orelzman.mymessages.domain.service.PhoneCall.PhoneCallManager
+import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

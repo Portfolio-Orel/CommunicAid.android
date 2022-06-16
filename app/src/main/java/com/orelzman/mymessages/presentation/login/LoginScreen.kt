@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -16,10 +17,10 @@ import com.orelzman.auth.domain.exception.TaskException
 import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
 import com.orelzman.mymessages.presentation.login.components.LoginButton
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
+import com.orelzman.mymessages.util.extension.DefaultDestinationNavigator
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
-@ExperimentalPermissionsApi
 @Composable
 @Destination(start = true)
 fun LoginScreen(
@@ -76,5 +77,16 @@ fun LoginScreen(
 //                )
 //            }
 //        }
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    MyMessagesTheme {
+        LoginScreen(
+            navigator = DefaultDestinationNavigator()
+        )
     }
 }

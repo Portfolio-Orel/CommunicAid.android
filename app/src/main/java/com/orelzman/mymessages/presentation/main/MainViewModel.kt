@@ -12,7 +12,7 @@ import com.orelzman.mymessages.data.dto.Message
 import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractor
 import com.orelzman.mymessages.data.local.interactors.message.MessageInteractor
 import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractor
-import com.orelzman.mymessages.domain.service.PhoneCall.PhoneCallInteractor
+import com.orelzman.mymessages.domain.service.phone_call.PhoneCallInteractor
 import com.orelzman.mymessages.util.Whatsapp.sendWhatsapp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope

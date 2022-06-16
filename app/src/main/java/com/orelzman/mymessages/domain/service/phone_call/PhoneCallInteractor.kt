@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.domain.service.PhoneCall
+package com.orelzman.mymessages.domain.service.phone_call
 
 import com.orelzman.mymessages.data.dto.PhoneCall
 import kotlinx.coroutines.flow.StateFlow

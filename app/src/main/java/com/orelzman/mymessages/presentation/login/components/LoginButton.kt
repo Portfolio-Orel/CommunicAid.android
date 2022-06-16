@@ -3,7 +3,10 @@ package com.orelzman.mymessages.presentation.login.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,7 +19,7 @@ import com.orelzman.mymessages.ui.theme.Shapes
 fun LoginButton(
     text: String,
     loadingText: String = "Signing in...",
-//    icon: Painter = painterResource(id = R.drawable.common_google_signin_btn_icon_light),
+//    icon: ImageVector = ImageVector.vectorResource(id = R.drawable.common_google_signin_btn_icon_light),
     isLoading: Boolean = false,
     shape: Shape = Shapes.medium,
     borderColor: Color = Color.LightGray,
@@ -45,7 +48,7 @@ fun LoginButton(
             horizontalArrangement = Arrangement.Center,
         ) {
 //            Icon(
-//                painter = icon,
+//                imageVector = icon,
 //                contentDescription = "SignInButton",
 //                tint = Color.Unspecified
 //            )

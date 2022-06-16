@@ -1,12 +1,12 @@
-package com.orelzman.mymessages.domain.service.PhoneCall
+package com.orelzman.mymessages.domain.service.phone_call
 
 import android.content.Context
 import com.orelzman.mymessages.data.dto.PhoneCall
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 interface PhoneCallManager {
 
-    val callOnTheLine: MutableStateFlow<PhoneCall?>
+    val callOnTheLine: StateFlow<PhoneCall?>
 
     fun onStateChanged(state: String, number: String, context: Context)
 }

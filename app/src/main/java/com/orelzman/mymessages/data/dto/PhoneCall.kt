@@ -20,6 +20,19 @@ data class PhoneCall(
     val isAnswered: Boolean
         get() = (startDate.time.inSeconds != endDate.time.inSeconds)
 
+    fun copy(phoneCall: PhoneCall?): PhoneCall? =
+        if(phoneCall == null) null
+        else PhoneCall(
+            number = phoneCall.number,
+            startDate = phoneCall.startDate,
+            endDate = phoneCall.endDate,
+            name = phoneCall.name,
+            isIncoming = phoneCall.isIncoming,
+            isWaiting = phoneCall.isIncoming,
+            isRejected = phoneCall.isRejected,
+            messagesSent = phoneCall.messagesSent
+        )
+
     override val data: Map<String, Any> =
         mapOf(
             "phoneNumber" to number,
