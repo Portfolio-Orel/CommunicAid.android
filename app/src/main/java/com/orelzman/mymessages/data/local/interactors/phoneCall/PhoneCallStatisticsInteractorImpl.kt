@@ -3,7 +3,7 @@ package com.orelzman.mymessages.data.local.interactors.phoneCall
 import com.orelzman.mymessages.data.dto.PhoneCall
 import com.orelzman.mymessages.data.dto.PhoneCallStatistics
 import com.orelzman.mymessages.data.local.LocalDatabase
-import com.orelzman.mymessages.data.repository.Repository
+import com.orelzman.mymessages.data.remote.repository.Repository
 import javax.inject.Inject
 
 class PhoneCallStatisticsInteractorImpl @Inject constructor(

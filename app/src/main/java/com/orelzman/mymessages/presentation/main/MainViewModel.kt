@@ -14,6 +14,7 @@ import com.orelzman.mymessages.data.local.interactors.message.MessageInteractor
 import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractor
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallInteractor
 import com.orelzman.mymessages.util.Whatsapp.sendWhatsapp
+import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.copyToClipboard
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -40,6 +41,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun onMessageClick(message: Message, context: Context) {
+        Log.vCustom(message.toString())
         val phoneCall = phoneCallInteractor.numberOnTheLine.value
         if (phoneCall != null) {
             phoneCallStatisticsInteractor.addMessageSent(

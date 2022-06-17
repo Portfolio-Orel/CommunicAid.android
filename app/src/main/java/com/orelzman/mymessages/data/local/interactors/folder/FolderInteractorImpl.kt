@@ -1,10 +1,11 @@
 package com.orelzman.mymessages.data.local.interactors.folder
 
 import com.orelzman.mymessages.data.dto.Folder
+import com.orelzman.mymessages.data.dto.Message
 import com.orelzman.mymessages.data.dto.folders
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.dao.FolderDao
-import com.orelzman.mymessages.data.repository.Repository
+import com.orelzman.mymessages.data.remote.repository.Repository
 import javax.inject.Inject
 
 class FolderInteractorImpl @Inject constructor(
@@ -29,13 +30,20 @@ class FolderInteractorImpl @Inject constructor(
         return folderId
     }
 
-    override suspend fun saveMessageInFolder(messageId: String, folderId: String) {
+    override suspend fun saveMessageInFolder(messageId: String, folderId: String, isLocal: Boolean) {
         val folder = db.get(folderId = folderId)
+        if(folder.messageIds.contains(messageId)) return
         (folder.messageIds as ArrayList<String>).add(messageId)
-        db.updateFolder(folder = folder)
+        db.update(folder = folder)
     }
 
     override suspend fun getFolderWithMessageId(messageId: String): Folder =
         db.getFolders().first { it.messageIds.contains(messageId) }
+
+    override suspend fun removeMessageFromFolder(uid: String, message: Message, folderId: String, isLocal: Boolean) {
+        val folder = db.get(folderId = folderId)
+        (folder.messageIds as ArrayList<String>).remove(message.id)
+        db.update(folder)
+    }
 
 }

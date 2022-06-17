@@ -1,11 +1,16 @@
 package com.orelzman.mymessages.presentation.main
 
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -35,10 +40,13 @@ fun MainScreen(
     val screen = LocalConfiguration.current
     val boxWidth = ((screen.screenWidthDp) / state.maxMessagesInRow).dp
     val boxHeight = (boxWidth * 1.5f)
-    
+    val messagesOffset = remember { mutableStateOf(0f) }
+    val foldersOffset = remember { mutableStateOf(0f) }
+
+
     if(state.messageToEdit != null) {
         navigator.navigate(
-            DetailsFolderScreenDestination()
+            DetailsMessageScreenDestination(state.messageToEdit.id)
         )
     }
     
@@ -80,7 +88,14 @@ fun MainScreen(
                     .padding(start = 10.dp, end = 5.dp)
                     .fillMaxWidth(0.9f)
                     .fillMaxHeight(0.8F)
-                    .fillMaxWidth(0.9F),
+                    .fillMaxWidth(0.9F)
+                    .scrollable(
+                        orientation = Orientation.Vertical,
+                        state = rememberScrollableState { delta ->
+                            messagesOffset.value = messagesOffset.value + delta
+                            delta
+                        }
+                    ),
                 mainAxisSpacing = 25.dp,
                 mainAxisAlignment = MainAxisAlignment.Start,
                 mainAxisSize = SizeMode.Wrap
@@ -93,7 +108,14 @@ fun MainScreen(
                             modifier = Modifier
                                 .width(boxWidth)
                                 .height(boxHeight)
-                                .padding(0.dp),
+                                .padding(0.dp)
+                                .scrollable(
+                                    orientation = Orientation.Horizontal,
+                                    state = rememberScrollableState { delta ->
+                                        foldersOffset.value = foldersOffset.value + delta
+                                        delta
+                                    }
+                                ),
                             onClick = { message, context ->
                                 viewModel.onMessageClick(message, context)
                             },

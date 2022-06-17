@@ -1,9 +1,6 @@
 package com.orelzman.mymessages.data.local.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.orelzman.mymessages.data.dto.Message
 
 @Dao
@@ -29,4 +26,7 @@ interface MessageDao {
         WHERE id = :messageId
     """)
     suspend fun getMessage(messageId: String): Message
+
+    @Update
+    suspend fun update(message: Message)
 }

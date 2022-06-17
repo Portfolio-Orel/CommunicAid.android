@@ -26,15 +26,16 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 fun DetailsMessageScreen(
     navigator: DestinationsNavigator,
     viewModel: DetailsMessageViewModel = hiltViewModel(),
-    messageId: String? = null
+    messageId: String?
 ) {
+    LaunchedEffect(key1 = messageId ) {
+        viewModel.setEdit(messageId = messageId)
+    }
     val state = viewModel.state
 
     if (state.isMessageSaved) {
         navigator.navigate(MainScreenDestination)
     }
-
-    viewModel.setEdit(messageId = messageId)
 
     MyMessagesTheme {
         Column(

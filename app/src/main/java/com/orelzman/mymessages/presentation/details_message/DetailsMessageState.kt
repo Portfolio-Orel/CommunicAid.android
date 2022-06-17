@@ -7,7 +7,8 @@ data class DetailsMessageState(
     val title: String = "",
     val shortTitle: String = "",
     val body: String = "",
-    val folderId: String = "",
+    val oldFolderId: String = "", // For Edit
+    val currentFolderId: String = "",
     val emptyFields: ArrayList<Fields> = ArrayList(),
     val isLoading: Boolean = false, // Message is being uploaded
     val error: String = "",
@@ -15,7 +16,7 @@ data class DetailsMessageState(
     val messageId: String? = null
 ) {
     val isReadyForSave: Boolean =
-        title.isNotBlank() && shortTitle.isNotBlank() && body.isNotBlank() && folderId.isNotBlank()
+        title.isNotBlank() && shortTitle.isNotBlank() && body.isNotBlank() && currentFolderId.isNotBlank()
 }
 
 enum class Fields {

@@ -4,7 +4,7 @@ import com.orelzman.mymessages.data.dto.Message
 import com.orelzman.mymessages.data.dto.messages
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractor
-import com.orelzman.mymessages.data.repository.Repository
+import com.orelzman.mymessages.data.remote.repository.Repository
 import javax.inject.Inject
 
 class MessageInteractorImpl @Inject constructor(
@@ -34,6 +34,22 @@ class MessageInteractorImpl @Inject constructor(
     override suspend fun getMessage(messageId: String): Message =
         db.getMessage(messageId = messageId)
 
+    override suspend fun editMessage(
+        uid: String,
+        message: Message,
+        oldFolderId: String,
+        newFolderId: String
+    ) {
+        repository.editMessage(
+            uid = uid,
+            message = message,
+            oldFolderId = oldFolderId,
+            newFolderId = newFolderId
+        )
+        db.update(message)
+        folderInteractor.removeMessageFromFolder(uid = uid, message = message, folderId = oldFolderId)
+        folderInteractor.saveMessageInFolder(messageId = message.id, folderId = newFolderId)
+    }
 
 
 }

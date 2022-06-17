@@ -8,8 +8,8 @@ import com.orelzman.mymessages.data.local.interactors.message.MessageInteractor
 import com.orelzman.mymessages.data.local.interactors.message.MessageInteractorImpl
 import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractor
 import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractorImpl
-import com.orelzman.mymessages.data.repository.Repository
-import com.orelzman.mymessages.data.repository.firebase.FirebaseRepository
+import com.orelzman.mymessages.data.remote.repository.Repository
+import com.orelzman.mymessages.data.remote.repository.firebase.FirebaseRepository
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallInteractor
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallInteractorImpl
 import dagger.Binds

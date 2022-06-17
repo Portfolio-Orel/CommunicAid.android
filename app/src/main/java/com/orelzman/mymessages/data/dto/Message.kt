@@ -5,9 +5,9 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Message(
-    val messageTitle: String,
-    val messageShortTitle: String,
-    val messageBody: String,
+    val messageTitle: String = "",
+    val messageShortTitle: String = "",
+    val messageBody: String = "",
     val messageTimesUsed: Long = 0,
     val isActive: Boolean = true,
     @PrimaryKey val id: String = ""
@@ -28,6 +28,15 @@ data class Message(
         messageBody = message.messageBody,
         messageTimesUsed = message.messageTimesUsed,
         isActive = message.isActive,
+        id = id
+    )
+
+    constructor(data: MutableMap<String, Any>?, id: String): this(
+        messageTitle = data?.get("messageTitle") as String,
+        messageShortTitle = data["messageShortTitle"] as String,
+        messageBody = data["messageBody"] as String,
+        messageTimesUsed = data["messageTimesUsed"] as Long,
+        isActive = data["isActive"] as Boolean,
         id = id
     )
 

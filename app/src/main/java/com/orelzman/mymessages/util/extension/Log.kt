@@ -7,6 +7,7 @@ class Log {
     companion object {
         fun vCustom(message: String) {
             Log.v("MyMessages", message)
+            println("MyMessages: $message")
         }
     }
 

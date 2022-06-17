@@ -17,7 +17,7 @@ import com.orelzman.mymessages.data.local.type_converters.Converters
         Folder::class,
         PhoneCallStatistics::class,
     ],
-    version = 1
+    version = 2
 )
 @TypeConverters(Converters::class)
 abstract class LocalDatabase : RoomDatabase() {

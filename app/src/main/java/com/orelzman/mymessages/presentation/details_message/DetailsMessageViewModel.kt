@@ -47,7 +47,8 @@ class DetailsMessageViewModel @Inject constructor(
             title = message.messageTitle,
             body = message.messageBody,
             shortTitle = message.messageShortTitle,
-            folderId = folder.id
+            messageId = message.id,
+            oldFolderId = folder.id
         )
     }
 
@@ -65,32 +66,43 @@ class DetailsMessageViewModel @Inject constructor(
     }
 
     fun setFolderId(value: String) {
-        state = state.copy(folderId = value)
+        state = state.copy(currentFolderId = value)
     }
 
     fun saveMessage() {
         if (state.isReadyForSave) {
             state = state.copy(isLoading = true)
+            val message = Message(
+                messageTitle = state.title,
+                messageShortTitle = state.shortTitle,
+                messageBody = state.body,
+                id = state.messageId ?: ""
+            )
             viewModelScope.launch {
                 authInteractor.user?.uid?.let {
-                    messageInteractor.saveMessage(
-                        uid = it,
-                        message = Message(
-                            state.title,
-                            state.shortTitle,
-                            state.body,
-                        ),
-                        folderId = state.folderId
-                    )
-                    state = state.copy(isLoading = false, isMessageSaved = true)
+                    if (state.messageId != null && state.messageId != "") {
+                        messageInteractor.editMessage(
+                            uid = it,
+                            message = message,
+                            newFolderId = state.currentFolderId,
+                            oldFolderId = state.oldFolderId
+                        )
+                    } else {
+                        messageInteractor.saveMessage(
+                            uid = it,
+                            message = message,
+                            folderId = state.currentFolderId
+                        )
+                    }
                 }
+                state = state.copy(isLoading = false, isMessageSaved = true)
             }
         } else {
             val emptyFields = ArrayList<Fields>()
             if (state.title.isBlank()) emptyFields.add(Fields.Title)
             if (state.shortTitle.isBlank()) emptyFields.add(Fields.ShortTitle)
             if (state.body.isBlank()) emptyFields.add(Fields.Body)
-            if (state.folderId.isBlank()) emptyFields.add(Fields.Folder)
+            if (state.currentFolderId.isBlank()) emptyFields.add(Fields.Folder)
             state = state.copy(emptyFields = emptyFields)
         }
     }

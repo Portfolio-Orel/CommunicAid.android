@@ -19,7 +19,7 @@ interface FolderDao {
     suspend fun getFolders(): List<Folder>
 
     @Update
-    suspend fun updateFolder(folder: Folder)
+    suspend fun update(folder: Folder)
 
     @Query("""
         SELECT *

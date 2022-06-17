@@ -1,5 +1,8 @@
 package com.orelzman.mymessages.data.remote.repository
 
+import com.orelzman.mymessages.data.dto.Message
+
+
 /**
  * TODO: Think of a way to inject it with the uid
  */
@@ -29,6 +32,13 @@ interface Repository {
     suspend fun deleteFolder(uid: String, id: String)
 
     suspend fun addPhoneCalls(uid: String, dataList: List<Map<String, Any>>)
+
+    suspend fun editMessage(
+        uid: String,
+        message: Message,
+        oldFolderId: String,
+        newFolderId: String
+    )
 
     val folderExistsException: FolderExistsException
 }

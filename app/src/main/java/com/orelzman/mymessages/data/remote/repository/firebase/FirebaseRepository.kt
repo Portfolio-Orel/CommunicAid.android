@@ -1,8 +1,11 @@
 package com.orelzman.mymessages.data.remote.repository.firebase
 
 import com.google.firebase.firestore.*
+import com.orelzman.mymessages.data.dto.Folder
+import com.orelzman.mymessages.data.dto.Message
 import com.orelzman.mymessages.data.remote.repository.FolderExistsException
 import com.orelzman.mymessages.data.remote.repository.Repository
+import com.orelzman.mymessages.util.extension.Log
 import kotlinx.coroutines.tasks.await
 import java.util.*
 import javax.inject.Inject
@@ -107,6 +110,36 @@ class FirebaseRepository @Inject constructor() : Repository {
         }
     }
 
+    override suspend fun editMessage(
+        uid: String,
+        message: Message,
+        oldFolderId: String,
+        newFolderId: String
+    ) {
+        try {
+            val batch = db.batch()
+            Collections.Messages.get(uid, message.id).update(message.data)
+            val folderColRef = Collections.Folders.get(uid)
+            Log.vCustom("MyMessages")
+            val folderWithMessageDocument =
+                folderColRef.document(oldFolderId).get().await()
+            val newFolderDocument = folderColRef.document(newFolderId).get().await()
+            val oldFolder = Folder(folderWithMessageDocument.data, folderWithMessageDocument.id)
+            val newFolder = Folder(newFolderDocument.data, newFolderDocument.id)
+            val oldFoldersMessages = ArrayList(oldFolder.messageIds)
+            val newFoldersMessages = ArrayList(newFolder.messageIds)
+            oldFoldersMessages.remove(message.id)
+            newFoldersMessages.add(message.id)
+            oldFolder.messageIds = oldFoldersMessages
+            newFolder.messageIds = newFoldersMessages
+            batch.update(folderColRef.document(newFolder.id), newFolder.data)
+            batch.update(folderColRef.document(oldFolder.id), oldFolder.data)
+            batch.commit().await()
+        } catch (ex: Exception) {
+            Log.vCustom(ex.stackTraceToString())
+        }
+    }
+
     @Suppress("UNCHECKED_CAST")
     private suspend fun updateStatistics(uid: String, data: Map<String, Any>) {
         val cal = Calendar.getInstance()
@@ -206,6 +239,9 @@ class FirebaseRepository @Inject constructor() : Repository {
     private fun Collections.get(uid: String): CollectionReference =
         if (this == Collections.Users) db.collection(value)
         else db.collection(Collections.Users.value).document(uid).collection(value)
+
+    private fun Collections.get(uid: String, id: String): DocumentReference =
+        db.collection(Collections.Users.value).document(uid).collection(value).document(id)
 
     companion object {
         private const val COLLECTION_MESSAGES_SENT = "messagesSent"

@@ -4,21 +4,21 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class Folder (
+data class Folder(
     val folderTitle: String = "",
-    val messageIds: List<String> = emptyList(),
+    var messageIds: List<String> = emptyList(),
     val isActive: Boolean = true,
     val folderTimesUsed: Long = 0,
     @PrimaryKey val id: String = "",
-): DTO {
+) : DTO {
 
-    constructor(folder: Folder, id: String) : this(
-        folderTitle = folder.folderTitle,
-        messageIds = folder.messageIds,
-        isActive = folder.isActive,
-        folderTimesUsed = folder.folderTimesUsed,
-        id = id
-    )
+    override fun equals(other: Any?): Boolean {
+        return if (other is Folder) {
+            id == other.id
+        } else {
+            false
+        }
+    }
 
     override val data: Map<String, Any>
         get() =
@@ -28,6 +28,24 @@ data class Folder (
                 "isActive" to isActive,
                 "messageIDs" to messageIds
             )
+
+    constructor(folder: Folder, id: String) : this(
+        folderTitle = folder.folderTitle,
+        messageIds = folder.messageIds,
+        isActive = folder.isActive,
+        folderTimesUsed = folder.folderTimesUsed,
+        id = id
+    )
+
+    @Suppress("UNCHECKED_CAST")
+    constructor(data: MutableMap<String, Any>?, id: String) : this(
+        folderTitle = data?.get("folderTitle") as String,
+        messageIds = data["messageIDs"] as? List<String> ?: emptyList(),
+        isActive = data["isActive"] as Boolean,
+        folderTimesUsed = data["folderTimesUsed"] as Long,
+        id = id
+    )
+
 }
 
 @Suppress("UNCHECKED_CAST")
