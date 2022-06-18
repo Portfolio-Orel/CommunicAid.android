@@ -28,7 +28,7 @@ fun DetailsMessageScreen(
     viewModel: DetailsMessageViewModel = hiltViewModel(),
     messageId: String?
 ) {
-    LaunchedEffect(key1 = messageId ) {
+    LaunchedEffect(key1 = messageId) {
         viewModel.setEdit(messageId = messageId)
     }
     val state = viewModel.state
@@ -82,7 +82,7 @@ fun DetailsMessageScreen(
                 isError = state.body == ""
             )
 
-            Dropdown(folders = state.folders) { viewModel.setFolderId(it) }
+            Dropdown(folders = state.folders, onSelected = { viewModel.setFolderId(it) })
             Spacer(modifier = Modifier.weight(1f))
 
             Row {
@@ -112,10 +112,14 @@ fun DetailsMessageScreen(
 }
 
 @Composable
-fun Dropdown(folders: List<Folder>, onSelected: (String) -> Unit) {
+fun Dropdown(
+    folders: List<Folder>,
+    onSelected: (String) -> Unit,
+    selectedFolder: Folder = Folder()
+) {
 
     var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf("") }
+    var selectedText by remember { mutableStateOf(selectedFolder.folderTitle) }
     var textfieldSize by remember { mutableStateOf(Size.Zero) }
 
     val icon = if (expanded)
@@ -152,10 +156,10 @@ fun Dropdown(folders: List<Folder>, onSelected: (String) -> Unit) {
                 DropdownMenuItem(
                     text = { Text(text = folder.folderTitle) },
                     onClick = {
-                    selectedText = folder.folderTitle
-                    onSelected(folder.id)
-                    expanded = false
-                })
+                        selectedText = folder.folderTitle
+                        onSelected(folder.id)
+                        expanded = false
+                    })
             }
         }
     }

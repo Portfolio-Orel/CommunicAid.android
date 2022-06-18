@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
@@ -38,18 +39,19 @@ fun MainScreen(
 ) {
     val state = viewModel.state
     val screen = LocalConfiguration.current
-    val boxWidth = ((screen.screenWidthDp) / state.maxMessagesInRow).dp
+    val spaceBetweenMessages = 26
+    val boxWidth = getMessageWidth(screenWidth = screen.screenWidthDp, spaceBetween = spaceBetweenMessages)
     val boxHeight = (boxWidth * 1.5f)
     val messagesOffset = remember { mutableStateOf(0f) }
     val foldersOffset = remember { mutableStateOf(0f) }
 
 
-    if(state.messageToEdit != null) {
+    if (state.messageToEdit != null) {
         navigator.navigate(
             DetailsMessageScreenDestination(state.messageToEdit.id)
         )
     }
-    
+
     MyMessagesTheme {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
@@ -96,7 +98,7 @@ fun MainScreen(
                             delta
                         }
                     ),
-                mainAxisSpacing = 25.dp,
+                mainAxisSpacing = spaceBetweenMessages.dp,
                 mainAxisAlignment = MainAxisAlignment.Start,
                 mainAxisSize = SizeMode.Wrap
             ) {
@@ -142,6 +144,12 @@ fun MainScreen(
             }
         }
     }
+}
+
+private fun getMessageWidth(screenWidth: Int, messagesInRow: Int = 4, spaceBetween: Int = 16): Dp {
+    val spacesCount = messagesInRow + 1 // Amount of spaces between each message
+    val spaceForMesages = screenWidth - spacesCount * spaceBetween
+    return (spaceForMesages / messagesInRow).dp
 }
 
 private fun calculateMinIndexForSecondFlowRow(itemsCount: Int, maxItems: Int): Int =
