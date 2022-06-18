@@ -10,7 +10,6 @@ data class PhoneCall(
     val number: String = "",
     @PrimaryKey var startDate: Date = Date(),
     var endDate: Date = startDate,
-    var name: String = "",
     val isIncoming: Boolean = false,
     val isWaiting: Boolean = false,
     var isRejected: Boolean = false,
@@ -20,13 +19,15 @@ data class PhoneCall(
     val isAnswered: Boolean
         get() = (startDate.time.inSeconds != endDate.time.inSeconds)
 
+    var name: String = ""
+        get() = number
+
     fun copy(phoneCall: PhoneCall?): PhoneCall? =
-        if(phoneCall == null) null
+        if (phoneCall == null) null
         else PhoneCall(
             number = phoneCall.number,
             startDate = phoneCall.startDate,
             endDate = phoneCall.endDate,
-            name = phoneCall.name,
             isIncoming = phoneCall.isIncoming,
             isWaiting = phoneCall.isIncoming,
             isRejected = phoneCall.isRejected,
