@@ -1,7 +1,9 @@
 package com.orelzman.mymessages.util
 
 import android.content.Context
+import android.os.Build
 import android.provider.CallLog
+import androidx.annotation.RequiresApi
 import com.orelzman.mymessages.domain.model.CallLogEntity
 import com.orelzman.mymessages.util.extension.toDate
 import java.util.*
@@ -56,11 +58,11 @@ object CallLogUtils {
                         duration = duration,
                         name = name,
                         dateMilliseconds = date,
-                        callLogType = callLogType
+                        callLogType = CallType.fromInt(callLogType)
                     )
-                    if(callLogEntity.dateMilliseconds.toLong().toDate() < startDate) {
+                    if (callLogEntity.dateMilliseconds.toLong().toDate() < startDate) {
                         break
-                    } else if (callLogEntity.dateMilliseconds.toLong().toDate() < endDate){
+                    } else if (callLogEntity.dateMilliseconds.toLong().toDate() < endDate) {
                         callLogEntities.add(callLogEntity)
                     }
                 }
@@ -76,4 +78,18 @@ fun getStartOfDay(): Date {
     val day = calendar[Calendar.DATE]
     calendar[year, month, day, 0, 0] = 0
     return calendar.time
+}
+
+enum class CallType(val value: Int) {
+    MISSED(CallLog.Calls.MISSED_TYPE),
+    INCOMING(CallLog.Calls.INCOMING_TYPE),
+    OUTGOING(CallLog.Calls.OUTGOING_TYPE),
+    @RequiresApi(Build.VERSION_CODES.N)
+    REJECTED(CallLog.Calls.REJECTED_TYPE),
+    @RequiresApi(Build.VERSION_CODES.N)
+    BLOCK(CallLog.Calls.BLOCKED_TYPE);
+
+    companion object {
+        fun fromInt(value: Int): CallType = values().first { it.value == value }
+    }
 }
