@@ -14,7 +14,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.android.gms.common.api.ApiException
 import com.orelzman.auth.domain.activity_result.ActivityResultContractImpl
 import com.orelzman.auth.domain.exception.TaskException
-import com.orelzman.mymessages.presentation.destinations.UnhandledCallsScreenDestination
+import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
 import com.orelzman.mymessages.presentation.login.components.LoginButton
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 import com.orelzman.mymessages.util.extension.DefaultDestinationNavigator
@@ -50,7 +50,7 @@ fun LoginScreen(
                 .padding(16.dp)
         ) {
             if (state.user != null) {
-                navigator.navigate(UnhandledCallsScreenDestination)
+                navigator.navigate(MainScreenDestination)
             } else {
                 Text(text = "!LoggedIn")
             }

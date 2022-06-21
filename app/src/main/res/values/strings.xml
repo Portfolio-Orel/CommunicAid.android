@@ -4,4 +4,5 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="add_message">הוסף הודעה</string>
     <string name="add_folder">הוסף תיקייה</string>
+    <string name="unhandled_calls">שיחות שלא טופלו</string>
 </resources>
