@@ -7,9 +7,9 @@ import java.util.*
 
 class CallLogEntity(
     val number: String = "",
-    val duration: String = "",
+    val duration: Long = 0,
     val name: String = "",
-    var dateMilliseconds: String = "",
+    var dateMilliseconds: Long = 0,
     val callLogType: CallType? = null
 ) {
 

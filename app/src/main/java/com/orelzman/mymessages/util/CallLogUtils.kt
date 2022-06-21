@@ -55,9 +55,9 @@ object CallLogUtils {
                     val callLogType: Int = type.toInt()
                     val callLogEntity = CallLogEntity(
                         number = number,
-                        duration = duration,
+                        duration = duration.toLong(),
                         name = name,
-                        dateMilliseconds = date,
+                        dateMilliseconds = date.toLong(),
                         callLogType = CallType.fromInt(callLogType)
                     )
                     if (callLogEntity.dateMilliseconds.toLong().toDate() < startDate) {
