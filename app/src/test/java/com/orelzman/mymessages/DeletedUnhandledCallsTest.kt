@@ -2,14 +2,15 @@ package com.orelzman.mymessages
 
 import android.content.Context
 import androidx.room.Room
+import com.orelzman.mymessages.data.dto.DeletedUnhandledCalls
 import com.orelzman.mymessages.data.dto.PhoneCall
-import com.orelzman.mymessages.data.dto.UnhandledCall
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.interactors.unhandled_calls.UnhandledCallsInteractor
 import com.orelzman.mymessages.data.local.interactors.unhandled_calls.UnhandledCallsInteractorImpl
 import com.orelzman.mymessages.data.local.type_converters.Converters
 import com.orelzman.mymessages.domain.model.CallLogEntity
 import com.orelzman.mymessages.util.CallType
+import com.orelzman.mymessages.util.startOfDay
 import junit.framework.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -23,7 +24,7 @@ import kotlin.random.Random
 
 @RunWith(MockitoJUnitRunner::class)
 
-class UnhandledCallsTest {
+class DeletedUnhandledCallsTest {
 
     @Mock
     private lateinit var mockContext: Context
@@ -32,7 +33,7 @@ class UnhandledCallsTest {
     private lateinit var db: LocalDatabase
 
     private var callLogs: ArrayList<CallLogEntity> = ArrayList()
-    private var unhandledCalls: ArrayList<UnhandledCall> = ArrayList()
+    private var deletedUnhandledCalls: ArrayList<DeletedUnhandledCalls> = ArrayList()
 
     @Before
     fun setUp() {
@@ -88,11 +89,47 @@ class UnhandledCallsTest {
         outgoingCall(Numbers.DAD)
         missedCall(Numbers.DAD)
         missedCall(Numbers.DAD)
-        missedCall(Numbers.DAD)
+        missedCall(Numbers.DAD, date = Date().startOfDay)
         deleteNumber(Numbers.DAD)
         val calls = filterCalls().map { it.number }
         assertTrue(calls.size == 1)
         assertTrue(calls.containsAll(listOf(Numbers.OREL.value)))
+    }
+
+    @Test
+    fun `missed-outgoing missed-incoming`() {
+        missedCall(Numbers.OREL)
+        incomingCall(Numbers.OREL)
+        missedCall(Numbers.DAD)
+        outgoingCall(Numbers.DAD)
+        val calls = filterCalls().map { it.number }
+        assertTrue(calls.isEmpty())
+    }
+
+    @Test
+    fun `missed-deleted missed-outgoing missed-incoming`() {
+        missedCall(Numbers.SARA)
+        deleteNumber(Numbers.SARA)
+        missedCall(Numbers.OREL)
+        incomingCall(Numbers.OREL)
+        missedCall(Numbers.DAD)
+        outgoingCall(Numbers.DAD)
+        val calls = filterCalls().map { it.number }
+        assertTrue(calls.isEmpty())
+    }
+
+    @Test
+    fun `missed-deleted missed-outgoing missed-incoming missed`() {
+        missedCall(Numbers.SARA)
+        deleteNumber(Numbers.SARA)
+        missedCall(Numbers.OREL)
+        incomingCall(Numbers.OREL)
+        missedCall(Numbers.DAD)
+        outgoingCall(Numbers.DAD)
+        missedCall(Numbers.OREL)
+        val calls = filterCalls().map { it.number }
+        assertTrue(calls.size == 1)
+        assertTrue(calls.contains(Numbers.OREL.value))
     }
 
     @Test
@@ -109,7 +146,7 @@ class UnhandledCallsTest {
 
     private fun filterCalls(): List<CallLogEntity> =
         unhandledCallsInteractor.filterUnhandledCalls(
-            unhandledCalls = unhandledCalls,
+            deletedUnhandledCalls = deletedUnhandledCalls,
             callLogs = callLogs
         )
 
@@ -120,8 +157,8 @@ class UnhandledCallsTest {
     private fun outgoingCall(number: Numbers) =
         addNumberToLog(number, CallType.OUTGOING)
 
-    private fun missedCall(number: Numbers) =
-        addNumberToLog(number, CallType.MISSED)
+    private fun missedCall(number: Numbers, date: Date = Date()) =
+        addNumberToLog(number, CallType.MISSED, date)
 
     private fun rejectedCall(number: Numbers) =
         addNumberToLog(number, CallType.REJECTED)
@@ -130,8 +167,8 @@ class UnhandledCallsTest {
         addNumberToLog(number, CallType.BLOCK)
 
     private fun deleteNumber(number: Numbers) {
-        unhandledCalls.add(
-            UnhandledCall(
+        deletedUnhandledCalls.add(
+            DeletedUnhandledCalls(
                 id = "1$number", phoneCall = PhoneCall(
                     number = number.value,
                     startDate = Date(),
@@ -146,12 +183,12 @@ class UnhandledCallsTest {
         Thread.sleep(10)
     }
 
-    private fun addNumberToLog(number: Numbers, type: CallType) {
+    private fun addNumberToLog(number: Numbers, type: CallType, date: Date = Date()) {
         callLogs.add(
             CallLogEntity(
                 number = number.value,
                 duration = 1,
-                dateMilliseconds = Date().time,
+                dateMilliseconds = date.time,
                 callLogType = type
             )
         )

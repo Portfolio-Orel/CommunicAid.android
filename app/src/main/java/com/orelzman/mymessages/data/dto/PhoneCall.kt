@@ -1,8 +1,10 @@
 package com.orelzman.mymessages.data.dto
 
+import android.os.Build
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.orelzman.mymessages.domain.service.inSeconds
+import com.orelzman.mymessages.util.CallType
 import java.util.*
 
 @Entity
@@ -47,6 +49,20 @@ data class PhoneCall(
             "messagesSent" to messagesSent
         )
 
+    val callType: CallType
+    get() {
+        var type: CallType = CallType.MISSED
+        if(isIncoming && isAnswered) { // Incoming answered
+            type = CallType.INCOMING
+        }
+        if (!isIncoming && isAnswered) { // Outgoing answered
+            type = CallType.OUTGOING
+        }
+        if(isRejected && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            type = CallType.REJECTED
+        }
+        return type
+    }
 
     fun missed() {
         isRejected = false

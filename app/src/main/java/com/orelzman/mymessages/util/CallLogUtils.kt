@@ -13,7 +13,7 @@ object CallLogUtils {
     fun getTodaysCallLog(context: Context): ArrayList<CallLogEntity> =
         getCallLogsByDate(
             context = context,
-            startDate = getStartOfDay(),
+            startDate = Date().startOfDay,
             endDate = Date()
         )
 
@@ -71,15 +71,6 @@ object CallLogUtils {
     }
 }
 
-fun getStartOfDay(): Date {
-    val calendar = Calendar.getInstance()
-    val year = calendar[Calendar.YEAR]
-    val month = calendar[Calendar.MONTH]
-    val day = calendar[Calendar.DATE]
-    calendar[year, month, day, 0, 0] = 0
-    return calendar.time
-}
-
 enum class CallType(val value: Int) {
     MISSED(CallLog.Calls.MISSED_TYPE),
     INCOMING(CallLog.Calls.INCOMING_TYPE),
@@ -92,4 +83,14 @@ enum class CallType(val value: Int) {
     companion object {
         fun fromInt(value: Int): CallType = values().first { it.value == value }
     }
+}
+
+val Date.startOfDay: Date
+get() {
+        val calendar = Calendar.getInstance()
+        val year = calendar[Calendar.YEAR]
+        val month = calendar[Calendar.MONTH]
+        val day = calendar[Calendar.DATE]
+        calendar[year, month, day, 0, 0] = 0
+        return calendar.time
 }

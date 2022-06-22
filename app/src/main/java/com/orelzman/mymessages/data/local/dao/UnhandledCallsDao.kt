@@ -4,20 +4,22 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.orelzman.mymessages.data.dto.UnhandledCall
+import com.orelzman.mymessages.data.dto.DeletedUnhandledCalls
 
 @Dao
 interface UnhandledCallsDao {
 
     @Insert
-    suspend fun insert(unhandledCall: UnhandledCall)
+    suspend fun insert(deletedUnhandledCalls: DeletedUnhandledCalls)
 
     @Update
-    suspend fun update(unhandledCall: UnhandledCall)
+    suspend fun update(deletedUnhandledCalls: DeletedUnhandledCalls)
 
-    @Query("""
+    @Query(
+        """
         SELECT *
-        FROM UnhandledCall
-    """)
-    suspend fun getAll(): List<UnhandledCall>
+        FROM DeletedUnhandledCalls
+    """
+    )
+    suspend fun getAll(): List<DeletedUnhandledCalls>
 }

@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 import com.orelzman.mymessages.data.dto.Folder
 import com.orelzman.mymessages.data.dto.Message
 import com.orelzman.mymessages.data.dto.PhoneCallStatistics
-import com.orelzman.mymessages.data.dto.UnhandledCall
+import com.orelzman.mymessages.data.dto.DeletedUnhandledCalls
 import com.orelzman.mymessages.data.local.dao.FolderDao
 import com.orelzman.mymessages.data.local.dao.MessageDao
 import com.orelzman.mymessages.data.local.dao.PhoneCallStatisticsDao
@@ -18,7 +18,7 @@ import com.orelzman.mymessages.data.local.type_converters.Converters
         Message::class,
         Folder::class,
         PhoneCallStatistics::class,
-        UnhandledCall::class,
+        DeletedUnhandledCalls::class,
     ],
     version = 3
 )

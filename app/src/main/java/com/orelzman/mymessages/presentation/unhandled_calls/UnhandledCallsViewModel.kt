@@ -12,8 +12,8 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.mymessages.data.dto.DeletedUnhandledCalls
 import com.orelzman.mymessages.data.dto.PhoneCall
-import com.orelzman.mymessages.data.dto.UnhandledCall
 import com.orelzman.mymessages.data.local.interactors.unhandled_calls.UnhandledCallsInteractor
 import com.orelzman.mymessages.domain.model.CallLogEntity
 import com.orelzman.mymessages.util.CallLogUtils
@@ -46,7 +46,7 @@ class UnhandledCallsViewModel @Inject constructor(
                     .distinctBy { unhandledCall -> unhandledCall.phoneCall.startDate }
                 val callsFromCallLog = getCallsFromCallLog(context = getApplicationContext())
                 val callsToHandle = unhandledCallsInteractor.filterUnhandledCalls(
-                    unhandledCalls = unhandledCalls,
+                    deletedUnhandledCalls = unhandledCalls,
                     callLogs = callsFromCallLog
                 )
                 state = state.copy(callsToHandle = callsToHandle)
@@ -61,7 +61,7 @@ class UnhandledCallsViewModel @Inject constructor(
         viewModelScope.launch {
             authInteractor.user?.uid?.let {
                 unhandledCallsInteractor.insert(
-                    uid = it, unhandledCall = UnhandledCall(phoneCall = phoneCall)
+                    uid = it, deletedUnhandledCalls = DeletedUnhandledCalls(phoneCall = phoneCall)
                 )
             }
             setCalls()
