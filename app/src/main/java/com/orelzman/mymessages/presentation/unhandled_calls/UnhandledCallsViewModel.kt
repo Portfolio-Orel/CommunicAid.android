@@ -3,6 +3,7 @@ package com.orelzman.mymessages.presentation.unhandled_calls
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
 import android.os.Bundle
 import androidx.compose.runtime.getValue
@@ -71,9 +72,14 @@ class UnhandledCallsViewModel @Inject constructor(
     /**
      * Start a phone call to [phoneCall]
      */
-    fun onCall(phoneCall: PhoneCall) {
+    fun onCall(phoneCall: PhoneCall, context: Context? = null) {
         val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:${phoneCall.number}"))
-        startActivity(getApplicationContext(), intent, Bundle())
+        if(context != null) {
+            context.startActivity(intent)
+        } else {
+            intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
+            startActivity(getApplicationContext(), intent, Bundle())
+        }
     }
 
     private fun getApplicationContext(): Context =
