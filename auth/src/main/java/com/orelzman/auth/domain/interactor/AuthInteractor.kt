@@ -20,6 +20,11 @@ interface AuthInteractor {
     val signInRequest: BeginSignInRequest
 
     /**
+     * Inits AWS
+     */
+    fun init()
+
+    /**
      * Checks if there is an authenticated user.
      * @return a single with true if authenticated and false otherwise.
      * @author Orel Zilberman, 19.11.2021

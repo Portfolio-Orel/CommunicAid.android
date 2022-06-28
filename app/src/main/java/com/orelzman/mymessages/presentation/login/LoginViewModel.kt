@@ -25,6 +25,7 @@ class LoginViewModel @Inject constructor(
         if (interactor.user != null) {
             state = state.copy(user = User(uid = interactor.user!!.uid))
         }
+        interactor.init()
     }
 
     fun onEvent(event: LoginEvents) {
