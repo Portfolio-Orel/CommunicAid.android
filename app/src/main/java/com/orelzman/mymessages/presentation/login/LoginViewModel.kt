@@ -1,5 +1,6 @@
 package com.orelzman.mymessages.presentation.login
 
+import android.app.Activity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -27,9 +28,12 @@ class LoginViewModel @Inject constructor(
         }
         CoroutineScope(Dispatchers.IO).launch {
             interactor.init()
-            interactor.signIn()
-            val token = interactor.getToken()
-            val x = token
+        }
+    }
+
+    fun test(activity: Activity) {
+        CoroutineScope(Dispatchers.IO).launch {
+            interactor.googleAuth(activity)
         }
     }
 

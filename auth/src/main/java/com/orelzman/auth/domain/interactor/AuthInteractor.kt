@@ -1,5 +1,6 @@
 package com.orelzman.auth.domain.interactor
 
+import android.app.Activity
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.orelzman.auth.domain.model.User
@@ -45,6 +46,8 @@ interface AuthInteractor {
         username: String = "user123",
         code: String = "162774"
     )
+
+    suspend fun googleAuth(activity: Activity)
 
     /**
      * Checks if there is an authenticated user.

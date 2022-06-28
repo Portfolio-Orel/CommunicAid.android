@@ -1,9 +1,11 @@
 package com.orelzman.auth.data.interactor
 
+import android.app.Activity
 import android.content.Context
 import android.util.Log
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amplifyframework.auth.AuthException
+import com.amplifyframework.auth.AuthProvider
 import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.auth.options.AuthSignUpOptions
@@ -57,6 +59,15 @@ class AuthInteractorImpl @Inject constructor(
             }
         } catch (error: AuthException) {
             Log.e("AuthQuickstart", "Failed to confirm signup", error)
+        }
+    }
+
+    override suspend fun googleAuth(activity: Activity) {
+        try {
+            val result = Amplify.Auth.signInWithSocialWebUI(AuthProvider.google(), activity)
+            Log.i("AuthQuickstart", "Sign in OK: $result")
+        } catch (error: AuthException) {
+            Log.e("AuthQuickstart", "Sign in failed", error)
         }
     }
 
