@@ -25,7 +25,12 @@ class LoginViewModel @Inject constructor(
         if (interactor.user != null) {
             state = state.copy(user = User(uid = interactor.user!!.uid))
         }
-        interactor.init()
+        CoroutineScope(Dispatchers.IO).launch {
+            interactor.init()
+            interactor.signIn()
+            val token = interactor.getToken()
+            val x = token
+        }
     }
 
     fun onEvent(event: LoginEvents) {

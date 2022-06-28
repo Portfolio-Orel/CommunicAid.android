@@ -22,7 +22,29 @@ interface AuthInteractor {
     /**
      * Inits AWS
      */
-    fun init()
+    suspend fun init()
+
+    fun getToken(): String
+    suspend fun signOut()
+    suspend fun signUp(
+        email: String = "ezpz0nic@gmail.com",
+        username: String = "user123",
+        password: String = "password123",
+        isSaveCredentials: Boolean = false
+    )
+    suspend fun signIn(
+        username: String = "user123",
+        password: String = "password123",
+        isSaveCredentials: Boolean = false
+    )
+
+    /**
+     * Used after sign up.
+     */
+    suspend fun confirmUser(
+        username: String = "user123",
+        code: String = "162774"
+    )
 
     /**
      * Checks if there is an authenticated user.
