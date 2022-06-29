@@ -9,12 +9,6 @@ import io.reactivex.rxjava3.core.Single
 interface AuthInteractor {
 
     /**
-     * The authenticated user.
-     * @author Orel Zilberman, 19.11.2021
-     */
-    val user: User?
-
-    /**
      * Used for google authentication.
      * @author Orel Zilberman, 28.4.2021
      */
@@ -25,6 +19,12 @@ interface AuthInteractor {
      */
     suspend fun init()
 
+
+    /**
+     * The authenticated user.
+     * @author Orel Zilberman, 19.11.2021
+     */
+    suspend fun getUser(): User?
     fun getToken(): String
     suspend fun signOut()
     suspend fun signUp(

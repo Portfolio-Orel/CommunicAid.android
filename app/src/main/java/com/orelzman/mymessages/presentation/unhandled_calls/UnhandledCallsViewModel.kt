@@ -41,7 +41,7 @@ class UnhandledCallsViewModel @Inject constructor(
      */
     private fun setCalls() {
         viewModelScope.launch {
-            authInteractor.user?.uid?.let {
+            authInteractor.getUser()?.uid?.let {
                 val unhandledCalls = unhandledCallsInteractor.getAll(it)
                     .sortedByDescending { unhandledCall -> unhandledCall.phoneCall.startDate }
                     .distinctBy { unhandledCall -> unhandledCall.phoneCall.startDate }
@@ -60,7 +60,7 @@ class UnhandledCallsViewModel @Inject constructor(
      */
     fun onDelete(phoneCall: PhoneCall) {
         viewModelScope.launch {
-            authInteractor.user?.uid?.let {
+            authInteractor.getUser()?.uid?.let {
                 unhandledCallsInteractor.insert(
                     uid = it, deletedUnhandledCalls = DeletedUnhandledCalls(phoneCall = phoneCall)
                 )

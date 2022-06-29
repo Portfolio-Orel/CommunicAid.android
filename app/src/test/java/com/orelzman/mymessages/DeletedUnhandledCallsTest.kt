@@ -195,10 +195,6 @@ class DeletedUnhandledCallsTest {
         Thread.sleep(10)
     }
 
-    suspend  fun delay(time: Long) {
-        // I'd like it to call this
-    }
-
     private fun randomizeNumber(): String {
         var number = ""
         for (i in 0..9) {

@@ -147,7 +147,7 @@ class CallsService : Service() {
                 .getAll()
                 .map { it.phoneCall.update(this@CallsService) }
             Log.vCustom("upload calls: $callsLog")
-            authInteractor.user?.uid?.let {
+            authInteractor.getUser()?.uid?.let {
                 phoneCallStatisticsInteractor.addPhoneCalls(
                     it,
                     callsLog

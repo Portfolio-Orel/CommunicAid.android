@@ -33,6 +33,15 @@ class AuthInteractorImpl @Inject constructor(
         Amplify.Auth.fetchAuthSession()
     }
 
+    override suspend fun getUser(): User? {
+        if (!Amplify.Auth.fetchAuthSession().isSignedIn) {
+            return null
+        }
+        val userId = Amplify.Auth.getCurrentUser()?.userId ?: ""
+        val token = getToken()
+        return User(uid = userId, token = token)
+    }
+
     override fun getToken(): String =
         AWSMobileClient.getInstance().tokens.accessToken.tokenString
 
@@ -48,6 +57,7 @@ class AuthInteractorImpl @Inject constructor(
             .build()
         Amplify.Auth.signUp(username, password, options)
     }
+
     @Throws
     override suspend fun confirmUser(username: String, code: String) {
         try {
@@ -71,21 +81,23 @@ class AuthInteractorImpl @Inject constructor(
         }
     }
 
-    override suspend fun signIn(username: String, password: String, isSaveCredentials: Boolean) {
+    override suspend fun signIn(
+        username: String,
+        password: String,
+        isSaveCredentials: Boolean
+    ) {
         val result = Amplify.Auth.signIn(username, password)
         if (result.isSignInComplete) {
             Log.i("AuthQuickstart", "Sign in succeeded")
         } else {
             Log.e("AuthQuickstart", "Sign in not complete")
+            throw Exception("Login failed")
         }
     }
 
     override suspend fun signOut() {
         Amplify.Auth.signOut()
     }
-
-    override val user: User?
-        get() = authRepository.user?.uid?.let { User(uid = it) }
 
     override fun isAuth(): Single<Boolean> = Single.just(authRepository.isAuth())
 
