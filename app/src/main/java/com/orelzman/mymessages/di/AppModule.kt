@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.gson.Gson
+import com.orelzman.mymessages.R
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.type_converters.Converters
 import com.orelzman.mymessages.data.remote.BaseProjectUrl
@@ -26,15 +27,17 @@ import javax.inject.Singleton
 object AppModule {
     @Provides
     @Singleton
-    fun provideLocalDatabase(app: Application): LocalDatabase =
-        Room.databaseBuilder(
-            app,
-            LocalDatabase::class.java,
-            "mymessagesdb.db"
-        )
-            .addTypeConverter(Converters())
-            .fallbackToDestructiveMigration()
-            .build()
+    fun provideLocalDatabase(context: Application): LocalDatabase =
+        with(context) {
+            Room.databaseBuilder(
+                context,
+                LocalDatabase::class.java,
+                getString(R.string.local_db_name)
+            )
+                .addTypeConverter(Converters())
+                .fallbackToDestructiveMigration()
+                .build()
+        }
 
     @ExperimentalPermissionsApi
     @Provides
