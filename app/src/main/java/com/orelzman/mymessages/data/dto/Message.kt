@@ -10,10 +10,11 @@ data class Message(
     val body: String = "",
     val timesUsed: Long = 0,
     val isActive: Boolean = true,
+    val position: Int? = null,
     @PrimaryKey val id: String = ""
-): DTO {
+) {
 
-    override val data: Map<String, Any>
+    val data: Map<String, Any>
         get() = mapOf(
             "messageTitle" to title,
             "messageShortTitle" to shortTitle,

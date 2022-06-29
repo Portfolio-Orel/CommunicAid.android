@@ -17,6 +17,10 @@ class MessageInFolderInteractorImpl @Inject constructor(
         db.insert(messageInFolder)
     }
 
+    override suspend fun insert(messagesInFolders: List<MessageInFolder>) {
+        db.insert(messagesInFolders)
+    }
+
     override suspend fun getMessagesInFolders(): List<MessageInFolder> =
         db.getMessageInFolders()
 

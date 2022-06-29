@@ -82,7 +82,7 @@ class MainViewModel @Inject constructor(
 
     private fun getMessages() {
         CoroutineScope(Dispatchers.Main).launch {
-            val messages = authInteractor.user?.let { messageInteractor.getMessages(it.userId) }
+            val messages = authInteractor.user?.let { messageInteractor.getMessagesWithFolders(it.userId) }
             if (messages != null) {
                 state = state.copy(messages = messages)
             }
