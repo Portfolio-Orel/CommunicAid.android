@@ -25,6 +25,7 @@ import com.orelzman.mymessages.R
 import com.orelzman.mymessages.data.dto.getByIds
 import com.orelzman.mymessages.presentation.destinations.DetailsFolderScreenDestination
 import com.orelzman.mymessages.presentation.destinations.DetailsMessageScreenDestination
+import com.orelzman.mymessages.presentation.destinations.UnhandledCallsScreenDestination
 import com.orelzman.mymessages.presentation.main.components.FolderView
 import com.orelzman.mymessages.presentation.main.components.MessageView
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
@@ -141,6 +142,14 @@ fun MainScreen(
                 )
             }) {
                 Text(text = stringResource(R.string.add_message))
+            }
+
+            Button(onClick = {
+                navigator.navigate(
+                        UnhandledCallsScreenDestination()
+                )
+            }) {
+                Text(text = stringResource(R.string.unhandled_calls))
             }
         }
     }

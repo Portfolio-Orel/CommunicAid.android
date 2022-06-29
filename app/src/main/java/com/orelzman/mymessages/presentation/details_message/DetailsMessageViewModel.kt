@@ -24,7 +24,7 @@ class DetailsMessageViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            authInteractor.user?.uid?.let {
+            authInteractor.getUser()?.uid?.let {
                 val folders = folderInteractor.getFolders(it)
                 state = state.copy(folders = folders)
             }
@@ -79,7 +79,7 @@ class DetailsMessageViewModel @Inject constructor(
                 id = state.messageId ?: ""
             )
             viewModelScope.launch {
-                authInteractor.user?.uid?.let {
+                authInteractor.getUser()?.uid?.let {
                     if (state.messageId != null && state.messageId != "") {
                         messageInteractor.editMessage(
                             uid = it,

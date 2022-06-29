@@ -82,7 +82,7 @@ class MainViewModel @Inject constructor(
 
     private fun getMessages() {
         CoroutineScope(Dispatchers.Main).launch {
-            val messages = authInteractor.user?.let { messageInteractor.getMessages(it.uid) }
+            val messages = authInteractor.getUser()?.let { messageInteractor.getMessages(it.uid) }
             if (messages != null) {
                 state = state.copy(messages = messages)
             }
@@ -91,7 +91,7 @@ class MainViewModel @Inject constructor(
 
     private fun getFolders() {
         CoroutineScope(Dispatchers.Main).launch {
-            val folders = authInteractor.user?.let { folderInteractor.getFolders(it.uid) }
+            val folders = authInteractor.getUser()?.let { folderInteractor.getFolders(it.uid) }
             if (folders != null && folders.isNotEmpty()) {
                 state = state.copy(folders = folders, selectedFolder = folders[0])
             }
