@@ -15,7 +15,7 @@ class AuthInteractorImpl @Inject constructor(
 ) : AuthInteractor {
 
     override val user: User?
-        get() = authRepository.user?.uid?.let { User(uid = it) }
+        get() = authRepository.user?.uid?.let { User(userId = it) }
 
     override fun isAuth(): Single<Boolean> = Single.just(authRepository.isAuth())
 
@@ -27,7 +27,7 @@ class AuthInteractorImpl @Inject constructor(
         try {
             val authResult = authRepository.auth(email, password).await()
             if (isSaveCredentials) authRepository.saveCredentials(email, password)
-            return authResult.user?.uid?.let { User(uid = it) }
+            return authResult.user?.uid?.let { User(userId = it) }
         } catch (exception: Exception) {
             throw(UsernamePasswordAuthException(exception))
         }

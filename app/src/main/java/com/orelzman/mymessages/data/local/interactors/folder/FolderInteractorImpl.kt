@@ -15,17 +15,17 @@ class FolderInteractorImpl @Inject constructor(
 
     private val db: FolderDao = database.folderDao
 
-    override suspend fun getFolders(uid: String): List<Folder> {
+    override suspend fun getFolders(userId: String): List<Folder> {
         var folders = db.getFolders()
         if (folders.isEmpty()) {
-            folders = repository.getFolders(uid).folders
+            folders = repository.getFolders(userId).folders
             db.insert(folders)
         }
         return folders
     }
 
-    override suspend fun addFolder(uid: String, folder: Folder): String {
-        val folderId = repository.saveFolder(uid, folder.data)
+    override suspend fun addFolder(userId: String, folder: Folder): String {
+        val folderId = repository.saveFolder(userId, folder.data)
         db.insert(Folder(folder, folderId))
         return folderId
     }
@@ -40,7 +40,7 @@ class FolderInteractorImpl @Inject constructor(
     override suspend fun getFolderWithMessageId(messageId: String): Folder =
         db.getFolders().first { it.messageIds.contains(messageId) }
 
-    override suspend fun removeMessageFromFolder(uid: String, message: Message, folderId: String, isLocal: Boolean) {
+    override suspend fun removeMessageFromFolder(userId: String, message: Message, folderId: String, isLocal: Boolean) {
         val folder = db.get(folderId = folderId)
         (folder.messageIds as ArrayList<String>).remove(message.id)
         db.update(folder)

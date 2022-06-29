@@ -7,5 +7,6 @@ data class CreateMessageBody(
     @SerializedName("short_title") val shortTitle: String,
     @SerializedName("body") val body: String,
     @SerializedName("user_id") val userId: String,
+    @SerializedName("folder_id") val folderId: String,
     @SerializedName("position") val position: Int? = null,
 )

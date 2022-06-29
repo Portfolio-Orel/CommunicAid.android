@@ -8,6 +8,7 @@ import com.orelzman.mymessages.data.dto.Message
 import com.orelzman.mymessages.data.dto.PhoneCallStatistics
 import com.orelzman.mymessages.data.local.dao.FolderDao
 import com.orelzman.mymessages.data.local.dao.MessageDao
+import com.orelzman.mymessages.data.local.dao.MessageInFolderDao
 import com.orelzman.mymessages.data.local.dao.PhoneCallStatisticsDao
 import com.orelzman.mymessages.data.local.type_converters.Converters
 
@@ -17,11 +18,12 @@ import com.orelzman.mymessages.data.local.type_converters.Converters
         Folder::class,
         PhoneCallStatistics::class,
     ],
-    version = 2
+    version = 3
 )
 @TypeConverters(Converters::class)
 abstract class LocalDatabase : RoomDatabase() {
     abstract val messageDao: MessageDao
     abstract val folderDao: FolderDao
     abstract val phoneCallDao: PhoneCallStatisticsDao
+    abstract val messageInFolderDao: MessageInFolderDao
 }

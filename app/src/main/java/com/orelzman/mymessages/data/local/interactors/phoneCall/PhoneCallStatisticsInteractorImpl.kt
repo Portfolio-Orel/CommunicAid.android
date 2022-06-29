@@ -12,9 +12,9 @@ class PhoneCallStatisticsInteractorImpl @Inject constructor(
 ) : PhoneCallStatisticsInteractor {
     private val db = database.phoneCallDao
 
-    override suspend fun addPhoneCalls(uid: String, phoneCalls: List<PhoneCall>) {
+    override suspend fun addPhoneCalls(userId: String, phoneCalls: List<PhoneCall>) {
         try {
-            repository.addPhoneCalls(uid, phoneCalls.map { it.data })
+            repository.addPhoneCalls(userId, phoneCalls.map { it.data })
             db.delete(phoneCalls.map { PhoneCallStatistics(it) })
         } catch (exception: Exception) {
         }

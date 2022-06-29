@@ -27,9 +27,9 @@ class FirebaseRepository @Inject constructor() : Repository {
     override val folderExistsException: FolderExistsException
         get() = FolderExistsException()
 
-    override suspend fun getMessages(uid: String): List<Map<String, Any>?> {
+    override suspend fun getMessages(userId: String): List<Map<String, Any>?> {
         val result = Collections.Messages
-            .get(uid)
+            .get(userId)
             .whereEqualTo("isActive", true)
             .get()
             .await()
@@ -37,9 +37,9 @@ class FirebaseRepository @Inject constructor() : Repository {
         return attachID(result)
     }
 
-    override suspend fun getFolders(uid: String): List<Map<String, Any>?> {
+    override suspend fun getFolders(userId: String): List<Map<String, Any>?> {
         val result = Collections.Folders
-            .get(uid)
+            .get(userId)
             .whereEqualTo("isActive", true)
             .get()
             .await()
@@ -48,14 +48,14 @@ class FirebaseRepository @Inject constructor() : Repository {
     }
 
     override suspend fun saveMessage(
-        uid: String,
+        userId: String,
         data: Map<String, Any>,
         folderId: String
     ): String {
         val messageDocRef = Collections.Messages
-            .get(uid)
+            .get(userId)
             .document()
-        val folderDocRef = Collections.Folders.get(uid).document(folderId)
+        val folderDocRef = Collections.Folders.get(userId).document(folderId)
         val folderData =
             mapOf(FIELD_ARRAY_MESSAGES_IN_FOLDERS to FieldValue.arrayUnion(messageDocRef.id))
         db.runBatch {
@@ -65,9 +65,9 @@ class FirebaseRepository @Inject constructor() : Repository {
         return messageDocRef.id
     }
 
-    override suspend fun saveFolder(uid: String, data: Map<String, Any>): String {
+    override suspend fun saveFolder(userId: String, data: Map<String, Any>): String {
         val existFolder = Collections.Folders
-            .get(uid)
+            .get(userId)
             .whereEqualTo("folderTitle", data["folderTitle"])
             .get()
             .await()
@@ -75,30 +75,30 @@ class FirebaseRepository @Inject constructor() : Repository {
             throw folderExistsException
         }
         val docRef = Collections.Folders
-            .get(uid)
+            .get(userId)
             .document()
         docRef.set(data).await()
         return docRef.id
     }
 
-    override suspend fun deleteMessage(uid: String, id: String) {
+    override suspend fun deleteMessage(userId: String, id: String) {
         Collections.Messages
-            .get(uid)
+            .get(userId)
             .document(id)
             .deleteDocument()
     }
 
-    override suspend fun deleteFolder(uid: String, id: String) {
+    override suspend fun deleteFolder(userId: String, id: String) {
         Collections.Folders
-            .get(uid)
+            .get(userId)
             .document(id)
             .deleteDocument()
     }
 
 
-    override suspend fun addPhoneCalls(uid: String, dataList: List<Map<String, Any>>) {
+    override suspend fun addPhoneCalls(userId: String, dataList: List<Map<String, Any>>) {
         val colRef = Collections.PhoneCalls
-            .get(uid)
+            .get(userId)
         val batch = db.batch()
         dataList.forEach {
             val docRef = colRef.document()
@@ -106,20 +106,20 @@ class FirebaseRepository @Inject constructor() : Repository {
         }
         batch.commit().await()
         dataList.forEach {
-            updateStatistics(uid, it)
+            updateStatistics(userId, it)
         }
     }
 
     override suspend fun editMessage(
-        uid: String,
+        userId: String,
         message: Message,
         oldFolderId: String,
         newFolderId: String
     ) {
         try {
             val batch = db.batch()
-            Collections.Messages.get(uid, message.id).update(message.data)
-            val folderColRef = Collections.Folders.get(uid)
+            Collections.Messages.get(userId, message.id).update(message.data)
+            val folderColRef = Collections.Folders.get(userId)
             Log.vCustom("MyMessages")
             val folderWithMessageDocument =
                 folderColRef.document(oldFolderId).get().await()
@@ -141,7 +141,7 @@ class FirebaseRepository @Inject constructor() : Repository {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private suspend fun updateStatistics(uid: String, data: Map<String, Any>) {
+    private suspend fun updateStatistics(userId: String, data: Map<String, Any>) {
         val cal = Calendar.getInstance()
         val startDate =
             Date(data["startDate"] as String)
@@ -150,11 +150,11 @@ class FirebaseRepository @Inject constructor() : Repository {
         val formattedDate =
             "${cal.get(Calendar.DAY_OF_MONTH)}/${cal.get(Calendar.MONTH) + 1}/${cal.get(Calendar.YEAR)}"
         val messagesSent = (data["messagesSent"] as? List<String> ?: emptyList())
-        updateCallsPerDayStatistics(uid, startDate, formattedDate)
+        updateCallsPerDayStatistics(userId, startDate, formattedDate)
         if (messagesSent.isNotEmpty()) {
-            updatePotentialClientsStatistics(uid, number, startDate, formattedDate)
+            updatePotentialClientsStatistics(userId, number, startDate, formattedDate)
             updateMessagesSentPerHour(
-                uid,
+                userId,
                 messagesSent,
                 startDate,
                 formattedDate,
@@ -163,11 +163,11 @@ class FirebaseRepository @Inject constructor() : Repository {
     }
 
     private suspend fun updateCallsPerDayStatistics(
-        uid: String,
+        userId: String,
         startDate: Date,
         formattedDate: String,
     ) {
-        val col = Collections.PhoneCallsPerDay.get(uid)
+        val col = Collections.PhoneCallsPerDay.get(userId)
         val res = col.whereEqualTo("formattedDate", formattedDate).get().await()
         if (res.isEmpty) { // First statistics update for today.
             val statisticsData = hashMapOf(
@@ -183,12 +183,12 @@ class FirebaseRepository @Inject constructor() : Repository {
     }
 
     private suspend fun updatePotentialClientsStatistics(
-        uid: String,
+        userId: String,
         number: String,
         startDate: Date,
         formattedDate: String,
     ) {
-        val col = Collections.PotentialClients.get(uid)
+        val col = Collections.PotentialClients.get(userId)
         val statisticsData: MutableMap<String, Any?> = mutableMapOf(
             "formattedDate" to formattedDate,
             "date" to startDate, // The actual date it is added on is the endDate
@@ -213,12 +213,12 @@ class FirebaseRepository @Inject constructor() : Repository {
 
     @Suppress("UNCHECKED_CAST")
     private suspend fun updateMessagesSentPerHour(
-        uid: String,
+        userId: String,
         messagesSent: List<String>,
         date: Date,
         formattedDate: String
     ) {
-        val col = Collections.MessagesSentPerDay.get(uid)
+        val col = Collections.MessagesSentPerDay.get(userId)
         val data = hashMapOf(
             "date" to date,
             "formattedDate" to formattedDate,
@@ -236,12 +236,12 @@ class FirebaseRepository @Inject constructor() : Repository {
         }
     }
 
-    private fun Collections.get(uid: String): CollectionReference =
+    private fun Collections.get(userId: String): CollectionReference =
         if (this == Collections.Users) db.collection(value)
-        else db.collection(Collections.Users.value).document(uid).collection(value)
+        else db.collection(Collections.Users.value).document(userId).collection(value)
 
-    private fun Collections.get(uid: String, id: String): DocumentReference =
-        db.collection(Collections.Users.value).document(uid).collection(value).document(id)
+    private fun Collections.get(userId: String, id: String): DocumentReference =
+        db.collection(Collections.Users.value).document(userId).collection(value).document(id)
 
     companion object {
         private const val COLLECTION_MESSAGES_SENT = "messagesSent"

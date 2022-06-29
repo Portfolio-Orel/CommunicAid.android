@@ -50,7 +50,7 @@ class MainViewModel @Inject constructor(
             )
             context.sendWhatsapp(
                 phoneCall.number,
-                message.messageBody
+                message.body
             )
         } else {
             goToEditMessage(message = message)
@@ -62,7 +62,7 @@ class MainViewModel @Inject constructor(
         if (phoneCall != null) {
             goToEditMessage(message)
         } else {
-            context.copyToClipboard(label = message.messageTitle, value = message.messageBody)
+            context.copyToClipboard(label = message.title, value = message.body)
         }
     }
 
@@ -82,7 +82,7 @@ class MainViewModel @Inject constructor(
 
     private fun getMessages() {
         CoroutineScope(Dispatchers.Main).launch {
-            val messages = authInteractor.user?.let { messageInteractor.getMessages(it.uid) }
+            val messages = authInteractor.user?.let { messageInteractor.getMessages(it.userId) }
             if (messages != null) {
                 state = state.copy(messages = messages)
             }
@@ -91,7 +91,7 @@ class MainViewModel @Inject constructor(
 
     private fun getFolders() {
         CoroutineScope(Dispatchers.Main).launch {
-            val folders = authInteractor.user?.let { folderInteractor.getFolders(it.uid) }
+            val folders = authInteractor.user?.let { folderInteractor.getFolders(it.userId) }
             if (folders != null && folders.isNotEmpty()) {
                 state = state.copy(folders = folders, selectedFolder = folders[0])
             }

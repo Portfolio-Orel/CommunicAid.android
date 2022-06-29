@@ -23,7 +23,7 @@ class LoginViewModel @Inject constructor(
 
     init {
         if (interactor.user != null) {
-            state = state.copy(user = User(uid = interactor.user!!.uid))
+            state = state.copy(user = User(userId = interactor.user!!.userId))
         }
     }
 
@@ -45,7 +45,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             state = try {
                 val user = interactor.auth(email = email, password = password)
-                state.copy(user = User(uid = user?.uid ?: ""), isLoading = false)
+                state.copy(user = User(userId = user?.userId ?: ""), isLoading = false)
             } catch (exception: Exception) {
                 state.copy(error = exception.message, isLoading = false)
             }

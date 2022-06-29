@@ -8,33 +8,33 @@ import com.orelzman.mymessages.data.dto.Message
  */
 interface Repository {
     /**
-     * Returns all [uid]'s messages.
+     * Returns all [userId]'s messages.
      */
-    suspend fun getMessages(uid: String): List<Map<String, Any>?>
+    suspend fun getMessages(userId: String): List<Map<String, Any>?>
 
     /**
-     * Returns all [uid]'s folders.
+     * Returns all [userId]'s folders.
      */
-    suspend fun getFolders(uid: String): List<Map<String, Any>?>
+    suspend fun getFolders(userId: String): List<Map<String, Any>?>
 
     /**
      * Adds a message to the db and to the folder's messages and returns its id.
      */
-    suspend fun saveMessage(uid: String, data: Map<String, Any>, folderId: String): String
+    suspend fun saveMessage(userId: String, data: Map<String, Any>, folderId: String): String
 
     /**
      * Adds a folder to the db and returns its id.
      */
-    suspend fun saveFolder(uid: String, data: Map<String, Any>): String
+    suspend fun saveFolder(userId: String, data: Map<String, Any>): String
 
-    suspend fun deleteMessage(uid: String, id: String)
+    suspend fun deleteMessage(userId: String, id: String)
 
-    suspend fun deleteFolder(uid: String, id: String)
+    suspend fun deleteFolder(userId: String, id: String)
 
-    suspend fun addPhoneCalls(uid: String, dataList: List<Map<String, Any>>)
+    suspend fun addPhoneCalls(userId: String, dataList: List<Map<String, Any>>)
 
     suspend fun editMessage(
-        uid: String,
+        userId: String,
         message: Message,
         oldFolderId: String,
         newFolderId: String

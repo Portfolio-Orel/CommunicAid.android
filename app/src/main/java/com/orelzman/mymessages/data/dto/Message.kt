@@ -5,47 +5,47 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Message(
-    val messageTitle: String = "",
-    val messageShortTitle: String = "",
-    val messageBody: String = "",
-    val messageTimesUsed: Long = 0,
+    val title: String = "",
+    val shortTitle: String = "",
+    val body: String = "",
+    val timesUsed: Long = 0,
     val isActive: Boolean = true,
     @PrimaryKey val id: String = ""
 ): DTO {
 
     override val data: Map<String, Any>
         get() = mapOf(
-            "messageTitle" to messageTitle,
-            "messageShortTitle" to messageShortTitle,
-            "messageBody" to messageBody,
-            "messageTimesUsed" to messageTimesUsed,
+            "messageTitle" to title,
+            "messageShortTitle" to shortTitle,
+            "messageBody" to body,
+            "messageTimesUsed" to timesUsed,
             "isActive" to isActive,
         )
 
     constructor(message: Message, id: String) : this(
-        messageTitle = message.messageTitle,
-        messageShortTitle = message.messageShortTitle,
-        messageBody = message.messageBody,
-        messageTimesUsed = message.messageTimesUsed,
+        title = message.title,
+        shortTitle = message.shortTitle,
+        body = message.body,
+        timesUsed = message.timesUsed,
         isActive = message.isActive,
         id = id
     )
 
     constructor(data: MutableMap<String, Any>?, id: String): this(
-        messageTitle = data?.get("messageTitle") as String,
-        messageShortTitle = data["messageShortTitle"] as String,
-        messageBody = data["messageBody"] as String,
-        messageTimesUsed = data["messageTimesUsed"] as Long,
+        title = data?.get("messageTitle") as String,
+        shortTitle = data["messageShortTitle"] as String,
+        body = data["messageBody"] as String,
+        timesUsed = data["messageTimesUsed"] as Long,
         isActive = data["isActive"] as Boolean,
         id = id
     )
 
     companion object {
         val default = Message(
-            messageTitle = "Title",
-            messageShortTitle = "Short title",
-            messageBody = "Body",
-            messageTimesUsed = 4,
+            title = "Title",
+            shortTitle = "Short title",
+            body = "Body",
+            timesUsed = 4,
             isActive = true,
             id = "id"
         )
@@ -59,10 +59,10 @@ val List<Map<String, Any>?>.messages: List<Message>
         for (item in this) {
             messages.add(
                 Message(
-                    messageTitle = item?.get("messageTitle") as? String ?: "",
-                    messageShortTitle = item?.get("messageShortTitle") as? String ?: "",
-                    messageBody = item?.get("messageBody") as? String ?: "",
-                    messageTimesUsed = item?.get("messageTimesUsed") as? Long ?: 0,
+                    title = item?.get("messageTitle") as? String ?: "",
+                    shortTitle = item?.get("messageShortTitle") as? String ?: "",
+                    body = item?.get("messageBody") as? String ?: "",
+                    timesUsed = item?.get("messageTimesUsed") as? Long ?: 0,
                     isActive = item?.get("isActive") as Boolean,
                     id = item["id"] as? String ?: "",
                 )
