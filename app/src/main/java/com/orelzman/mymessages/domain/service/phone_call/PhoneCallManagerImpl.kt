@@ -6,7 +6,6 @@ import android.os.Build
 import android.telephony.TelephonyManager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.data.dto.PhoneCall
-import com.orelzman.mymessages.data.dto.PhoneCallStatistics
 import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractor
 import com.orelzman.mymessages.domain.service.CallsService
 import com.orelzman.mymessages.domain.service.CallsService.Companion.INTENT_STATE_VALUE

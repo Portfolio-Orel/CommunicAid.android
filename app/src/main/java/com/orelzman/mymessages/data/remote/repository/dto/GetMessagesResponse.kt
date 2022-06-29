@@ -5,6 +5,7 @@ import com.orelzman.mymessages.data.dto.Message
 import com.orelzman.mymessages.data.dto.MessageInFolder
 
 data class GetMessagesResponse(
+    @SerializedName("message_in_folder_id") val messageInFolderId: String,
     @SerializedName("folder_id") val folderId: String,
     @SerializedName("message_id") val messageId: String,
     @SerializedName("title") val title: String,
@@ -27,7 +28,15 @@ data class GetMessagesResponse(
 fun List<GetMessagesResponse>.toMessagesInFolders(): List<MessageInFolder> {
     val array = ArrayList<MessageInFolder>()
     forEach {
-        with(it) { array.add(MessageInFolder(messageId = messageId, folderId = folderId)) }
+        with(it) {
+            array.add(
+                MessageInFolder(
+                    id = messageInFolderId,
+                    messageId = messageId,
+                    folderId = folderId
+                )
+            )
+        }
     }
     return array
 }
