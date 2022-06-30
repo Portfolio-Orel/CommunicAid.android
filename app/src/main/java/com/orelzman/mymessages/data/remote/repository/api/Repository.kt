@@ -37,6 +37,10 @@ interface Repository {
 
     suspend fun createDeletedCall(createDeletedCallBody: CreateDeletedCallBody): String
 
+    suspend fun createUser(createUserBody: CreateUserBody)
+
+    suspend fun getUser(userId: String): GetUserResponse?
+
 //    suspend fun editMessage(
 //        userId: String,
 //        message: Message,

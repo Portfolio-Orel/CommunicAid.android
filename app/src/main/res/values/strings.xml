@@ -16,4 +16,6 @@
     <string name="register">הירשם</string>
     <string name="password">סיסמא</string>
     <string name="email">אימייל</string>
+    <string name="insert_email_code">הכנס את הקוד שקיבלת במייל</string>
+    <string name="confirmation_code">קוד אישור</string>
 </resources>

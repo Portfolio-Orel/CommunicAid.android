@@ -79,23 +79,27 @@ class DetailsMessageViewModel @Inject constructor(
                 id = state.messageId ?: ""
             )
             viewModelScope.launch {
-                authInteractor.getUser()?.userId?.let {
-                    if (state.messageId != null && state.messageId != "") {
-                        messageInteractor.editMessage(
-                            userId = it,
-                            message = message,
-                            newFolderId = state.currentFolderId,
-                            oldFolderId = state.oldFolderId
-                        )
-                    } else {
-                        messageInteractor.createMessage(
-                            userId = it,
-                            message = message,
-                            folderId = state.currentFolderId
-                        )
+                try {
+                    authInteractor.getUser()?.userId?.let {
+                        if (state.messageId != null && state.messageId != "") {
+                            messageInteractor.editMessage(
+                                userId = it,
+                                message = message,
+                                newFolderId = state.currentFolderId,
+                                oldFolderId = state.oldFolderId
+                            )
+                        } else {
+                            messageInteractor.createMessage(
+                                userId = it,
+                                message = message,
+                                folderId = state.currentFolderId
+                            )
+                        }
                     }
+                    state = state.copy(isLoading = false, isMessageSaved = true)
+                } catch (exception: Exception) {
+                    println()
                 }
-                state = state.copy(isLoading = false, isMessageSaved = true)
             }
         } else {
             val emptyFields = ArrayList<Fields>()

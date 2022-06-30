@@ -13,7 +13,7 @@ interface API {
     suspend fun createUser(@Body userBody: CreateUserBody)
 
     @GET("/users/{user_id}")
-    suspend fun getUser(@Path("user_id") userId: String): GetUserResponse
+    suspend fun getUser(@Path("user_id") userId: String): GetUserResponse?
 
     // Messages
     @POST("/messages")

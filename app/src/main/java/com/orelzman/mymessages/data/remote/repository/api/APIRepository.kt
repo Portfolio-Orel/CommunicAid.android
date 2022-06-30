@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 class APIRepository @Inject constructor(
     private val api: API
-): Repository {
+) : Repository {
     override suspend fun getMessages(userId: String): List<GetMessagesResponse> {
         val result = api.getMessages(userId)
         return result
@@ -21,9 +21,14 @@ class APIRepository @Inject constructor(
         return result
     }
 
-    override suspend fun createFolder(createFolderBody: CreateFolderBody): String {
-        val result = api.createFolder(createFolderBody)
-        return result
+    override suspend fun createFolder(createFolderBody: CreateFolderBody): String? {
+        return try {
+            val result = api.createFolder(createFolderBody)
+            result
+        } catch (ex: Exception) {
+            println()
+            null
+        }
     }
 
     override suspend fun createPhoneCall(createPhoneCallBody: CreatePhoneCallBody): String {
@@ -40,4 +45,12 @@ class APIRepository @Inject constructor(
         return result
     }
 
+    override suspend fun createUser(createUserBody: CreateUserBody) =
+        api.createUser(createUserBody)
+
+    override suspend fun getUser(userId: String): GetUserResponse? {
+        val user = api.getUser(userId)
+        println(user)
+        return user
+    }
 }

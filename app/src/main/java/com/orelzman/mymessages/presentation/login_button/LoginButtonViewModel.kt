@@ -1,5 +1,6 @@
 package com.orelzman.mymessages.presentation.login_button
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -27,6 +28,7 @@ class LoginButtonViewModel @Inject constructor(
                 state = state.copy(isLoading = false, isAuthorized = true, user = user)
                 state.copy(isSignInAttempt = false)
             } catch(exception: Exception) {
+                Log.e("AWSAuth", exception.message ?: "")
                 state = state.copy(isLoading = false, isAuthorized = false)
                 state.copy(isSignInAttempt = false)
             }
