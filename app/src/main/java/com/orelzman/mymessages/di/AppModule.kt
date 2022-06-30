@@ -11,7 +11,7 @@ import com.orelzman.mymessages.data.remote.BaseProjectUrl
 import com.orelzman.mymessages.data.remote.EnvironmentRepository
 import com.orelzman.mymessages.data.remote.Environments
 import com.orelzman.mymessages.data.remote.repository.api.API
-import com.orelzman.mymessages.domain.manager.PhoneCall.PhoneCallManagerImpl
+import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerImpl
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManager
 import dagger.Module
 import dagger.Provides

@@ -3,6 +3,6 @@ package com.orelzman.mymessages.domain.service.phone_call
 import com.orelzman.mymessages.data.dto.PhoneCall
 import kotlinx.coroutines.flow.StateFlow
 
-interface PhoneCallInteractor {
+interface PhoneCallManagerInteractor {
     val numberOnTheLine: StateFlow<PhoneCall?>
 }

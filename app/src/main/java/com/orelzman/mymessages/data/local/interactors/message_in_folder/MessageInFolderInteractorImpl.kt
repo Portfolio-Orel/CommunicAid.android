@@ -3,7 +3,7 @@ package com.orelzman.mymessages.data.local.interactors.message_in_folder
 import com.orelzman.mymessages.data.dto.MessageInFolder
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.dao.MessageInFolderDao
-import com.orelzman.mymessages.data.remote.repository.Repository
+import com.orelzman.mymessages.data.remote.repository.api.Repository
 import javax.inject.Inject
 
 class MessageInFolderInteractorImpl @Inject constructor(

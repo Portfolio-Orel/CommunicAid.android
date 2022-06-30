@@ -4,13 +4,13 @@ import com.orelzman.mymessages.data.dto.Message
 import com.orelzman.mymessages.data.dto.MessageInFolder
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.interactors.message_in_folder.MessageInFolderInteractor
-import com.orelzman.mymessages.data.remote.repository.APIRepository
+import com.orelzman.mymessages.data.remote.repository.api.Repository
 import com.orelzman.mymessages.data.remote.repository.dto.CreateMessageBody
 import com.orelzman.mymessages.data.remote.repository.dto.toMessagesInFolders
 import javax.inject.Inject
 
 class MessageInteractorImpl @Inject constructor(
-    private val repository: APIRepository,
+    private val repository: Repository,
     private val messageInFolderInteractor: MessageInFolderInteractor,
     database: LocalDatabase,
 ) : MessageInteractor {

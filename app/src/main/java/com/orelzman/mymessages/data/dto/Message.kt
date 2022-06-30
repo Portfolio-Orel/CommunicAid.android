@@ -8,7 +8,7 @@ data class Message(
     val title: String = "",
     val shortTitle: String = "",
     val body: String = "",
-    val timesUsed: Long = 0,
+    val timesUsed: Int = 0,
     val isActive: Boolean = true,
     val position: Int? = null,
     @PrimaryKey val id: String = ""

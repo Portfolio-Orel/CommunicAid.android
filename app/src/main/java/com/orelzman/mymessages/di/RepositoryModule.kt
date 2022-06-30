@@ -6,12 +6,12 @@ import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractor
 import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractorImpl
 import com.orelzman.mymessages.data.local.interactors.message.MessageInteractor
 import com.orelzman.mymessages.data.local.interactors.message.MessageInteractorImpl
-import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractor
-import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractorImpl
-import com.orelzman.mymessages.data.remote.repository.Repository
+import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsInteractor
+import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsInteractorImpl
+import com.orelzman.mymessages.data.remote.repository.api.Repository
 import com.orelzman.mymessages.data.remote.repository.firebase.FirebaseRepository
-import com.orelzman.mymessages.domain.service.phone_call.PhoneCallInteractor
-import com.orelzman.mymessages.domain.service.phone_call.PhoneCallInteractorImpl
+import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
+import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractorImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -48,9 +48,9 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun providePhoneCallStatisticsInteractor(interactor: PhoneCallStatisticsInteractorImpl): PhoneCallStatisticsInteractor
+    abstract fun providePhoneCallStatisticsInteractor(interactor: PhoneCallsInteractorImpl): PhoneCallsInteractor
 
     @Binds
     @Singleton
-    abstract fun providePhoneCallInteractor(phoneCallInteractorImpl: PhoneCallInteractorImpl): PhoneCallInteractor
+    abstract fun providePhoneCallInteractor(phoneCallInteractorImpl: PhoneCallManagerInteractorImpl): PhoneCallManagerInteractor
 }

@@ -11,8 +11,8 @@ import com.orelzman.mymessages.data.dto.Folder
 import com.orelzman.mymessages.data.dto.Message
 import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractor
 import com.orelzman.mymessages.data.local.interactors.message.MessageInteractor
-import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractor
-import com.orelzman.mymessages.domain.service.phone_call.PhoneCallInteractor
+import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsInteractor
+import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
 import com.orelzman.mymessages.util.Whatsapp.sendWhatsapp
 import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.copyToClipboard
@@ -28,8 +28,8 @@ class MainViewModel @Inject constructor(
     private val folderInteractor: FolderInteractor,
     private val messageInteractor: MessageInteractor,
     private val authInteractor: AuthInteractor,
-    private val phoneCallInteractor: PhoneCallInteractor,
-    private val phoneCallStatisticsInteractor: PhoneCallStatisticsInteractor,
+    private val phoneCallManagerInteractor: PhoneCallManagerInteractor,
+    private val phoneCallStatisticsInteractor: PhoneCallsInteractor,
 ) : ViewModel() {
 
     var state by mutableStateOf(MainState(folders = emptyList(), messages = emptyList()))
@@ -42,7 +42,7 @@ class MainViewModel @Inject constructor(
 
     fun onMessageClick(message: Message, context: Context) {
         Log.vCustom(message.toString())
-        val phoneCall = phoneCallInteractor.numberOnTheLine.value
+        val phoneCall = phoneCallManagerInteractor.numberOnTheLine.value
         if (phoneCall != null) {
             phoneCallStatisticsInteractor.addMessageSent(
                 phoneCall,
@@ -58,7 +58,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun onMessageLongClick(message: Message, context: Context) {
-        val phoneCall = phoneCallInteractor.numberOnTheLine.value
+        val phoneCall = phoneCallManagerInteractor.numberOnTheLine.value
         if (phoneCall != null) {
             goToEditMessage(message)
         } else {
@@ -100,7 +100,7 @@ class MainViewModel @Inject constructor(
 
     private fun observeNumberOnTheLine() {
         viewModelScope.launch {
-            phoneCallInteractor.numberOnTheLine.collectLatest {
+            phoneCallManagerInteractor.numberOnTheLine.collectLatest {
                 state = state.copy(callOnTheLine = it?.number ?: "אין שיחה")
             }
         }

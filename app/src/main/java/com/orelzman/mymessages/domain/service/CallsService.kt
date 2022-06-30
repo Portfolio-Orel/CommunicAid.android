@@ -15,8 +15,8 @@ import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.MainActivity
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.data.dto.PhoneCall
-import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractor
-import com.orelzman.mymessages.domain.service.phone_call.PhoneCallInteractor
+import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsInteractor
+import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
 import com.orelzman.mymessages.util.extension.Log
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -42,10 +42,10 @@ class CallsService : Service() {
     private val notificationChannelId = "MyMessages"
 
     @Inject
-    lateinit var phoneCallInteractor: PhoneCallInteractor
+    lateinit var phoneCallManagerInteractor: PhoneCallManagerInteractor
 
     @Inject
-    lateinit var phoneCallStatisticsInteractor: PhoneCallStatisticsInteractor
+    lateinit var phoenCallsInteractor: PhoneCallsInteractor
 
     @Inject
     lateinit var authInteractor: AuthInteractor
@@ -57,6 +57,7 @@ class CallsService : Service() {
         currentState = intent?.extras?.get(INTENT_STATE_VALUE) as ServiceState
         Log.vCustom("Service onStartCommand: $currentState")
         if (currentState == ServiceState.UPLOAD_LOGS) {
+            setWakeLock()
             uploadCalls()
         }
         return START_NOT_STICKY
@@ -70,7 +71,7 @@ class CallsService : Service() {
         startForeground(notificationID, currentNotification)
     }
 
-    private fun startService() {
+    private fun setWakeLock() {
         // we need this lock so our service gets not affected by Doze Mode
         wakeLock =
             (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
@@ -143,12 +144,12 @@ class CallsService : Service() {
 
     private fun uploadCalls() {
         CoroutineScope(Dispatchers.IO).launch {
-            val callsLog = phoneCallStatisticsInteractor
+            val callsLog = phoenCallsInteractor
                 .getAll()
-                .map { it.phoneCall.update(this@CallsService) }
+                .map { it.update(this@CallsService) }
             Log.vCustom("upload calls: $callsLog")
             authInteractor.user?.userId?.let {
-                phoneCallStatisticsInteractor.addPhoneCalls(
+                phoenCallsInteractor.addPhoneCalls(
                     it,
                     callsLog
                 )

@@ -19,7 +19,7 @@ data class GetMessagesResponse(
             title = title,
             shortTitle = shortTitle,
             body = body,
-            timesUsed = timesUsed.toLong(),
+            timesUsed = timesUsed,
             isActive = true,
             id = messageId
         )

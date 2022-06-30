@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.data.remote.repository
+package com.orelzman.mymessages.data.remote.repository.api
 
 import com.orelzman.mymessages.data.remote.repository.dto.*
 
@@ -6,7 +6,7 @@ import com.orelzman.mymessages.data.remote.repository.dto.*
 /**
  * TODO: Think of a way to inject it with the uid
  */
-interface APIRepository {
+interface Repository {
     /**
      * Returns all [userId]'s messages.
      */
@@ -31,7 +31,9 @@ interface APIRepository {
 //
 //    suspend fun deleteFolder(userId: String, id: String)
 
-    suspend fun createPhoneCalls(createPhoneCallBody: CreatePhoneCallBody): String
+    suspend fun createPhoneCall(createPhoneCallBody: CreatePhoneCallBody): String
+
+    suspend fun createPhoneCalls(createPhoneCallBody: List<CreatePhoneCallBody>): List<String>
 
     suspend fun createDeletedCall(createDeletedCallBody: CreateDeletedCallBody): String
 

@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class Folder(
     val title: String = "",
     val isActive: Boolean = true,
-    val timesUsed: Long = 0,
+    val timesUsed: Int = 0,
     val position: Int = 0,
     @PrimaryKey val id: String = "",
 ) {

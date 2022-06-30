@@ -2,6 +2,7 @@ package com.orelzman.mymessages.data.dto
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.orelzman.mymessages.data.remote.repository.dto.CreatePhoneCallBody
 import com.orelzman.mymessages.domain.service.inSeconds
 import java.util.*
 
@@ -12,43 +13,58 @@ data class PhoneCall(
     var startDate: Date = Date(),
     var endDate: Date = startDate,
     var name: String = "",
-    val isIncoming: Boolean = false,
-    val isWaiting: Boolean = false,
-    var isRejected: Boolean = false,
-)  {
+    var type: CallType
+) {
     var messagesSent: List<String> = emptyList()
 
     val isAnswered: Boolean
         get() = (startDate.time.inSeconds != endDate.time.inSeconds)
 
-    fun copy(phoneCall: PhoneCall?): PhoneCall? =
-        if(phoneCall == null) null
-        else PhoneCall(
-            number = phoneCall.number,
-            startDate = phoneCall.startDate,
-            endDate = phoneCall.endDate,
-            name = phoneCall.name,
-            isIncoming = phoneCall.isIncoming,
-            isWaiting = phoneCall.isIncoming,
-            isRejected = phoneCall.isRejected,
-        )
-
     fun missed() {
-        isRejected = false
+        type = CallType.MISSED
     }
 
     fun rejected() {
-        isRejected = true
+        type = CallType.REJECTED
     }
 
     companion object {
         fun waiting(number: String) =
-            PhoneCall(number = number, isIncoming = true, isWaiting = true, isRejected = false)
+            PhoneCall(number = number, type = CallType.WAITING)
 
         fun incoming(number: String) =
-            PhoneCall(number = number, isIncoming = true, isWaiting = false, isRejected = false)
+            PhoneCall(number = number, type = CallType.INCOMING)
 
         fun outgoing(number: String) =
-            PhoneCall(number = number, isIncoming = false, isWaiting = false, isRejected = false)
+            PhoneCall(number = number, type = CallType.OUTGOING)
     }
+}
+
+enum class CallType(name: String) {
+    INCOMING("incoming"),
+    OUTGOING("outgoing"),
+    WAITING("waiting"),
+    REJECTED("rejected"),
+    MISSED("missed")
+}
+
+fun List<PhoneCall>.createPhoneCallBodyList(userId: String): List<CreatePhoneCallBody> {
+    val array = ArrayList<CreatePhoneCallBody>()
+    forEach {
+        with(it) {
+            array.add(
+                CreatePhoneCallBody(
+                    number = number,
+                    contactName = name,
+                    startDate = startDate.time,
+                    endDate = endDate.time,
+                    isAnswered = isAnswered,
+                    type = type.name,
+                    messagesSent = messagesSent,
+                    userId = userId
+                )
+            )
+        }
+    }
+    return array
 }

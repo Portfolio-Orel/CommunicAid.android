@@ -1,7 +1,11 @@
-package com.orelzman.mymessages
+//package com.orelzman.mymessages
 //
 //import android.content.Context
+//import com.google.accompanist.permissions.ExperimentalPermissionsApi
+//import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsInteractorImpl
+//import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerImpl
 //import com.orelzman.mymessages.domain.service.phone_call.CallState
+//import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractorImpl
 //import org.junit.Assert.*
 //import org.junit.Before
 //import org.junit.Test
@@ -11,12 +15,16 @@ package com.orelzman.mymessages
 //import org.mockito.junit.MockitoJUnitRunner
 //
 //
+//@OptIn(ExperimentalPermissionsApi::class)
 //@RunWith(MockitoJUnitRunner::class)
 //class PhoneCallManagerTest {
 //
 //    private val number = "testNumber"
 //    private val number2 = "testNumber2"
-////    private val phoneCallManager = PhoneCallManagerImpl()
+//    private val phoneCallManager = PhoneCallManagerImpl(phoneCallInteractor = PhoneCallsInteractorImpl(
+//        repository =,
+//        database =
+//    ))
 //
 //    @Mock
 //    private lateinit var mockContext: Context
@@ -35,7 +43,7 @@ package com.orelzman.mymessages
 //
 //    private fun `Check if backlog contains a number`(number: String) =
 //        try {
-////            assertTrue(phoneCallManager.callsBacklog.value.any { it.number == number })
+//            assertTrue(phoneCallManager.callsBacklog.value.any { it.number == number })
 //        } catch(excpetion: AssertionError) {
 //            throw Exception("Did you comment backlog.value = emptyList() in resetValues?")
 //        }
@@ -49,17 +57,17 @@ package com.orelzman.mymessages
 //    private fun testBackgroundCall(number: String) =
 //        assertEquals(phoneCallManager.callInTheBackground.value?.number, number)
 //
-////    private fun `Check if call in backlog is outgoing`(number: String) =
-////        assertFalse(phoneCallManager.callsBacklog.value.first { it.number == number }.isIncoming)
+//    private fun `Check if call in backlog is outgoing`(number: String) =
+//        assertFalse(phoneCallManager.callsBacklog.value.first { it.number == number }.isIncoming)
 //
-////    private fun `Check if call in backlog is incoming`(number: String) =
-////        assertTrue(phoneCallManager.callsBacklog.value.first { it.number == number }.isIncoming)
+//    private fun `Check if call in backlog is incoming`(number: String) =
+//        assertTrue(phoneCallManager.callsBacklog.value.first { it.number == number }.isIncoming)
 //
-////    private fun `Check if call in backlog is answered`(number: String) =
-////        assertTrue(phoneCallManager.callsBacklog.value.first { it.number == number }.isAnswered)
-////
-////    private fun `Check if call in backlog is missed`(number: String) =
-////        assertFalse(phoneCallManager.callsBacklog.value.first { it.number == number }.isAnswered)
+//    private fun `Check if call in backlog is answered`(number: String) =
+//        assertTrue(phoneCallManager.callsBacklog.value.first { it.number == number }.isAnswered)
+//
+//    private fun `Check if call in backlog is missed`(number: String) =
+//        assertFalse(phoneCallManager.callsBacklog.value.first { it.number == number }.isAnswered)
 //
 //    @Test
 //    fun `Test an outgoing call`() {
@@ -68,7 +76,7 @@ package com.orelzman.mymessages
 //        testCallOnTheLine(number)
 //        endCall()
 //        `Check if backlog contains a number`(number)
-////        `Check if call in backlog is outgoing`(number)
+//        `Check if call in backlog is outgoing`(number)
 //    }
 //
 //    @Test
@@ -78,7 +86,7 @@ package com.orelzman.mymessages
 //        testCallOnTheLine(number)
 //        endCall()
 //        `Check if backlog contains a number`(number)
-////        `Check if call in backlog is incoming`(number)
+//        `Check if call in backlog is incoming`(number)
 //    }
 //
 //    fun `Test waiting call`() {

@@ -1,13 +1,11 @@
-package com.orelzman.mymessages.data.remote.repository.serverless
+package com.orelzman.mymessages.data.remote.repository.api
 
-import com.orelzman.mymessages.data.remote.repository.APIRepository
-import com.orelzman.mymessages.data.remote.repository.api.API
 import com.orelzman.mymessages.data.remote.repository.dto.*
 import javax.inject.Inject
 
 class APIRepository @Inject constructor(
     private val api: API
-): APIRepository {
+): Repository {
     override suspend fun getMessages(userId: String): List<GetMessagesResponse> {
         val result = api.getMessages(userId)
         return result
