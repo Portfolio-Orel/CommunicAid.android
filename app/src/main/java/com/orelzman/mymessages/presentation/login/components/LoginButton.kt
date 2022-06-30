@@ -12,13 +12,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.orelzman.mymessages.R
 import com.orelzman.mymessages.ui.theme.Shapes
 
 @Composable
 fun LoginButton(
     text: String,
-    loadingText: String = "Signing in...",
+    loadingText: String = stringResource(R.string.signing_in),
 //    icon: ImageVector = ImageVector.vectorResource(id = R.drawable.common_google_signin_btn_icon_light),
     isLoading: Boolean = false,
     shape: Shape = Shapes.medium,

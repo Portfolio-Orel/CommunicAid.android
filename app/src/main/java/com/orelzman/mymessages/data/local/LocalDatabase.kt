@@ -3,14 +3,8 @@ package com.orelzman.mymessages.data.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.orelzman.mymessages.data.dto.Folder
-import com.orelzman.mymessages.data.dto.Message
-import com.orelzman.mymessages.data.dto.MessageInFolder
-import com.orelzman.mymessages.data.dto.PhoneCall
-import com.orelzman.mymessages.data.local.dao.FolderDao
-import com.orelzman.mymessages.data.local.dao.MessageDao
-import com.orelzman.mymessages.data.local.dao.MessageInFolderDao
-import com.orelzman.mymessages.data.local.dao.PhoneCallDao
+import com.orelzman.mymessages.data.dto.*
+import com.orelzman.mymessages.data.local.dao.*
 import com.orelzman.mymessages.data.local.type_converters.Converters
 
 @Database(
@@ -19,6 +13,7 @@ import com.orelzman.mymessages.data.local.type_converters.Converters
         Folder::class,
         MessageInFolder::class,
         PhoneCall::class,
+        DeletedUnhandledCalls::class
     ],
     version = 3
 )
@@ -28,4 +23,5 @@ abstract class LocalDatabase : RoomDatabase() {
     abstract val folderDao: FolderDao
     abstract val phoneCallDao: PhoneCallDao
     abstract val messageInFolderDao: MessageInFolderDao
+    abstract val unhandledCallDao: UnhandledCallsDao
 }

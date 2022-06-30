@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.orelzman.mymessages.data.remote.repository.dto.CreatePhoneCallBody
 import com.orelzman.mymessages.domain.service.inSeconds
+import com.orelzman.mymessages.util.CallType
 import java.util.*
 
 @Entity
@@ -13,39 +14,32 @@ data class PhoneCall(
     var startDate: Date = Date(),
     var endDate: Date = startDate,
     var name: String = "",
-    var type: CallType
+    var isWaiting: Boolean = false,
+    var messagesSent: List<String> = emptyList(),
+    var type: String = CallType.INCOMING.name
 ) {
-    var messagesSent: List<String> = emptyList()
 
     val isAnswered: Boolean
         get() = (startDate.time.inSeconds != endDate.time.inSeconds)
 
     fun missed() {
-        type = CallType.MISSED
+        type = CallType.MISSED.name
     }
 
     fun rejected() {
-        type = CallType.REJECTED
+        type = CallType.REJECTED.name
     }
 
     companion object {
         fun waiting(number: String) =
-            PhoneCall(number = number, type = CallType.WAITING)
+            PhoneCall(number = number, isWaiting = true, type = CallType.INCOMING.name)
 
         fun incoming(number: String) =
-            PhoneCall(number = number, type = CallType.INCOMING)
+            PhoneCall(number = number, isWaiting = false, type = CallType.INCOMING.name)
 
         fun outgoing(number: String) =
-            PhoneCall(number = number, type = CallType.OUTGOING)
+            PhoneCall(number = number, isWaiting = false, type = CallType.OUTGOING.name)
     }
-}
-
-enum class CallType(name: String) {
-    INCOMING("incoming"),
-    OUTGOING("outgoing"),
-    WAITING("waiting"),
-    REJECTED("rejected"),
-    MISSED("missed")
 }
 
 fun List<PhoneCall>.createPhoneCallBodyList(userId: String): List<CreatePhoneCallBody> {
@@ -59,7 +53,7 @@ fun List<PhoneCall>.createPhoneCallBodyList(userId: String): List<CreatePhoneCal
                     startDate = startDate.time,
                     endDate = endDate.time,
                     isAnswered = isAnswered,
-                    type = type.name,
+                    type = type,
                     messagesSent = messagesSent,
                     userId = userId
                 )

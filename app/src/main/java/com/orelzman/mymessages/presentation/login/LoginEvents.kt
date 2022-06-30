@@ -1,12 +1,11 @@
 package com.orelzman.mymessages.presentation.login
 
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.orelzman.auth.domain.model.User
 
 sealed class LoginEvents {
-    data class AuthWithEmailAndPassowrd(
-        val email: String = "1@2.com",
-        val password: String = "o123456"
-    ) : LoginEvents()
+    object UserRegisteredSuccessfully : LoginEvents()
 
-    data class AuthWithGmail constructor(val signInAccount: GoogleSignInAccount) : LoginEvents()
+    data class UserLoggedInSuccessfully(
+        val user: User?
+    ) : LoginEvents()
 }

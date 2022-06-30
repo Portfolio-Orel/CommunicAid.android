@@ -1,21 +1,24 @@
 package com.orelzman.mymessages.presentation.login
 
-import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.android.gms.common.api.ApiException
-import com.orelzman.auth.domain.activity_result.ActivityResultContractImpl
-import com.orelzman.auth.domain.exception.TaskException
-import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
-import com.orelzman.mymessages.presentation.login.components.LoginButton
+import com.orelzman.mymessages.R
+import com.orelzman.mymessages.presentation.login.components.Input
+import com.orelzman.mymessages.presentation.login.register_button.RegisterButton
+import com.orelzman.mymessages.presentation.login_button.LoginButton
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 import com.orelzman.mymessages.util.extension.DefaultDestinationNavigator
 import com.ramcosta.composedestinations.annotation.Destination
@@ -28,59 +31,67 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
-    val signInRequest = 1
 
+    Column {
+        Input(
+            modifier = Modifier.padding(20.dp),
+            title = stringResource(R.string.user_name),
+            placeholder = stringResource(R.string.user_name),
+            initialText = "",
+            isPassword = false,
+            leadingIcon = {
+                Icon(imageVector = Icons.Filled.Person, stringResource(R.string.user_name))
+            },
+            onTextChange = { viewModel.onUsernameChange(it) }
+        )
+        Input(
+            modifier = Modifier.padding(20.dp),
+            title = stringResource(R.string.password),
+            placeholder = stringResource(R.string.password),
+            initialText = "",
+            isPassword = true,
+            leadingIcon = {
+                Icon(imageVector = Icons.Filled.Lock, stringResource(R.string.password_icon))
+            },
+            onTextChange = { viewModel.onPasswordChange(it) })
+        if (state.isRegister) {
+            Input(
+                modifier = Modifier.padding(20.dp),
+                title = stringResource(R.string.email),
+                placeholder = stringResource(R.string.email),
+                initialText = "",
+                isPassword = false,
+                leadingIcon = {
+                    Icon(imageVector = Icons.Filled.Lock, stringResource(R.string.email))
+                },
+                onTextChange = { viewModel.onEmailChange(it) })
 
-    val authResultLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContractImpl()) { task ->
-            try {
-                val account = task?.getResult(TaskException::class.java)
-                if (account != null) {
-                    viewModel.onEvent(LoginEvents.AuthWithGmail(account))
+            RegisterButton(
+                username = state.username,
+                password = state.password,
+                email = state.email,
+                modifier = Modifier.padding(20.dp),
+                onRegisterComplete = { viewModel.onEvent(LoginEvents.UserRegisteredSuccessfully) })
+        } else {
+            LoginButton(
+                username = state.username,
+                password = state.password,
+                modifier = Modifier.padding(20.dp),
+                onLoginComplete = { viewModel.onEvent(LoginEvents.UserLoggedInSuccessfully(it)) })
+            Text(
+                stringResource(R.string.register),
+                modifier = Modifier.clickable {
+                    viewModel.onRegisterClick()
                 }
-            } catch (e: ApiException) {
-                println(e.message)
-            }
+                    .padding(20.dp),
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleSmall,
+                maxLines = 1,
+            )
         }
-
-    MyMessagesTheme {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            if (state.user != null) {
-                navigator.navigate(MainScreenDestination)
-            } else {
-                Text(text = "!LoggedIn")
-            }
-            LoginButton(text = "Login", isLoading = false) {
-                authResultLauncher.launch(signInRequest)
-            }
-        }
-//        Button(
-//            modifier =
-//            Modifier
-//                .width(128.dp)
-//                .height(48.dp)
-//
-//            ,
-//            onClick = {
-//                viewModel.onEvent(LoginEvents.AuthWithGmail(context))
-//            }) {
-//            if(!state.isLoading) {
-//                Text("Login")
-//            } else {
-//                CircularProgressIndicator(
-//                    modifier = Modifier.padding(bottom = 12.dp),
-//                    color = Color.White
-//                )
-//            }
-//        }
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {

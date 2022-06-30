@@ -22,11 +22,10 @@ import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
 import com.orelzman.mymessages.R
-import com.orelzman.mymessages.data.dto.getByIds
 import com.orelzman.mymessages.presentation.destinations.DetailsFolderScreenDestination
 import com.orelzman.mymessages.presentation.destinations.DetailsMessageScreenDestination
+import com.orelzman.mymessages.presentation.destinations.UnhandledCallsScreenDestination
 import com.orelzman.mymessages.presentation.main.components.FolderView
-import com.orelzman.mymessages.presentation.main.components.MessageView
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -102,30 +101,30 @@ fun MainScreen(
                 mainAxisAlignment = MainAxisAlignment.Start,
                 mainAxisSize = SizeMode.Wrap
             ) {
-                state.messages
-                    .getByIds(state.selectedFolder.messageIds)
-                    .forEach {
-                        MessageView(
-                            message = it,
-                            modifier = Modifier
-                                .width(boxWidth)
-                                .height(boxHeight)
-                                .padding(0.dp)
-                                .scrollable(
-                                    orientation = Orientation.Horizontal,
-                                    state = rememberScrollableState { delta ->
-                                        foldersOffset.value = foldersOffset.value + delta
-                                        delta
-                                    }
-                                ),
-                            onClick = { message, context ->
-                                viewModel.onMessageClick(message, context)
-                            },
-                            onLongClick = { message, context ->
-                                viewModel.onMessageLongClick(message, context)
-                            }
-                        )
-                    }
+//                state.messages
+//                    .getByIds(state.selectedFolder.messageIds)
+//                    .forEach {
+//                        MessageView(
+//                            message = it,
+//                            modifier = Modifier
+//                                .width(boxWidth)
+//                                .height(boxHeight)
+//                                .padding(0.dp)
+//                                .scrollable(
+//                                    orientation = Orientation.Horizontal,
+//                                    state = rememberScrollableState { delta ->
+//                                        foldersOffset.value = foldersOffset.value + delta
+//                                        delta
+//                                    }
+//                                ),
+//                            onClick = { message, context ->
+//                                viewModel.onMessageClick(message, context)
+//                            },
+//                            onLongClick = { message, context ->
+//                                viewModel.onMessageLongClick(message, context)
+//                            }
+//                        )
+//                    }
             }
             Button(onClick = {
                 navigator.navigate(
@@ -141,6 +140,14 @@ fun MainScreen(
                 )
             }) {
                 Text(text = stringResource(R.string.add_message))
+            }
+
+            Button(onClick = {
+                navigator.navigate(
+                        UnhandledCallsScreenDestination()
+                )
+            }) {
+                Text(text = stringResource(R.string.unhandled_calls))
             }
         }
     }

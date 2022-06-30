@@ -57,7 +57,6 @@ class CallsService : Service() {
         currentState = intent?.extras?.get(INTENT_STATE_VALUE) as ServiceState
         Log.vCustom("Service onStartCommand: $currentState")
         if (currentState == ServiceState.UPLOAD_LOGS) {
-            setWakeLock()
             uploadCalls()
         }
         return START_NOT_STICKY
@@ -71,7 +70,7 @@ class CallsService : Service() {
         startForeground(notificationID, currentNotification)
     }
 
-    private fun setWakeLock() {
+    private fun startService() {
         // we need this lock so our service gets not affected by Doze Mode
         wakeLock =
             (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
@@ -148,7 +147,7 @@ class CallsService : Service() {
                 .getAll()
                 .map { it.update(this@CallsService) }
             Log.vCustom("upload calls: $callsLog")
-            authInteractor.user?.userId?.let {
+            authInteractor.getUser()?.userId?.let {
                 phoenCallsInteractor.addPhoneCalls(
                     it,
                     callsLog
@@ -161,7 +160,6 @@ class CallsService : Service() {
         }
     }
 }
-
 /**
  * Updates values according to the call log
  * *** Test call in background, removed and called again to see if the backlog catches both from the calllog

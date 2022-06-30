@@ -26,9 +26,13 @@ class APIRepository @Inject constructor(
         return result
     }
 
-    override suspend fun createPhoneCalls(createPhoneCallBody: CreatePhoneCallBody): String {
+    override suspend fun createPhoneCall(createPhoneCallBody: CreatePhoneCallBody): String {
         val result = api.createPhoneCall(createPhoneCallBody)
         return result
+    }
+
+    override suspend fun createPhoneCalls(createPhoneCallBody: List<CreatePhoneCallBody>): List<String> {
+        TODO("Not yet implemented")
     }
 
     override suspend fun createDeletedCall(createDeletedCallBody: CreateDeletedCallBody): String {
