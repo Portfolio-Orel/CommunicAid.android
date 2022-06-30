@@ -24,7 +24,7 @@ class DetailsMessageViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            authInteractor.getUser()?.uid?.let {
+            authInteractor.getUser()?.userId?.let {
                 val folders = folderInteractor.getFolders(it)
                 state = state.copy(folders = folders)
             }
@@ -36,17 +36,17 @@ class DetailsMessageViewModel @Inject constructor(
             return
         }
         viewModelScope.launch {
-            val message = messageInteractor.getMessage(messageId = messageId)
-            val folder = folderInteractor.getFolderWithMessageId(messageId = messageId)
-            setEditValues(message = message, folder = folder)
+//            val message = messageInteractor.getMessage(messageId = messageId)
+//            val folder = folderInteractor.getFolderWithMessageId(messageId = messageId)
+//            setEditValues(message = message, folder = folder)
         }
     }
 
     private fun setEditValues(message: Message, folder: Folder) {
         state = state.copy(
-            title = message.messageTitle,
-            body = message.messageBody,
-            shortTitle = message.messageShortTitle,
+            title = message.title,
+            body = message.body,
+            shortTitle = message.shortTitle,
             messageId = message.id,
             oldFolderId = folder.id
         )
@@ -73,23 +73,23 @@ class DetailsMessageViewModel @Inject constructor(
         if (state.isReadyForSave) {
             state = state.copy(isLoading = true)
             val message = Message(
-                messageTitle = state.title,
-                messageShortTitle = state.shortTitle,
-                messageBody = state.body,
+                title = state.title,
+                shortTitle = state.shortTitle,
+                body = state.body,
                 id = state.messageId ?: ""
             )
             viewModelScope.launch {
-                authInteractor.getUser()?.uid?.let {
+                authInteractor.getUser()?.userId?.let {
                     if (state.messageId != null && state.messageId != "") {
                         messageInteractor.editMessage(
-                            uid = it,
+                            userId = it,
                             message = message,
                             newFolderId = state.currentFolderId,
                             oldFolderId = state.oldFolderId
                         )
                     } else {
-                        messageInteractor.saveMessage(
-                            uid = it,
+                        messageInteractor.createMessage(
+                            userId = it,
                             message = message,
                             folderId = state.currentFolderId
                         )

@@ -3,6 +3,7 @@ package com.orelzman.mymessages.data.dto
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.orelzman.mymessages.domain.model.CallLogEntity
+import com.orelzman.mymessages.util.CallType
 import java.util.*
 
 /**
@@ -13,13 +14,8 @@ data class DeletedUnhandledCalls(
     @PrimaryKey val id: String = "",
     val phoneCall: PhoneCall = PhoneCall(),
     val deleteDate: Date = Date()
-): DTO {
-    override val data: Map<String, Any>
-        get() = mapOf(
-            "id" to id,
-            "phoneCall" to phoneCall.data,
-            "date" to deleteDate.time
-        )
+) {
+
 
     fun asCallLogEntity(): CallLogEntity =
         CallLogEntity(
@@ -27,7 +23,7 @@ data class DeletedUnhandledCalls(
             duration = phoneCall.startDate.time - phoneCall.endDate.time,
             name = phoneCall.name,
             dateMilliseconds = phoneCall.startDate.time,
-            callLogType = phoneCall.callType
+            callLogType = CallType.fromString(phoneCall.type)
         )
 }
 

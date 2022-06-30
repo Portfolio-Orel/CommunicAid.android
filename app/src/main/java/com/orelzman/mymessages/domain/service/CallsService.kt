@@ -15,8 +15,8 @@ import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.MainActivity
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.data.dto.PhoneCall
-import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractor
-import com.orelzman.mymessages.domain.service.phone_call.PhoneCallInteractor
+import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsInteractor
+import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
 import com.orelzman.mymessages.util.extension.Log
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -42,10 +42,10 @@ class CallsService : Service() {
     private val notificationChannelId = "MyMessages"
 
     @Inject
-    lateinit var phoneCallInteractor: PhoneCallInteractor
+    lateinit var phoneCallManagerInteractor: PhoneCallManagerInteractor
 
     @Inject
-    lateinit var phoneCallStatisticsInteractor: PhoneCallStatisticsInteractor
+    lateinit var phoenCallsInteractor: PhoneCallsInteractor
 
     @Inject
     lateinit var authInteractor: AuthInteractor
@@ -143,12 +143,12 @@ class CallsService : Service() {
 
     private fun uploadCalls() {
         CoroutineScope(Dispatchers.IO).launch {
-            val callsLog = phoneCallStatisticsInteractor
+            val callsLog = phoenCallsInteractor
                 .getAll()
-                .map { it.phoneCall.update(this@CallsService) }
+                .map { it.update(this@CallsService) }
             Log.vCustom("upload calls: $callsLog")
-            authInteractor.getUser()?.uid?.let {
-                phoneCallStatisticsInteractor.addPhoneCalls(
+            authInteractor.getUser()?.userId?.let {
+                phoenCallsInteractor.addPhoneCalls(
                     it,
                     callsLog
                 )
@@ -160,7 +160,6 @@ class CallsService : Service() {
         }
     }
 }
-
 /**
  * Updates values according to the call log
  * *** Test call in background, removed and called again to see if the backlog catches both from the calllog

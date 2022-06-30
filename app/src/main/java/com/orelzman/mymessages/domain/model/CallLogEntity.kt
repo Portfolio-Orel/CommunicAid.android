@@ -1,6 +1,5 @@
 package com.orelzman.mymessages.domain.model
 
-import android.os.Build
 import com.orelzman.mymessages.data.dto.PhoneCall
 import com.orelzman.mymessages.util.CallType
 import com.orelzman.mymessages.util.extension.toDate
@@ -14,20 +13,17 @@ class CallLogEntity(
     val callLogType: CallType? = null
 ) {
 
-    fun isUnhandled(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+    fun isUnhandled(): Boolean =
             callLogType == CallType.REJECTED || callLogType == CallType.MISSED
-        } else {
-            callLogType == CallType.MISSED
-        }
-    }
+
 
     val phoneCall: PhoneCall
         get() =
             PhoneCall(
                 number = number,
                 startDate = Date(),
-                endDate = dateMilliseconds.toLong().toDate()
+                endDate = dateMilliseconds.toDate(),
+                type = CallType.INCOMING.name
             )
 }
 

@@ -41,7 +41,7 @@ fun FolderView(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = folder.folderTitle,
+            text = folder.title,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
             style = MaterialTheme.typography.bodyLarge

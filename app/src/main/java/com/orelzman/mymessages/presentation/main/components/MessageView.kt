@@ -49,13 +49,13 @@ fun MessageView(
                     .padding(12.dp)
             ) {
                 Text(
-                    text = message.messageShortTitle,
+                    text = message.shortTitle,
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
         }
         Text(
-            text = message.messageTitle,
+            text = message.title,
             style = MaterialTheme.typography.bodyLarge
         )
     }

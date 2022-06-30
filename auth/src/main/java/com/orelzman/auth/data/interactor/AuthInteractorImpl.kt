@@ -25,21 +25,27 @@ class AuthInteractorImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val authRepository: AuthRepository
 ) : AuthInteractor {
+    companion object {
+        var isConfigured: Boolean = false
+    }
 
     override suspend fun init() {
         // Add this line, to include the Auth plugin.
+        if(isConfigured) return
         Amplify.addPlugin(AWSCognitoAuthPlugin())
         Amplify.configure(context)
         Amplify.Auth.fetchAuthSession()
+        isConfigured = true
     }
 
     override suspend fun getUser(): User? {
+        init()
         if (!Amplify.Auth.fetchAuthSession().isSignedIn) {
             return null
         }
         val userId = Amplify.Auth.getCurrentUser()?.userId ?: ""
         val token = getToken()
-        return User(uid = userId, token = token)
+        return User(userId = userId, token = token)
     }
 
     override fun getToken(): String =
@@ -109,7 +115,7 @@ class AuthInteractorImpl @Inject constructor(
         try {
             val authResult = authRepository.auth(email, password).await()
             if (isSaveCredentials) authRepository.saveCredentials(email, password)
-            return authResult.user?.uid?.let { User(uid = it) }
+            return authResult.user?.uid?.let { User(userId = it) }
         } catch (exception: Exception) {
             throw(UsernamePasswordAuthException(exception))
         }

@@ -8,12 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
 fun Input(
+    modifier: Modifier = Modifier,
     title: String = "",
     placeholder: String = "",
     initialText: String = "",
@@ -24,7 +26,7 @@ fun Input(
     val value = remember { mutableStateOf(initialText) }
     val passwordVisible = rememberSaveable { mutableStateOf(false) }
 
-    Column {
+    Column(modifier = modifier) {
         Text(title)
         TextField(
             value = value.value,

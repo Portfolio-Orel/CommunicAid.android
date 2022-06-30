@@ -4,11 +4,10 @@ import com.orelzman.mymessages.data.dto.PhoneCall
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
-class PhoneCallInteractorImpl @Inject constructor(
+class PhoneCallManagerInteractorImpl @Inject constructor(
     private val phoneCallManager: PhoneCallManager
-) : PhoneCallInteractor {
+) : PhoneCallManagerInteractor {
 
     override val numberOnTheLine: StateFlow<PhoneCall?>
         get() = phoneCallManager.callOnTheLine
-
 }

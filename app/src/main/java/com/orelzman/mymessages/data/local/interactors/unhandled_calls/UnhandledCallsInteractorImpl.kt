@@ -3,7 +3,7 @@ package com.orelzman.mymessages.data.local.interactors.unhandled_calls
 import com.orelzman.mymessages.data.dto.DeletedUnhandledCalls
 import com.orelzman.mymessages.data.dto.numbers
 import com.orelzman.mymessages.data.local.LocalDatabase
-import com.orelzman.mymessages.data.remote.repository.Repository
+import com.orelzman.mymessages.data.remote.repository.api.Repository
 import com.orelzman.mymessages.domain.model.*
 import javax.inject.Inject
 

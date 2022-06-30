@@ -5,11 +5,15 @@
     <string name="add_message">הוסף הודעה</string>
     <string name="add_folder">הוסף תיקייה</string>
     <string name="unhandled_calls">שיחות שלא טופלו</string>
-    <string name="password_icon">Password Icon</string>
+    <string name="password_icon">אייקון של סיסמא</string>
     <string name="show_password">הצג סיסמא</string>
     <string name="hide_password">הסתר סיסמא</string>
     <string name="user_name">שם משתמש</string>
     <string name="signing_in">Signing in…</string>
     <string name="login">התחבר</string>
     <string name="local_db_name">mymessagesdb.db</string>
+    <string name="registering">נרשם…</string>
+    <string name="register">הירשם</string>
+    <string name="password">סיסמא</string>
+    <string name="email">אימייל</string>
 </resources>

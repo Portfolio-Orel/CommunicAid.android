@@ -2,7 +2,6 @@ package com.orelzman.mymessages.di
 
 import android.app.Application
 import androidx.room.Room
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.gson.Gson
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.data.local.LocalDatabase
@@ -11,8 +10,6 @@ import com.orelzman.mymessages.data.remote.BaseProjectUrl
 import com.orelzman.mymessages.data.remote.EnvironmentRepository
 import com.orelzman.mymessages.data.remote.Environments
 import com.orelzman.mymessages.data.remote.repository.api.API
-import com.orelzman.mymessages.domain.manager.PhoneCall.PhoneCallManagerImpl
-import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,11 +35,6 @@ object AppModule {
                 .fallbackToDestructiveMigration()
                 .build()
         }
-
-    @ExperimentalPermissionsApi
-    @Provides
-    @Singleton
-    fun providePhoneCallManager(phoneCallManagerImpl: PhoneCallManagerImpl): PhoneCallManager = phoneCallManagerImpl
 
     @Provides
     @BaseProjectUrl

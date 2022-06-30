@@ -119,7 +119,7 @@ fun Dropdown(
 ) {
 
     var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf(selectedFolder.folderTitle) }
+    var selectedText by remember { mutableStateOf(selectedFolder.title) }
     var textfieldSize by remember { mutableStateOf(Size.Zero) }
 
     val icon = if (expanded)
@@ -154,9 +154,9 @@ fun Dropdown(
         ) {
             folders.forEach { folder ->
                 DropdownMenuItem(
-                    text = { Text(text = folder.folderTitle) },
+                    text = { Text(text = folder.title) },
                     onClick = {
-                        selectedText = folder.folderTitle
+                        selectedText = folder.title
                         onSelected(folder.id)
                         expanded = false
                     })

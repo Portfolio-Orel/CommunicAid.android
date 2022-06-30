@@ -82,9 +82,7 @@ fun DefaultPreview2() {
                     number = "0543056286",
                     startDate = Date(),
                     endDate = Date(),
-                    isIncoming = false,
                     isWaiting = false,
-                    isRejected = false,
                     messagesSent = listOf()
                 )
             )

@@ -173,10 +173,9 @@ class DeletedUnhandledCallsTest {
                     number = number.value,
                     startDate = Date(),
                     endDate = Date(),
-                    isIncoming = false,
+                    type = CallType.INCOMING.name,
                     isWaiting = false,
-                    isRejected = false,
-                    messagesSent = listOf()
+                    messagesSent = listOf(),
                 ), deleteDate = Date()
             )
         )

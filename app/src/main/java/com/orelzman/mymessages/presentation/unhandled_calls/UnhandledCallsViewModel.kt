@@ -41,7 +41,7 @@ class UnhandledCallsViewModel @Inject constructor(
      */
     private fun setCalls() {
         viewModelScope.launch {
-            authInteractor.getUser()?.uid?.let {
+            authInteractor.getUser()?.userId?.let {
                 val unhandledCalls = unhandledCallsInteractor.getAll(it)
                     .sortedByDescending { unhandledCall -> unhandledCall.phoneCall.startDate }
                     .distinctBy { unhandledCall -> unhandledCall.phoneCall.startDate }
@@ -60,7 +60,7 @@ class UnhandledCallsViewModel @Inject constructor(
      */
     fun onDelete(phoneCall: PhoneCall) {
         viewModelScope.launch {
-            authInteractor.getUser()?.uid?.let {
+            authInteractor.getUser()?.userId?.let {
                 unhandledCallsInteractor.insert(
                     uid = it, deletedUnhandledCalls = DeletedUnhandledCalls(phoneCall = phoneCall)
                 )
@@ -74,7 +74,7 @@ class UnhandledCallsViewModel @Inject constructor(
      */
     fun onCall(phoneCall: PhoneCall, context: Context? = null) {
         val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:${phoneCall.number}"))
-        if(context != null) {
+        if (context != null) {
             context.startActivity(intent)
         } else {
             intent.addFlags(FLAG_ACTIVITY_NEW_TASK)

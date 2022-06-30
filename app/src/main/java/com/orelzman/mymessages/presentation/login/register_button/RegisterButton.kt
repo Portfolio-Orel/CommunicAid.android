@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.login_button
+package com.orelzman.mymessages.presentation.login.register_button
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -14,30 +14,34 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.orelzman.auth.domain.model.User
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.ui.theme.Shapes
 
 @Composable
-fun LoginButton(
+fun RegisterButton(
     username: String,
     password: String,
-    onLoginComplete: (User?) -> Unit,
+    email: String,
+    onRegisterComplete: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: LoginButtonViewModel = hiltViewModel(),
+    isSaveCredentials: Boolean = false,
+    viewModel: RegisterButtonViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
 
-    if(state.isSignInAttempt && (!state.isLoading && state.isAuthorized)) {
-        onLoginComplete(state.user)
+    if (state.isRegisterAttempt && (!state.isLoading && state.isRegisterCompleted)) {
+        onRegisterComplete()
     }
 
     Surface(
         modifier = modifier.clickable(
             enabled = !state.isLoading,
             onClick = {
-                viewModel.login(
-                    username = username, password = password
+                viewModel.register(
+                    username = username,
+                    password = password,
+                    email = email,
+                    isSaveCredentials = isSaveCredentials
                 )
             }
         ),
@@ -59,8 +63,8 @@ fun LoginButton(
             Spacer(modifier = Modifier.width(8.dp))
 
             Text(
-                text = if (state.isLoading) stringResource(R.string.signing_in) else stringResource(
-                    R.string.login
+                text = if (state.isLoading) stringResource(R.string.registering) else stringResource(
+                    R.string.register
                 )
             )
             if (state.isLoading) {

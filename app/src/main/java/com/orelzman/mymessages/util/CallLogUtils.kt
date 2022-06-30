@@ -1,9 +1,7 @@
 package com.orelzman.mymessages.util
 
 import android.content.Context
-import android.os.Build
 import android.provider.CallLog
-import androidx.annotation.RequiresApi
 import com.orelzman.mymessages.domain.model.CallLogEntity
 import com.orelzman.mymessages.util.extension.toDate
 import java.util.*
@@ -71,17 +69,16 @@ object CallLogUtils {
     }
 }
 
-enum class CallType(val value: Int) {
-    MISSED(CallLog.Calls.MISSED_TYPE),
-    INCOMING(CallLog.Calls.INCOMING_TYPE),
-    OUTGOING(CallLog.Calls.OUTGOING_TYPE),
-    @RequiresApi(Build.VERSION_CODES.N)
-    REJECTED(CallLog.Calls.REJECTED_TYPE),
-    @RequiresApi(Build.VERSION_CODES.N)
-    BLOCK(CallLog.Calls.BLOCKED_TYPE);
+enum class CallType(val value: Int, name: String) {
+    MISSED(CallLog.Calls.MISSED_TYPE, "missed"),
+    INCOMING(CallLog.Calls.INCOMING_TYPE, "incoming"),
+    OUTGOING(CallLog.Calls.OUTGOING_TYPE, "outgoing"),
+    REJECTED(CallLog.Calls.REJECTED_TYPE, "rejected"),
+    BLOCK(CallLog.Calls.BLOCKED_TYPE, "block");
 
     companion object {
         fun fromInt(value: Int): CallType = values().first { it.value == value }
+        fun fromString(value: String): CallType = values().first { it.name == value }
     }
 }
 

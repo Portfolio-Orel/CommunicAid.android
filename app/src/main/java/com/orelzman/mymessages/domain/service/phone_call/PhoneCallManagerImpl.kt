@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.domain.manager.PhoneCall
+package com.orelzman.mymessages.domain.service.phone_call
 
 import android.content.Context
 import android.content.Intent
@@ -6,13 +6,10 @@ import android.os.Build
 import android.telephony.TelephonyManager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.data.dto.PhoneCall
-import com.orelzman.mymessages.data.dto.PhoneCallStatistics
-import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractor
+import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.service.CallsService
 import com.orelzman.mymessages.domain.service.CallsService.Companion.INTENT_STATE_VALUE
 import com.orelzman.mymessages.domain.service.ServiceState
-import com.orelzman.mymessages.domain.service.phone_call.CallState
-import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManager
 import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.log
 import kotlinx.coroutines.CoroutineScope
@@ -26,7 +23,7 @@ import javax.inject.Inject
 @Suppress("MoveVariableDeclarationIntoWhen")
 @ExperimentalPermissionsApi
 class PhoneCallManagerImpl @Inject constructor(
-    private val phoneCallStatisticsInteractor: PhoneCallStatisticsInteractor,
+    private val phoneCallInteractor: PhoneCallsInteractor,
 ) : PhoneCallManager {
 
     private val callInTheBackground: MutableStateFlow<PhoneCall?> = MutableStateFlow(null)
@@ -126,7 +123,7 @@ class PhoneCallManagerImpl @Inject constructor(
     private fun addToBacklog(phoneCall: PhoneCall?) {
         if (phoneCall == null) return
         CoroutineScope(Dispatchers.IO).launch {
-            phoneCallStatisticsInteractor.cachePhoneCall(PhoneCallStatistics(phoneCall = phoneCall))
+            phoneCallInteractor.cachePhoneCall(phoneCall = phoneCall)
         }
     }
 
