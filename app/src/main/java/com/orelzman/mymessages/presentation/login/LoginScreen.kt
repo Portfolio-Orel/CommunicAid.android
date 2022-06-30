@@ -1,21 +1,15 @@
 package com.orelzman.mymessages.presentation.login
 
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.android.gms.common.api.ApiException
-import com.orelzman.auth.domain.activity_result.ActivityResultContractImpl
-import com.orelzman.auth.domain.exception.TaskException
-import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
-import com.orelzman.mymessages.presentation.login.components.LoginButton
+import com.orelzman.mymessages.R
+import com.orelzman.mymessages.presentation.login.components.Input
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 import com.orelzman.mymessages.util.extension.DefaultDestinationNavigator
 import com.ramcosta.composedestinations.annotation.Destination
@@ -25,62 +19,35 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Destination(start = true)
 fun LoginScreen(
     navigator: DestinationsNavigator,
-    viewModel: LoginViewModel = hiltViewModel()
+//    viewModel: LoginViewModel = hiltViewModel()
 ) {
-    val state = viewModel.state
-    val signInRequest = 1
+//    val state = viewModel.state
+
+    Column {
+        Input(
+            title = "User name",
+            placeholder = "User name",
+            initialText = "",
+            isPassword = false,
+            leadingIcon = {
+                Icon(imageVector = Icons.Filled.Person, stringResource(R.string.user_name))
+            },
+            onTextChange = {}
+        )
+        Input(
+            title = "Password",
+            placeholder = "Password",
+            initialText = "",
+            isPassword = true,
+            leadingIcon = {
+                Icon(imageVector = Icons.Filled.Lock, stringResource(R.string.password_icon))
+            },
+            onTextChange = {})
 
 
-    val authResultLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContractImpl()) { task ->
-            try {
-                val account = task?.getResult(TaskException::class.java)
-                if (account != null) {
-                    viewModel.onEvent(LoginEvents.AuthWithGmail(account))
-                }
-            } catch (e: ApiException) {
-                println(e.message)
-            }
-        }
-
-    MyMessagesTheme {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            if (state.user != null) {
-                navigator.navigate(MainScreenDestination)
-            } else {
-                Text(text = "!LoggedIn")
-            }
-            LoginButton(text = "Login", isLoading = false) {
-                authResultLauncher.launch(signInRequest)
-            }
-        }
-//        Button(
-//            modifier =
-//            Modifier
-//                .width(128.dp)
-//                .height(48.dp)
-//
-//            ,
-//            onClick = {
-//                viewModel.onEvent(LoginEvents.AuthWithGmail(context))
-//            }) {
-//            if(!state.isLoading) {
-//                Text("Login")
-//            } else {
-//                CircularProgressIndicator(
-//                    modifier = Modifier.padding(bottom = 12.dp),
-//                    color = Color.White
-//                )
-//            }
-//        }
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {

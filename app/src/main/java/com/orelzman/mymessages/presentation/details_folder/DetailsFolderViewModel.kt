@@ -28,7 +28,7 @@ class DetailsFolderViewModel @Inject constructor(
             state = state.copy(isLoading = true)
             state = state.copy(isLoading = true)
             viewModelScope.launch {
-                authInteractor.user?.uid?.let {
+                authInteractor.getUser()?.uid?.let {
                     folderInteractor.addFolder(
                         uid = it,
                         folder = Folder(folderTitle = state.title)
