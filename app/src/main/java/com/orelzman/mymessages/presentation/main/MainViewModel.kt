@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.data.dto.Folder
 import com.orelzman.mymessages.data.dto.Message
+import com.orelzman.mymessages.data.dto.MessageSent
 import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractor
 import com.orelzman.mymessages.data.local.interactors.message.MessageInteractor
 import com.orelzman.mymessages.data.local.interactors.message_in_folder.MessageInFolderInteractor
@@ -21,6 +22,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,16 +40,15 @@ class MainViewModel @Inject constructor(
     fun init() {
         state = state.copy(isLoading = true)
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                getMessages()
-                getFolders()
-                getMessagesInFolder()
-                observeNumberOnTheLine()
-            } catch (exception: Exception) {
-
-            } finally {
-                state = state.copy(isLoading = false)
+            getMessages()
+            getFolders()
+            getMessagesInFolder()
+            observeNumberOnTheLine()
+        }.invokeOnCompletion {
+            if (it != null) {
+                // Error
             }
+            state = state.copy(isLoading = false)
         }
     }
 
@@ -64,7 +65,7 @@ class MainViewModel @Inject constructor(
         if (phoneCall != null) {
             phoneCallStatisticsInteractor.addMessageSent(
                 phoneCall,
-                message.id
+                MessageSent(sentAt = Date().time, messageId = message.id)
             )
             context.sendWhatsapp(
                 phoneCall.number,

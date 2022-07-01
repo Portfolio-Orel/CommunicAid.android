@@ -6,7 +6,7 @@ import java.io.File
 class Log {
     companion object {
         fun vCustom(message: String) {
-            Log.v("MyMessages", message)
+            Log.v("MyMessages logs:", message)
             println("MyMessages: $message")
         }
     }

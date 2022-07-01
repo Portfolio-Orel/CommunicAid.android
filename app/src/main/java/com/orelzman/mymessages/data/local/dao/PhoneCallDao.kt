@@ -20,4 +20,9 @@ interface PhoneCallDao {
         FROM PhoneCall
     """)
     fun getAll(): List<PhoneCall>
+
+    @Query("""
+        DELETE FROM PhoneCall
+    """)
+    fun clear()
 }

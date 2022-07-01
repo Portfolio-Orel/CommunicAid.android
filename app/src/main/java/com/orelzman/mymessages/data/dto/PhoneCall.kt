@@ -15,7 +15,7 @@ data class PhoneCall(
     var endDate: Date = startDate,
     var name: String = "",
     var isWaiting: Boolean = false,
-    var messagesSent: List<String> = emptyList(),
+    var messagesSent: List<MessageSent> = emptyList(),
     var type: String = CallType.INCOMING.name
 ) {
 
@@ -44,7 +44,7 @@ data class PhoneCall(
 
 fun List<PhoneCall>.createPhoneCallBodyList(userId: String): List<CreatePhoneCallBody> {
     val array = ArrayList<CreatePhoneCallBody>()
-    forEach {
+    forEach { it ->
         with(it) {
             array.add(
                 CreatePhoneCallBody(
@@ -54,7 +54,7 @@ fun List<PhoneCall>.createPhoneCallBodyList(userId: String): List<CreatePhoneCal
                     endDate = endDate.time,
                     isAnswered = isAnswered,
                     type = type,
-                    messagesSent = messagesSent,
+                    messagesSent = messagesSent.map { messageSent -> messageSent.createMessageSentBody },
                     userId = userId
                 )
             )

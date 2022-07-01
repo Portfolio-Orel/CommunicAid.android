@@ -139,11 +139,14 @@ class PhoneCallManagerImpl @Inject constructor(
         intent.putExtra(INTENT_STATE_VALUE, state)
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Log.vCustom("Starting the service! context: $context")
                 context.startForegroundService(intent)
             } else {
+                Log.vCustom("Starting the service pre O! context: $context")
                 context.startService(intent)
             }
         } catch (exception: Exception) { // ForegroundServiceStartNotAllowedException
+            Log.vCustom("Error... ${exception.message}")
             exception.log()
         }
     }

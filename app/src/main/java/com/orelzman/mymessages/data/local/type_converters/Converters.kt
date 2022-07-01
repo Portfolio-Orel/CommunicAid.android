@@ -4,20 +4,21 @@ import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.orelzman.mymessages.data.dto.MessageSent
 import com.orelzman.mymessages.data.dto.PhoneCall
 import java.util.*
 
 @ProvidedTypeConverter
 class Converters {
 
-    private val messageListType = object : TypeToken<List<String>?>() {}.type
+    private val messagesSentListType = object : TypeToken<List<MessageSent>?>() {}.type
 
     @TypeConverter
-    fun stringToMessage(strings: String?): List<String> =
-        Gson().fromJson(strings, messageListType)
+    fun stringToMessagesSent(string: String?): List<MessageSent> =
+        Gson().fromJson(string, messagesSentListType)
 
     @TypeConverter
-    fun messageToString(messages: List<String>?): String =
+    fun messageSentToString(messages: List<MessageSent>?): String =
         Gson().toJson(messages)
 
 
@@ -36,5 +37,4 @@ class Converters {
     @TypeConverter
     fun phoneCallToString(phoneCall: PhoneCall): String =
         Gson().toJson(phoneCall)
-
 }

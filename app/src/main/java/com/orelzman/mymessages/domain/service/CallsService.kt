@@ -45,7 +45,7 @@ class CallsService : Service() {
     lateinit var phoneCallManagerInteractor: PhoneCallManagerInteractor
 
     @Inject
-    lateinit var phoenCallsInteractor: PhoneCallsInteractor
+    lateinit var phoneCallsInteractor: PhoneCallsInteractor
 
     @Inject
     lateinit var authInteractor: AuthInteractor
@@ -56,6 +56,7 @@ class CallsService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         currentState = intent?.extras?.get(INTENT_STATE_VALUE) as ServiceState
         Log.vCustom("Service onStartCommand: $currentState")
+        startService()
         if (currentState == ServiceState.UPLOAD_LOGS) {
             uploadCalls()
         }
@@ -103,12 +104,8 @@ class CallsService : Service() {
         val pendingIntent: PendingIntent =
             Intent(this, MainActivity::class.java).let { notificationIntent ->
                 notificationIntent.flags =
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or FLAG_IMMUTABLE
                     PendingIntent.getActivity(this, 0, notificationIntent, FLAG_IMMUTABLE)
-                } else {
-                    PendingIntent.getActivity(this, 0, notificationIntent, 0)
-                }
             }
 
         val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -142,21 +139,26 @@ class CallsService : Service() {
     }
 
     private fun uploadCalls() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val callsLog = phoenCallsInteractor
-                .getAll()
-                .map { it.update(this@CallsService) }
-            Log.vCustom("upload calls: $callsLog")
-            authInteractor.getUser()?.userId?.let {
-                phoenCallsInteractor.addPhoneCalls(
-                    it,
-                    callsLog
-                )
+        try {
+            CoroutineScope(Dispatchers.IO).launch {
+                val callsLog = phoneCallsInteractor
+                    .getAll()
+                    .map { it.update(this@CallsService) }
+                Log.vCustom("upload calls: $callsLog")
+                authInteractor.getUser()?.userId?.let {
+                    phoneCallsInteractor.addPhoneCalls(
+                        it,
+                        callsLog
+                    )
+                }
+            }.invokeOnCompletion {
+                Log.vCustom("About to finish service")
+                phoneCallsInteractor.clear()
+                stopService()
+                Log.vCustom("Service stopped.")
             }
-        }.invokeOnCompletion {
-            Log.vCustom("About to finish service")
+        } catch(exception: Exception) {
             stopService()
-            Log.vCustom("Service stopped.")
         }
     }
 }
@@ -165,7 +167,7 @@ class CallsService : Service() {
  * *** Test call in background, removed and called again to see if the backlog catches both from the calllog
  * This has to go to the service because the log is added async.
  */
-private fun PhoneCall.update(context: Context): PhoneCall {
+fun PhoneCall.update(context: Context): PhoneCall {
     val details = arrayOf(
         CallLog.Calls.NUMBER,
         CallLog.Calls.TYPE,

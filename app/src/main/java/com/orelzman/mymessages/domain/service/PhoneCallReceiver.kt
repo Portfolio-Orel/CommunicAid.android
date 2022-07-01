@@ -18,7 +18,7 @@ class PhonecallReceiver : BroadcastReceiver() {
         when (intent?.action) {
             PHONE_STATE -> {
                 val stateStr = intent.extras?.getString(TelephonyManager.EXTRA_STATE)
-                val number =
+                @Suppress("DEPRECATION") val number =
                     intent.extras?.getString(TelephonyManager.EXTRA_INCOMING_NUMBER)
                         ?: return
                 stateStr?.let { phoneCallManager.onStateChanged(it, number, context) }
