@@ -10,7 +10,6 @@ import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.data.remote.repository.api.Repository
 import com.orelzman.mymessages.data.remote.repository.dto.CreateUserBody
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.security.InvalidParameterException
@@ -86,7 +85,7 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun userLoggedInSuccessfully() {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val userId = interactor.getUser()?.userId
                 if (userId != null) {
@@ -105,7 +104,7 @@ class LoginViewModel @Inject constructor(
         if (code.length != 6) {
             return
         }
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 interactor.confirmUser(username, "453432")
                 val user = interactor.getUser()
@@ -121,7 +120,7 @@ class LoginViewModel @Inject constructor(
 
     private suspend fun confirmUserCreated(userId: String) {
         try {
-            CoroutineScope(Dispatchers.IO).launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 val user = repository.getUser(userId)
                 if (user?.userId == null) {
                     createUser(userId, user?.email ?: "")

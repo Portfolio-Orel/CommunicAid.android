@@ -18,7 +18,6 @@ import com.orelzman.mymessages.util.Whatsapp.sendWhatsapp
 import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.copyToClipboard
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -38,12 +37,17 @@ class MainViewModel @Inject constructor(
 
     fun init() {
         state = state.copy(isLoading = true)
-        CoroutineScope(Dispatchers.IO).launch {
-            getMessages()
-            getFolders()
-            getMessagesInFolder()
-            observeNumberOnTheLine()
-            state = state.copy(isLoading = false)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                getMessages()
+                getFolders()
+                getMessagesInFolder()
+                observeNumberOnTheLine()
+            } catch (exception: Exception) {
+
+            } finally {
+                state = state.copy(isLoading = false)
+            }
         }
     }
 
@@ -95,14 +99,14 @@ class MainViewModel @Inject constructor(
     }
 
     private fun getMessagesInFolder() {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val messagesInFolders = messageInFolderInteractor.getMessagesInFolders()
             state = state.copy(messagesInFolders = messagesInFolders)
         }
     }
 
     private fun getMessages() {
-        CoroutineScope(Dispatchers.Main).launch {
+        viewModelScope.launch(Dispatchers.Main) {
             try {
                 val messages = authInteractor.getUser()
                     ?.let { messageInteractor.getMessagesWithFolders(it.userId) }
@@ -116,7 +120,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun getFolders() {
-        CoroutineScope(Dispatchers.Main).launch {
+        viewModelScope.launch(Dispatchers.Main) {
             try {
                 val folders =
                     authInteractor.getUser()?.let { folderInteractor.getFolders(it.userId) }
