@@ -24,15 +24,22 @@ class FolderInteractorImpl @Inject constructor(
         return folders
     }
 
-    override suspend fun addFolder(userId: String, folder: Folder): String {
-        val folderId = repository.createFolder(
-            CreateFolderBody(
-                title = folder.title,
-                userId = userId,
-                position = null
-            )
-        )
-        db.insert(Folder(folder, folderId))
-        return folderId
+    override suspend fun addFolder(userId: String, folder: Folder): String? {
+        try {
+            val folderId = repository.createFolder(
+                CreateFolderBody(
+                    title = folder.title,
+                    userId = userId,
+                    position = null
+                )
+            ) ?: return null
+
+            db.insert(Folder(folder, folderId))
+            return folderId
+        } catch(exception: Exception) {
+            // ToDo
+            return null
+        }
+
     }
 }

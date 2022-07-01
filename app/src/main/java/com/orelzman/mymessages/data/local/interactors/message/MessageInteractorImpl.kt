@@ -28,9 +28,10 @@ class MessageInteractorImpl @Inject constructor(
         return messages
     }
 
-    override suspend fun createMessage(userId: String, message: Message, folderId: String): String {
+    override suspend fun createMessage(userId: String, message: Message, folderId: String): String? {
         val messageId =
-            repository.createMessage(CreateMessageBody.fromMessage(userId, message, folderId))
+            repository.createMessage(CreateMessageBody.fromMessage(userId, message, folderId)) ?: return null
+
         db.insert(Message(message, messageId))
         messageInFolderInteractor.insert(MessageInFolder(messageId = messageId, folderId = folderId))
         return messageId

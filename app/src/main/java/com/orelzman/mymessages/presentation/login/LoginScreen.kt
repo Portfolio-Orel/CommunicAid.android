@@ -50,7 +50,7 @@ fun LoginScreen(
                 modifier = Modifier.padding(20.dp),
                 title = stringResource(R.string.user_name),
                 placeholder = stringResource(R.string.user_name),
-                initialText = "",
+                initialText = "user123",
                 isPassword = false,
                 leadingIcon = {
                     Icon(imageVector = Icons.Filled.Person, stringResource(R.string.user_name))
@@ -61,7 +61,7 @@ fun LoginScreen(
                 modifier = Modifier.padding(20.dp),
                 title = stringResource(R.string.password),
                 placeholder = stringResource(R.string.password),
-                initialText = "",
+                initialText = "password123",
                 isPassword = true,
                 leadingIcon = {
                     Icon(imageVector = Icons.Filled.Lock, stringResource(R.string.password_icon))
@@ -93,7 +93,14 @@ fun LoginScreen(
                     username = state.username,
                     password = state.password,
                     modifier = Modifier.padding(20.dp),
-                    onLoginComplete = { viewModel.onEvent(LoginEvents.UserLoggedInSuccessfully(it)) })
+                    onLoginComplete = { isAuthorized, exception ->
+                        viewModel.onEvent(
+                            LoginEvents.OnLoginCompleted(
+                                isAuthorized = isAuthorized,
+                                exception = exception
+                            )
+                        )
+                    })
                 Text(
                     stringResource(R.string.register),
                     modifier = Modifier

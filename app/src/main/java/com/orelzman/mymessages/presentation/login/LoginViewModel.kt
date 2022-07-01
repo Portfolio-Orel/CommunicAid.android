@@ -1,5 +1,6 @@
 package com.orelzman.mymessages.presentation.login
 
+import android.security.keystore.UserNotAuthenticatedException
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.security.InvalidParameterException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,16 +25,28 @@ class LoginViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val user = interactor.getUser()
-            if (user != null) {
-                confirmUserCreated(user.userId)
+            try {
+                val user = interactor.getUser()
+                if (user != null) {
+                    confirmUserCreated(user.userId)
+                }
+            } catch(exception: Exception) {
+                when(exception) {
+                    is UserNotAuthenticatedException -> {/*User needs to login again-do it with saved credentials*/}
+                }
             }
         }
     }
 
     fun onEvent(event: LoginEvents) {
         when (event) {
-            is LoginEvents.UserLoggedInSuccessfully -> userLoggedInSuccessfully()
+            is LoginEvents.OnLoginCompleted -> {
+                if (event.isAuthorized) {
+                    userLoggedInSuccessfully()
+                } else {
+                    loginFailed(event.exception)
+                }
+            }
             is LoginEvents.UserRegisteredSuccessfully -> state =
                 state.copy(showCodeConfirmation = true)
             is LoginEvents.ConfirmSignup -> confirmSignup(
@@ -60,6 +74,15 @@ class LoginViewModel @Inject constructor(
 
     fun onUsernameChange(value: String) {
         state = state.copy(username = value)
+    }
+
+    private fun loginFailed(exception: Exception?) {
+        when (exception) {
+            is InvalidParameterException -> { /*Wrong credentials.*/
+            }
+            else -> {/*Unknown*/
+            }
+        }
     }
 
     private fun userLoggedInSuccessfully() {

@@ -13,30 +13,30 @@ interface API {
     suspend fun createUser(@Body userBody: CreateUserBody)
 
     @GET("/users/{user_id}")
-    suspend fun getUser(@Path("user_id") userId: String): GetUserResponse?
+    suspend fun getUser(@Path("user_id") userId: String): Response<GetUserResponse>?
 
     // Messages
     @POST("/messages")
-    suspend fun createMessage(@Body messageBody: CreateMessageBody): String
+    suspend fun createMessage(@Body messageBody: CreateMessageBody): Response<String>
 
     @GET("/messages/{user_id}")
-    suspend fun getMessages(@Path("user_id") userId: String): List<GetMessagesResponse>
+    suspend fun getMessages(@Path("user_id") userId: String): Response<List<GetMessagesResponse>>
 
     // Folders
     @POST("/folders")
-    suspend fun createFolder(@Body folderBody: CreateFolderBody): String
+    suspend fun createFolder(@Body folderBody: CreateFolderBody): Response<String>
 
     @GET("/folders/{user_id}")
-    suspend fun getFolders(@Path("user_id") userId: String): List<GetFoldersResponse>
+    suspend fun getFolders(@Path("user_id") userId: String): Response<List<GetFoldersResponse>>
 
     // Deleted Calls
     @POST("/deletedCalls")
-    suspend fun createDeletedCall(@Body deletedCallBody: CreateDeletedCallBody): String
+    suspend fun createDeletedCall(@Body deletedCallBody: CreateDeletedCallBody): Response<String>
 
     @GET("/deletedCalls/{user_id}")
-    suspend fun getDeletedCalls(@Path("user_id") userId: String): List<GetDeletedCallsResponse>
+    suspend fun getDeletedCalls(@Path("user_id") userId: String): Response<List<GetDeletedCallsResponse>>
 
     // Phone Calls
     @POST("/phoneCalls")
-    suspend fun createPhoneCall(phoneCallBody: CreatePhoneCallBody): String
+    suspend fun createPhoneCall(phoneCallBody: CreatePhoneCallBody): Response<String>
 }
