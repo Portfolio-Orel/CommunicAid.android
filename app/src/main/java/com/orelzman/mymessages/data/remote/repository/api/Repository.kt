@@ -20,22 +20,26 @@ interface Repository {
     /**
      * Adds a message to the db and to the folder's messages and returns its id.
      */
-    suspend fun createMessage(createMessageBody: CreateMessageBody): String
+    suspend fun createMessage(createMessageBody: CreateMessageBody): String?
 
     /**
      * Adds a folder to the db and returns its id.
      */
-    suspend fun createFolder(createFolderBody: CreateFolderBody): String
+    suspend fun createFolder(createFolderBody: CreateFolderBody): String?
 
 //    suspend fun deleteMessage(userId: String, id: String)
 //
 //    suspend fun deleteFolder(userId: String, id: String)
 
-    suspend fun createPhoneCall(createPhoneCallBody: CreatePhoneCallBody): String
+    suspend fun createPhoneCall(createPhoneCallBody: CreatePhoneCallBody): String?
 
     suspend fun createPhoneCalls(createPhoneCallBody: List<CreatePhoneCallBody>): List<String>
 
-    suspend fun createDeletedCall(createDeletedCallBody: CreateDeletedCallBody): String
+    suspend fun createDeletedCall(createDeletedCallBody: CreateDeletedCallBody): String?
+
+    suspend fun createUser(createUserBody: CreateUserBody)
+
+    suspend fun getUser(userId: String): GetUserResponse?
 
 //    suspend fun editMessage(
 //        userId: String,

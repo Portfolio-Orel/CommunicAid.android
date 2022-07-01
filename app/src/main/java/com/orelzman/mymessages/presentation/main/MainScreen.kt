@@ -4,11 +4,9 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -26,6 +24,7 @@ import com.orelzman.mymessages.presentation.destinations.DetailsFolderScreenDest
 import com.orelzman.mymessages.presentation.destinations.DetailsMessageScreenDestination
 import com.orelzman.mymessages.presentation.destinations.UnhandledCallsScreenDestination
 import com.orelzman.mymessages.presentation.main.components.FolderView
+import com.orelzman.mymessages.presentation.main.components.MessageView
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -50,8 +49,25 @@ fun MainScreen(
             DetailsMessageScreenDestination(state.messageToEdit.id)
         )
     }
+    
+    LaunchedEffect(key1 = viewModel) {
+        viewModel.init()
+    }
 
     MyMessagesTheme {
+        if(state.isLoading) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .height(16.dp)
+                            .width(16.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
+        }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -101,30 +117,29 @@ fun MainScreen(
                 mainAxisAlignment = MainAxisAlignment.Start,
                 mainAxisSize = SizeMode.Wrap
             ) {
-//                state.messages
-//                    .getByIds(state.selectedFolder.messageIds)
-//                    .forEach {
-//                        MessageView(
-//                            message = it,
-//                            modifier = Modifier
-//                                .width(boxWidth)
-//                                .height(boxHeight)
-//                                .padding(0.dp)
-//                                .scrollable(
-//                                    orientation = Orientation.Horizontal,
-//                                    state = rememberScrollableState { delta ->
-//                                        foldersOffset.value = foldersOffset.value + delta
-//                                        delta
-//                                    }
-//                                ),
-//                            onClick = { message, context ->
-//                                viewModel.onMessageClick(message, context)
-//                            },
-//                            onLongClick = { message, context ->
-//                                viewModel.onMessageLongClick(message, context)
-//                            }
-//                        )
-//                    }
+                viewModel.getFoldersMessages()
+                    .forEach {
+                        MessageView(
+                            message = it,
+                            modifier = Modifier
+                                .width(boxWidth)
+                                .height(boxHeight)
+                                .padding(0.dp)
+                                .scrollable(
+                                    orientation = Orientation.Horizontal,
+                                    state = rememberScrollableState { delta ->
+                                        foldersOffset.value = foldersOffset.value + delta
+                                        delta
+                                    }
+                                ),
+                            onClick = { message, context ->
+                                viewModel.onMessageClick(message, context)
+                            },
+                            onLongClick = { message, context ->
+                                viewModel.onMessageLongClick(message, context)
+                            }
+                        )
+                    }
             }
             Button(onClick = {
                 navigator.navigate(

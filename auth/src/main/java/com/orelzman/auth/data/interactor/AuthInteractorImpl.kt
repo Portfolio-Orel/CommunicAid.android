@@ -31,11 +31,16 @@ class AuthInteractorImpl @Inject constructor(
 
     override suspend fun init() {
         // Add this line, to include the Auth plugin.
-        if(isConfigured) return
-        Amplify.addPlugin(AWSCognitoAuthPlugin())
-        Amplify.configure(context)
-        Amplify.Auth.fetchAuthSession()
-        isConfigured = true
+        if (isConfigured) return
+        try {
+            Amplify.addPlugin(AWSCognitoAuthPlugin())
+            Amplify.configure(context)
+            Amplify.Auth.fetchAuthSession()
+            isConfigured = true
+        } catch (exception: com.amplifyframework.core.Amplify.AlreadyConfiguredException) {
+            isConfigured = true
+            return
+        }
     }
 
     override suspend fun getUser(): User? {
@@ -44,8 +49,14 @@ class AuthInteractorImpl @Inject constructor(
             return null
         }
         val userId = Amplify.Auth.getCurrentUser()?.userId ?: ""
+        var email = ""
+        Amplify.Auth.fetchUserAttributes().forEach {
+            if (it.key == AuthUserAttributeKey.email()) {
+                email = it.value
+            }
+        }
         val token = getToken()
-        return User(userId = userId, token = token)
+        return User(userId = userId, token = token, email =email)
     }
 
     override fun getToken(): String =

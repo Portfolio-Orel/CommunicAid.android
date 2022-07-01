@@ -25,16 +25,19 @@ class DetailsFolderViewModel @Inject constructor(
 
     fun saveFolder() {
         if (state.isReadyForSave) {
-            state = state.copy(isLoading = true)
-            state = state.copy(isLoading = true)
-            viewModelScope.launch {
-                authInteractor.getUser()?.userId?.let {
-                    folderInteractor.addFolder(
-                        userId = it,
-                        folder = Folder(title = state.title)
-                    )
-                    state = state.copy(isLoading = false, isFolderAdded = true)
+            try {
+                state = state.copy(isLoading = true)
+                viewModelScope.launch {
+                    authInteractor.getUser()?.userId?.let {
+                        folderInteractor.addFolder(
+                            userId = it,
+                            folder = Folder(title = state.title)
+                        )
+                        state = state.copy(isLoading = false, isFolderAdded = true)
+                    }
                 }
+            } catch (exception: Exception) {
+                println()
             }
         }
     }

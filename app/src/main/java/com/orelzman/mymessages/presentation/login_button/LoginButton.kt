@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.orelzman.auth.domain.model.User
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.ui.theme.Shapes
 
@@ -22,22 +21,20 @@ import com.orelzman.mymessages.ui.theme.Shapes
 fun LoginButton(
     username: String,
     password: String,
-    onLoginComplete: (User?) -> Unit,
+    onLoginComplete: (Boolean, Exception?) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LoginButtonViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state
-
-    if(state.isSignInAttempt && (!state.isLoading && state.isAuthorized)) {
-        onLoginComplete(state.user)
-    }
 
     Surface(
         modifier = modifier.clickable(
             enabled = !state.isLoading,
             onClick = {
                 viewModel.login(
-                    username = username, password = password
+                    username = username,
+                    password = password,
+                    onLoginComplete = onLoginComplete
                 )
             }
         ),

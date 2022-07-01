@@ -11,6 +11,7 @@ import com.orelzman.mymessages.data.dto.Folder
 import com.orelzman.mymessages.data.dto.Message
 import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractor
 import com.orelzman.mymessages.data.local.interactors.message.MessageInteractor
+import com.orelzman.mymessages.data.local.interactors.message_in_folder.MessageInFolderInteractor
 import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
 import com.orelzman.mymessages.util.Whatsapp.sendWhatsapp
@@ -30,14 +31,27 @@ class MainViewModel @Inject constructor(
     private val authInteractor: AuthInteractor,
     private val phoneCallManagerInteractor: PhoneCallManagerInteractor,
     private val phoneCallStatisticsInteractor: PhoneCallsInteractor,
+    private val messageInFolderInteractor: MessageInFolderInteractor
 ) : ViewModel() {
 
-    var state by mutableStateOf(MainState(folders = emptyList(), messages = emptyList()))
+    var state by mutableStateOf(MainState())
 
-    init {
-        getMessages()
-        getFolders()
-        observeNumberOnTheLine()
+    fun init() {
+        state = state.copy(isLoading = true)
+        CoroutineScope(Dispatchers.IO).launch {
+            getMessages()
+            getFolders()
+            getMessagesInFolder()
+            observeNumberOnTheLine()
+            state = state.copy(isLoading = false)
+        }
+    }
+
+    fun getFoldersMessages(): List<Message> {
+        val messageIds = state.messagesInFolders
+            .filter { it.folderId == state.selectedFolder.id }
+            .map { it.messageId }
+        return state.messages.filter { messageIds.contains(it.id) }
     }
 
     fun onMessageClick(message: Message, context: Context) {
@@ -80,23 +94,41 @@ class MainViewModel @Inject constructor(
         state = state.copy(folderToEdit = folder)
     }
 
+    private fun getMessagesInFolder() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val messagesInFolders = messageInFolderInteractor.getMessagesInFolders()
+            state = state.copy(messagesInFolders = messagesInFolders)
+        }
+    }
+
     private fun getMessages() {
         CoroutineScope(Dispatchers.Main).launch {
-            val messages = authInteractor.getUser()?.let { messageInteractor.getMessagesWithFolders(it.userId) }
-            if (messages != null) {
-                state = state.copy(messages = messages)
+            try {
+                val messages = authInteractor.getUser()
+                    ?.let { messageInteractor.getMessagesWithFolders(it.userId) }
+                if (messages != null) {
+                    state = state.copy(messages = messages)
+                }
+            } catch (ex: Exception) {
+                println(ex)
             }
         }
     }
 
     private fun getFolders() {
         CoroutineScope(Dispatchers.Main).launch {
-            val folders = authInteractor.getUser()?.let { folderInteractor.getFolders(it.userId) }
-            if (folders != null && folders.isNotEmpty()) {
-                state = state.copy(folders = folders, selectedFolder = folders[0])
+            try {
+                val folders =
+                    authInteractor.getUser()?.let { folderInteractor.getFolders(it.userId) }
+                if (folders != null && folders.isNotEmpty()) {
+                    state = state.copy(folders = folders, selectedFolder = folders[0])
+                }
+            } catch (ex: Exception) {
+                println(ex)
             }
         }
     }
+
 
     private fun observeNumberOnTheLine() {
         viewModelScope.launch {

@@ -1,5 +1,6 @@
 package com.orelzman.mymessages.presentation.login_button
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,18 +18,18 @@ class LoginButtonViewModel @Inject constructor(
 ): ViewModel() {
     var state by mutableStateOf(LoginButtonState())
 
-    fun login(username: String, password: String) {
-        state = state.copy(isSignInAttempt = true)
+    fun login(username: String, password: String, onLoginComplete: (Boolean, Exception?) -> Unit) {
+        state = state.copy(isLoading = true)
         CoroutineScope(Dispatchers.IO).launch {
             state = try {
                 authInteractor.init()
                 authInteractor.signIn(username = username, password = password)
-                val user = authInteractor.getUser()
-                state = state.copy(isLoading = false, isAuthorized = true, user = user)
-                state.copy(isSignInAttempt = false)
+                onLoginComplete(true, null)
+                state.copy(isLoading = false)
             } catch(exception: Exception) {
-                state = state.copy(isLoading = false, isAuthorized = false)
-                state.copy(isSignInAttempt = false)
+                Log.e("AWSAuth", exception.message ?: "")
+                onLoginComplete(false, exception)
+                state.copy(isLoading = false)
             }
         }
     }

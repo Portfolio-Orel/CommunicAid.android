@@ -3,9 +3,11 @@ package com.orelzman.mymessages.di
 import android.app.Application
 import androidx.room.Room
 import com.google.gson.Gson
+import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.type_converters.Converters
+import com.orelzman.mymessages.data.remote.AuthInterceptor
 import com.orelzman.mymessages.data.remote.BaseProjectUrl
 import com.orelzman.mymessages.data.remote.EnvironmentRepository
 import com.orelzman.mymessages.data.remote.Environments
@@ -17,6 +19,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -41,13 +44,17 @@ object AppModule {
     fun provideBaseUrl(
         environmentRepository: EnvironmentRepository
     ) = when (environmentRepository.currentEnvironment) {
-        Environments.Local -> "http://localhost:4000"
+        Environments.Local -> "http://192.168.1.39:4000"
         Environments.Production -> "https://22jwmm93j9.execute-api.us-east-1.amazonaws.com"
     }
 
     @Provides
-    fun provideOkHttpClient(): OkHttpClient =
-        OkHttpClient()
+    fun provideOkHttpClient(authIneractor: AuthInteractor): OkHttpClient =
+        OkHttpClient.Builder()
+            .addInterceptor(AuthInterceptor(authIneractor))
+            .connectTimeout(30L, TimeUnit.SECONDS)
+            .readTimeout(30L, TimeUnit.SECONDS)
+            .build()
 
     @Provides
     fun provideGson(): Gson = Gson()

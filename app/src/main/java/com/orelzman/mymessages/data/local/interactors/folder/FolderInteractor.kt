@@ -4,5 +4,5 @@ import com.orelzman.mymessages.data.dto.Folder
 
 interface FolderInteractor {
     suspend fun getFolders(userId: String): List<Folder>
-    suspend fun addFolder(userId: String, folder: Folder): String
+    suspend fun addFolder(userId: String, folder: Folder): String?
 }

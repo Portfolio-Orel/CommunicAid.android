@@ -1,7 +1,5 @@
 package com.orelzman.mymessages.presentation.login
 
-import com.orelzman.auth.domain.model.User
-
 data class LoginState(
     var isLoading: Boolean = false,
     var username: String = "",
@@ -9,6 +7,6 @@ data class LoginState(
     var email: String = "",
     var isRegister: Boolean = false,
     var showCodeConfirmation: Boolean = false,
-    var user: User? = null,
+    var isAuthorized: Boolean = false,
     var error: String? = null,
 )
