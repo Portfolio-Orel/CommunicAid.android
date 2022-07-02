@@ -15,7 +15,7 @@ import com.orelzman.mymessages.data.local.type_converters.Converters
         PhoneCall::class,
         DeletedUnhandledCalls::class
     ],
-    version = 6
+    version = 7
 )
 @TypeConverters(Converters::class)
 abstract class LocalDatabase : RoomDatabase() {

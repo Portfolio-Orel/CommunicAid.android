@@ -89,14 +89,20 @@ class MainViewModel @Inject constructor(
         Log.vCustom(message.toString())
         val phoneCall = phoneCallManagerInteractor.numberOnTheLine.value
         if (phoneCall != null) {
-            phoneCallStatisticsInteractor.addMessageSent(
-                phoneCall,
-                MessageSent(sentAt = Date().time, messageId = message.id)
-            )
-            context.sendWhatsapp(
-                phoneCall.number,
-                message.body
-            )
+            try {
+                viewModelScope.launch(Dispatchers.IO) {
+                    phoneCallStatisticsInteractor.addMessageSent(
+                        phoneCall,
+                        MessageSent(sentAt = Date().time, messageId = message.id)
+                    )
+                    context.sendWhatsapp(
+                        phoneCall.number,
+                        message.body
+                    )
+                }
+            } catch (exception: Exception) {
+                exception.log()
+            }
         } else {
             goToEditMessage(message = message)
         }
