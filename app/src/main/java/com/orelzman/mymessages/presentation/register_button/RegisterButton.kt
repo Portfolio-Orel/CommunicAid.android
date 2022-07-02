@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.login.register_button
+package com.orelzman.mymessages.presentation.register_button
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -29,10 +29,6 @@ fun RegisterButton(
 ) {
     val state = viewModel.state
 
-    if (state.isRegisterAttempt && (!state.isLoading && state.isRegisterCompleted)) {
-        onRegisterComplete()
-    }
-
     Surface(
         modifier = modifier.clickable(
             enabled = !state.isLoading,
@@ -41,7 +37,10 @@ fun RegisterButton(
                     username = username,
                     password = password,
                     email = email,
-                    isSaveCredentials = isSaveCredentials
+                    isSaveCredentials = isSaveCredentials,
+                    onRegisterComplete = {
+                        onRegisterComplete()
+                    }
                 )
             }
         ),

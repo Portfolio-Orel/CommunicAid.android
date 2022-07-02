@@ -34,7 +34,7 @@ fun DetailsMessageScreen(
     val state = viewModel.state
 
     if (state.isMessageSaved) {
-        navigator.navigate(MainScreenDestination)
+        navigator.popBackStack()
     }
 
     MyMessagesTheme {

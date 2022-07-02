@@ -22,7 +22,9 @@ import com.google.accompanist.flowlayout.SizeMode
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.presentation.destinations.DetailsFolderScreenDestination
 import com.orelzman.mymessages.presentation.destinations.DetailsMessageScreenDestination
+import com.orelzman.mymessages.presentation.destinations.LoginScreenDestination
 import com.orelzman.mymessages.presentation.destinations.UnhandledCallsScreenDestination
+import com.orelzman.mymessages.presentation.logout_screen.LogoutButton
 import com.orelzman.mymessages.presentation.main.components.FolderView
 import com.orelzman.mymessages.presentation.main.components.MessageView
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
@@ -38,7 +40,8 @@ fun MainScreen(
     val state = viewModel.state
     val screen = LocalConfiguration.current
     val spaceBetweenMessages = 26
-    val boxWidth = getMessageWidth(screenWidth = screen.screenWidthDp, spaceBetween = spaceBetweenMessages)
+    val boxWidth =
+        getMessageWidth(screenWidth = screen.screenWidthDp, spaceBetween = spaceBetweenMessages)
     val boxHeight = (boxWidth * 1.5f)
     val messagesOffset = remember { mutableStateOf(0f) }
     val foldersOffset = remember { mutableStateOf(0f) }
@@ -49,13 +52,13 @@ fun MainScreen(
             DetailsMessageScreenDestination(state.messageToEdit.id)
         )
     }
-    
+
     LaunchedEffect(key1 = viewModel) {
         viewModel.init()
     }
 
     MyMessagesTheme {
-        if(state.isLoading) {
+        if (state.isLoading) {
             Box(modifier = Modifier.fillMaxSize()) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     CircularProgressIndicator(
@@ -159,11 +162,14 @@ fun MainScreen(
 
             Button(onClick = {
                 navigator.navigate(
-                        UnhandledCallsScreenDestination()
+                    UnhandledCallsScreenDestination()
                 )
             }) {
                 Text(text = stringResource(R.string.unhandled_calls))
             }
+            LogoutButton(onLogoutComplete = {
+                navigator.navigate(LoginScreenDestination)
+            })
         }
     }
 }

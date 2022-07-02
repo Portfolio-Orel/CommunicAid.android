@@ -55,7 +55,6 @@ class MainActivity : ComponentActivity() {
                         }
                     ) // ToDo add assurance that the permissions were granted
 
-                    // A surface container using the 'background' color from the theme
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background

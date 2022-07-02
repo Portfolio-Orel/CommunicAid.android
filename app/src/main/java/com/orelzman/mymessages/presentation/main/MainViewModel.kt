@@ -18,6 +18,7 @@ import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInterac
 import com.orelzman.mymessages.util.Whatsapp.sendWhatsapp
 import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.copyToClipboard
+import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -43,12 +44,37 @@ class MainViewModel @Inject constructor(
             getMessages()
             getFolders()
             getMessagesInFolder()
+            getUser()
             observeNumberOnTheLine()
         }.invokeOnCompletion {
-            if (it != null) {
-                // Error
-            }
+            it?.log()
             state = state.copy(isLoading = false)
+        }
+    }
+
+    private suspend fun getUser() {
+        val user = authInteractor.getUser()
+        state = state.copy(user = user)
+    }
+
+    private suspend fun getMessagesInFolder() {
+        val messagesInFolders = messageInFolderInteractor.getMessagesInFolders()
+        state = state.copy(messagesInFolders = messagesInFolders)
+    }
+
+    private suspend fun getMessages() {
+        val messages = authInteractor.getUser()
+            ?.let { messageInteractor.getMessagesWithFolders(it.userId) }
+        if (messages != null) {
+            state = state.copy(messages = messages)
+        }
+    }
+
+    private suspend fun getFolders() {
+        val folders =
+            authInteractor.getUser()?.let { folderInteractor.getFolders(it.userId) }
+        if (folders != null && folders.isNotEmpty()) {
+            state = state.copy(folders = folders, selectedFolder = folders[0])
         }
     }
 
@@ -98,42 +124,6 @@ class MainViewModel @Inject constructor(
     private fun goToEditFolder(folder: Folder) {
         state = state.copy(folderToEdit = folder)
     }
-
-    private fun getMessagesInFolder() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val messagesInFolders = messageInFolderInteractor.getMessagesInFolders()
-            state = state.copy(messagesInFolders = messagesInFolders)
-        }
-    }
-
-    private fun getMessages() {
-        viewModelScope.launch(Dispatchers.Main) {
-            try {
-                val messages = authInteractor.getUser()
-                    ?.let { messageInteractor.getMessagesWithFolders(it.userId) }
-                if (messages != null) {
-                    state = state.copy(messages = messages)
-                }
-            } catch (ex: Exception) {
-                println(ex)
-            }
-        }
-    }
-
-    private fun getFolders() {
-        viewModelScope.launch(Dispatchers.Main) {
-            try {
-                val folders =
-                    authInteractor.getUser()?.let { folderInteractor.getFolders(it.userId) }
-                if (folders != null && folders.isNotEmpty()) {
-                    state = state.copy(folders = folders, selectedFolder = folders[0])
-                }
-            } catch (ex: Exception) {
-                println(ex)
-            }
-        }
-    }
-
 
     private fun observeNumberOnTheLine() {
         viewModelScope.launch {

@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.login.register_button
+package com.orelzman.mymessages.presentation.register_button
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,7 +17,13 @@ class RegisterButtonViewModel @Inject constructor(
 ) : ViewModel() {
     var state by mutableStateOf(RegisterButtonState())
 
-    fun register(username: String, password: String, email: String, isSaveCredentials: Boolean = false) {
+    fun register(
+        username: String,
+        password: String,
+        email: String,
+        isSaveCredentials: Boolean = false,
+        onRegisterComplete: () -> Unit
+    ) {
         CoroutineScope(Dispatchers.IO).launch {
             state = state.copy(isLoading = true, isRegisterAttempt = true)
             authInteractor.signUp(
@@ -26,8 +32,9 @@ class RegisterButtonViewModel @Inject constructor(
                 password = password,
                 isSaveCredentials = isSaveCredentials
             )
-            state = state.copy(isLoading = false, isRegisterAttempt = true, isRegisterCompleted = true)
-            state = state.copy(isLoading = false, isRegisterAttempt = false)
+            state =
+                state.copy(isLoading = false)
+            onRegisterComplete()
         }
     }
 }
