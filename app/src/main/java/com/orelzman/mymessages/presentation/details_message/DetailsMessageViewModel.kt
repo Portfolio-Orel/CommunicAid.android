@@ -10,7 +10,9 @@ import com.orelzman.mymessages.data.dto.Folder
 import com.orelzman.mymessages.data.dto.Message
 import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractor
 import com.orelzman.mymessages.data.local.interactors.message.MessageInteractor
+import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,7 +25,7 @@ class DetailsMessageViewModel @Inject constructor(
     var state by mutableStateOf(DetailsMessageState())
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             authInteractor.getUser()?.userId?.let {
                 val folders = folderInteractor.getFolders(it)
                 state = state.copy(folders = folders)
@@ -32,13 +34,12 @@ class DetailsMessageViewModel @Inject constructor(
     }
 
     fun setEdit(messageId: String?) {
-        if (messageId == null) {
-            return
-        }
-        viewModelScope.launch {
-//            val message = messageInteractor.getMessage(messageId = messageId)
-//            val folder = folderInteractor.getFolderWithMessageId(messageId = messageId)
-//            setEditValues(message = message, folder = folder)
+        messageId?.let {
+            viewModelScope.launch(Dispatchers.IO) {
+                val message = messageInteractor.getMessage(messageId = messageId)
+                val folder = folderInteractor.getFolderWithMessageId(messageId = messageId)
+                setEditValues(message = message, folder = folder)
+            }
         }
     }
 
@@ -48,7 +49,8 @@ class DetailsMessageViewModel @Inject constructor(
             body = message.body,
             shortTitle = message.shortTitle,
             messageId = message.id,
-            oldFolderId = folder.id
+            oldFolderId = folder.id,
+            isEdit = true
         )
     }
 
@@ -78,11 +80,11 @@ class DetailsMessageViewModel @Inject constructor(
                 body = state.body,
                 id = state.messageId ?: ""
             )
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 try {
                     authInteractor.getUser()?.userId?.let {
-                        if (state.messageId != null && state.messageId != "") {
-                            messageInteractor.editMessage(
+                        if (state.isEdit) {
+                            messageInteractor.updateMessage(
                                 userId = it,
                                 message = message,
                                 newFolderId = state.currentFolderId,
@@ -98,7 +100,7 @@ class DetailsMessageViewModel @Inject constructor(
                     }
                     state = state.copy(isLoading = false, isMessageSaved = true)
                 } catch (exception: Exception) {
-                    println()
+                    exception.log()
                 }
             }
         } else {

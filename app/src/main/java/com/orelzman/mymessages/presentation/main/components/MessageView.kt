@@ -1,8 +1,9 @@
 package com.orelzman.mymessages.presentation.main.components
 
 import android.content.Context
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -17,13 +18,13 @@ import androidx.compose.ui.unit.dp
 import com.orelzman.mymessages.data.dto.Message
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun MessageView(
     message: Message,
     modifier: Modifier = Modifier,
     onClick: (Message, Context) -> Unit,
-    onLongClick: (Message, Context) -> Unit = {_, _ ->}
+    onLongClick: (Message, Context) -> Unit = { _, _ -> }
 ) {
     val context = LocalContext.current
     Column(
@@ -36,9 +37,11 @@ fun MessageView(
                 .fillMaxHeight(0.7f)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
-                .clickable {
-                    onClick(message, context)
-                }
+                .combinedClickable(
+                    onClick = { onClick(message, context) },
+                    onLongClick = { onLongClick(message, context) }
+                )
+
                 .background(MaterialTheme.colorScheme.secondary),
             elevation = CardDefaults.elevatedCardElevation(),
         ) {

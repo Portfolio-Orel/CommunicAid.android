@@ -3,11 +3,9 @@ package com.orelzman.mymessages.data.local.interactors.message_in_folder
 import com.orelzman.mymessages.data.dto.MessageInFolder
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.dao.MessageInFolderDao
-import com.orelzman.mymessages.data.remote.repository.api.Repository
 import javax.inject.Inject
 
 class MessageInFolderInteractorImpl @Inject constructor(
-    private val repository: Repository,
     database: LocalDatabase,
 ) : MessageInFolderInteractor {
 
@@ -28,5 +26,20 @@ class MessageInFolderInteractorImpl @Inject constructor(
     override suspend fun deleteMessageInFolder(messageInFolder: MessageInFolder) {
         db.delete(messageInFolder)
     }
+
+    override suspend fun getMessageFolderId(messageId: String): String =
+        db.getWithMessageId(messageId)
+
+    override suspend fun update(messageId: String, oldFolderId: String, newFolderId: String) {
+        val messageInFolder = db.getWithMessageIdAndFolderId(messageId, oldFolderId)
+        db.update(
+            MessageInFolder(
+                id = messageInFolder.id,
+                messageId = messageId,
+                folderId = newFolderId
+            )
+        )
+    }
+
 
 }

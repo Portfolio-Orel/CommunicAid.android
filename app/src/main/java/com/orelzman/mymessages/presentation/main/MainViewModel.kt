@@ -126,7 +126,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun observeNumberOnTheLine() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             phoneCallManagerInteractor.numberOnTheLine.collectLatest {
                 state = state.copy(callOnTheLine = it?.number ?: "אין שיחה")
             }

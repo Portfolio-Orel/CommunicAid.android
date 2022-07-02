@@ -1,6 +1,6 @@
 package com.orelzman.mymessages.data.dto
 
-import com.orelzman.mymessages.data.remote.repository.dto.CreateMessageSentBody
+import com.orelzman.mymessages.data.remote.repository.dto.body.create.CreateMessageSentBody
 
 data class MessageSent(
     val sentAt: Long,

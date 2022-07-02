@@ -1,10 +1,10 @@
 package com.orelzman.mymessages.data.remote.repository.api
 
-import com.orelzman.mymessages.data.remote.repository.dto.*
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import com.orelzman.mymessages.data.remote.repository.dto.body.create.*
+import com.orelzman.mymessages.data.remote.repository.dto.body.update.UpdateFolderBody
+import com.orelzman.mymessages.data.remote.repository.dto.body.update.UpdateMessageBody
+import com.orelzman.mymessages.data.remote.repository.dto.response.*
+import retrofit2.http.*
 
 interface API {
 
@@ -22,12 +22,18 @@ interface API {
     @GET("/messages/{user_id}")
     suspend fun getMessages(@Path("user_id") userId: String): Response<List<GetMessagesResponse>>
 
+    @PATCH("/messages")
+    suspend fun updateMessage(@Body message: UpdateMessageBody)
+
     // Folders
     @POST("/folders")
     suspend fun createFolder(@Body folderBody: CreateFolderBody): Response<String>
 
     @GET("/folders/{user_id}")
     suspend fun getFolders(@Path("user_id") userId: String): Response<List<GetFoldersResponse>>
+
+    @PATCH("/folders")
+    suspend fun updateFolder(@Body folder: UpdateFolderBody)
 
     // Deleted Calls
     @POST("/deletedCalls")

@@ -2,7 +2,7 @@ package com.orelzman.mymessages.data.dto
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.orelzman.mymessages.data.remote.repository.dto.CreatePhoneCallBody
+import com.orelzman.mymessages.data.remote.repository.dto.body.create.CreatePhoneCallBody
 import com.orelzman.mymessages.domain.service.inSeconds
 import com.orelzman.mymessages.util.CallType
 import java.util.*
