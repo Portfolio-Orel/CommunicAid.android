@@ -37,6 +37,9 @@ interface API {
     suspend fun getDeletedCalls(@Path("user_id") userId: String): Response<List<GetDeletedCallsResponse>>
 
     // Phone Calls
+    @POST("/phoneCall")
+    suspend fun createPhoneCall(@Body phoneCallBody: CreatePhoneCallBody): Response<String>
+
     @POST("/phoneCalls")
-    suspend fun createPhoneCall(phoneCallBody: CreatePhoneCallBody): Response<String>
+    suspend fun createPhoneCalls(@Body phoneCallsBody: List<CreatePhoneCallBody>): Response<List<String>>
 }

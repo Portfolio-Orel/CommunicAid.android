@@ -17,7 +17,7 @@ interface AuthInteractor {
     /**
      * Inits AWS
      */
-    suspend fun init()
+    suspend fun initAWS()
 
 
     /**

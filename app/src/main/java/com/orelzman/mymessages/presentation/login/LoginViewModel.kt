@@ -6,11 +6,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.orelzman.auth.domain.exception.CodeMismatchException
+import com.orelzman.auth.domain.exception.UserNotConfirmedException
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.mymessages.data.local.interactors.database.DatabaseInteractor
 import com.orelzman.mymessages.data.remote.repository.api.Repository
 import com.orelzman.mymessages.data.remote.repository.dto.CreateUserBody
+import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.security.InvalidParameterException
@@ -19,20 +22,27 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val interactor: AuthInteractor,
-    private val repository: Repository
+    private val repository: Repository,
+    private val databaseInteractor: DatabaseInteractor,
 ) : ViewModel() {
     var state by mutableStateOf(LoginState())
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
+                interactor.initAWS()
                 val user = interactor.getUser()
                 if (user != null) {
                     confirmUserCreated(user.userId)
+                } else {
+                    databaseInteractor.clear()
                 }
-            } catch(exception: Exception) {
-                when(exception) {
-                    is UserNotAuthenticatedException -> {/*User needs to login again-do it with saved credentials*/}
+            } catch (exception: Exception) {
+                state = state.copy(isCheckingAuth = false)
+                exception.log()
+                when (exception) {
+                    is UserNotAuthenticatedException -> {/*User needs to login again-do it with saved credentials*/
+                    }
                 }
             }
         }
@@ -60,6 +70,10 @@ class LoginViewModel @Inject constructor(
         state = state.copy(showCodeConfirmation = true)
     }
 
+    fun hideRegistrationConfirmation() {
+        state = state.copy(showCodeConfirmation = false)
+    }
+
     fun onRegisterClick() {
         state = state.copy(isRegister = true)
     }
@@ -80,13 +94,16 @@ class LoginViewModel @Inject constructor(
         when (exception) {
             is InvalidParameterException -> { /*Wrong credentials.*/
             }
+            is UserNotConfirmedException -> {
+                state = state.copy(showCodeConfirmation = true)
+            }
             else -> {/*Unknown*/
             }
         }
     }
 
     private fun userLoggedInSuccessfully() {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val userId = interactor.getUser()?.userId
                 if (userId != null) {
@@ -105,31 +122,35 @@ class LoginViewModel @Inject constructor(
         if (code.length != 6) {
             return
         }
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
-                interactor.confirmUser(username, "453432")
+                interactor.confirmUser(username, code)
                 val user = interactor.getUser()
                 if (user?.userId != null) {
-                    createUser(user.userId, user.email)
                     state = state.copy(isAuthorized = true)
                 }
             } catch (exception: Exception) {
-                println()
+                when (exception) {
+                    is CodeMismatchException -> {
+
+                    }
+                    else -> {}
+                }
             }
         }
     }
 
     private suspend fun confirmUserCreated(userId: String) {
         try {
-            CoroutineScope(Dispatchers.IO).launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 val user = repository.getUser(userId)
                 if (user?.userId == null) {
                     createUser(userId, user?.email ?: "")
                 }
-                state = state.copy(isAuthorized = true)
+                state = state.copy(isAuthorized = true, isCheckingAuth = false)
             }
         } catch (exception: Exception) {
-            state = state.copy(isAuthorized = false)
+            state = state.copy(isAuthorized = false, isCheckingAuth = false)
         }
     }
 
@@ -146,6 +167,7 @@ class LoginViewModel @Inject constructor(
                 )
             )
         } catch (exception: Exception) {
+            exception.log()
             println()
         }
     }

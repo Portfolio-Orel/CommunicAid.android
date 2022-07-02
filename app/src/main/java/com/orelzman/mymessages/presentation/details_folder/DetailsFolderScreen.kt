@@ -24,7 +24,7 @@ fun DetailsFolderScreen(
     val state = viewModel.state
 
     if(state.isFolderAdded) {
-        navigator.navigate(MainScreenDestination)
+        navigator.popBackStack()
     }
     MyMessagesTheme {
         Column(

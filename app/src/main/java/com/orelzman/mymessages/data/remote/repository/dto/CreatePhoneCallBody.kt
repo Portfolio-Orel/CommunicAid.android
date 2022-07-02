@@ -9,6 +9,6 @@ data class CreatePhoneCallBody(
     @SerializedName("end_date") val endDate: Long,
     @SerializedName("is_answered") val isAnswered: Boolean,
     @SerializedName("type") val type: String,
-    @SerializedName("messages_sent") val messagesSent: List<String>,
+    @SerializedName("messages_sent") val messagesSent: List<CreateMessageSentBody>,
     @SerializedName("user_id") val userId: String,
 )

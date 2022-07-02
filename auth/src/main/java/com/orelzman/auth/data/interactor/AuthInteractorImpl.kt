@@ -13,11 +13,16 @@ import com.amplifyframework.kotlin.core.Amplify
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.orelzman.auth.data.repository.AuthRepository
+import com.orelzman.auth.domain.exception.CodeMismatchException
+import com.orelzman.auth.domain.exception.UserNotConfirmedException
 import com.orelzman.auth.domain.exception.UsernamePasswordAuthException
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.auth.domain.model.User
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -29,7 +34,13 @@ class AuthInteractorImpl @Inject constructor(
         var isConfigured: Boolean = false
     }
 
-    override suspend fun init() {
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            initAWS()
+        }
+    }
+
+    override suspend fun initAWS() {
         // Add this line, to include the Auth plugin.
         if (isConfigured) return
         try {
@@ -44,7 +55,6 @@ class AuthInteractorImpl @Inject constructor(
     }
 
     override suspend fun getUser(): User? {
-        init()
         if (!Amplify.Auth.fetchAuthSession().isSignedIn) {
             return null
         }
@@ -72,20 +82,34 @@ class AuthInteractorImpl @Inject constructor(
         val options = AuthSignUpOptions.builder()
             .userAttribute(AuthUserAttributeKey.email(), email)
             .build()
-        Amplify.Auth.signUp(username, password, options)
+        try {
+            Amplify.Auth.signUp(username, password, options)
+        } catch (exception: Exception) {
+            when (exception) {
+                is AuthException.UserNotConfirmedException -> throw UserNotConfirmedException()
+                else -> throw exception
+            }
+        }
     }
+
 
     @Throws
     override suspend fun confirmUser(username: String, code: String) {
         try {
-            val result = Amplify.Auth.confirmSignUp("username", code)
+            val result = Amplify.Auth.confirmSignUp(username, code)
             if (result.isSignUpComplete) {
                 Log.i("AuthQuickstart", "Signup confirmed")
             } else {
                 Log.i("AuthQuickstart", "Signup confirmation not yet complete")
             }
         } catch (error: AuthException) {
-            Log.e("AuthQuickstart", "Failed to confirm signup", error)
+            when (error) {
+                is AuthException.CodeMismatchException -> {
+                    Amplify.Auth.resendSignUpCode(username)
+                    throw CodeMismatchException()
+                }
+                else -> throw error
+            }
         }
     }
 
@@ -103,12 +127,19 @@ class AuthInteractorImpl @Inject constructor(
         password: String,
         isSaveCredentials: Boolean
     ) {
-        val result = Amplify.Auth.signIn(username, password)
-        if (result.isSignInComplete) {
-            Log.i("AuthQuickstart", "Sign in succeeded")
-        } else {
-            Log.e("AuthQuickstart", "Sign in not complete")
-            throw Exception("Login failed")
+        try {
+            val result = Amplify.Auth.signIn(username, password)
+            if (result.isSignInComplete) {
+                Log.i("AuthQuickstart", "Sign in succeeded")
+            } else {
+                Log.e("AuthQuickstart", "Sign in not complete")
+                throw Exception("Login failed")
+            }
+        } catch (exception: Exception) {
+            when (exception) {
+                is AuthException.UserNotConfirmedException -> throw UserNotConfirmedException()
+                else -> throw exception
+            }
         }
     }
 
