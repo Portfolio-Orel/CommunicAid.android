@@ -10,7 +10,7 @@ data class Message(
     val body: String = "",
     val timesUsed: Int = 0,
     val isActive: Boolean = true,
-    val position: Int? = null,
+    val position: Int = 0,
     @PrimaryKey val id: String = ""
 ) {
 

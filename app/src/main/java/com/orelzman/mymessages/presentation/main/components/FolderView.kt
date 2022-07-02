@@ -1,7 +1,8 @@
 package com.orelzman.mymessages.presentation.main.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.orelzman.mymessages.data.dto.Folder
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FolderView(
     folder: Folder,
@@ -37,7 +39,10 @@ fun FolderView(
                 } else {
                     MaterialTheme.colorScheme.background
                 }
-            ).clickable { onClick(folder) },
+            )
+            .combinedClickable(
+                onClick = { onClick(folder) },
+                onLongClick = { onLongClick(folder) }),
         contentAlignment = Alignment.Center
     ) {
         Text(

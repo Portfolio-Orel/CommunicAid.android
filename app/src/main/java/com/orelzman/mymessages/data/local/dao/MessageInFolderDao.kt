@@ -12,10 +12,12 @@ interface MessageInFolderDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(messagesInFolder: List<MessageInFolder>)
 
-    @Query("""
+    @Query(
+        """
         SELECT *
         FROM MessageInFolder
-    """)
+    """
+    )
     suspend fun getMessageInFolders(): List<MessageInFolder>
 
     @Update
@@ -24,12 +26,32 @@ interface MessageInFolderDao {
     @Delete
     suspend fun delete(messageInFolder: MessageInFolder)
 
-    @Query("""
+    @Query(
+        """
         SELECT *
         FROM MessageInFolder
         WHERE id = :messageInFolderId
-    """)
+    """
+    )
     suspend fun get(messageInFolderId: String): MessageInFolder
+
+    @Query(
+        """
+        SELECT folderId
+        FROM MessageInFolder
+        WHERE messageId = :messageId
+    """
+    )
+    suspend fun getWithMessageId(messageId: String): String
+
+    @Query(
+        """
+        SELECT *
+        FROM MessageInFolder
+        WHERE messageId = :messageId AND folderId = :folderId
+    """
+    )
+    suspend fun getWithMessageIdAndFolderId(messageId: String, folderId: String): MessageInFolder
 
     @Query("DELETE FROM MessageInFolder")
     suspend fun clear()

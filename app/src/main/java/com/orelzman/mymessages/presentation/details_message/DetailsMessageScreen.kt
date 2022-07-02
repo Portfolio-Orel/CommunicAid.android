@@ -34,7 +34,7 @@ fun DetailsMessageScreen(
     val state = viewModel.state
 
     if (state.isMessageSaved) {
-        navigator.popBackStack()
+        navigator.navigateUp()
     }
 
     MyMessagesTheme {
@@ -92,7 +92,8 @@ fun DetailsMessageScreen(
                 ) {
                     if (state.isLoading) {
                         CircularProgressIndicator(
-                            modifier = Modifier.padding(bottom = 12.dp),
+                            modifier = Modifier.padding(bottom = 12.dp)
+                                .size(8.dp),
                             color = Color.White
                         )
                     } else {

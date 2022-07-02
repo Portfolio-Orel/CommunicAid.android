@@ -1,6 +1,13 @@
 package com.orelzman.mymessages.data.remote.repository.api
 
-import com.orelzman.mymessages.data.remote.repository.dto.*
+import com.orelzman.mymessages.data.dto.Folder
+import com.orelzman.mymessages.data.dto.Message
+import com.orelzman.mymessages.data.remote.repository.dto.body.create.*
+import com.orelzman.mymessages.data.remote.repository.dto.body.update.UpdateFolderBody
+import com.orelzman.mymessages.data.remote.repository.dto.body.update.UpdateMessageBody
+import com.orelzman.mymessages.data.remote.repository.dto.response.GetFoldersResponse
+import com.orelzman.mymessages.data.remote.repository.dto.response.GetMessagesResponse
+import com.orelzman.mymessages.data.remote.repository.dto.response.GetUserResponse
 import javax.inject.Inject
 
 class APIRepository @Inject constructor(
@@ -31,6 +38,33 @@ class APIRepository @Inject constructor(
         }
     }
 
+    override suspend fun deleteMessage(message: Message, folderId: String) =
+        api.updateMessage(
+            UpdateMessageBody(
+                messageId = message.id,
+                title = message.title,
+                shortTitle = message.shortTitle,
+                body = message.body,
+                times_used = message.timesUsed,
+                isActive = false,
+                folderId = folderId,
+                previousFolderId = folderId,
+                position = message.position,
+            )
+        )
+
+
+    override suspend fun deleteFolder(folder: Folder) =
+        api.updateFolder(
+            UpdateFolderBody(
+                id = folder.id,
+                title = folder.title,
+                isActive = false,
+                timesUsed = folder.timesUsed,
+                position = folder.position
+            )
+        )
+
     override suspend fun createPhoneCall(createPhoneCallBody: CreatePhoneCallBody): String {
         val result = api.createPhoneCall(createPhoneCallBody)
         return result.body
@@ -51,7 +85,34 @@ class APIRepository @Inject constructor(
 
     override suspend fun getUser(userId: String): GetUserResponse? {
         val response = api.getUser(userId)
-        println(response)
         return response?.body
     }
+
+    override suspend fun updateMessage(message: Message, oldFolderId: String, newFolderId: String) =
+        api.updateMessage(
+            UpdateMessageBody(
+                messageId = message.id,
+                title = message.title,
+                shortTitle = message.shortTitle,
+                body = message.body,
+                times_used = message.timesUsed,
+                isActive = message.isActive,
+                folderId = newFolderId,
+                previousFolderId = oldFolderId,
+                position = message.position,
+            )
+        )
+
+
+    override suspend fun updateFolder(folder: Folder) =
+        api.updateFolder(
+            UpdateFolderBody(
+                id = folder.id,
+                title = folder.title,
+                isActive = folder.isActive,
+                timesUsed = folder.timesUsed,
+                position = folder.position
+            )
+        )
+
 }

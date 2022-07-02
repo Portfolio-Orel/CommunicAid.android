@@ -3,13 +3,15 @@ package com.orelzman.mymessages.data.local.interactors.folder
 import com.orelzman.mymessages.data.dto.Folder
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.dao.FolderDao
+import com.orelzman.mymessages.data.local.interactors.message_in_folder.MessageInFolderInteractor
 import com.orelzman.mymessages.data.remote.repository.api.Repository
-import com.orelzman.mymessages.data.remote.repository.dto.CreateFolderBody
-import com.orelzman.mymessages.data.remote.repository.dto.folders
+import com.orelzman.mymessages.data.remote.repository.dto.body.create.CreateFolderBody
+import com.orelzman.mymessages.data.remote.repository.dto.response.folders
 import javax.inject.Inject
 
 class FolderInteractorImpl @Inject constructor(
     private val repository: Repository,
+    private val messageInFolderInteractor: MessageInFolderInteractor,
     database: LocalDatabase,
 ) : FolderInteractor {
 
@@ -24,7 +26,11 @@ class FolderInteractorImpl @Inject constructor(
         return folders
     }
 
-    override suspend fun addFolder(userId: String, folder: Folder): String? {
+    override suspend fun getFolder(folderId: String): Folder =
+        db.get(folderId = folderId)
+
+
+    override suspend fun createFolder(userId: String, folder: Folder): String? {
         try {
             val folderId = repository.createFolder(
                 CreateFolderBody(
@@ -36,10 +42,27 @@ class FolderInteractorImpl @Inject constructor(
 
             db.insert(Folder(folder, folderId))
             return folderId
-        } catch(exception: Exception) {
+        } catch (exception: Exception) {
             // ToDo
             return null
         }
 
     }
+
+    override suspend fun updateFolder(folder: Folder) {
+        repository.updateFolder(folder)
+        db.update(folder)
+    }
+
+
+    override suspend fun deleteFolder(folder: Folder) {
+        repository.deleteFolder(folder)
+        db.delete(folder)
+    }
+
+    override suspend fun getFolderWithMessageId(messageId: String): Folder {
+        val folderId = messageInFolderInteractor.getMessageFolderId(messageId)
+        return db.get(folderId)
+    }
+
 }

@@ -6,12 +6,13 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
-import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -19,49 +20,54 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Composable
 fun DetailsFolderScreen(
     navigator: DestinationsNavigator,
-    viewModel: DetailsFolderViewModel = hiltViewModel()
+    viewModel: DetailsFolderViewModel = hiltViewModel(),
+    folderId: String?
 ) {
     val state = viewModel.state
-
-    if(state.isFolderAdded) {
-        navigator.popBackStack()
+    LaunchedEffect(key1 = folderId) {
+        viewModel.setEdit(folderId)
     }
-    MyMessagesTheme {
-        Column(
+    if (state.isFolderAdded) {
+        navigator.navigateUp()
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        OutlinedTextField(
+            value = state.title,
+            onValueChange = { viewModel.setTitle(it) },
             modifier = Modifier
-                .fillMaxSize()
-        ) {
-            OutlinedTextField(
-                value = state.title,
-                onValueChange = { viewModel.setTitle(it) },
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                placeholder = {
-                    Text(text = "כותרת")
-                },
-            )
-            Row {
-                Button(
-                    onClick = { viewModel.saveFolder() },
-                    modifier = Modifier.padding(start = 32.dp, bottom = 32.dp)
-                ) {
-                    if (state.isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.padding(bottom = 12.dp),
-                            color = Color.White
-                        )
-                    } else {
-                        Text("שמור")
-                    }
+                .padding(16.dp)
+                .fillMaxWidth(),
+            placeholder = {
+                Text(text = "כותרת")
+            },
+        )
+        Row {
+            Button(
+                onClick = { viewModel.onSaveClick() },
+                modifier = Modifier.padding(start = 32.dp, bottom = 32.dp)
+                    .align(Alignment.CenterVertically)
+            ) {
+                if (state.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .padding(bottom = 12.dp)
+                            .size(16.dp),
+                        color = Color.White,
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text("שמור")
                 }
-                Spacer(modifier = Modifier.weight(1f))
-                Button(
-                    onClick = { navigator.navigate(MainScreenDestination) },
-                    modifier = Modifier.padding(end = 32.dp, bottom = 32.dp)
-                ) {
-                    Text("בטל")
-                }
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            Button(
+                onClick = { navigator.navigate(MainScreenDestination) },
+                modifier = Modifier.padding(end = 32.dp, bottom = 32.dp)
+            ) {
+                Text("בטל")
             }
         }
     }

@@ -13,7 +13,8 @@ data class DetailsMessageState(
     val isLoading: Boolean = false, // Message is being uploaded
     val error: String = "",
     val isMessageSaved: Boolean = false,
-    val messageId: String? = null
+    val messageId: String? = null,
+    val isEdit: Boolean = false,
 ) {
     val isReadyForSave: Boolean =
         title.isNotBlank() && shortTitle.isNotBlank() && body.isNotBlank() && currentFolderId.isNotBlank()

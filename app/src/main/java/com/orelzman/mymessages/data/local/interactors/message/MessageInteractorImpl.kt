@@ -5,8 +5,8 @@ import com.orelzman.mymessages.data.dto.MessageInFolder
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.interactors.message_in_folder.MessageInFolderInteractor
 import com.orelzman.mymessages.data.remote.repository.api.Repository
-import com.orelzman.mymessages.data.remote.repository.dto.CreateMessageBody
-import com.orelzman.mymessages.data.remote.repository.dto.toMessagesInFolders
+import com.orelzman.mymessages.data.remote.repository.dto.body.create.CreateMessageBody
+import com.orelzman.mymessages.data.remote.repository.dto.response.toMessagesInFolders
 import javax.inject.Inject
 
 class MessageInteractorImpl @Inject constructor(
@@ -28,38 +28,49 @@ class MessageInteractorImpl @Inject constructor(
         return messages
     }
 
-    override suspend fun createMessage(userId: String, message: Message, folderId: String): String? {
+    override suspend fun createMessage(
+        userId: String,
+        message: Message,
+        folderId: String
+    ): String? {
         val messageId =
-            repository.createMessage(CreateMessageBody.fromMessage(userId, message, folderId)) ?: return null
+            repository.createMessage(CreateMessageBody.fromMessage(userId, message, folderId))
+                ?: return null
 
         db.insert(Message(message, messageId))
-        messageInFolderInteractor.insert(MessageInFolder(messageId = messageId, folderId = folderId))
+        messageInFolderInteractor.insert(
+            MessageInFolder(
+                messageId = messageId,
+                folderId = folderId
+            )
+        )
         return messageId
     }
 
     override suspend fun getMessage(messageId: String): Message =
         db.getMessage(messageId = messageId)
 
-    override suspend fun editMessage(
+    override suspend fun updateMessage(
         userId: String,
         message: Message,
         oldFolderId: String,
         newFolderId: String
     ) {
-//        repository.editMessage(
-//            userId = userId,
-//            message = message,
-//            oldFolderId = oldFolderId,
-//            newFolderId = newFolderId
-//        )
-//        db.update(message)
-//        folderInteractor.removeMessageFromFolder(
-//            userId = userId,
-//            message = message,
-//            folderId = oldFolderId
-//        )
-//        folderInteractor.saveMessageInFolder(messageId = message.id, folderId = newFolderId)
+        repository.updateMessage(
+            message = message,
+            oldFolderId = oldFolderId,
+            newFolderId = newFolderId
+        )
+        db.update(message)
+        messageInFolderInteractor.update(
+            messageId = message.id,
+            oldFolderId = oldFolderId,
+            newFolderId = newFolderId
+        )
     }
+
+    override suspend fun deleteMessage(message: Message, folderId: String) =
+        repository.deleteMessage(message, folderId)
 
 
 }

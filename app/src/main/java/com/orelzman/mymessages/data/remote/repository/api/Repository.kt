@@ -1,35 +1,28 @@
 package com.orelzman.mymessages.data.remote.repository.api
 
-import com.orelzman.mymessages.data.remote.repository.dto.*
+import com.orelzman.mymessages.data.dto.Folder
+import com.orelzman.mymessages.data.dto.Message
+import com.orelzman.mymessages.data.remote.repository.dto.body.create.*
+import com.orelzman.mymessages.data.remote.repository.dto.response.GetFoldersResponse
+import com.orelzman.mymessages.data.remote.repository.dto.response.GetMessagesResponse
+import com.orelzman.mymessages.data.remote.repository.dto.response.GetUserResponse
 
 
 /**
  * TODO: Think of a way to inject it with the uid
  */
 interface Repository {
-    /**
-     * Returns all [userId]'s messages.
-     */
     suspend fun getMessages(userId: String): List<GetMessagesResponse>
 
-    /**
-     * Returns all [userId]'s folders.
-     */
     suspend fun getFolders(userId: String): List<GetFoldersResponse>
 
-    /**
-     * Adds a message to the db and to the folder's messages and returns its id.
-     */
     suspend fun createMessage(createMessageBody: CreateMessageBody): String?
 
-    /**
-     * Adds a folder to the db and returns its id.
-     */
     suspend fun createFolder(createFolderBody: CreateFolderBody): String?
 
-//    suspend fun deleteMessage(userId: String, id: String)
-//
-//    suspend fun deleteFolder(userId: String, id: String)
+    suspend fun deleteMessage(message: Message, folderId: String)
+
+    suspend fun deleteFolder(folder: Folder)
 
     suspend fun createPhoneCall(createPhoneCallBody: CreatePhoneCallBody): String?
 
@@ -41,10 +34,13 @@ interface Repository {
 
     suspend fun getUser(userId: String): GetUserResponse?
 
-//    suspend fun editMessage(
-//        userId: String,
-//        message: Message,
-//        oldFolderId: String,
-//        newFolderId: String
-//    )
+    suspend fun updateMessage(
+        message: Message,
+        oldFolderId: String,
+        newFolderId: String
+    )
+
+    suspend fun updateFolder(
+        folder: Folder,
+    )
 }

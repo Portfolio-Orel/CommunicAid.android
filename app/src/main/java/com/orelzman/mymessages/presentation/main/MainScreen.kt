@@ -27,7 +27,6 @@ import com.orelzman.mymessages.presentation.destinations.UnhandledCallsScreenDes
 import com.orelzman.mymessages.presentation.logout_screen.LogoutButton
 import com.orelzman.mymessages.presentation.main.components.FolderView
 import com.orelzman.mymessages.presentation.main.components.MessageView
-import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -49,128 +48,130 @@ fun MainScreen(
 
     if (state.messageToEdit != null) {
         navigator.navigate(
-            DetailsMessageScreenDestination(state.messageToEdit.id)
+            DetailsMessageScreenDestination(messageId = state.messageToEdit.id)
+        )
+    }
+    if (state.folderToEdit != null) {
+        navigator.navigate(
+            DetailsFolderScreenDestination(folderId = state.folderToEdit.id)
         )
     }
 
     LaunchedEffect(key1 = viewModel) {
         viewModel.init()
     }
-
-    MyMessagesTheme {
-        if (state.isLoading) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .height(16.dp)
-                            .width(16.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                }
+    if (state.isLoading) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .height(16.dp)
+                        .width(16.dp),
+                    strokeWidth = 2.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                )
             }
         }
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+    }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
         ) {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    state.callOnTheLine,
-                    style = MaterialTheme.typography.titleSmall
+            Text(
+                state.callOnTheLine,
+                style = MaterialTheme.typography.titleSmall
+            )
+        }
+        Divider(
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
+        )
+        Row(
+            modifier = Modifier
+                .padding(8.dp)
+        ) {
+            state.folders.forEach { folder ->
+                FolderView(
+                    folder = folder,
+                    isSelected = state.selectedFolder.id == folder.id,
+                    modifier = Modifier
+                        .height(50.dp)
+                        .width(120.dp),
+                    onClick = { viewModel.setSelectedFolder(it) },
+                    onLongClick = { viewModel.onFolderLongClick(it) }
                 )
             }
-            Divider(
-                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
-            )
-            Row(
-                modifier = Modifier
-                    .padding(8.dp)
-            ) {
-                state.folders.forEach { folder ->
-                    FolderView(
-                        folder = folder,
-                        isSelected = state.selectedFolder.id == folder.id,
+        }
+
+        FlowRow(
+            modifier = Modifier
+                .padding(start = 10.dp, end = 5.dp)
+                .fillMaxWidth(0.9f)
+                .fillMaxHeight(0.8F)
+                .fillMaxWidth(0.9F)
+                .scrollable(
+                    orientation = Orientation.Vertical,
+                    state = rememberScrollableState { delta ->
+                        messagesOffset.value = messagesOffset.value + delta
+                        delta
+                    }
+                ),
+            mainAxisSpacing = spaceBetweenMessages.dp,
+            mainAxisAlignment = MainAxisAlignment.Start,
+            mainAxisSize = SizeMode.Wrap
+        ) {
+            viewModel.getFoldersMessages()
+                .forEach {
+                    MessageView(
+                        message = it,
                         modifier = Modifier
-                            .height(50.dp)
-                            .width(120.dp),
-                        onClick = { viewModel.setSelectedFolder(it) },
-                        onLongClick = { viewModel.onFolderLongClick(it) }
+                            .width(boxWidth)
+                            .height(boxHeight)
+                            .padding(0.dp)
+                            .scrollable(
+                                orientation = Orientation.Horizontal,
+                                state = rememberScrollableState { delta ->
+                                    foldersOffset.value = foldersOffset.value + delta
+                                    delta
+                                }
+                            ),
+                        onClick = { message, context ->
+                            viewModel.onMessageClick(message, context)
+                        },
+                        onLongClick = { message, context ->
+                            viewModel.onMessageLongClick(message, context)
+                        }
                     )
                 }
-            }
-
-            FlowRow(
-                modifier = Modifier
-                    .padding(start = 10.dp, end = 5.dp)
-                    .fillMaxWidth(0.9f)
-                    .fillMaxHeight(0.8F)
-                    .fillMaxWidth(0.9F)
-                    .scrollable(
-                        orientation = Orientation.Vertical,
-                        state = rememberScrollableState { delta ->
-                            messagesOffset.value = messagesOffset.value + delta
-                            delta
-                        }
-                    ),
-                mainAxisSpacing = spaceBetweenMessages.dp,
-                mainAxisAlignment = MainAxisAlignment.Start,
-                mainAxisSize = SizeMode.Wrap
-            ) {
-                viewModel.getFoldersMessages()
-                    .forEach {
-                        MessageView(
-                            message = it,
-                            modifier = Modifier
-                                .width(boxWidth)
-                                .height(boxHeight)
-                                .padding(0.dp)
-                                .scrollable(
-                                    orientation = Orientation.Horizontal,
-                                    state = rememberScrollableState { delta ->
-                                        foldersOffset.value = foldersOffset.value + delta
-                                        delta
-                                    }
-                                ),
-                            onClick = { message, context ->
-                                viewModel.onMessageClick(message, context)
-                            },
-                            onLongClick = { message, context ->
-                                viewModel.onMessageLongClick(message, context)
-                            }
-                        )
-                    }
-            }
-            Button(onClick = {
-                navigator.navigate(
-                    DetailsFolderScreenDestination()
-                )
-            }) {
-                Text(text = stringResource(R.string.add_folder))
-            }
-
-            Button(onClick = {
-                navigator.navigate(
-                    DetailsMessageScreenDestination()
-                )
-            }) {
-                Text(text = stringResource(R.string.add_message))
-            }
-
-            Button(onClick = {
-                navigator.navigate(
-                    UnhandledCallsScreenDestination()
-                )
-            }) {
-                Text(text = stringResource(R.string.unhandled_calls))
-            }
-            LogoutButton(onLogoutComplete = {
-                navigator.navigate(LoginScreenDestination)
-            })
         }
+        Button(onClick = {
+            navigator.navigate(
+                DetailsFolderScreenDestination()
+            )
+        }) {
+            Text(text = stringResource(R.string.add_folder))
+        }
+
+        Button(onClick = {
+            navigator.navigate(
+                DetailsMessageScreenDestination()
+            )
+        }) {
+            Text(text = stringResource(R.string.add_message))
+        }
+
+        Button(onClick = {
+            navigator.navigate(
+                UnhandledCallsScreenDestination()
+            )
+        }) {
+            Text(text = stringResource(R.string.unhandled_calls))
+        }
+        LogoutButton(onLogoutComplete = {
+            navigator.navigate(LoginScreenDestination)
+        })
     }
 }
 

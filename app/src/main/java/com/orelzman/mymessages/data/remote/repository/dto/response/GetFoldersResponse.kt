@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.data.remote.repository.dto
+package com.orelzman.mymessages.data.remote.repository.dto.response
 
 import com.google.gson.annotations.SerializedName
 import com.orelzman.mymessages.data.dto.Folder

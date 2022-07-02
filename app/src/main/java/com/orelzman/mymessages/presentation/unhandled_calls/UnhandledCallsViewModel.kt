@@ -19,6 +19,7 @@ import com.orelzman.mymessages.data.local.interactors.unhandled_calls.UnhandledC
 import com.orelzman.mymessages.domain.model.CallLogEntity
 import com.orelzman.mymessages.util.CallLogUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -40,7 +41,7 @@ class UnhandledCallsViewModel @Inject constructor(
      * Sets all the calls that were not handled by the user and might require his attention.
      */
     private fun setCalls() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             authInteractor.getUser()?.userId?.let {
                 val unhandledCalls = unhandledCallsInteractor.getAll(it)
                     .sortedByDescending { unhandledCall -> unhandledCall.phoneCall.startDate }
@@ -59,7 +60,7 @@ class UnhandledCallsViewModel @Inject constructor(
      * Deletes [phoneCall] as marks it as deletedUnhandled
      */
     fun onDelete(phoneCall: PhoneCall) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             authInteractor.getUser()?.userId?.let {
                 unhandledCallsInteractor.insert(
                     uid = it, deletedUnhandledCalls = DeletedUnhandledCalls(phoneCall = phoneCall)
