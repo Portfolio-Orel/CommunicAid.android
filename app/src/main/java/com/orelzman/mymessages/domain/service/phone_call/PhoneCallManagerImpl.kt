@@ -1,16 +1,10 @@
 package com.orelzman.mymessages.domain.service.phone_call
 
-import android.content.Context
-import android.content.Intent
-import android.os.Build
 import android.telephony.TelephonyManager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.data.dto.PhoneCall
 import com.orelzman.mymessages.data.local.interactors.analytics.AnalyticsInteractor
 import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsInteractor
-import com.orelzman.mymessages.domain.service.CallsService
-import com.orelzman.mymessages.domain.service.CallsService.Companion.INTENT_STATE_VALUE
-import com.orelzman.mymessages.domain.service.ServiceState
 import com.orelzman.mymessages.domain.service.phone_call.exceptions.WaitingThenRingingException
 import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.log
@@ -32,21 +26,19 @@ class PhoneCallManagerImpl @Inject constructor(
     private val _state: MutableStateFlow<CallState> = MutableStateFlow(CallState.IDLE)
 
     override val callOnTheLine = _callOnTheLine.asStateFlow()
-    val state = _state.asStateFlow()
+    override val state = _state.asStateFlow()
 
-    override fun onStateChanged(state: String, number: String, context: Context) {
+    override fun onStateChanged(state: String, number: String) {
         Log.vCustom("state: $state \n number: $number")
         analyticsInteractor?.track("Call Status", mapOf("status" to state))
         when (state) {
-            TelephonyManager.EXTRA_STATE_IDLE -> onIdleState(context)
+            TelephonyManager.EXTRA_STATE_IDLE -> onIdleState()
             TelephonyManager.EXTRA_STATE_RINGING -> onRingingState(number)
             TelephonyManager.EXTRA_STATE_OFFHOOK -> onOffHookState(number)
         }
-        startBackgroundService(context)
     }
 
-    private fun onIdleState(context: Context) {
-        startBackgroundService(context, ServiceState.UPLOAD_LOGS)
+    private fun onIdleState() {
         resetStates()
     }
 
@@ -134,30 +126,6 @@ class PhoneCallManagerImpl @Inject constructor(
         phoneCall.id = id.toString()
         phoneCallInteractor.cachePhoneCall(phoneCall = phoneCall)
         analyticsInteractor?.track("Call Cached", mapOf("call" to phoneCall.number))
-    }
-
-    private fun startBackgroundService(
-        context: Context,
-        state: ServiceState = ServiceState.ALIVE
-    ) {
-        // Avoid starting the service twice for the same purpose
-        if (state == CallsService.currentState) {
-            return
-        }
-        val intent = Intent(context, CallsService::class.java)
-        intent.putExtra(INTENT_STATE_VALUE, state)
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Log.vCustom("Starting the service! context: $context")
-                context.startForegroundService(intent)
-            } else {
-                Log.vCustom("Starting the service pre O! context: $context")
-                context.startService(intent)
-            }
-        } catch (exception: Exception) { // ForegroundServiceStartNotAllowedException
-            Log.vCustom("Error... ${exception.message}")
-            exception.log()
-        }
     }
 
     private fun resetStates() {
