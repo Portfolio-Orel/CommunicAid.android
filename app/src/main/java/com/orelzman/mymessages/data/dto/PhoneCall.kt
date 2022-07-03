@@ -9,7 +9,7 @@ import java.util.*
 
 @Entity
 data class PhoneCall(
-    @PrimaryKey val id: String = "",
+    @PrimaryKey var id: String = "",
     val number: String = "",
     var startDate: Date = Date(),
     var endDate: Date = startDate,

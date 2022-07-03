@@ -11,10 +11,12 @@ import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsIntera
 import com.orelzman.mymessages.domain.service.CallsService
 import com.orelzman.mymessages.domain.service.CallsService.Companion.INTENT_STATE_VALUE
 import com.orelzman.mymessages.domain.service.ServiceState
+import com.orelzman.mymessages.domain.service.phone_call.exceptions.WaitingThenRingingException
 import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.log
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.util.*
 import javax.inject.Inject
 
 
@@ -22,7 +24,7 @@ import javax.inject.Inject
 @ExperimentalPermissionsApi
 class PhoneCallManagerImpl @Inject constructor(
     private val phoneCallInteractor: PhoneCallsInteractor,
-    private val analyticsInteractor: AnalyticsInteractor
+    private val analyticsInteractor: AnalyticsInteractor?
 ) : PhoneCallManager {
 
     private val callInTheBackground: MutableStateFlow<PhoneCall?> = MutableStateFlow(null)
@@ -34,7 +36,7 @@ class PhoneCallManagerImpl @Inject constructor(
 
     override fun onStateChanged(state: String, number: String, context: Context) {
         Log.vCustom("state: $state \n number: $number")
-        analyticsInteractor.track("Call Status", mapOf("status" to state))
+        analyticsInteractor?.track("Call Status", mapOf("status" to state))
         when (state) {
             TelephonyManager.EXTRA_STATE_IDLE -> onIdleState(context)
             TelephonyManager.EXTRA_STATE_RINGING -> onRingingState(number)
@@ -55,9 +57,9 @@ class PhoneCallManagerImpl @Inject constructor(
                 incomingCall(number = number)
             }
             CallState.INCOMING, CallState.OUTGOING -> {
-                waiting(number = number)
+                waitingCall(number = number)
             }
-            else -> Log.vCustom("Weird exception - onRingingState: $number ${state.value}")
+            else -> WaitingThenRingingException.log()
         }
     }
 
@@ -66,16 +68,16 @@ class PhoneCallManagerImpl @Inject constructor(
         when (previousState) {
             CallState.WAITING -> {
                 if (callOnTheLine.value?.number != number) { // Waiting answered.
-                    waitingAnswered()
+                    waitingCallAnswered()
                 } else {
-                    waitingDenied()
+                    waitingCallRejected()
                 }
             }
             CallState.IDLE -> {
                 outgoingCall(number = number)
             }
-            CallState.INCOMING -> { // incoming answered
-
+            CallState.INCOMING -> {
+                incomingAnswered()
             }
             else -> throw Exception("Weird exception - onOffHookState: $number ${state.value}")
         }
@@ -105,26 +107,33 @@ class PhoneCallManagerImpl @Inject constructor(
         setCallOnLine(PhoneCall.incoming(number = number))
     }
 
-    private fun waiting(number: String) {
+    private fun incomingAnswered() {
+        // ToDo if needed
+    }
+
+    private fun waitingCall(number: String) {
         setStateValue(CallState.WAITING)
         setBackgroundCall(PhoneCall.waiting(number = number))
     }
 
 
-    private fun waitingAnswered() {
+    private fun waitingCallAnswered() {
         val backgroundCallHolder = callInTheBackground.value
         setBackgroundCall(callOnTheLine.value)
         setCallOnLine(backgroundCallHolder)
     }
 
-    private fun waitingDenied() {
+    private fun waitingCallRejected() {
+        callInTheBackground.value = null
         setStateValue(CallState.INCOMING)
     }
 
     private fun addToBacklog(phoneCall: PhoneCall?) {
         if (phoneCall == null) return
+        val id = UUID.randomUUID()
+        phoneCall.id = id.toString()
         phoneCallInteractor.cachePhoneCall(phoneCall = phoneCall)
-        analyticsInteractor.track("Call Cached", mapOf("call" to phoneCall.number))
+        analyticsInteractor?.track("Call Cached", mapOf("call" to phoneCall.number))
     }
 
     private fun startBackgroundService(
