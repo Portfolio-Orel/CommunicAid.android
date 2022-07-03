@@ -15,9 +15,11 @@ import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.MainActivity
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.data.dto.PhoneCall
+import com.orelzman.mymessages.data.local.interactors.analytics.AnalyticsInteractor
 import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
 import com.orelzman.mymessages.util.extension.Log
+import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -50,12 +52,20 @@ class CallsService : Service() {
     @Inject
     lateinit var authInteractor: AuthInteractor
 
+    @Inject
+    lateinit var analyticsInteractor: AnalyticsInteractor
+
     override fun onBind(p0: Intent?): IBinder? =
         null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         currentState = intent?.extras?.get(INTENT_STATE_VALUE) as ServiceState
         Log.vCustom("Service onStartCommand: $currentState")
+        try {
+            analyticsInteractor.track("CallsService", mapOf("status" to currentState.name))
+        } catch (exception: Exception) {
+            exception.log(mapOf("status" to currentState.name))
+        }
         startService()
         if (currentState == ServiceState.UPLOAD_LOGS) {
             uploadCalls()
@@ -105,7 +115,7 @@ class CallsService : Service() {
             Intent(this, MainActivity::class.java).let { notificationIntent ->
                 notificationIntent.flags =
                     Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or FLAG_IMMUTABLE
-                    PendingIntent.getActivity(this, 0, notificationIntent, FLAG_IMMUTABLE)
+                PendingIntent.getActivity(this, 0, notificationIntent, FLAG_IMMUTABLE)
             }
 
         val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -139,29 +149,32 @@ class CallsService : Service() {
     }
 
     private fun uploadCalls() {
-        try {
-            CoroutineScope(Dispatchers.IO).launch {
-                val callsLog = phoneCallsInteractor
+        var phoneCalls = emptyList<PhoneCall>()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                phoneCalls = phoneCallsInteractor
                     .getAll()
                     .map { it.update(this@CallsService) }
-                Log.vCustom("upload calls: $callsLog")
+                analyticsInteractor.track("Calls Uploaded", phoneCalls)
                 authInteractor.getUser()?.userId?.let {
                     phoneCallsInteractor.addPhoneCalls(
                         it,
-                        callsLog
+                        phoneCalls
                     )
                 }
-            }.invokeOnCompletion {
-                Log.vCustom("About to finish service")
-                phoneCallsInteractor.clear()
+            } catch (exception: Exception) {
+                exception.log(phoneCalls)
                 stopService()
-                Log.vCustom("Service stopped.")
             }
-        } catch(exception: Exception) {
+        }.invokeOnCompletion {
+            Log.vCustom("About to finish service")
+            phoneCallsInteractor.clear()
             stopService()
+            Log.vCustom("Service stopped.")
         }
     }
 }
+
 /**
  * Updates values according to the call log
  * *** Test call in background, removed and called again to see if the backlog catches both from the calllog

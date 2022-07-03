@@ -17,7 +17,18 @@ data class PhoneCall(
     var isWaiting: Boolean = false,
     var messagesSent: List<MessageSent> = emptyList(),
     var type: String = CallType.INCOMING.name
-) {
+) : Loggable {
+
+    override val data: Map<String, Any>
+        get() = mapOf(
+            "number" to number,
+            "start_date" to "startDate.time",
+            "end_date" to "endDate.time",
+            "name" to name,
+            "is_waiting" to isWaiting,
+            "messages_sent" to messagesSent.map { it.data },
+            "type" to type
+        )
 
     val isAnswered: Boolean
         get() = (startDate.time.inSeconds != endDate.time.inSeconds)

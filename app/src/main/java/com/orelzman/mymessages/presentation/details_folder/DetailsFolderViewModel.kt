@@ -88,7 +88,7 @@ class DetailsFolderViewModel @Inject constructor(
                     state = state.copy(isLoading = false, isFolderAdded = true)
                 }
             } catch (exception: Exception) {
-                exception.log()
+                exception.log(state)
                 state = state.copy(isLoading = false, isFolderAdded = true)
             }
         }

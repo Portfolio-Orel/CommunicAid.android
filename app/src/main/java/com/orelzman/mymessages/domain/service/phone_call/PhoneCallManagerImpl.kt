@@ -6,17 +6,15 @@ import android.os.Build
 import android.telephony.TelephonyManager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.data.dto.PhoneCall
+import com.orelzman.mymessages.data.local.interactors.analytics.AnalyticsInteractor
 import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.service.CallsService
 import com.orelzman.mymessages.domain.service.CallsService.Companion.INTENT_STATE_VALUE
 import com.orelzman.mymessages.domain.service.ServiceState
 import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.log
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -24,6 +22,7 @@ import javax.inject.Inject
 @ExperimentalPermissionsApi
 class PhoneCallManagerImpl @Inject constructor(
     private val phoneCallInteractor: PhoneCallsInteractor,
+    private val analyticsInteractor: AnalyticsInteractor
 ) : PhoneCallManager {
 
     private val callInTheBackground: MutableStateFlow<PhoneCall?> = MutableStateFlow(null)
@@ -35,6 +34,7 @@ class PhoneCallManagerImpl @Inject constructor(
 
     override fun onStateChanged(state: String, number: String, context: Context) {
         Log.vCustom("state: $state \n number: $number")
+        analyticsInteractor.track("Call Status", mapOf("status" to state))
         when (state) {
             TelephonyManager.EXTRA_STATE_IDLE -> onIdleState(context)
             TelephonyManager.EXTRA_STATE_RINGING -> onRingingState(number)
@@ -57,7 +57,7 @@ class PhoneCallManagerImpl @Inject constructor(
             CallState.INCOMING, CallState.OUTGOING -> {
                 waiting(number = number)
             }
-             else -> Log.vCustom("Weird exception - onRingingState: $number ${state.value}")
+            else -> Log.vCustom("Weird exception - onRingingState: $number ${state.value}")
         }
     }
 
@@ -105,6 +105,12 @@ class PhoneCallManagerImpl @Inject constructor(
         setCallOnLine(PhoneCall.incoming(number = number))
     }
 
+    private fun waiting(number: String) {
+        setStateValue(CallState.WAITING)
+        setBackgroundCall(PhoneCall.waiting(number = number))
+    }
+
+
     private fun waitingAnswered() {
         val backgroundCallHolder = callInTheBackground.value
         setBackgroundCall(callOnTheLine.value)
@@ -115,16 +121,10 @@ class PhoneCallManagerImpl @Inject constructor(
         setStateValue(CallState.INCOMING)
     }
 
-    private fun waiting(number: String) {
-        setStateValue(CallState.WAITING)
-        setBackgroundCall(PhoneCall.waiting(number = number))
-    }
-
     private fun addToBacklog(phoneCall: PhoneCall?) {
         if (phoneCall == null) return
-        CoroutineScope(Dispatchers.IO).launch {
-            phoneCallInteractor.cachePhoneCall(phoneCall = phoneCall)
-        }
+        phoneCallInteractor.cachePhoneCall(phoneCall = phoneCall)
+        analyticsInteractor.track("Call Cached", mapOf("call" to phoneCall.number))
     }
 
     private fun startBackgroundService(
