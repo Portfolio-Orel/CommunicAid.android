@@ -54,10 +54,10 @@ class PhoneCallManagerImpl @Inject constructor(
             CallState.IDLE -> {
                 incomingCall(number = number)
             }
-            CallState.INCOMING -> {
+            CallState.INCOMING, CallState.OUTGOING -> {
                 waiting(number = number)
             }
-            else -> throw Exception("Weird exception - onRingingState: $number ${state.value}")
+             else -> Log.vCustom("Weird exception - onRingingState: $number ${state.value}")
         }
     }
 
