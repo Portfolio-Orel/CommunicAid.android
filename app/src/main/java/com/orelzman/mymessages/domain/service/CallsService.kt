@@ -15,8 +15,9 @@ import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.MainActivity
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.data.dto.PhoneCall
-import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallStatisticsInteractor
-import com.orelzman.mymessages.domain.service.PhoneCall.PhoneCallInteractor
+import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsInteractor
+import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
+import com.orelzman.mymessages.util.extension.Log
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,16 +30,22 @@ import kotlin.math.absoluteValue
 @ExperimentalPermissionsApi
 class CallsService : Service() {
 
+    companion object {
+        const val INTENT_STATE_VALUE = "background_service_state_value"
+
+        var currentState: ServiceState = ServiceState.NOT_ALIVE
+    }
+
     private var wakeLock: PowerManager.WakeLock? = null
     private lateinit var currentNotification: Notification
     private val notificationID = 1
     private val notificationChannelId = "MyMessages"
 
     @Inject
-    lateinit var phoneCallInteractor: PhoneCallInteractor
+    lateinit var phoneCallManagerInteractor: PhoneCallManagerInteractor
 
     @Inject
-    lateinit var phoneCallStatisticsInteractor: PhoneCallStatisticsInteractor
+    lateinit var phoneCallsInteractor: PhoneCallsInteractor
 
     @Inject
     lateinit var authInteractor: AuthInteractor
@@ -47,17 +54,21 @@ class CallsService : Service() {
         null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        uploadCalls()
-        // by returning this we make sure the service is restarted if the system kills the service
-        return START_STICKY
+        currentState = intent?.extras?.get(INTENT_STATE_VALUE) as ServiceState
+        Log.vCustom("Service onStartCommand: $currentState")
+        startService()
+        if (currentState == ServiceState.UPLOAD_LOGS) {
+            uploadCalls()
+        }
+        return START_NOT_STICKY
     }
 
 
     override fun onCreate() {
+        Log.vCustom("Service onCreate")
         super.onCreate()
         currentNotification = createNotification()
         startForeground(notificationID, currentNotification)
-        uploadCalls()
     }
 
     private fun startService() {
@@ -93,12 +104,8 @@ class CallsService : Service() {
         val pendingIntent: PendingIntent =
             Intent(this, MainActivity::class.java).let { notificationIntent ->
                 notificationIntent.flags =
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or FLAG_IMMUTABLE
                     PendingIntent.getActivity(this, 0, notificationIntent, FLAG_IMMUTABLE)
-                } else {
-                    PendingIntent.getActivity(this, 0, notificationIntent, 0)
-                }
             }
 
         val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -132,28 +139,35 @@ class CallsService : Service() {
     }
 
     private fun uploadCalls() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val callsLog = phoneCallStatisticsInteractor
-                .getAll()
-                .map { it.phoneCall.update(this@CallsService) }
-            authInteractor.user?.uid?.let {
-                phoneCallStatisticsInteractor.addPhoneCalls(
-                    it,
-                    callsLog
-                )
+        try {
+            CoroutineScope(Dispatchers.IO).launch {
+                val callsLog = phoneCallsInteractor
+                    .getAll()
+                    .map { it.update(this@CallsService) }
+                Log.vCustom("upload calls: $callsLog")
+                authInteractor.getUser()?.userId?.let {
+                    phoneCallsInteractor.addPhoneCalls(
+                        it,
+                        callsLog
+                    )
+                }
+            }.invokeOnCompletion {
+                Log.vCustom("About to finish service")
+                phoneCallsInteractor.clear()
+                stopService()
+                Log.vCustom("Service stopped.")
             }
+        } catch(exception: Exception) {
             stopService()
         }
-        println()
     }
 }
-
 /**
  * Updates values according to the call log
  * *** Test call in background, removed and called again to see if the backlog catches both from the calllog
  * This has to go to the service because the log is added async.
  */
-private fun PhoneCall.update(context: Context): PhoneCall {
+fun PhoneCall.update(context: Context): PhoneCall {
     val details = arrayOf(
         CallLog.Calls.NUMBER,
         CallLog.Calls.TYPE,
@@ -209,3 +223,10 @@ val Long.date: Date
 
 fun Date.notEquals(date: Date, maxDifferenceInSeconds: Long = 5): Boolean =
     (time.inSeconds - date.time.inSeconds).absoluteValue >= maxDifferenceInSeconds
+
+
+enum class ServiceState(val value: Int) {
+    UPLOAD_LOGS(0),
+    ALIVE(1),
+    NOT_ALIVE(2)
+}

@@ -24,8 +24,8 @@ android {
 
     defaultConfig {
         applicationId "com.orelzman.mymessages"
-        minSdk 21
-        targetSdk 31
+        minSdk 24
+        targetSdk 29
         versionCode 1
         versionName "1.0"
 
@@ -77,6 +77,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
     implementation 'androidx.activity:activity-compose:1.4.0'
     implementation 'androidx.test:monitor:1.5.0'
+    implementation 'androidx.hilt:hilt-work:1.0.0'
     testImplementation 'junit:junit:4.13.2'
     testImplementation "org.mockito.kotlin:mockito-kotlin:4.0.0"
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
@@ -115,6 +116,7 @@ dependencies {
     implementation 'io.github.raamcosta.compose-destinations:core:1.4.4-beta'
     ksp 'io.github.raamcosta.compose-destinations:ksp:1.4.4-beta'
 
+
     // Gson
     implementation 'com.google.code.gson:gson:2.8.9'
 
@@ -127,6 +129,10 @@ dependencies {
     // FlowRow
     implementation "com.google.accompanist:accompanist-flowlayout:0.24.8-beta"
 
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    // GSON
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
     // Mixpanel
 //    api 'com.mixpanel.android:mixpanel-android:6.0'

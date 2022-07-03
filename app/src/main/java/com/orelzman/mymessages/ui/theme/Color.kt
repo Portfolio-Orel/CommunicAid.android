@@ -2,9 +2,6 @@ package com.orelzman.mymessages.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-
-
-
 val Purple10 = Color(0xff0b001a)
 val Purple20 = Color(0xff2b0066)
 val Purple30 = Color(0xff400099)
