@@ -1,7 +1,7 @@
 package com.orelzman.mymessages.presentation.details_folder
 
-import com.orelzman.mymessages.data.dto.Folder
-import com.orelzman.mymessages.data.dto.Loggable
+import com.orelzman.mymessages.domain.model.entities.Folder
+import com.orelzman.mymessages.domain.model.entities.Loggable
 
 data class DetailsFolderState(
     val title: String = "",

@@ -1,12 +1,12 @@
 package com.orelzman.mymessages
 
-import com.orelzman.mymessages.data.dto.Folder
-import com.orelzman.mymessages.data.dto.Message
-import com.orelzman.mymessages.data.remote.repository.api.Repository
-import com.orelzman.mymessages.data.remote.repository.dto.body.create.*
-import com.orelzman.mymessages.data.remote.repository.dto.response.GetFoldersResponse
-import com.orelzman.mymessages.data.remote.repository.dto.response.GetMessagesResponse
-import com.orelzman.mymessages.data.remote.repository.dto.response.GetUserResponse
+import com.orelzman.mymessages.domain.model.entities.Folder
+import com.orelzman.mymessages.domain.model.entities.Message
+import com.orelzman.mymessages.domain.repository.Repository
+import com.orelzman.mymessages.domain.model.dto.body.create.*
+import com.orelzman.mymessages.domain.model.dto.response.GetFoldersResponse
+import com.orelzman.mymessages.domain.model.dto.response.GetMessagesResponse
+import com.orelzman.mymessages.domain.model.dto.response.GetUserResponse
 
 class StubRepository : Repository {
     override suspend fun getMessages(userId: String): List<GetMessagesResponse> =

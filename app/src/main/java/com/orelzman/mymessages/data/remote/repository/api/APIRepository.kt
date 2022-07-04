@@ -1,13 +1,14 @@
 package com.orelzman.mymessages.data.remote.repository.api
 
-import com.orelzman.mymessages.data.dto.Folder
-import com.orelzman.mymessages.data.dto.Message
-import com.orelzman.mymessages.data.remote.repository.dto.body.create.*
-import com.orelzman.mymessages.data.remote.repository.dto.body.update.UpdateFolderBody
-import com.orelzman.mymessages.data.remote.repository.dto.body.update.UpdateMessageBody
-import com.orelzman.mymessages.data.remote.repository.dto.response.GetFoldersResponse
-import com.orelzman.mymessages.data.remote.repository.dto.response.GetMessagesResponse
-import com.orelzman.mymessages.data.remote.repository.dto.response.GetUserResponse
+import com.orelzman.mymessages.domain.model.entities.Folder
+import com.orelzman.mymessages.domain.model.entities.Message
+import com.orelzman.mymessages.domain.model.dto.body.create.*
+import com.orelzman.mymessages.domain.model.dto.body.update.UpdateFolderBody
+import com.orelzman.mymessages.domain.model.dto.body.update.UpdateMessageBody
+import com.orelzman.mymessages.domain.model.dto.response.GetFoldersResponse
+import com.orelzman.mymessages.domain.model.dto.response.GetMessagesResponse
+import com.orelzman.mymessages.domain.model.dto.response.GetUserResponse
+import com.orelzman.mymessages.domain.repository.Repository
 import javax.inject.Inject
 
 class APIRepository @Inject constructor(

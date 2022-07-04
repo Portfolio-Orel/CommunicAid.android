@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.orelzman.mymessages.data.dto.Folder
+import com.orelzman.mymessages.domain.model.entities.Folder
 
 
 @OptIn(ExperimentalFoundationApi::class)

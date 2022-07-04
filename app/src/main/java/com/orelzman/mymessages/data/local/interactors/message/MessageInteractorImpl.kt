@@ -1,12 +1,13 @@
 package com.orelzman.mymessages.data.local.interactors.message
 
-import com.orelzman.mymessages.data.dto.Message
-import com.orelzman.mymessages.data.dto.MessageInFolder
+import com.orelzman.mymessages.domain.model.entities.Message
+import com.orelzman.mymessages.domain.model.entities.MessageInFolder
 import com.orelzman.mymessages.data.local.LocalDatabase
-import com.orelzman.mymessages.data.local.interactors.message_in_folder.MessageInFolderInteractor
-import com.orelzman.mymessages.data.remote.repository.api.Repository
-import com.orelzman.mymessages.data.remote.repository.dto.body.create.CreateMessageBody
-import com.orelzman.mymessages.data.remote.repository.dto.response.toMessagesInFolders
+import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
+import com.orelzman.mymessages.domain.interactors.MessageInteractor
+import com.orelzman.mymessages.domain.repository.Repository
+import com.orelzman.mymessages.domain.model.dto.body.create.CreateMessageBody
+import com.orelzman.mymessages.domain.model.dto.response.toMessagesInFolders
 import javax.inject.Inject
 
 class MessageInteractorImpl @Inject constructor(

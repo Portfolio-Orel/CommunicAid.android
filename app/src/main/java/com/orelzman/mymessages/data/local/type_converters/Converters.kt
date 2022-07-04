@@ -4,8 +4,8 @@ import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.orelzman.mymessages.data.dto.MessageSent
-import com.orelzman.mymessages.data.dto.PhoneCall
+import com.orelzman.mymessages.domain.model.entities.MessageSent
+import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import java.util.*
 
 @ProvidedTypeConverter

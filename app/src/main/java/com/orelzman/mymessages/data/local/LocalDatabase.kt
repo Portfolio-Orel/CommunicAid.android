@@ -3,9 +3,9 @@ package com.orelzman.mymessages.data.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.orelzman.mymessages.data.dto.*
 import com.orelzman.mymessages.data.local.dao.*
 import com.orelzman.mymessages.data.local.type_converters.Converters
+import com.orelzman.mymessages.domain.model.entities.*
 
 @Database(
     entities = [
@@ -13,7 +13,7 @@ import com.orelzman.mymessages.data.local.type_converters.Converters
         Folder::class,
         MessageInFolder::class,
         PhoneCall::class,
-        DeletedUnhandledCalls::class
+        DeletedCalls::class
     ],
     version = 7
 )

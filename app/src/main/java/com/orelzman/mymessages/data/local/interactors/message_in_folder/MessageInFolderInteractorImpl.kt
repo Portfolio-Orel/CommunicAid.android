@@ -1,8 +1,9 @@
 package com.orelzman.mymessages.data.local.interactors.message_in_folder
 
-import com.orelzman.mymessages.data.dto.MessageInFolder
+import com.orelzman.mymessages.domain.model.entities.MessageInFolder
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.dao.MessageInFolderDao
+import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
 import javax.inject.Inject
 
 class MessageInFolderInteractorImpl @Inject constructor(

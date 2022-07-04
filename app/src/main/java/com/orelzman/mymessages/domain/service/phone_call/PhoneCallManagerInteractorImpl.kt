@@ -1,6 +1,6 @@
 package com.orelzman.mymessages.domain.service.phone_call
 
-import com.orelzman.mymessages.data.dto.PhoneCall
+import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 

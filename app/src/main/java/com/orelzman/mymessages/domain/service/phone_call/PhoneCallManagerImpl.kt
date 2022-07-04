@@ -2,9 +2,9 @@ package com.orelzman.mymessages.domain.service.phone_call
 
 import android.telephony.TelephonyManager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.orelzman.mymessages.data.dto.PhoneCall
-import com.orelzman.mymessages.data.local.interactors.analytics.AnalyticsInteractor
-import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsInteractor
+import com.orelzman.mymessages.domain.model.entities.PhoneCall
+import com.orelzman.mymessages.domain.interactors.AnalyticsInteractor
+import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.service.phone_call.exceptions.WaitingThenRingingException
 import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.log
