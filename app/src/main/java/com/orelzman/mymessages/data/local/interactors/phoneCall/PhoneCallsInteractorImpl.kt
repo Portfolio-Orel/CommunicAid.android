@@ -35,5 +35,6 @@ class PhoneCallsInteractorImpl @Inject constructor(
         db.getAll()
 
     override fun clear() = db.clear()
+    override fun remove(phoneCalls: List<PhoneCall>) = db.remove(phoneCalls)
 
 }

@@ -10,4 +10,5 @@ interface PhoneCallsInteractor {
     fun updateCall(phoneCall: PhoneCall)
     fun getAll(): List<PhoneCall>
     fun clear()
+    fun remove(phoneCalls: List<PhoneCall>)
 }
