@@ -9,9 +9,9 @@ import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.exception.CodeMismatchException
 import com.orelzman.auth.domain.exception.UserNotConfirmedException
 import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.mymessages.data.local.interactors.database.DatabaseInteractor
-import com.orelzman.mymessages.data.remote.repository.api.Repository
-import com.orelzman.mymessages.data.remote.repository.dto.body.create.CreateUserBody
+import com.orelzman.mymessages.domain.interactors.DatabaseInteractor
+import com.orelzman.mymessages.domain.repository.Repository
+import com.orelzman.mymessages.domain.model.dto.body.create.CreateUserBody
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.orelzman.mymessages.R
-import com.orelzman.mymessages.data.dto.PhoneCall
+import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 import java.util.*
 

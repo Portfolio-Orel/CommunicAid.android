@@ -1,7 +1,7 @@
 package com.orelzman.mymessages.presentation.details_message
 
-import com.orelzman.mymessages.data.dto.Folder
-import com.orelzman.mymessages.data.dto.Loggable
+import com.orelzman.mymessages.domain.model.entities.Folder
+import com.orelzman.mymessages.domain.model.entities.Loggable
 
 data class DetailsMessageState(
     val folders: List<Folder> = emptyList(),

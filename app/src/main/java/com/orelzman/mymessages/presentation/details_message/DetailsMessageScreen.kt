@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.orelzman.mymessages.data.dto.Folder
+import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 import com.ramcosta.composedestinations.annotation.Destination

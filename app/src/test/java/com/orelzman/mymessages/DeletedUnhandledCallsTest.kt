@@ -2,13 +2,13 @@ package com.orelzman.mymessages
 
 import android.content.Context
 import androidx.room.Room
-import com.orelzman.mymessages.data.dto.DeletedUnhandledCalls
-import com.orelzman.mymessages.data.dto.PhoneCall
 import com.orelzman.mymessages.data.local.LocalDatabase
-import com.orelzman.mymessages.data.local.interactors.unhandled_calls.UnhandledCallsInteractor
-import com.orelzman.mymessages.data.local.interactors.unhandled_calls.UnhandledCallsInteractorImpl
+import com.orelzman.mymessages.data.local.interactors.deleted_calls.DeletedCallsInteractorImpl
 import com.orelzman.mymessages.data.local.type_converters.Converters
-import com.orelzman.mymessages.domain.model.CallLogEntity
+import com.orelzman.mymessages.domain.interactors.DeletedCallsInteractor
+import com.orelzman.mymessages.domain.model.entities.CallLogEntity
+import com.orelzman.mymessages.domain.model.entities.DeletedCalls
+import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.util.CallType
 import com.orelzman.mymessages.util.startOfDay
 import junit.framework.Assert.assertTrue
@@ -27,11 +27,11 @@ class DeletedUnhandledCallsTest {
     @Mock
     private lateinit var mockContext: Context
 
-    private lateinit var unhandledCallsInteractor: UnhandledCallsInteractor
+    private lateinit var unhandledCallsInteractor: DeletedCallsInteractor
     private lateinit var db: LocalDatabase
 
     private var callLogs: ArrayList<CallLogEntity> = ArrayList()
-    private var deletedUnhandledCalls: ArrayList<DeletedUnhandledCalls> = ArrayList()
+    private var deletedCalls: ArrayList<DeletedCalls> = ArrayList()
 
     @Before
     fun setUp() {
@@ -45,7 +45,7 @@ class DeletedUnhandledCallsTest {
             .fallbackToDestructiveMigration()
             .build()
         unhandledCallsInteractor =
-            UnhandledCallsInteractorImpl(repository = null, database = db)
+            DeletedCallsInteractorImpl(repository = null, database = db)
     }
 
     @Test
@@ -144,7 +144,7 @@ class DeletedUnhandledCallsTest {
 
     private fun filterCalls(): List<CallLogEntity> =
         unhandledCallsInteractor.filterUnhandledCalls(
-            deletedUnhandledCalls = deletedUnhandledCalls,
+            deletedCalls = deletedCalls,
             callLogs = callLogs
         )
 
@@ -165,8 +165,8 @@ class DeletedUnhandledCallsTest {
         addNumberToLog(number, CallType.BLOCK)
 
     private fun deleteNumber(number: Numbers) {
-        deletedUnhandledCalls.add(
-            DeletedUnhandledCalls(
+        deletedCalls.add(
+            DeletedCalls(
                 id = "1$number", phoneCall = PhoneCall(
                     number = number.value,
                     startDate = Date(),

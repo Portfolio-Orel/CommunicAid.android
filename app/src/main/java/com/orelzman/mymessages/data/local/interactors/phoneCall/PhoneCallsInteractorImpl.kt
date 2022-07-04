@@ -1,10 +1,11 @@
 package com.orelzman.mymessages.data.local.interactors.phoneCall
 
-import com.orelzman.mymessages.data.dto.MessageSent
-import com.orelzman.mymessages.data.dto.PhoneCall
-import com.orelzman.mymessages.data.dto.createPhoneCallBodyList
+import com.orelzman.mymessages.domain.model.entities.MessageSent
+import com.orelzman.mymessages.domain.model.entities.PhoneCall
+import com.orelzman.mymessages.domain.model.entities.createPhoneCallBodyList
 import com.orelzman.mymessages.data.local.LocalDatabase
-import com.orelzman.mymessages.data.remote.repository.api.Repository
+import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
+import com.orelzman.mymessages.domain.repository.Repository
 import javax.inject.Inject
 
 class PhoneCallsInteractorImpl @Inject constructor(
