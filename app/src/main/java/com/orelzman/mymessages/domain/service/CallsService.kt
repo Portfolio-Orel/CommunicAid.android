@@ -164,7 +164,7 @@ class CallsService : Service() {
                         it,
                         phoneCalls
                     )
-                    phoneCallsInteractor.clear()
+                    phoneCallsInteractor.remove(phoneCalls)
                 }
             } catch (exception: Exception) {
                 exception.log(phoneCalls)

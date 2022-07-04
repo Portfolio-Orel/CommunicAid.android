@@ -33,4 +33,7 @@ interface PhoneCallDao {
         DELETE FROM PhoneCall
     """)
     fun clear()
+
+    @Delete
+    fun remove(phoneCalls: List<PhoneCall>)
 }
