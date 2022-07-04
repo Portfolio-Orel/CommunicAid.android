@@ -2,6 +2,7 @@ package com.orelzman.mymessages.data.local.dao
 
 import androidx.room.*
 import com.orelzman.mymessages.data.dto.PhoneCall
+import java.util.*
 
 @Dao
 interface PhoneCallDao {
@@ -20,6 +21,13 @@ interface PhoneCallDao {
         FROM PhoneCall
     """)
     fun getAll(): List<PhoneCall>
+
+    @Query("""
+        SELECT * 
+        FROM PhoneCall
+        WHERE startDate == :startDate
+    """)
+    fun getByStartDate(startDate: Date): PhoneCall
 
     @Query("""
         DELETE FROM PhoneCall
