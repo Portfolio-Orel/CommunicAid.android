@@ -60,13 +60,13 @@ class PhoneCallManagerTest {
 
     @Test
     fun testIncomingThenWaitingAnsweredThenIncomingAnswered() {
-        incomingCallAnswered(1000, Numbers.OREL)
+        incomingCallAnswered( Numbers.OREL)
         testState(CallState.INCOMING)
         waitingCall(Numbers.MOM)
         testState(CallState.WAITING)
         printDB()
         printDBSize()
-        waitingCallAnswered(Numbers.MOM, 1000)
+        waitingCallAnswered(Numbers.MOM,)
         printDB()
         printDBSize()
         testState(CallState.INCOMING)
@@ -83,7 +83,7 @@ class PhoneCallManagerTest {
 
     @Test
     fun testIncomingThenWaitingAnsweredThenIncomingRejected() {
-        incomingCallAnswered(1000, Numbers.OREL)
+        incomingCallAnswered(Numbers.OREL)
         testState(CallState.INCOMING)
         waitingCall(Numbers.MOM)
         testState(CallState.WAITING)
@@ -105,7 +105,7 @@ class PhoneCallManagerTest {
 
     @Test
     fun testIncomingThenWaitingAnswered() {
-        incomingCallAnswered(1000, Numbers.OREL)
+        incomingCallAnswered(Numbers.OREL)
         testState(CallState.INCOMING)
         waitingCall(Numbers.MOM)
         testState(CallState.WAITING)
@@ -124,7 +124,7 @@ class PhoneCallManagerTest {
 
     @Test
     fun testIncomingThenWaitingRejected() {
-        incomingCallAnswered(1000, Numbers.OREL)
+        incomingCallAnswered(Numbers.OREL)
         testState(CallState.INCOMING)
 
         waitingCall(Numbers.MOM)
@@ -166,14 +166,14 @@ class PhoneCallManagerTest {
         testDBSize(count)
     }
 
-    private fun incomingCallsAnsweredAndHangup(count: Int, number: Numbers, duration: Long) {
+    private fun incomingCallsAnsweredAndHangup(count: Int, number: Numbers, duration: Long = 100) {
         for (i in 0 until count) {
-            incomingCallAnswered(duration, number)
+            incomingCallAnswered(number, duration)
             hangup(number)
         }
     }
 
-    private fun incomingCallAnswered(millis: Long, number: Numbers) {
+    private fun incomingCallAnswered(number: Numbers, millis: Long = 100) {
         ring(number)
         offhook(number, millis)
     }
