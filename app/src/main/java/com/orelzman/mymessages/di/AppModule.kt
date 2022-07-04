@@ -36,6 +36,7 @@ object AppModule {
             )
                 .addTypeConverter(Converters())
                 .fallbackToDestructiveMigration()
+                .allowMainThreadQueries()
                 .build()
         }
 

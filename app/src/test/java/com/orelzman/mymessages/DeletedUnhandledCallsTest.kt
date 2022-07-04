@@ -19,11 +19,9 @@ import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.junit.MockitoJUnitRunner
 import java.util.*
-import kotlin.random.Random
 
 
 @RunWith(MockitoJUnitRunner::class)
-
 class DeletedUnhandledCallsTest {
 
     @Mock
@@ -193,14 +191,6 @@ class DeletedUnhandledCallsTest {
         )
         Thread.sleep(10)
     }
-
-    private fun randomizeNumber(): String {
-        var number = ""
-        for (i in 0..9) {
-            number += Random.nextInt(0, 9)
-        }
-        return number
-    }
 }
 
 enum class Numbers(val value: String) {
@@ -208,6 +198,4 @@ enum class Numbers(val value: String) {
     SARA("0528112646"),
     MOM("0543050285"),
     DAD("0542444505"),
-    RANDOM1("0527746342"),
-    RANDOM2("0509362641")
 }

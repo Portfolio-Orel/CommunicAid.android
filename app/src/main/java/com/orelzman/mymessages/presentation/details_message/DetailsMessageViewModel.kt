@@ -100,7 +100,7 @@ class DetailsMessageViewModel @Inject constructor(
                     }
                     state = state.copy(isLoading = false, isMessageSaved = true)
                 } catch (exception: Exception) {
-                    exception.log()
+                    exception.log(state)
                 }
             }
         } else {

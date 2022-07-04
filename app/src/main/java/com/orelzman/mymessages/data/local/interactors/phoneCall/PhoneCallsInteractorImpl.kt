@@ -14,7 +14,7 @@ class PhoneCallsInteractorImpl @Inject constructor(
     private val db = database.phoneCallDao
 
     override suspend fun addPhoneCalls(userId: String, phoneCalls: List<PhoneCall>) {
-            repository.createPhoneCalls(phoneCalls.createPhoneCallBodyList(userId))
+        repository.createPhoneCalls(phoneCalls.createPhoneCallBodyList(userId))
     }
 
     override fun cachePhoneCall(phoneCall: PhoneCall) =
@@ -26,6 +26,10 @@ class PhoneCallsInteractorImpl @Inject constructor(
         phoneCall.messagesSent = messages
         db.insert(phoneCall)
     }
+
+    override fun updateCall(phoneCall: PhoneCall) =
+    db.update(phoneCall)
+
 
     override fun getAll(): List<PhoneCall> =
         db.getAll()
