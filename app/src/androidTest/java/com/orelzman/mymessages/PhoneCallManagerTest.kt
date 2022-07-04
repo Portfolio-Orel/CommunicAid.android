@@ -59,16 +59,83 @@ class PhoneCallManagerTest {
     }
 
     @Test
-    fun testIncomingThenWaitingAnswered() {
+    fun testIncomingThenWaitingAnsweredThenIncomingAnswered() {
+        incomingCallAnswered(1000, Numbers.OREL)
+        testState(CallState.INCOMING)
+        waitingCall(Numbers.MOM)
+        testState(CallState.WAITING)
+        printDB()
+        printDBSize()
+        waitingCallAnswered(Numbers.MOM, 1000)
+        printDB()
+        printDBSize()
+        testState(CallState.INCOMING)
+        testLastNumber(Numbers.MOM)
+        incomingCall(Numbers.SARA)
+        testLastNumber(Numbers.SARA)
+        testState(CallState.WAITING)
+        waitingCallAnswered(number = Numbers.SARA)
+        testState(CallState.INCOMING)
+        testDBSize(3)
+        hangup()
+        testDBSize(3)
+    }
 
+    @Test
+    fun testIncomingThenWaitingAnsweredThenIncomingRejected() {
+        incomingCallAnswered(1000, Numbers.OREL)
+        testState(CallState.INCOMING)
+        waitingCall(Numbers.MOM)
+        testState(CallState.WAITING)
+        printDB()
+        printDBSize()
+        waitingCallAnswered(Numbers.MOM, 1000)
+        printDB()
+        printDBSize()
+        testState(CallState.INCOMING)
+        testLastNumber(Numbers.MOM)
+        incomingCall(Numbers.SARA)
+        testLastNumber(Numbers.SARA)
+        testState(CallState.WAITING)
+        waitingCallRejected(Numbers.MOM)
+        testDBSize(3)
+        hangup()
+        testDBSize(3)
+    }
+
+    @Test
+    fun testIncomingThenWaitingAnswered() {
+        incomingCallAnswered(1000, Numbers.OREL)
+        testState(CallState.INCOMING)
+        waitingCall(Numbers.MOM)
+        testState(CallState.WAITING)
+        printDB()
+        printDBSize()
+        waitingCallAnswered(Numbers.MOM, 1000)
+        printDB()
+        printDBSize()
+        testState(CallState.INCOMING)
+        testLastNumber(Numbers.MOM)
+        hangup()
+        printDB()
+        printDBSize()
+        testDBSize(2)
     }
 
     @Test
     fun testIncomingThenWaitingRejected() {
         incomingCallAnswered(1000, Numbers.OREL)
+        testState(CallState.INCOMING)
+
         waitingCall(Numbers.MOM)
+        testState(CallState.WAITING)
+
         waitingCallRejected(previousNumber = Numbers.OREL)
+        testState(CallState.INCOMING)
+        testLastNumber(Numbers.MOM)
+
         hangup(Numbers.OREL)
+
         testDBSize(2)
     }
 
@@ -84,6 +151,7 @@ class PhoneCallManagerTest {
         for (i in 0 until count) {
             outgoingCallAnswered(duration, number)
             hangup(number)
+            testState(CallState.IDLE)
         }
     }
 
@@ -110,13 +178,18 @@ class PhoneCallManagerTest {
         offhook(number, millis)
     }
 
-    private fun hangup(number: Numbers) {
-        idle(number = number)
+    private fun incomingCall(number: Numbers, millis: Long = 100) {
+        ring(number, millis)
     }
 
-    private fun waitingCallAnswered(number: Numbers) {
+    private fun hangup(number: Numbers = Numbers.OREL) {
+        idle(number = number)
+        testState(CallState.IDLE)
+    }
+
+    private fun waitingCallAnswered(number: Numbers, millis: Long = 100) {
         if (manager.state.value != CallState.WAITING) throw CantEndWaitingCallFromNotWaitingState
-        offhook(number)
+        offhook(number, millis)
     }
 
     private fun waitingCallRejected(previousNumber: Numbers) {
@@ -156,6 +229,21 @@ class PhoneCallManagerTest {
         val calls = interactor.getAll()
         assert(calls.size == sizeExpected)
     }
+
+    private fun printDB() {
+        println("TEST::: ${interactor.getAll().map { it.number }}")
+    }
+
+    private fun printDBSize() {
+        println("TEST::: ${interactor.getAll().size}")
+    }
+
+    private fun testState(state: CallState) =
+        assert(manager.state.value == state)
+
+    private fun testLastNumber(number: Numbers) =
+        assert(interactor.getAll().last().number == number.value)
+
 
     @After
     fun teardown() {

@@ -21,13 +21,16 @@ class AnalyticsInteractorImpl @Inject constructor(
         mixpanel.track(identifier, props)
     }
 
-    override fun track(identifier: String, loggable: Loggable) {
+    override fun track(identifier: String, loggable: Loggable) =
         track(identifier, loggable.data)
-    }
 
-    override fun track(identifier: String, loggables: List<Loggable>) {
+
+    override fun track(identifier: String, loggables: List<Loggable>) =
         loggables.forEach { loggable ->
             track(identifier, loggable)
         }
-    }
+
+    override fun track(identifier: String, pair: Pair<String, Any>) =
+        track(identifier, mapOf(pair.first to pair.second))
+
 }

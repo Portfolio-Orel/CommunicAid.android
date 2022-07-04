@@ -20,9 +20,11 @@ import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsIntera
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
 import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.log
+import com.orelzman.mymessages.util.extension.toDate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -152,15 +154,17 @@ class CallsService : Service() {
         var phoneCalls = emptyList<PhoneCall>()
         CoroutineScope(Dispatchers.IO).launch {
             try {
+                delay(2000) // Delay to let the calls log populate
                 phoneCalls = phoneCallsInteractor
                     .getAll()
-                    .map { it.update(this@CallsService) }
-                analyticsInteractor.track("Calls Uploaded", phoneCalls)
+                    .mapNotNull { update(this@CallsService, it) }
+                            .distinctBy { it.startDate }
                 authInteractor.getUser()?.userId?.let {
                     phoneCallsInteractor.addPhoneCalls(
                         it,
                         phoneCalls
                     )
+                    phoneCallsInteractor.clear()
                 }
             } catch (exception: Exception) {
                 exception.log(phoneCalls)
@@ -168,54 +172,55 @@ class CallsService : Service() {
             }
         }.invokeOnCompletion {
             Log.vCustom("About to finish service")
-            phoneCallsInteractor.clear()
             stopService()
             Log.vCustom("Service stopped.")
         }
     }
-}
 
-/**
- * Updates values according to the call log
- * *** Test call in background, removed and called again to see if the backlog catches both from the calllog
- * This has to go to the service because the log is added async.
- */
-fun PhoneCall.update(context: Context): PhoneCall {
-    val details = arrayOf(
-        CallLog.Calls.NUMBER,
-        CallLog.Calls.TYPE,
-        CallLog.Calls.DURATION,
-        CallLog.Calls.CACHED_NAME,
-        CallLog.Calls.DATE
-    )
-    context.contentResolver
-        .query(
-            CallLog.Calls.CONTENT_URI,
-            details,
-            null,
-            null,
-            CallLog.Calls.DATE + " DESC"
+    /**
+     * Updates values according to the call log
+     * *** Test call in background, removed and called again to see if the backlog catches both from the calllog
+     * This has to go to the service because the log is added async.
+     */
+    fun update(context: Context, phoneCall: PhoneCall): PhoneCall? {
+        val details = arrayOf(
+            CallLog.Calls.NUMBER,
+            CallLog.Calls.TYPE,
+            CallLog.Calls.DURATION,
+            CallLog.Calls.CACHED_NAME,
+            CallLog.Calls.DATE
         )
-        ?.use {
-            while (it.moveToNext()) {
-                val logStartDate = it.getString(4).toLong().date
-                if (
-                    number != it.getString(0)
-                    || logStartDate.notEquals(startDate)
-                ) continue
-                val type = it.getString(1)
-                val duration = it.getString(2).toLong()
-                name = it.getString(3) ?: ""
-                startDate = logStartDate
-                endDate = (startDate.time.inSeconds + duration).date
-                when (type.toInt()) {
-                    CallLog.Calls.MISSED_TYPE -> missed()
-                    CallLog.Calls.REJECTED_TYPE -> rejected()
+        context.contentResolver
+            .query(
+                CallLog.Calls.CONTENT_URI,
+                details,
+                null,
+                null,
+                "${CallLog.Calls.DATE} DESC"
+            )
+            ?.use {
+                while (it.moveToNext()) {
+                    val logStartDate = it.getString(4).toLong().toDate()
+                    if (
+                        phoneCall.number != it.getString(0)
+                        || logStartDate.time.inSeconds < phoneCall.startDate.time.inSeconds - 15
+                        || logStartDate.time.inSeconds > phoneCall.startDate.time.inSeconds + 15
+                    ) continue
+                    val type = it.getString(1)
+                    val duration = it.getString(2).toLong()
+                    phoneCall.name = it.getString(3) ?: ""
+                    phoneCall.startDate = logStartDate
+                    phoneCall.endDate = (phoneCall.startDate.time.inSeconds + duration).date
+                    when (type.toInt()) {
+                        CallLog.Calls.MISSED_TYPE -> phoneCall.missed()
+                        CallLog.Calls.REJECTED_TYPE -> phoneCall.rejected()
+                    }
+                    return phoneCall
                 }
-                return@use
             }
-        }
-    return this
+        analyticsInteractor.track("Call Upload Fail", phoneCall)
+        return null
+    }
 }
 
 val Long.inSeconds: Long
@@ -224,6 +229,14 @@ val Long.inSeconds: Long
             this / 1000
         } else {
             this
+        }
+
+val Long.inMilliseconds: Long
+    get() =
+        if ("$this".length <= 10) {
+            this
+        } else {
+            this * 1000
         }
 
 val Long.date: Date

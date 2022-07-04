@@ -77,12 +77,10 @@ class PhoneCallManagerImpl @Inject constructor(
 
     private fun setBackgroundCall(phoneCall: PhoneCall?) {
         callInTheBackground.value = phoneCall
-        addToBacklog(phoneCall = phoneCall)
     }
 
     private fun setCallOnLine(phoneCall: PhoneCall?) {
         _callOnTheLine.value = phoneCall
-        addToBacklog(phoneCall = phoneCall)
     }
 
     private fun setStateValue(callState: CallState) {
@@ -91,12 +89,16 @@ class PhoneCallManagerImpl @Inject constructor(
 
     private fun outgoingCall(number: String) {
         setStateValue(CallState.OUTGOING)
-        setCallOnLine(PhoneCall.outgoing(number = number))
+        val phoneCall = PhoneCall.outgoing(number = number)
+        setCallOnLine(phoneCall)
+        addToBacklog(phoneCall = phoneCall)
     }
 
     private fun incomingCall(number: String) {
         setStateValue(CallState.INCOMING)
-        setCallOnLine(PhoneCall.incoming(number = number))
+        val phoneCall = PhoneCall.incoming(number = number)
+        setCallOnLine(phoneCall)
+        addToBacklog(phoneCall = phoneCall)
     }
 
     private fun incomingAnswered() {
@@ -105,12 +107,15 @@ class PhoneCallManagerImpl @Inject constructor(
 
     private fun waitingCall(number: String) {
         setStateValue(CallState.WAITING)
+        val phoneCall = PhoneCall.waiting(number = number)
         setBackgroundCall(PhoneCall.waiting(number = number))
+        addToBacklog(phoneCall = phoneCall)
     }
 
 
     private fun waitingCallAnswered() {
         val backgroundCallHolder = callInTheBackground.value
+        setStateValue(CallState.INCOMING)
         setBackgroundCall(callOnTheLine.value)
         setCallOnLine(backgroundCallHolder)
     }
@@ -124,6 +129,9 @@ class PhoneCallManagerImpl @Inject constructor(
         if (phoneCall == null) return
         val id = UUID.randomUUID()
         phoneCall.id = id.toString()
+        if(phoneCallInteractor.getAll().any { it.startDate == phoneCall.startDate }) {
+            analyticsInteractor?.track("Call Cached", "value" to "Double add attempt")
+        }
         phoneCallInteractor.cachePhoneCall(phoneCall = phoneCall)
         analyticsInteractor?.track("Call Cached", mapOf("call" to phoneCall.number))
     }
