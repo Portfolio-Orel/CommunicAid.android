@@ -12,7 +12,7 @@ data class Message(
     val isActive: Boolean = true,
     val position: Int = 0,
     @PrimaryKey val id: String = ""
-) {
+) : Loggable {
 
     constructor(message: Message, id: String) : this(
         title = message.title,
@@ -34,6 +34,16 @@ data class Message(
         )
     }
 
+    override val data: Map<String, Any>
+        get() = mapOf(
+            "title" to title,
+            "short_title" to shortTitle,
+            "body" to body,
+            "times_used" to timesUsed,
+            "is_active" to isActive,
+            "position" to position,
+            "id" to id
+        )
 }
 
 fun List<Message>.getByIds(ids: List<String>): List<Message> =

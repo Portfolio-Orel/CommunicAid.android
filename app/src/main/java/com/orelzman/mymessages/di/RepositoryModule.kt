@@ -3,6 +3,8 @@ package com.orelzman.mymessages.di
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.auth.data.interactor.AuthInteractorImpl
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.mymessages.data.local.interactors.analytics.AnalyticsInteractor
+import com.orelzman.mymessages.data.local.interactors.analytics.AnalyticsInteractorImpl
 import com.orelzman.mymessages.data.local.interactors.database.DatabaseInteractor
 import com.orelzman.mymessages.data.local.interactors.database.DatabaseInteractorImpl
 import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractor
@@ -73,5 +75,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun provideDatabaseInteractor(interactor: DatabaseInteractorImpl): DatabaseInteractor
+
+    @Binds
+    @Singleton
+    abstract fun provideAnalyticsInteractor(interactor: AnalyticsInteractorImpl): AnalyticsInteractor
+
 
 }

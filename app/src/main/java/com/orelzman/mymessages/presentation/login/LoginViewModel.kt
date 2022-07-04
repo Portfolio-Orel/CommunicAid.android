@@ -168,7 +168,6 @@ class LoginViewModel @Inject constructor(
             )
         } catch (exception: Exception) {
             exception.log()
-            println()
         }
     }
 

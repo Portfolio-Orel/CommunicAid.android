@@ -14,7 +14,7 @@ data class DeletedUnhandledCalls(
     @PrimaryKey val id: String = "",
     val phoneCall: PhoneCall = PhoneCall(),
     val deleteDate: Date = Date()
-) {
+) : Loggable {
 
 
     fun asCallLogEntity(): CallLogEntity =
@@ -24,6 +24,13 @@ data class DeletedUnhandledCalls(
             name = phoneCall.name,
             dateMilliseconds = phoneCall.startDate.time,
             callLogType = CallType.fromString(phoneCall.type)
+        )
+
+    override val data: Map<String, Any>
+        get() = mapOf(
+            "id" to id,
+            "phone_call" to phoneCall.data,
+            "delete_date" to deleteDate
         )
 }
 
