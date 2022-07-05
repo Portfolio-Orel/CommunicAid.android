@@ -14,9 +14,9 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.MainActivity
 import com.orelzman.mymessages.R
-import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.interactors.AnalyticsInteractor
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
+import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
 import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.log
@@ -165,6 +165,10 @@ class CallsService : Service() {
                         phoneCalls
                     )
                     phoneCallsInteractor.remove(phoneCalls)
+                    phoneCalls.forEach { call ->
+                        analyticsInteractor.track("Call Deleted", "call" to call.number)
+                    }
+
                 }
             } catch (exception: Exception) {
                 exception.log(phoneCalls)

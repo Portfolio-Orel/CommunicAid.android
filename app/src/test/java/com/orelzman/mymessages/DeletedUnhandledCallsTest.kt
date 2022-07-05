@@ -3,9 +3,9 @@ package com.orelzman.mymessages
 import android.content.Context
 import androidx.room.Room
 import com.orelzman.mymessages.data.local.LocalDatabase
-import com.orelzman.mymessages.data.local.interactors.deleted_calls.DeletedCallsInteractorImpl
 import com.orelzman.mymessages.data.local.type_converters.Converters
-import com.orelzman.mymessages.domain.interactors.DeletedCallsInteractor
+import com.orelzman.mymessages.domain.managers.UnhandledCallsManager
+import com.orelzman.mymessages.domain.managers.UnhandledCallsManagerImpl
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.DeletedCalls
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
@@ -27,7 +27,7 @@ class DeletedUnhandledCallsTest {
     @Mock
     private lateinit var mockContext: Context
 
-    private lateinit var unhandledCallsInteractor: DeletedCallsInteractor
+    private lateinit var unhandledCallsManager: UnhandledCallsManager
     private lateinit var db: LocalDatabase
 
     private var callLogs: ArrayList<CallLogEntity> = ArrayList()
@@ -36,16 +36,14 @@ class DeletedUnhandledCallsTest {
     @Before
     fun setUp() {
         mockContext = mock(Context::class.java)
-        db = Room.databaseBuilder(
+        db = Room.inMemoryDatabaseBuilder(
             mockContext,
-            LocalDatabase::class.java,
-            "mymessagesdb.db"
-        )
+            LocalDatabase::class.java)
             .addTypeConverter(Converters())
             .fallbackToDestructiveMigration()
             .build()
-        unhandledCallsInteractor =
-            DeletedCallsInteractorImpl(repository = null, database = db)
+        unhandledCallsManager = UnhandledCallsManagerImpl()
+
     }
 
     @Test
@@ -143,7 +141,7 @@ class DeletedUnhandledCallsTest {
     }
 
     private fun filterCalls(): List<CallLogEntity> =
-        unhandledCallsInteractor.filterUnhandledCalls(
+        unhandledCallsManager.filterUnhandledCalls(
             deletedCalls = deletedCalls,
             callLogs = callLogs
         )

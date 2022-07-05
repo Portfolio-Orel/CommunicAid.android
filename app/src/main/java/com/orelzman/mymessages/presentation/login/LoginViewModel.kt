@@ -8,10 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.exception.CodeMismatchException
 import com.orelzman.auth.domain.exception.UserNotConfirmedException
+import com.orelzman.auth.domain.exception.UserNotFoundException
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.domain.interactors.DatabaseInteractor
-import com.orelzman.mymessages.domain.repository.Repository
 import com.orelzman.mymessages.domain.model.dto.body.create.CreateUserBody
+import com.orelzman.mymessages.domain.repository.Repository
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -66,8 +67,8 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun testRegistration() {
-        state = state.copy(showCodeConfirmation = true)
+    fun onLoginClick() {
+        state = state.copy(error = null)
     }
 
     fun hideRegistrationConfirmation() {
@@ -91,13 +92,18 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun loginFailed(exception: Exception?) {
-        when (exception) {
-            is InvalidParameterException -> { /*Wrong credentials.*/
+        state = when (exception) {
+            is InvalidParameterException -> {
+                state.copy(error = "הפרטים שהוזנו לא נכונים...")
             }
             is UserNotConfirmedException -> {
-                state = state.copy(showCodeConfirmation = true)
+                state.copy(showCodeConfirmation = true)
             }
-            else -> {/*Unknown*/
+            is UserNotFoundException -> {
+                state.copy(error = "המשתמש לא מוכר לנו...")
+            }
+            else -> {
+                state.copy(error = "קרתה שגיאה לא צפויה. אנחנו מטפלים בזה")
             }
         }
     }
@@ -134,6 +140,7 @@ class LoginViewModel @Inject constructor(
                     is CodeMismatchException -> {
 
                     }
+
                     else -> {}
                 }
             }

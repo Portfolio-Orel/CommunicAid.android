@@ -9,14 +9,14 @@ import com.amplifyframework.auth.AuthProvider
 import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.auth.options.AuthSignUpOptions
+import com.amplifyframework.core.Amplify.AlreadyConfiguredException
 import com.amplifyframework.kotlin.core.Amplify
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.orelzman.auth.data.repository.AuthRepository
-import com.orelzman.auth.domain.exception.CodeMismatchException
-import com.orelzman.auth.domain.exception.UserNotConfirmedException
-import com.orelzman.auth.domain.exception.UsernamePasswordAuthException
+import com.orelzman.auth.domain.exception.*
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.auth.domain.interactor.UserInteractor
 import com.orelzman.auth.domain.model.User
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.rxjava3.core.Single
@@ -28,7 +28,8 @@ import javax.inject.Inject
 
 class AuthInteractorImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val userInteractor: UserInteractor,
 ) : AuthInteractor {
     companion object {
         var isConfigured: Boolean = false
@@ -41,22 +42,32 @@ class AuthInteractorImpl @Inject constructor(
     }
 
     override suspend fun initAWS() {
-        // Add this line, to include the Auth plugin.
         if (isConfigured) return
         try {
             Amplify.addPlugin(AWSCognitoAuthPlugin())
             Amplify.configure(context)
-            Amplify.Auth.fetchAuthSession()
             isConfigured = true
-        } catch (exception: com.amplifyframework.core.Amplify.AlreadyConfiguredException) {
+        } catch (exception: AlreadyConfiguredException) {
             isConfigured = true
             return
+        } finally {
+            if (Amplify.Auth.fetchAuthSession().isSignedIn) {
+                getUser()?.let {
+                    if(userInteractor.get() == null) {
+                        userInteractor.insert(it)
+                    }
+                }
+            }
         }
     }
 
     override suspend fun getUser(): User? {
         if (!Amplify.Auth.fetchAuthSession().isSignedIn) {
             return null
+        }
+        val user = userInteractor.get()
+        if (user != null) {
+            return user
         }
         val userId = Amplify.Auth.getCurrentUser()?.userId ?: ""
         var email = ""
@@ -66,7 +77,7 @@ class AuthInteractorImpl @Inject constructor(
             }
         }
         val token = getToken()
-        return User(userId = userId, token = token, email =email)
+        return User(userId = userId, token = token, email = email)
     }
 
     override fun getToken(): String =
@@ -108,6 +119,9 @@ class AuthInteractorImpl @Inject constructor(
                     Amplify.Auth.resendSignUpCode(username)
                     throw CodeMismatchException()
                 }
+                is AuthException.NotAuthorizedException -> {
+                    throw NotAuthorizedException()
+                }
                 else -> throw error
             }
         }
@@ -138,6 +152,7 @@ class AuthInteractorImpl @Inject constructor(
         } catch (exception: Exception) {
             when (exception) {
                 is AuthException.UserNotConfirmedException -> throw UserNotConfirmedException()
+                is AuthException.UserNotFoundException -> throw UserNotFoundException()
                 else -> throw exception
             }
         }

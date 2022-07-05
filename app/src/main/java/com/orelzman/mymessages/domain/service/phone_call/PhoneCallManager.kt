@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
  */
 interface PhoneCallManager {
 
+    val callInBackground: StateFlow<PhoneCall?>
     val callOnTheLine: StateFlow<PhoneCall?>
     val state: StateFlow<CallState>
     fun onStateChanged(state: String, number: String)

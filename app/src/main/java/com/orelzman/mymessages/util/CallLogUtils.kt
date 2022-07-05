@@ -2,7 +2,7 @@ package com.orelzman.mymessages.util
 
 import android.content.Context
 import android.provider.CallLog
-import com.orelzman.mymessages.domain.model.CallLogEntity
+import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.util.extension.toDate
 import java.util.*
 
