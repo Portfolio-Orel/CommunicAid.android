@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.orelzman.mymessages.domain.model.entities.DeletedCall
 import kotlinx.coroutines.flow.Flow
+import java.util.*
 
 @Dao
 interface DeletedCallsDao {
@@ -20,9 +21,10 @@ interface DeletedCallsDao {
         """
         SELECT *
         FROM DeletedCall
+        WHERE deleteDate > :startDate
     """
     )
-    fun getAll(): Flow<List<DeletedCall>>
+    fun getAll(startDate: Date): Flow<List<DeletedCall>>
 
     @Query(
         """

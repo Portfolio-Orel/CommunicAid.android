@@ -6,8 +6,8 @@ import com.orelzman.mymessages.domain.managers.UnhandledCallsManagerImpl
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.DeletedCall
 import com.orelzman.mymessages.util.CallType
-import com.orelzman.mymessages.util.startOfDay
-import junit.framework.Assert.assertTrue
+import com.orelzman.mymessages.util.utils.DateUtils
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -82,7 +82,7 @@ class DeletedUnhandledCallsTest {
         outgoingCall(Numbers.DAD)
         missedCall(Numbers.DAD)
         missedCall(Numbers.DAD)
-        missedCall(Numbers.DAD, date = Date().startOfDay)
+        missedCall(Numbers.DAD, date = DateUtils.getStartOfDay())
         deleteNumber(Numbers.DAD)
         val calls = filterCalls().map { it.number }
         assertTrue(calls.size == 1)

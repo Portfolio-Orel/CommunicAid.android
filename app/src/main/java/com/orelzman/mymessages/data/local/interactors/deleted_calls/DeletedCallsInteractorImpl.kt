@@ -5,6 +5,7 @@ import com.orelzman.mymessages.domain.interactors.DeletedCallsInteractor
 import com.orelzman.mymessages.domain.model.dto.body.create.CreateDeletedCallBody
 import com.orelzman.mymessages.domain.model.entities.DeletedCall
 import com.orelzman.mymessages.domain.repository.Repository
+import com.orelzman.mymessages.util.utils.DateUtils
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -44,7 +45,7 @@ class DeletedCallsInteractorImpl @Inject constructor(
             }
             db.insert(deletedCallsList)
         }
-        return db.getAll()
+        return db.getAll(DateUtils.getStartOfDay())
     }
 
 }

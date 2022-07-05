@@ -23,6 +23,7 @@ fun LogoutButton(
     val state = viewModel.state
 
     Button(
+        modifier = modifier,
         onClick = {
             viewModel.logout(onLogoutComplete = onLogoutComplete)
         },
