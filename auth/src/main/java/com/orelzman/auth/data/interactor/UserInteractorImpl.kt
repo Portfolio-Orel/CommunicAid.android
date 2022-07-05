@@ -5,7 +5,7 @@ import com.orelzman.auth.domain.interactor.UserInteractor
 import com.orelzman.auth.domain.model.User
 import javax.inject.Inject
 
-sealed class UserInteractorImpl @Inject constructor(
+class UserInteractorImpl @Inject constructor(
     private val userDB: UserDao
 ): UserInteractor {
     override fun insert(user: User) {

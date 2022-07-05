@@ -9,6 +9,7 @@ import com.orelzman.auth.data.dao.UserDao
 import com.orelzman.auth.data.interactor.UserInteractorImpl
 import com.orelzman.auth.data.local.AuthDatabase
 import com.orelzman.auth.data.repository.AuthRepository
+import com.orelzman.auth.domain.interactor.UserInteractor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,7 +43,7 @@ object AuthModule {
         db.userDao()
 
     @Provides
-    fun provideUserInteractor(userInteractor: UserInteractorImpl) = userInteractor
+    fun provideUserInteractor(userInteractor: UserInteractorImpl): UserInteractor = userInteractor
 
     @Provides
     @Singleton
