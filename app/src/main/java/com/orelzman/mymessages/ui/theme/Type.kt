@@ -23,13 +23,14 @@ val Typography = Typography(
     titleSmall = TextStyle(
         fontFamily = fontsVarelaround,
         fontWeight = FontWeight.Normal,
-        fontSize = 14.sp
+        fontSize = 22.sp
     ),
     titleMedium = TextStyle(
         fontFamily = fontsVarelaround,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
-    )
+        fontSize = 32.sp
+    ),
+
     /* Other default text styles to override
     button = TextStyle(
         fontFamily = FontFamily.Default,
