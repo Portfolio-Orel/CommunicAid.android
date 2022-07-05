@@ -3,9 +3,9 @@ package com.orelzman.mymessages.data.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.orelzman.mymessages.data.dto.*
 import com.orelzman.mymessages.data.local.dao.*
 import com.orelzman.mymessages.data.local.type_converters.Converters
+import com.orelzman.mymessages.domain.model.entities.*
 
 @Database(
     entities = [
@@ -13,9 +13,9 @@ import com.orelzman.mymessages.data.local.type_converters.Converters
         Folder::class,
         MessageInFolder::class,
         PhoneCall::class,
-        DeletedUnhandledCalls::class
+        DeletedCall::class
     ],
-    version = 7
+    version = 10
 )
 @TypeConverters(Converters::class)
 abstract class LocalDatabase : RoomDatabase() {
@@ -23,5 +23,5 @@ abstract class LocalDatabase : RoomDatabase() {
     abstract val folderDao: FolderDao
     abstract val phoneCallDao: PhoneCallDao
     abstract val messageInFolderDao: MessageInFolderDao
-    abstract val unhandledCallDao: UnhandledCallsDao
+    abstract val deletedCallsDao: DeletedCallsDao
 }

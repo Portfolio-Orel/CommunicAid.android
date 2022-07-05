@@ -24,8 +24,8 @@ android {
 
     defaultConfig {
         applicationId "com.orelzman.mymessages"
-        minSdk 24
-        targetSdk 29
+        minSdk 26
+        targetSdk 26
         versionCode 1
         versionName "1.0"
 

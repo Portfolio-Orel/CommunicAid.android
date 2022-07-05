@@ -61,117 +61,121 @@ fun MainScreen(
         viewModel.init()
     }
     if (state.isLoading) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .height(16.dp)
-                        .width(16.dp),
-                    strokeWidth = 2.dp,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
-        }
-    }
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
         Box(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                state.callOnTheLine,
-                style = MaterialTheme.typography.titleSmall
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .height(32.dp)
+                    .width(32.dp),
+                strokeWidth = 1.dp,
+                color = MaterialTheme.colorScheme.primary,
             )
         }
-        Divider(
-            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
-        )
-        Row(
-            modifier = Modifier
-                .padding(8.dp)
+    } else {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            state.folders.forEach { folder ->
-                FolderView(
-                    folder = folder,
-                    isSelected = state.selectedFolder.id == folder.id,
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    state.callOnTheLine,
                     modifier = Modifier
-                        .height(50.dp)
-                        .width(120.dp),
-                    onClick = { viewModel.setSelectedFolder(it) },
-                    onLongClick = { viewModel.onFolderLongClick(it) }
+                        .padding(8.dp),
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
-        }
-
-        FlowRow(
-            modifier = Modifier
-                .padding(start = 10.dp, end = 5.dp)
-                .fillMaxWidth(0.9f)
-                .fillMaxHeight(0.8F)
-                .fillMaxWidth(0.9F)
-                .scrollable(
-                    orientation = Orientation.Vertical,
-                    state = rememberScrollableState { delta ->
-                        messagesOffset.value = messagesOffset.value + delta
-                        delta
-                    }
-                ),
-            mainAxisSpacing = spaceBetweenMessages.dp,
-            mainAxisAlignment = MainAxisAlignment.Start,
-            mainAxisSize = SizeMode.Wrap
-        ) {
-            viewModel.getFoldersMessages()
-                .forEach {
-                    MessageView(
-                        message = it,
+            Divider(
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+            )
+            Row(
+                modifier = Modifier
+                    .padding(8.dp)
+            ) {
+                state.folders.forEach { folder ->
+                    FolderView(
+                        folder = folder,
+                        isSelected = state.selectedFolder.id == folder.id,
                         modifier = Modifier
-                            .width(boxWidth)
-                            .height(boxHeight)
-                            .padding(0.dp)
-                            .scrollable(
-                                orientation = Orientation.Horizontal,
-                                state = rememberScrollableState { delta ->
-                                    foldersOffset.value = foldersOffset.value + delta
-                                    delta
-                                }
-                            ),
-                        onClick = { message, context ->
-                            viewModel.onMessageClick(message, context)
-                        },
-                        onLongClick = { message, context ->
-                            viewModel.onMessageLongClick(message, context)
-                        }
+                            .height(50.dp)
+                            .width(120.dp),
+                        onClick = { viewModel.setSelectedFolder(it) },
+                        onLongClick = { viewModel.onFolderLongClick(it) }
                     )
                 }
-        }
-        Button(onClick = {
-            navigator.navigate(
-                DetailsFolderScreenDestination()
-            )
-        }) {
-            Text(text = stringResource(R.string.add_folder))
-        }
+            }
 
-        Button(onClick = {
-            navigator.navigate(
-                DetailsMessageScreenDestination()
-            )
-        }) {
-            Text(text = stringResource(R.string.add_message))
-        }
+            FlowRow(
+                modifier = Modifier
+                    .padding(start = 10.dp, end = 5.dp)
+                    .fillMaxWidth(0.9f)
+                    .fillMaxHeight(0.7F)
+                    .fillMaxWidth(0.9F)
+                    .scrollable(
+                        orientation = Orientation.Vertical,
+                        state = rememberScrollableState { delta ->
+                            messagesOffset.value = messagesOffset.value + delta
+                            delta
+                        }
+                    ),
+                mainAxisSpacing = spaceBetweenMessages.dp,
+                mainAxisAlignment = MainAxisAlignment.Start,
+                mainAxisSize = SizeMode.Wrap
+            ) {
+                viewModel.getFoldersMessages()
+                    .forEach {
+                        MessageView(
+                            message = it,
+                            modifier = Modifier
+                                .width(boxWidth)
+                                .height(boxHeight)
+                                .padding(0.dp)
+                                .scrollable(
+                                    orientation = Orientation.Horizontal,
+                                    state = rememberScrollableState { delta ->
+                                        foldersOffset.value = foldersOffset.value + delta
+                                        delta
+                                    }
+                                ),
+                            onClick = { message, context ->
+                                viewModel.onMessageClick(message, context)
+                            },
+                            onLongClick = { message, context ->
+                                viewModel.onMessageLongClick(message, context)
+                            }
+                        )
+                    }
+            }
+            LogoutButton(onLogoutComplete = {
+                navigator.navigate(LoginScreenDestination)
+            })
+            Button(onClick = {
+                navigator.navigate(
+                    DetailsFolderScreenDestination()
+                )
+            }) {
+                Text(text = stringResource(R.string.add_folder))
+            }
 
-        Button(onClick = {
-            navigator.navigate(
-                UnhandledCallsScreenDestination()
-            )
-        }) {
-            Text(text = stringResource(R.string.unhandled_calls))
+            Button(onClick = {
+                navigator.navigate(
+                    DetailsMessageScreenDestination()
+                )
+            }) {
+                Text(text = stringResource(R.string.add_message))
+            }
+
+            Button(onClick = {
+                navigator.navigate(
+                    UnhandledCallsScreenDestination()
+                )
+            }) {
+                Text(text = stringResource(R.string.unhandled_calls))
+            }
         }
-        LogoutButton(onLogoutComplete = {
-            navigator.navigate(LoginScreenDestination)
-        })
     }
 }
 

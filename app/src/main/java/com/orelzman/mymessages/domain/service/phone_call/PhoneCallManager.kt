@@ -1,6 +1,6 @@
 package com.orelzman.mymessages.domain.service.phone_call
 
-import com.orelzman.mymessages.data.dto.PhoneCall
+import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
  */
 interface PhoneCallManager {
 
+    val callInBackground: StateFlow<PhoneCall?>
     val callOnTheLine: StateFlow<PhoneCall?>
     val state: StateFlow<CallState>
     fun onStateChanged(state: String, number: String)

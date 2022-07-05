@@ -2,7 +2,8 @@ package com.orelzman.mymessages.data.local.interactors.analytics
 
 import android.content.Context
 import com.mixpanel.android.mpmetrics.MixpanelAPI
-import com.orelzman.mymessages.data.dto.Loggable
+import com.orelzman.mymessages.domain.interactors.AnalyticsInteractor
+import com.orelzman.mymessages.domain.model.entities.Loggable
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.json.JSONObject
 import javax.inject.Inject

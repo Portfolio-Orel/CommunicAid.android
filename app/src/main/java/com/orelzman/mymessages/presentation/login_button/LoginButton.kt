@@ -22,6 +22,7 @@ fun LoginButton(
     username: String,
     password: String,
     onLoginComplete: (Boolean, Exception?) -> Unit,
+    onLoginClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: LoginButtonViewModel = hiltViewModel(),
 ) {

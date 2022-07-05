@@ -3,22 +3,18 @@ package com.orelzman.mymessages.di
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.auth.data.interactor.AuthInteractorImpl
 import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.mymessages.data.local.interactors.analytics.AnalyticsInteractor
 import com.orelzman.mymessages.data.local.interactors.analytics.AnalyticsInteractorImpl
-import com.orelzman.mymessages.data.local.interactors.database.DatabaseInteractor
 import com.orelzman.mymessages.data.local.interactors.database.DatabaseInteractorImpl
-import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractor
+import com.orelzman.mymessages.data.local.interactors.deleted_calls.DeletedCallsInteractorImpl
 import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractorImpl
-import com.orelzman.mymessages.data.local.interactors.message.MessageInteractor
 import com.orelzman.mymessages.data.local.interactors.message.MessageInteractorImpl
-import com.orelzman.mymessages.data.local.interactors.message_in_folder.MessageInFolderInteractor
 import com.orelzman.mymessages.data.local.interactors.message_in_folder.MessageInFolderInteractorImpl
-import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsInteractor
 import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsInteractorImpl
-import com.orelzman.mymessages.data.local.interactors.unhandled_calls.UnhandledCallsInteractor
-import com.orelzman.mymessages.data.local.interactors.unhandled_calls.UnhandledCallsInteractorImpl
 import com.orelzman.mymessages.data.remote.repository.api.APIRepository
-import com.orelzman.mymessages.data.remote.repository.api.Repository
+import com.orelzman.mymessages.domain.interactors.*
+import com.orelzman.mymessages.domain.managers.UnhandledCallsManager
+import com.orelzman.mymessages.domain.managers.UnhandledCallsManagerImpl
+import com.orelzman.mymessages.domain.repository.Repository
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManager
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerImpl
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
@@ -60,7 +56,7 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun provideUnhandledCallsInteractor(unhandledCallsInteractor: UnhandledCallsInteractorImpl): UnhandledCallsInteractor
+    abstract fun provideUnhandledCallsInteractor(unhandledCallsInteractor: DeletedCallsInteractorImpl): DeletedCallsInteractor
 
     @ExperimentalPermissionsApi
     @Binds
@@ -80,5 +76,8 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun provideAnalyticsInteractor(interactor: AnalyticsInteractorImpl): AnalyticsInteractor
 
+    @Binds
+    @Singleton
+    abstract fun provideUnhandledCallsManager(manager: UnhandledCallsManagerImpl): UnhandledCallsManager
 
 }

@@ -14,13 +14,14 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.MainActivity
 import com.orelzman.mymessages.R
-import com.orelzman.mymessages.data.dto.PhoneCall
-import com.orelzman.mymessages.data.local.interactors.analytics.AnalyticsInteractor
-import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsInteractor
+import com.orelzman.mymessages.domain.interactors.AnalyticsInteractor
+import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
+import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
 import com.orelzman.mymessages.util.extension.Log
-import com.orelzman.mymessages.util.extension.log
 import com.orelzman.mymessages.util.extension.toDate
+import com.orelzman.mymessages.util.extension.inSeconds
+import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -165,6 +166,10 @@ class CallsService : Service() {
                         phoneCalls
                     )
                     phoneCallsInteractor.remove(phoneCalls)
+                    phoneCalls.forEach { call ->
+                        analyticsInteractor.track("Call Deleted", "call" to call.number)
+                    }
+
                 }
             } catch (exception: Exception) {
                 exception.log(phoneCalls)
@@ -210,7 +215,7 @@ class CallsService : Service() {
                     val duration = it.getString(2).toLong()
                     phoneCall.name = it.getString(3) ?: ""
                     phoneCall.startDate = logStartDate
-                    phoneCall.endDate = (phoneCall.startDate.time.inSeconds + duration).date
+                    phoneCall.endDate = (phoneCall.startDate.time.inSeconds + duration).toDate()
                     when (type.toInt()) {
                         CallLog.Calls.MISSED_TYPE -> phoneCall.missed()
                         CallLog.Calls.REJECTED_TYPE -> phoneCall.rejected()
@@ -222,30 +227,6 @@ class CallsService : Service() {
         return null
     }
 }
-
-val Long.inSeconds: Long
-    get() =
-        if ("$this".length > 10) {
-            this / 1000
-        } else {
-            this
-        }
-
-val Long.inMilliseconds: Long
-    get() =
-        if ("$this".length <= 10) {
-            this
-        } else {
-            this * 1000
-        }
-
-val Long.date: Date
-    get() =
-        if ("$this".length > 10) {
-            Date(this)
-        } else {
-            Date(this * 1000)
-        }
 
 fun Date.notEquals(date: Date, maxDifferenceInSeconds: Long = 5): Boolean =
     (time.inSeconds - date.time.inSeconds).absoluteValue >= maxDifferenceInSeconds

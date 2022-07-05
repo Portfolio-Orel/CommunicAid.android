@@ -1,9 +1,9 @@
 package com.orelzman.mymessages.presentation.main
 
 import com.orelzman.auth.domain.model.User
-import com.orelzman.mymessages.data.dto.Folder
-import com.orelzman.mymessages.data.dto.Message
-import com.orelzman.mymessages.data.dto.MessageInFolder
+import com.orelzman.mymessages.domain.model.entities.Folder
+import com.orelzman.mymessages.domain.model.entities.Message
+import com.orelzman.mymessages.domain.model.entities.MessageInFolder
 
 data class MainState(
     val messages: List<Message> = emptyList(),

@@ -7,13 +7,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.mymessages.data.dto.Folder
-import com.orelzman.mymessages.data.dto.Message
-import com.orelzman.mymessages.data.dto.MessageSent
-import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractor
-import com.orelzman.mymessages.data.local.interactors.message.MessageInteractor
-import com.orelzman.mymessages.data.local.interactors.message_in_folder.MessageInFolderInteractor
-import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsInteractor
+import com.orelzman.mymessages.domain.interactors.FolderInteractor
+import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
+import com.orelzman.mymessages.domain.interactors.MessageInteractor
+import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
+import com.orelzman.mymessages.domain.model.entities.Folder
+import com.orelzman.mymessages.domain.model.entities.Message
+import com.orelzman.mymessages.domain.model.entities.MessageSent
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
 import com.orelzman.mymessages.util.Whatsapp.sendWhatsapp
 import com.orelzman.mymessages.util.extension.Log
@@ -33,7 +33,7 @@ class MainViewModel @Inject constructor(
     private val authInteractor: AuthInteractor,
     private val phoneCallManagerInteractor: PhoneCallManagerInteractor,
     private val phoneCallStatisticsInteractor: PhoneCallsInteractor,
-    private val messageInFolderInteractor: MessageInFolderInteractor
+    private val messageInFolderInteractor: MessageInFolderInteractor,
 ) : ViewModel() {
 
     var state by mutableStateOf(MainState())

@@ -1,7 +1,7 @@
 package com.orelzman.mymessages.data.local.dao
 
 import androidx.room.*
-import com.orelzman.mymessages.data.dto.Folder
+import com.orelzman.mymessages.domain.model.entities.Folder
 
 @Dao
 interface FolderDao {

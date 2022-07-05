@@ -10,13 +10,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.orelzman.mymessages.R
-import com.orelzman.mymessages.data.dto.PhoneCall
+import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 import java.util.*
 
@@ -46,7 +47,7 @@ fun UnhandledCallRow(
         Column(modifier = Modifier
             .clickable { onClick(phoneCall) }) {
             Text(
-                text = phoneCall.name,
+                text = phoneCall.getName(LocalContext.current),
                 color = MaterialTheme.colorScheme.surface,
                 style = MaterialTheme.typography.titleMedium
             )

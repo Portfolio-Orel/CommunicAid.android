@@ -2,9 +2,9 @@ package com.orelzman.mymessages.domain.service.phone_call
 
 import android.telephony.TelephonyManager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.orelzman.mymessages.data.dto.PhoneCall
-import com.orelzman.mymessages.data.local.interactors.analytics.AnalyticsInteractor
-import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsInteractor
+import com.orelzman.mymessages.domain.interactors.AnalyticsInteractor
+import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
+import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.service.phone_call.exceptions.WaitingThenRingingException
 import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.log
@@ -21,12 +21,13 @@ class PhoneCallManagerImpl @Inject constructor(
     private val analyticsInteractor: AnalyticsInteractor?
 ) : PhoneCallManager {
 
-    private val callInTheBackground: MutableStateFlow<PhoneCall?> = MutableStateFlow(null)
+    private val _callInTheBackground: MutableStateFlow<PhoneCall?> = MutableStateFlow(null)
     private val _callOnTheLine: MutableStateFlow<PhoneCall?> = MutableStateFlow(null)
     private val _state: MutableStateFlow<CallState> = MutableStateFlow(CallState.IDLE)
 
     override val callOnTheLine = _callOnTheLine.asStateFlow()
     override val state = _state.asStateFlow()
+    override val callInBackground = _callInTheBackground.asStateFlow()
 
     override fun onStateChanged(state: String, number: String) {
         Log.vCustom("state: $state \n number: $number")
@@ -76,7 +77,7 @@ class PhoneCallManagerImpl @Inject constructor(
     }
 
     private fun setBackgroundCall(phoneCall: PhoneCall?) {
-        callInTheBackground.value = phoneCall
+        _callInTheBackground.value = phoneCall
     }
 
     private fun setCallOnLine(phoneCall: PhoneCall?) {
@@ -114,14 +115,14 @@ class PhoneCallManagerImpl @Inject constructor(
 
 
     private fun waitingCallAnswered() {
-        val backgroundCallHolder = callInTheBackground.value
+        val backgroundCallHolder = _callInTheBackground.value
         setStateValue(CallState.INCOMING)
         setBackgroundCall(callOnTheLine.value)
         setCallOnLine(backgroundCallHolder)
     }
 
     private fun waitingCallRejected() {
-        callInTheBackground.value = null
+        _callInTheBackground.value = null
         setStateValue(CallState.INCOMING)
     }
 
@@ -129,7 +130,7 @@ class PhoneCallManagerImpl @Inject constructor(
         if (phoneCall == null) return
         val id = UUID.randomUUID()
         phoneCall.id = id.toString()
-        if(phoneCallInteractor.getAll().any { it.startDate == phoneCall.startDate }) {
+        if (phoneCallInteractor.getAll().any { it.startDate == phoneCall.startDate }) {
             analyticsInteractor?.track("Call Cached", "value" to "Double add attempt")
         }
         phoneCallInteractor.cachePhoneCall(phoneCall = phoneCall)
@@ -139,6 +140,6 @@ class PhoneCallManagerImpl @Inject constructor(
     private fun resetStates() {
         setStateValue(CallState.IDLE)
         _callOnTheLine.value = null
-        callInTheBackground.value = null
+        _callInTheBackground.value = null
     }
 }

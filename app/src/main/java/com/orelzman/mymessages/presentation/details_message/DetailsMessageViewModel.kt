@@ -6,10 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.mymessages.data.dto.Folder
-import com.orelzman.mymessages.data.dto.Message
-import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractor
-import com.orelzman.mymessages.data.local.interactors.message.MessageInteractor
+import com.orelzman.mymessages.domain.model.entities.Folder
+import com.orelzman.mymessages.domain.model.entities.Message
+import com.orelzman.mymessages.domain.interactors.FolderInteractor
+import com.orelzman.mymessages.domain.interactors.MessageInteractor
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
