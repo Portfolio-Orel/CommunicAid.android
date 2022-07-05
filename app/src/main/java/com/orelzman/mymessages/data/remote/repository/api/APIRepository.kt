@@ -1,13 +1,14 @@
 package com.orelzman.mymessages.data.remote.repository.api
 
-import com.orelzman.mymessages.domain.model.entities.Folder
-import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.model.dto.body.create.*
 import com.orelzman.mymessages.domain.model.dto.body.update.UpdateFolderBody
 import com.orelzman.mymessages.domain.model.dto.body.update.UpdateMessageBody
+import com.orelzman.mymessages.domain.model.dto.response.GetDeletedCallsResponse
 import com.orelzman.mymessages.domain.model.dto.response.GetFoldersResponse
 import com.orelzman.mymessages.domain.model.dto.response.GetMessagesResponse
 import com.orelzman.mymessages.domain.model.dto.response.GetUserResponse
+import com.orelzman.mymessages.domain.model.entities.Folder
+import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.repository.Repository
 import javax.inject.Inject
 
@@ -78,6 +79,11 @@ class APIRepository @Inject constructor(
 
     override suspend fun createDeletedCall(createDeletedCallBody: CreateDeletedCallBody): String {
         val result = api.createDeletedCall(createDeletedCallBody)
+        return result.body
+    }
+
+    override suspend fun getDeletedCalls(userId: String): List<GetDeletedCallsResponse> {
+        val result = api.getDeletedCalls(userId)
         return result.body
     }
 

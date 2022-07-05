@@ -1,10 +1,12 @@
 package com.orelzman.mymessages.domain.model.entities
 
+import android.content.Context
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.orelzman.mymessages.domain.model.dto.body.create.CreatePhoneCallBody
-import com.orelzman.mymessages.domain.service.inSeconds
 import com.orelzman.mymessages.util.CallType
+import com.orelzman.mymessages.util.CallUtils
+import com.orelzman.mymessages.util.extension.inSeconds
 import java.util.*
 
 @Entity
@@ -32,6 +34,10 @@ data class PhoneCall(
 
     val isAnswered: Boolean
         get() = (startDate.time.inSeconds != endDate.time.inSeconds)
+
+    fun getName(context: Context): String =
+        CallUtils.getContactName(number, context)
+
 
     fun missed() {
         type = CallType.MISSED.name

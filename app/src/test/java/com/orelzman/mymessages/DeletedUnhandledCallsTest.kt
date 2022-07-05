@@ -1,14 +1,10 @@
 package com.orelzman.mymessages
 
 import android.content.Context
-import androidx.room.Room
-import com.orelzman.mymessages.data.local.LocalDatabase
-import com.orelzman.mymessages.data.local.type_converters.Converters
 import com.orelzman.mymessages.domain.managers.UnhandledCallsManager
 import com.orelzman.mymessages.domain.managers.UnhandledCallsManagerImpl
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
-import com.orelzman.mymessages.domain.model.entities.DeletedCalls
-import com.orelzman.mymessages.domain.model.entities.PhoneCall
+import com.orelzman.mymessages.domain.model.entities.DeletedCall
 import com.orelzman.mymessages.util.CallType
 import com.orelzman.mymessages.util.startOfDay
 import junit.framework.Assert.assertTrue
@@ -28,20 +24,13 @@ class DeletedUnhandledCallsTest {
     private lateinit var mockContext: Context
 
     private lateinit var unhandledCallsManager: UnhandledCallsManager
-    private lateinit var db: LocalDatabase
 
     private var callLogs: ArrayList<CallLogEntity> = ArrayList()
-    private var deletedCalls: ArrayList<DeletedCalls> = ArrayList()
+    private var deletedCalls: ArrayList<DeletedCall> = ArrayList()
 
     @Before
     fun setUp() {
         mockContext = mock(Context::class.java)
-        db = Room.inMemoryDatabaseBuilder(
-            mockContext,
-            LocalDatabase::class.java)
-            .addTypeConverter(Converters())
-            .fallbackToDestructiveMigration()
-            .build()
         unhandledCallsManager = UnhandledCallsManagerImpl()
 
     }
@@ -67,10 +56,18 @@ class DeletedUnhandledCallsTest {
         missedCall(Numbers.OREL)
         incomingCall(Numbers.MOM)
         outgoingCall(Numbers.DAD)
-        missedCall(Numbers.DAD)
+        rejectedCall(Numbers.DAD)
         val calls = filterCalls().map { it.number }
         assertTrue(calls.size == 3)
-        assertTrue(calls.containsAll(listOf(Numbers.OREL.value, Numbers.DAD.value, Numbers.SARA.value)))
+        assertTrue(
+            calls.containsAll(
+                listOf(
+                    Numbers.OREL.value,
+                    Numbers.DAD.value,
+                    Numbers.SARA.value
+                )
+            )
+        )
     }
 
     @Test
@@ -164,15 +161,10 @@ class DeletedUnhandledCallsTest {
 
     private fun deleteNumber(number: Numbers) {
         deletedCalls.add(
-            DeletedCalls(
-                id = "1$number", phoneCall = PhoneCall(
-                    number = number.value,
-                    startDate = Date(),
-                    endDate = Date(),
-                    type = CallType.INCOMING.name,
-                    isWaiting = false,
-                    messagesSent = listOf(),
-                ), deleteDate = Date()
+            DeletedCall(
+                id = "1$number",
+                number = number.value,
+                deleteDate = Date()
             )
         )
         Thread.sleep(10)
@@ -183,7 +175,7 @@ class DeletedUnhandledCallsTest {
             CallLogEntity(
                 number = number.value,
                 duration = 1,
-                dateMilliseconds = date.time,
+                time = date.time,
                 callLogType = type
             )
         )

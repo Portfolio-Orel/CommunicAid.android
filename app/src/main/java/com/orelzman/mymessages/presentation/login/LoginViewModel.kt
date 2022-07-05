@@ -39,12 +39,13 @@ class LoginViewModel @Inject constructor(
                     databaseInteractor.clear()
                 }
             } catch (exception: Exception) {
-                state = state.copy(isCheckingAuth = false)
                 exception.log()
                 when (exception) {
                     is UserNotAuthenticatedException -> {/*User needs to login again-do it with saved credentials*/
                     }
                 }
+            } finally {
+                state = state.copy(isLoading = false)
             }
         }
     }
@@ -109,8 +110,9 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun userLoggedInSuccessfully() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             try {
+                state = state.copy(isLoading = true)
                 val userId = interactor.getUser()?.userId
                 if (userId != null) {
                     confirmUserCreated(userId)
@@ -119,7 +121,8 @@ class LoginViewModel @Inject constructor(
                 }
 
             } catch (exception: Exception) {
-                println()
+                exception.log()
+                state = state.copy(isLoading = false)
             }
         }
     }
@@ -154,10 +157,12 @@ class LoginViewModel @Inject constructor(
                 if (user?.userId == null) {
                     createUser(userId, user?.email ?: "")
                 }
-                state = state.copy(isAuthorized = true, isCheckingAuth = false)
+                state = state.copy(isAuthorized = true)
             }
         } catch (exception: Exception) {
-            state = state.copy(isAuthorized = false, isCheckingAuth = false)
+            state = state.copy(isAuthorized = false)
+        } finally {
+            state = state.copy(isLoading = false)
         }
     }
 

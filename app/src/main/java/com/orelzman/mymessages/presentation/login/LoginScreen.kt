@@ -56,7 +56,7 @@ fun LoginScreen(
                     })
             }
         }
-        if (state.isCheckingAuth) {
+        if (state.isLoading) {
             Box(
                 modifier = Modifier
                     .fillMaxSize(),
