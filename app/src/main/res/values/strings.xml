@@ -20,4 +20,5 @@
     <string name="confirmation_code">קוד אישור</string>
     <string name="loging_out">מתנתק…</string>
     <string name="logout">התנתק</string>
+    <string name="wrong_credentials">הפרטים שהוזנו לא נכונים...</string>
 </resources>

@@ -56,7 +56,7 @@ fun LoginScreen(
                     })
             }
         }
-        if (state.isCheckingAuth) {
+        if (state.isLoading) {
             Box(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -138,7 +138,9 @@ fun LoginScreen(
                                         exception = exception
                                     )
                                 )
-                            })
+                            },
+                            onLoginClick = { viewModel.onLoginClick() }
+                        )
                         Text(
                             stringResource(R.string.register),
                             modifier = Modifier
@@ -150,6 +152,11 @@ fun LoginScreen(
                             maxLines = 1,
                         )
                     }
+                    Text(
+                        state.error ?: "",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             }
         }

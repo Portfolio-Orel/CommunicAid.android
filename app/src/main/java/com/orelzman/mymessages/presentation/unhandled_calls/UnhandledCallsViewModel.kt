@@ -15,10 +15,11 @@ import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.domain.interactors.AnalyticsInteractor
 import com.orelzman.mymessages.domain.interactors.DeletedCallsInteractor
+import com.orelzman.mymessages.domain.managers.UnhandledCallsManager
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
-import com.orelzman.mymessages.domain.model.entities.DeletedCalls
+import com.orelzman.mymessages.domain.model.entities.DeletedCall
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
-import com.orelzman.mymessages.util.CallLogUtils
+import com.orelzman.mymessages.util.CallUtils
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -28,13 +29,13 @@ import javax.inject.Inject
 @HiltViewModel
 class UnhandledCallsViewModel @Inject constructor(
     application: Application,
-    private val unhandledCallsInteractor: DeletedCallsInteractor,
+    private val deletedCallsInteractor: DeletedCallsInteractor,
+    private val unhandledCallsManager: UnhandledCallsManager,
     private val analyticsInteractor: AnalyticsInteractor,
     private val authInteractor: AuthInteractor,
 ) : AndroidViewModel(application) {
 
     var state by mutableStateOf(UnhandledCallsState())
-
 
     init {
         setCalls()
@@ -45,16 +46,17 @@ class UnhandledCallsViewModel @Inject constructor(
      */
     private fun setCalls() {
         viewModelScope.launch(Dispatchers.IO) {
-            authInteractor.getUser()?.userId?.let {
-                val unhandledCalls = unhandledCallsInteractor.getAll(it)
-                    .sortedByDescending { unhandledCall -> unhandledCall.phoneCall.startDate }
-                    .distinctBy { unhandledCall -> unhandledCall.phoneCall.startDate }
-                val callsFromCallLog = getCallsFromCallLog(context = getApplicationContext())
-                val callsToHandle = unhandledCallsInteractor.filterUnhandledCalls(
-                    deletedCalls = unhandledCalls,
-                    callLogs = callsFromCallLog
-                )
-                state = state.copy(callsToHandle = callsToHandle)
+            authInteractor.getUser()?.userId?.let { userId ->
+                deletedCallsInteractor.getAll(userId)
+                    .collect {
+                        val callsFromCallLog =
+                            getCallsFromCallLog(context = getApplicationContext())
+                        val callsToHandle = unhandledCallsManager.filterUnhandledCalls(
+                            deletedCalls = it,
+                            callLogs = callsFromCallLog
+                        )
+                        state = state.copy(callsToHandle = callsToHandle)
+                    }
             }
         }
     }
@@ -66,10 +68,11 @@ class UnhandledCallsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             authInteractor.getUser()?.userId?.let {
                 try {
-                    unhandledCallsInteractor.create(
-                        userId = it, deletedCall = DeletedCalls(phoneCall = phoneCall)
+                    deletedCallsInteractor.create(
+                        userId = it, deletedCall = DeletedCall(
+                            number = phoneCall.number
+                        )
                     )
-                    setCalls()
                 } catch (exception: Exception) {
                     exception.log()
                 }
@@ -95,5 +98,5 @@ class UnhandledCallsViewModel @Inject constructor(
 
 
     private fun getCallsFromCallLog(context: Context): ArrayList<CallLogEntity> =
-        CallLogUtils.getTodaysCallLog(context)
+        CallUtils.getTodaysCallLog(context)
 }

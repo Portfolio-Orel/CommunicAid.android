@@ -8,7 +8,7 @@ class CallLogEntity(
     val number: String = "",
     val duration: Long = 0,
     val name: String = "",
-    var dateMilliseconds: Long = 0,
+    var time: Long = 0,
     val callLogType: CallType? = null
 ) {
 
@@ -21,7 +21,7 @@ class CallLogEntity(
             PhoneCall(
                 number = number,
                 startDate = Date(),
-                endDate = dateMilliseconds.toDate(),
+                endDate = time.toDate(),
                 type = CallType.INCOMING.name
             )
 }

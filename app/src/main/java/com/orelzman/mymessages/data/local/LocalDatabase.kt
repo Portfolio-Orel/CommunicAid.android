@@ -13,9 +13,9 @@ import com.orelzman.mymessages.domain.model.entities.*
         Folder::class,
         MessageInFolder::class,
         PhoneCall::class,
-        DeletedCalls::class
+        DeletedCall::class
     ],
-    version = 7
+    version = 10
 )
 @TypeConverters(Converters::class)
 abstract class LocalDatabase : RoomDatabase() {
@@ -23,5 +23,5 @@ abstract class LocalDatabase : RoomDatabase() {
     abstract val folderDao: FolderDao
     abstract val phoneCallDao: PhoneCallDao
     abstract val messageInFolderDao: MessageInFolderDao
-    abstract val unhandledCallDao: UnhandledCallsDao
+    abstract val deletedCallsDao: DeletedCallsDao
 }
