@@ -3,6 +3,8 @@ package com.orelzman.mymessages.presentation.unhandled_calls.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,7 +38,7 @@ fun UnhandledCallRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_call_24),
+            imageVector = Icons.Filled.Phone,
             contentDescription = "Remove unhandled call",
             modifier = Modifier
                 .localPadding()
@@ -49,12 +51,12 @@ fun UnhandledCallRow(
             Text(
                 text = phoneCall.getName(LocalContext.current),
                 color = MaterialTheme.colorScheme.surface,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleSmall
             )
             Text(
                 "14:12 • אתמול",
                 color = MaterialTheme.colorScheme.surface.copy(alpha = 0.3f),
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.bodySmall
             )
         }
         Spacer(modifier = Modifier.weight(1f))
