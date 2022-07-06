@@ -10,4 +10,6 @@ class PhoneCallManagerInteractorImpl @Inject constructor(
 
     override val numberOnTheLine: StateFlow<PhoneCall?>
         get() = phoneCallManager.callOnTheLine
+    override val callInBackground: StateFlow<PhoneCall?>
+        get() = phoneCallManager.callInBackground
 }
