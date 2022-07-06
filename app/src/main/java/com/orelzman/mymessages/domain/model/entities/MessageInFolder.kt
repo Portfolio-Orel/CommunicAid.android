@@ -2,10 +2,11 @@ package com.orelzman.mymessages.domain.model.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.*
 
 @Entity
 data class MessageInFolder(
-    @PrimaryKey val id: String = "",
+    @PrimaryKey val id: String = UUID.randomUUID().toString(),
     val messageId: String = "",
     val folderId: String = "",
 ) : Loggable {

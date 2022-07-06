@@ -22,4 +22,5 @@
     <string name="logout">התנתק</string>
     <string name="wrong_credentials">הפרטים שהוזנו לא נכונים...</string>
     <string name="no_unhandled_calls">אין שיחות שלא טופלו!</string>
+    <string name="save_message">שמור</string>
 </resources>

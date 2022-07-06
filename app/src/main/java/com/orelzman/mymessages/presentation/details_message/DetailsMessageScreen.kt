@@ -7,14 +7,17 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
@@ -90,16 +93,19 @@ fun DetailsMessageScreen(
             Row {
                 Button(
                     onClick = { viewModel.saveMessage() },
-                    modifier = Modifier.padding(start = 32.dp, bottom = 32.dp)
+                    modifier = Modifier.padding(start = 32.dp, bottom = 32.dp),
                 ) {
-                    if (state.isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.padding(bottom = 12.dp)
-                                .size(8.dp),
-                            color = Color.White
-                        )
-                    } else {
-                        Text("שמור")
+                    Row(verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center) {
+                        Text(text = stringResource(R.string.save_message), modifier = Modifier.padding(6.dp))
+                        if (state.isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.padding(bottom = 12.dp)
+                                    .size(8.dp),
+                                color = Color.White,
+                                strokeWidth = 1.dp
+                            )
+                        }
                     }
                 }
                 Spacer(modifier = Modifier.weight(1f))
