@@ -17,8 +17,8 @@ val fontsVarelaround = FontFamily(
 val Typography = Typography(
     bodySmall = TextStyle(
         fontFamily = fontsVarelaround,
-        fontWeight = FontWeight.Normal,
-        fontSize = 20.sp
+        fontWeight = FontWeight.Thin,
+        fontSize = 12.sp
     ),
     titleSmall = TextStyle(
         fontFamily = fontsVarelaround,

@@ -6,10 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.mymessages.domain.model.entities.Folder
-import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.interactors.FolderInteractor
 import com.orelzman.mymessages.domain.interactors.MessageInteractor
+import com.orelzman.mymessages.domain.model.entities.Folder
+import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +25,7 @@ class DetailsMessageViewModel @Inject constructor(
     var state by mutableStateOf(DetailsMessageState())
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             authInteractor.getUser()?.userId?.let {
                 val folders = folderInteractor.getFolders(it)
                 state = state.copy(folders = folders)
@@ -35,7 +35,7 @@ class DetailsMessageViewModel @Inject constructor(
 
     fun setEdit(messageId: String?) {
         messageId?.let {
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch(Dispatchers.Main) {
                 val message = messageInteractor.getMessage(messageId = messageId)
                 val folder = folderInteractor.getFolderWithMessageId(messageId = messageId)
                 setEditValues(message = message, folder = folder)
