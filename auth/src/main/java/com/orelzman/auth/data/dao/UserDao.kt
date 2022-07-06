@@ -2,6 +2,7 @@ package com.orelzman.auth.data.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.orelzman.auth.domain.model.User
 
@@ -14,7 +15,7 @@ interface UserDao {
     """)
     fun get(): User?
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(user: User)
 
     @Query("""
