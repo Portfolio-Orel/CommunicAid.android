@@ -1,9 +1,11 @@
 package com.orelzman.mymessages.presentation.main
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -11,8 +13,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,6 +33,7 @@ import com.orelzman.mymessages.presentation.main.components.FolderView
 import com.orelzman.mymessages.presentation.main.components.MessageView
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+
 
 @Composable
 @Destination
@@ -81,14 +86,77 @@ fun MainScreen(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    state.callOnTheLine,
-                    modifier = Modifier
-                        .padding(8.dp),
-                    style = MaterialTheme.typography.titleMedium
-                )
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        state.activeCall ?: "",
+                        modifier = Modifier
+                            .padding(8.dp),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    if (state.callInBackground != null) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                        ) {
+                            Button(
+                                modifier = Modifier
+                                    .border(
+                                        1.dp,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        shape = RoundedCornerShape(32.dp)
+                                    )
+                                    .width(150.dp)
+                                    .height(36.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor =
+                                    if (state.activeCall == state.callOnTheLine) MaterialTheme.colorScheme.primary
+                                    else Color.Transparent
+                                ),
+                                onClick = { viewModel.setCallOnTheLineActive() }) {
+                                Text(
+                                    state.callOnTheLine ?: "",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    color = if (state.activeCall == state.callOnTheLine) MaterialTheme.colorScheme.onPrimary
+                                    else MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+
+                            Button(
+                                modifier = Modifier
+                                    .border(
+                                        1.dp,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        shape = RoundedCornerShape(32.dp)
+                                    )
+                                    .width(150.dp)
+                                    .height(36.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor =
+                                    if (state.activeCall == state.callInBackground) MaterialTheme.colorScheme.primary
+                                    else Color.Transparent
+                                ),
+                                onClick = { viewModel.setBackgroundCallActive() }) {
+                                Text(
+                                    state.callInBackground,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    color = if (state.activeCall == state.callInBackground) MaterialTheme.colorScheme.onPrimary
+                                    else MaterialTheme.colorScheme.onBackground
+                                )
+
+                            }
+                        }
+                    }
+                }
             }
             Divider(
+                modifier = Modifier.padding(8.dp),
                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
             )
             Row(

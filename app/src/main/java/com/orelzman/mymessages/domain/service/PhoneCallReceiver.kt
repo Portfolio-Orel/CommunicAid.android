@@ -30,7 +30,7 @@ class PhonecallReceiver : BroadcastReceiver() {
                 @Suppress("DEPRECATION") val number =
                     intent.extras?.getString(TelephonyManager.EXTRA_INCOMING_NUMBER)
                         ?: return
-                stateStr?.let { phoneCallManager.onStateChanged(it, number) }
+                stateStr?.let { phoneCallManager.onStateChanged(it, number, context) }
             }
         }
     }

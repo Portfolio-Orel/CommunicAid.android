@@ -46,6 +46,7 @@ class MainViewModel @Inject constructor(
             getMessagesInFolder()
             getUser()
             observeNumberOnTheLine()
+            observeNumberInBackground()
         }.invokeOnCompletion {
             it?.log()
             state = state.copy(isLoading = false)
@@ -123,6 +124,22 @@ class MainViewModel @Inject constructor(
 
     fun onFolderLongClick(folder: Folder) = goToEditFolder(folder)
 
+    fun setBackgroundCallActive() {
+        if (state.callInBackground != null) {
+            selectActiveCall(state.callInBackground)
+        } else {
+            selectActiveCall(state.callOnTheLine)
+        }
+    }
+
+    fun setCallOnTheLineActive() {
+        selectActiveCall(state.callOnTheLine)
+    }
+
+    private fun selectActiveCall(number: String?) {
+        state = state.copy(activeCall = number ?: "אין שיחה")
+    }
+
     private fun goToEditMessage(message: Message) {
         state = state.copy(messageToEdit = message)
     }
@@ -132,17 +149,18 @@ class MainViewModel @Inject constructor(
     }
 
     private fun observeNumberOnTheLine() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             phoneCallManagerInteractor.numberOnTheLine.collectLatest {
-                state = state.copy(callOnTheLine = it?.number ?: "אין שיחה")
+                state = state.copy(callOnTheLine = it?.number)
+                setCallOnTheLineActive()
             }
         }
     }
 
     private fun observeNumberInBackground() {
-        viewModelScope.launch(Dispatchers.IO) {
-            phoneCallManagerInteractor.numberOnTheLine.collectLatest {
-                state = state.copy(callInBackground = it?.number ?: null)
+        viewModelScope.launch(Dispatchers.Main) {
+            phoneCallManagerInteractor.callInBackground.collectLatest {
+                state = state.copy(callInBackground = it?.number)
             }
         }
     }

@@ -5,4 +5,5 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface PhoneCallManagerInteractor {
     val numberOnTheLine: StateFlow<PhoneCall?>
+    val callInBackground: StateFlow<PhoneCall?>
 }
