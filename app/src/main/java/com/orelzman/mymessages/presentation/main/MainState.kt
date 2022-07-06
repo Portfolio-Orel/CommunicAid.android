@@ -12,6 +12,7 @@ data class MainState(
     val user: User? = null,
     val selectedFolder: Folder = Folder(),
     val callOnTheLine: String = "",
+    val callInBackground: String? = null,
     val isLoading: Boolean = false,
     val isLoggedIn: Boolean = false,
     val maxMessagesInRow: Int = 6,

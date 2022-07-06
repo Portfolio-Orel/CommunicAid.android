@@ -138,4 +138,12 @@ class MainViewModel @Inject constructor(
             }
         }
     }
+
+    private fun observeNumberInBackground() {
+        viewModelScope.launch(Dispatchers.IO) {
+            phoneCallManagerInteractor.numberOnTheLine.collectLatest {
+                state = state.copy(callInBackground = it?.number ?: null)
+            }
+        }
+    }
 }
