@@ -20,7 +20,7 @@ data class PhoneCall(
     var isWaiting: Boolean = false,
     var messagesSent: List<MessageSent> = emptyList(),
     var type: String = CallType.INCOMING.name,
-    var uploadState: UploadState = UploadState.Not_Uploaded
+    var uploadState: UploadState = UploadState.NotUploaded
 ) : Loggable {
 
     override val data: Map<String, Any>

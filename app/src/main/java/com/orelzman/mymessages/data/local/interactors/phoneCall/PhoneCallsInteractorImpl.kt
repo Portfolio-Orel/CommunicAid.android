@@ -1,11 +1,12 @@
 package com.orelzman.mymessages.data.local.interactors.phoneCall
 
+import com.orelzman.mymessages.data.local.LocalDatabase
+import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.model.entities.MessageSent
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.model.entities.createPhoneCallBodyList
-import com.orelzman.mymessages.data.local.LocalDatabase
-import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.repository.Repository
+import com.orelzman.mymessages.domain.repository.UploadState
 import javax.inject.Inject
 
 class PhoneCallsInteractorImpl @Inject constructor(
@@ -31,6 +32,11 @@ class PhoneCallsInteractorImpl @Inject constructor(
 
     override fun updateCall(phoneCall: PhoneCall) =
         db.update(phoneCall)
+
+    override fun updateCallUploadState(phoneCall: PhoneCall, uploadState: UploadState) {
+        phoneCall.uploadState = uploadState
+        db.update(phoneCall)
+    }
 
 
     override fun getAll(): List<PhoneCall> =

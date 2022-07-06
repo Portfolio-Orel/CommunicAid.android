@@ -160,25 +160,29 @@ class CallsService : Service() {
                 phoneCalls = phoneCallsInteractor
                     .getAll()
                     .distinctBy { it.startDate }
-                    .filter { it.uploadState == UploadState.Not_Uploaded }
+                    .filter { it.uploadState == UploadState.NotUploaded }
                     .mapNotNull {
-                        it.uploadState = UploadState.Being_Uploaded
+                        it.uploadState = UploadState.BeingUploaded
+                        phoneCallsInteractor.updateCallUploadState(it, UploadState.BeingUploaded)
                         return@mapNotNull update(this@CallsService, it)
                     }
-                Log.vCustom("Calls amount: ${phoneCalls.size}")
                 authInteractor.getUser()?.userId?.let {
                     phoneCallsInteractor.addPhoneCalls(
                         it,
                         phoneCalls
                     )
-                    phoneCallsInteractor.remove(phoneCalls) // If you remove this line, update upload state to -> uploaded
+//                    phoneCallsInteractor.remove(phoneCalls) // If you remove this line, update upload state to -> uploaded
                     phoneCalls.forEach { call ->
+                        phoneCallsInteractor.updateCallUploadState(call, UploadState.Uploaded)
                         analyticsInteractor.track("Call Deleted", "call" to call.number)
                     }
 
                 }
             } catch (exception: Exception) {
                 exception.log(phoneCalls)
+                phoneCalls.forEach {
+                    phoneCallsInteractor.updateCallUploadState(it, uploadState = UploadState.NotUploaded)
+                }
                 stopService()
             }
         }.invokeOnCompletion {
