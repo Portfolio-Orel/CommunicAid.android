@@ -51,6 +51,7 @@ fun DetailsMessageScreen(
                 placeholder = {
                     Text(text = "כותרת")
                 },
+                isError = state.emptyFields.contains(Fields.Body)
             )
             Column {
                 OutlinedTextField(
@@ -62,6 +63,7 @@ fun DetailsMessageScreen(
                     placeholder = {
                         Text(text = "כותרת קצרה")
                     },
+                    isError = state.emptyFields.contains(Fields.Body)
                 )
 //                Text(
 //                    "מקסימום 3 תווים",
@@ -79,7 +81,7 @@ fun DetailsMessageScreen(
                     Text(text = "טקסט")
                 },
                 maxLines = 30,
-                isError = state.body == ""
+                isError = state.emptyFields.contains(Fields.Body)
             )
 
             Dropdown(folders = state.folders, onSelected = { viewModel.setFolderId(it) })
