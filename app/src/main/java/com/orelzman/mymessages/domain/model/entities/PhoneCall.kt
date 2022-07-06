@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.orelzman.mymessages.domain.model.dto.body.create.CreatePhoneCallBody
+import com.orelzman.mymessages.domain.repository.UploadState
 import com.orelzman.mymessages.util.CallType
 import com.orelzman.mymessages.util.CallUtils
 import com.orelzman.mymessages.util.extension.inSeconds
@@ -18,7 +19,8 @@ data class PhoneCall(
     var name: String = "",
     var isWaiting: Boolean = false,
     var messagesSent: List<MessageSent> = emptyList(),
-    var type: String = CallType.INCOMING.name
+    var type: String = CallType.INCOMING.name,
+    var uploadState: UploadState = UploadState.Not_Uploaded
 ) : Loggable {
 
     override val data: Map<String, Any>

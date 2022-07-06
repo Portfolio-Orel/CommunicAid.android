@@ -15,7 +15,7 @@ import com.orelzman.mymessages.domain.model.entities.*
         PhoneCall::class,
         DeletedCall::class
     ],
-    version = 10
+    version = 11
 )
 @TypeConverters(Converters::class)
 abstract class LocalDatabase : RoomDatabase() {
