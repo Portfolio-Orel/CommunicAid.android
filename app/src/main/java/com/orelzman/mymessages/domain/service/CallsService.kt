@@ -171,7 +171,6 @@ class CallsService : Service() {
                         it,
                         phoneCalls
                     )
-//                    phoneCallsInteractor.remove(phoneCalls) // If you remove this line, update upload state to -> uploaded
                     phoneCalls.forEach { call ->
                         phoneCallsInteractor.updateCallUploadState(call, UploadState.Uploaded)
                         analyticsInteractor.track("Call Deleted", "call" to call.number)
