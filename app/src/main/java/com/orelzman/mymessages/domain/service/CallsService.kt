@@ -17,11 +17,12 @@ import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.interactors.AnalyticsInteractor
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
+import com.orelzman.mymessages.domain.repository.UploadState
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
 import com.orelzman.mymessages.util.extension.Log
-import com.orelzman.mymessages.util.extension.toDate
 import com.orelzman.mymessages.util.extension.inSeconds
 import com.orelzman.mymessages.util.extension.log
+import com.orelzman.mymessages.util.extension.toDate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -158,21 +159,29 @@ class CallsService : Service() {
                 delay(2000) // Delay to let the calls log populate
                 phoneCalls = phoneCallsInteractor
                     .getAll()
-                    .mapNotNull { update(this@CallsService, it) }
-                            .distinctBy { it.startDate }
+                    .distinctBy { it.startDate }
+                    .filter { it.uploadState == UploadState.NotUploaded }
+                    .mapNotNull {
+                        it.uploadState = UploadState.BeingUploaded
+                        phoneCallsInteractor.updateCallUploadState(it, UploadState.BeingUploaded)
+                        return@mapNotNull update(this@CallsService, it)
+                    }
                 authInteractor.getUser()?.userId?.let {
                     phoneCallsInteractor.addPhoneCalls(
                         it,
                         phoneCalls
                     )
-                    phoneCallsInteractor.remove(phoneCalls)
                     phoneCalls.forEach { call ->
+                        phoneCallsInteractor.updateCallUploadState(call, UploadState.Uploaded)
                         analyticsInteractor.track("Call Deleted", "call" to call.number)
                     }
 
                 }
             } catch (exception: Exception) {
                 exception.log(phoneCalls)
+                phoneCalls.forEach {
+                    phoneCallsInteractor.updateCallUploadState(it, uploadState = UploadState.NotUploaded)
+                }
                 stopService()
             }
         }.invokeOnCompletion {

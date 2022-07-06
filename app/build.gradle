@@ -135,6 +135,9 @@ dependencies {
     // Permissions
     implementation "com.google.accompanist:accompanist-permissions:0.21.1-beta"
 
+    // SwipeRefreshLayout
+    implementation "com.google.accompanist:accompanist-swiperefresh:0.24.8-beta"
+
     // FlowRow
     implementation "com.google.accompanist:accompanist-flowlayout:0.24.8-beta"
 

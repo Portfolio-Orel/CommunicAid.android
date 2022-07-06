@@ -35,5 +35,19 @@ interface Repository {
 
     suspend fun createUser(createUserBody: CreateUserBody)
     suspend fun getUser(userId: String): GetUserResponse?
+}
 
+enum class UploadState(val value: String) {
+    NotUploaded("NotUploaded"),
+    BeingUploaded("BeingUploaded"),
+    Uploaded("Uploaded");
+
+    companion object {
+        fun fromString(value: String): UploadState {
+            values().forEach {
+                if (it.value == value) return it
+            }
+            return NotUploaded
+        }
+    }
 }

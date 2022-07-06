@@ -23,6 +23,7 @@ import com.orelzman.mymessages.util.CallUtils
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,7 +38,13 @@ class UnhandledCallsViewModel @Inject constructor(
 
     var state by mutableStateOf(UnhandledCallsState())
 
+    val isRefreshing = MutableSharedFlow<Boolean>()
+
     init {
+        setCalls()
+    }
+
+    fun refresh() {
         setCalls()
     }
 

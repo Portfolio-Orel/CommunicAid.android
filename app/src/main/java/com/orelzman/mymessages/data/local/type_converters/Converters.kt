@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.orelzman.mymessages.domain.model.entities.MessageSent
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
+import com.orelzman.mymessages.domain.repository.UploadState
 import java.util.*
 
 @ProvidedTypeConverter
@@ -37,4 +38,11 @@ class Converters {
     @TypeConverter
     fun phoneCallToString(phoneCall: PhoneCall): String =
         Gson().toJson(phoneCall)
+
+    @TypeConverter
+    fun uploadStateToString(uploadState: UploadState): String = uploadState.name
+
+    @TypeConverter
+    fun stringToUploadState(string: String): UploadState = UploadState.fromString(string)
+
 }

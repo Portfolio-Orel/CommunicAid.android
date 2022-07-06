@@ -13,6 +13,13 @@ interface PhoneCallDao {
     @Update
     fun update(phoneCall: PhoneCall)
 
+    @Query("""
+        UPDATE PhoneCall
+        SET uploadState = :uploadState
+        WHERE id = :phoneCallId
+    """)
+    fun updateUploadState(phoneCallId: String, uploadState: String)
+
     @Delete
     fun delete(phoneCall: List<PhoneCall>)
 
