@@ -217,8 +217,8 @@ class CallsService : Service() {
                     val logStartDate = it.getString(4).toLong().toDate()
                     if (
                         phoneCall.number != it.getString(0)
-                        || logStartDate.time.inSeconds < phoneCall.startDate.time.inSeconds - 15
-                        || logStartDate.time.inSeconds > phoneCall.startDate.time.inSeconds + 15
+                        || logStartDate.time.inSeconds < phoneCall.startDate.time.inSeconds - 10
+                        || logStartDate.time.inSeconds > phoneCall.startDate.time.inSeconds + 10
                     ) continue
                     val type = it.getString(1)
                     val duration = it.getString(2).toLong()

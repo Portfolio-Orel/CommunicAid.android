@@ -4,6 +4,7 @@ import com.orelzman.auth.domain.model.User
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.model.entities.MessageInFolder
+import com.orelzman.mymessages.domain.model.entities.PhoneCall
 
 data class MainState(
     val messages: List<Message> = emptyList(),
@@ -12,9 +13,9 @@ data class MainState(
     val user: User? = null,
     val selectedFolder: Folder = Folder(),
 
-    val activeCall: String? = null,
-    val callOnTheLine: String? = null,
-    val callInBackground: String? = null,
+    val activeCall: PhoneCall? = null,
+    val callOnTheLine: PhoneCall? = null,
+    val callInBackground: PhoneCall? = null,
 
     val isLoading: Boolean = false,
     val isLoggedIn: Boolean = false,

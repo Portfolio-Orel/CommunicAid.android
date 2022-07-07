@@ -14,6 +14,7 @@ import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.model.entities.MessageSent
+import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
 import com.orelzman.mymessages.util.Whatsapp.sendWhatsapp
 import com.orelzman.mymessages.util.extension.Log
@@ -88,7 +89,12 @@ class MainViewModel @Inject constructor(
 
     fun onMessageClick(message: Message, context: Context) {
         Log.vCustom(message.toString())
-        val phoneCall = phoneCallManagerInteractor.numberOnTheLine.value
+        val phoneCall =
+        if(state.activeCall?.number == phoneCallManagerInteractor.callInBackground.value?.number) {
+            phoneCallManagerInteractor.callInBackground.value
+        } else {
+            phoneCallManagerInteractor.numberOnTheLine.value
+        }
         if (phoneCall != null) {
             try {
                 viewModelScope.launch(Dispatchers.IO) {
@@ -136,8 +142,8 @@ class MainViewModel @Inject constructor(
         selectActiveCall(state.callOnTheLine)
     }
 
-    private fun selectActiveCall(number: String?) {
-        state = state.copy(activeCall = number ?: "אין שיחה")
+    private fun selectActiveCall(phoneCall: PhoneCall?) {
+        state = state.copy(activeCall = phoneCall)
     }
 
     private fun goToEditMessage(message: Message) {
@@ -151,7 +157,7 @@ class MainViewModel @Inject constructor(
     private fun observeNumberOnTheLine() {
         viewModelScope.launch(Dispatchers.Main) {
             phoneCallManagerInteractor.numberOnTheLine.collectLatest {
-                state = state.copy(callOnTheLine = it?.number)
+                state = state.copy(callOnTheLine = it)
                 setCallOnTheLineActive()
             }
         }
@@ -160,7 +166,7 @@ class MainViewModel @Inject constructor(
     private fun observeNumberInBackground() {
         viewModelScope.launch(Dispatchers.Main) {
             phoneCallManagerInteractor.callInBackground.collectLatest {
-                state = state.copy(callInBackground = it?.number)
+                state = state.copy(callInBackground = it)
             }
         }
     }

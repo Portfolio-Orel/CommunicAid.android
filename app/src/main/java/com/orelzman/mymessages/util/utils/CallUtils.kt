@@ -6,6 +6,7 @@ import android.net.Uri
 import android.provider.CallLog
 import android.provider.ContactsContract
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
+import com.orelzman.mymessages.util.extension.log
 import com.orelzman.mymessages.util.extension.toDate
 import com.orelzman.mymessages.util.utils.DateUtils
 import kotlinx.coroutines.delay
@@ -121,15 +122,23 @@ object CallUtils {
         val projection = arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME)
 
         var contactName = number
-        val cursor: Cursor? = context.contentResolver.query(uri, projection, null, null, null)
+        try {
+            val cursor: Cursor? = context.contentResolver.query(uri, projection, null, null, null)
 
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                contactName = cursor.getString(0)
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    contactName = cursor.getString(0)
+                }
+                cursor.close()
             }
-            cursor.close()
+            return contactName
+        } catch(exception: IllegalArgumentException) {
+            // Number not found
+            return number
+        } catch (exception: Exception) {
+            exception.log()
+            return number
         }
-        return contactName
     }
 
 

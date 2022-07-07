@@ -24,10 +24,7 @@ import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
 import com.orelzman.mymessages.R
-import com.orelzman.mymessages.presentation.destinations.DetailsFolderScreenDestination
-import com.orelzman.mymessages.presentation.destinations.DetailsMessageScreenDestination
-import com.orelzman.mymessages.presentation.destinations.LoginScreenDestination
-import com.orelzman.mymessages.presentation.destinations.UnhandledCallsScreenDestination
+import com.orelzman.mymessages.presentation.destinations.*
 import com.orelzman.mymessages.presentation.logout_screen.LogoutButton
 import com.orelzman.mymessages.presentation.main.components.FolderView
 import com.orelzman.mymessages.presentation.main.components.MessageView
@@ -91,7 +88,7 @@ fun MainScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        state.activeCall ?: "",
+                        state.activeCall?.number ?: stringResource(R.string.no_active_call),
                         modifier = Modifier
                             .padding(8.dp),
                         style = MaterialTheme.typography.titleMedium
@@ -117,7 +114,7 @@ fun MainScreen(
                                 ),
                                 onClick = { viewModel.setCallOnTheLineActive() }) {
                                 Text(
-                                    state.callOnTheLine ?: "",
+                                    state.callOnTheLine?.number ?: "",
                                     style = MaterialTheme.typography.bodySmall,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
@@ -142,7 +139,7 @@ fun MainScreen(
                                 ),
                                 onClick = { viewModel.setBackgroundCallActive() }) {
                                 Text(
-                                    state.callInBackground,
+                                    state.callInBackground.number,
                                     style = MaterialTheme.typography.bodySmall,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
@@ -179,8 +176,7 @@ fun MainScreen(
             FlowRow(
                 modifier = Modifier
                     .padding(start = 10.dp, end = 5.dp)
-                    .fillMaxWidth(0.9f)
-                    .fillMaxHeight(0.7F)
+                    .fillMaxHeight(0.5F)
                     .fillMaxWidth(0.9F)
                     .scrollable(
                         orientation = Orientation.Vertical,
@@ -242,6 +238,13 @@ fun MainScreen(
                 )
             }) {
                 Text(text = stringResource(R.string.unhandled_calls))
+            }
+            Button(onClick = {
+                navigator.navigate(
+                    StatsScreenDestination()
+                )
+            }) {
+                Text(text = "סטטיסטיקות")
             }
         }
     }
