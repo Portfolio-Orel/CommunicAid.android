@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.orelzman.mymessages.domain.model.dto.body.create.CreatePhoneCallBody
-import com.orelzman.mymessages.domain.repository.UploadState
 import com.orelzman.mymessages.util.CallType
 import com.orelzman.mymessages.util.CallUtils
 import com.orelzman.mymessages.util.extension.inSeconds
@@ -80,4 +79,19 @@ fun List<PhoneCall>.createPhoneCallBodyList(userId: String): List<CreatePhoneCal
         }
     }
     return array
+}
+
+enum class UploadState(val value: String) {
+    NotUploaded("NotUploaded"),
+    BeingUploaded("BeingUploaded"),
+    Uploaded("Uploaded");
+
+    companion object {
+        fun fromString(value: String): UploadState {
+            values().forEach {
+                if (it.value == value) return it
+            }
+            return NotUploaded
+        }
+    }
 }

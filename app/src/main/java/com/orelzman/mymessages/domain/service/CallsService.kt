@@ -8,7 +8,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
-import android.provider.CallLog
 import androidx.annotation.RequiresApi
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.auth.domain.interactor.AuthInteractor
@@ -17,20 +16,17 @@ import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.interactors.AnalyticsInteractor
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
-import com.orelzman.mymessages.domain.repository.UploadState
+import com.orelzman.mymessages.domain.model.entities.UploadState
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
+import com.orelzman.mymessages.util.CallUtils
 import com.orelzman.mymessages.util.extension.Log
-import com.orelzman.mymessages.util.extension.inSeconds
 import com.orelzman.mymessages.util.extension.log
-import com.orelzman.mymessages.util.extension.toDate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
-import kotlin.math.absoluteValue
 
 @AndroidEntryPoint
 @ExperimentalPermissionsApi
@@ -164,7 +160,7 @@ class CallsService : Service() {
                     .mapNotNull {
                         it.uploadState = UploadState.BeingUploaded
                         phoneCallsInteractor.updateCallUploadState(it, UploadState.BeingUploaded)
-                        return@mapNotNull update(this@CallsService, it)
+                        return@mapNotNull CallUtils.update(this@CallsService, it)
                     }
                 authInteractor.getUser()?.userId?.let {
                     phoneCallsInteractor.addPhoneCalls(
@@ -191,55 +187,14 @@ class CallsService : Service() {
         }
     }
 
-    /**
-     * Updates values according to the call log
-     * *** Test call in background, removed and called again to see if the backlog catches both from the calllog
-     * This has to go to the service because the log is added async.
-     */
-    fun update(context: Context, phoneCall: PhoneCall): PhoneCall? {
-        val details = arrayOf(
-            CallLog.Calls.NUMBER,
-            CallLog.Calls.TYPE,
-            CallLog.Calls.DURATION,
-            CallLog.Calls.CACHED_NAME,
-            CallLog.Calls.DATE
-        )
-        context.contentResolver
-            .query(
-                CallLog.Calls.CONTENT_URI,
-                details,
-                null,
-                null,
-                "${CallLog.Calls.DATE} DESC"
-            )
-            ?.use {
-                while (it.moveToNext()) {
-                    val logStartDate = it.getString(4).toLong().toDate()
-                    if (
-                        phoneCall.number != it.getString(0)
-                        || logStartDate.time.inSeconds < phoneCall.startDate.time.inSeconds - 10
-                        || logStartDate.time.inSeconds > phoneCall.startDate.time.inSeconds + 10
-                    ) continue
-                    val type = it.getString(1)
-                    val duration = it.getString(2).toLong()
-                    phoneCall.name = it.getString(3) ?: ""
-                    phoneCall.startDate = logStartDate
-                    phoneCall.endDate = (phoneCall.startDate.time.inSeconds + duration).toDate()
-                    when (type.toInt()) {
-                        CallLog.Calls.MISSED_TYPE -> phoneCall.missed()
-                        CallLog.Calls.REJECTED_TYPE -> phoneCall.rejected()
-                    }
-                    return phoneCall
-                }
-            }
-        analyticsInteractor.track("Call Upload Fail", phoneCall)
-        return null
+    private fun getMissedCalls(): List<PhoneCall> {
+        val phoneCalls = ArrayList<PhoneCall>()
+        val callsLogs = CallUtils.getTodaysCallLog(this)
+
+        return phoneCalls
     }
+
 }
-
-fun Date.notEquals(date: Date, maxDifferenceInSeconds: Long = 5): Boolean =
-    (time.inSeconds - date.time.inSeconds).absoluteValue >= maxDifferenceInSeconds
-
 
 enum class ServiceState(val value: Int) {
     UPLOAD_LOGS(0),

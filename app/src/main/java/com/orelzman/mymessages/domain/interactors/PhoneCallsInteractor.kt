@@ -2,7 +2,7 @@ package com.orelzman.mymessages.domain.interactors
 
 import com.orelzman.mymessages.domain.model.entities.MessageSent
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
-import com.orelzman.mymessages.domain.repository.UploadState
+import com.orelzman.mymessages.domain.model.entities.UploadState
 
 interface PhoneCallsInteractor {
     suspend fun addPhoneCalls(userId: String, phoneCalls: List<PhoneCall>)
