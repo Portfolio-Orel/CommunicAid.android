@@ -6,6 +6,10 @@ import android.net.Uri
 import android.provider.CallLog
 import android.provider.ContactsContract
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
+import com.orelzman.mymessages.domain.model.entities.PhoneCall
+import com.orelzman.mymessages.util.extension.compareToBallPark
+import com.orelzman.mymessages.util.extension.inSeconds
+import com.orelzman.mymessages.util.extension.log
 import com.orelzman.mymessages.util.extension.toDate
 import com.orelzman.mymessages.util.utils.DateUtils
 import kotlinx.coroutines.delay
@@ -28,7 +32,7 @@ object CallUtils {
      * @param endDate is the date of the last call we're looking for.
      * @author Orel Zilberman
      */
-    private fun getCallLogsByDate(
+    fun getCallLogsByDate(
         context: Context,
         startDate: Date = Date(),
         endDate: Date = Date()
@@ -121,17 +125,67 @@ object CallUtils {
         val projection = arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME)
 
         var contactName = number
-        val cursor: Cursor? = context.contentResolver.query(uri, projection, null, null, null)
+        try {
+            val cursor: Cursor? = context.contentResolver.query(uri, projection, null, null, null)
 
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                contactName = cursor.getString(0)
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    contactName = cursor.getString(0)
+                }
+                cursor.close()
             }
-            cursor.close()
+            return contactName
+        } catch(exception: IllegalArgumentException) {
+            // Number not found
+            return number
+        } catch (exception: Exception) {
+            exception.log()
+            return number
         }
-        return contactName
     }
 
+    /**
+     * Updates values according to the call log
+     * *** Test call in background, removed and called again to see if the backlog catches both from the calllog
+     * This has to go to the service because the log is added async.
+     */
+    fun update(context: Context, phoneCall: PhoneCall): PhoneCall? {
+        val details = arrayOf(
+            CallLog.Calls.NUMBER,
+            CallLog.Calls.TYPE,
+            CallLog.Calls.DURATION,
+            CallLog.Calls.CACHED_NAME,
+            CallLog.Calls.DATE
+        )
+        context.contentResolver
+            .query(
+                CallLog.Calls.CONTENT_URI,
+                details,
+                null,
+                null,
+                "${CallLog.Calls.DATE} DESC"
+            )
+            ?.use {
+                while (it.moveToNext()) {
+                    val logStartDate = it.getString(4).toLong().toDate()
+                    if (
+                        phoneCall.number != it.getString(0)
+                        || !logStartDate.compareToBallPark(phoneCall.startDate)
+                    ) continue
+                    val type = it.getString(1)
+                    val duration = it.getString(2).toLong()
+                    phoneCall.name = it.getString(3) ?: ""
+                    phoneCall.startDate = logStartDate
+                    phoneCall.endDate = (phoneCall.startDate.time.inSeconds + duration).toDate()
+                    when (type.toInt()) {
+                        CallLog.Calls.MISSED_TYPE -> phoneCall.missed()
+                        CallLog.Calls.REJECTED_TYPE -> phoneCall.rejected()
+                    }
+                    return phoneCall
+                }
+            }
+        return null
+    }
 
 }
 
@@ -144,6 +198,5 @@ enum class CallType(val value: Int) {
 
     companion object {
         fun fromInt(value: Int): CallType = values().first { it.value == value }
-        fun fromString(value: String): CallType = values().first { it.name == value }
     }
 }

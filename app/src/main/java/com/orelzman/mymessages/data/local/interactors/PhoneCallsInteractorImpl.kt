@@ -1,12 +1,12 @@
-package com.orelzman.mymessages.data.local.interactors.phoneCall
+package com.orelzman.mymessages.data.local.interactors
 
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.model.entities.MessageSent
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
+import com.orelzman.mymessages.domain.model.entities.UploadState
 import com.orelzman.mymessages.domain.model.entities.createPhoneCallBodyList
 import com.orelzman.mymessages.domain.repository.Repository
-import com.orelzman.mymessages.domain.repository.UploadState
 import javax.inject.Inject
 
 class PhoneCallsInteractorImpl @Inject constructor(
@@ -15,12 +15,15 @@ class PhoneCallsInteractorImpl @Inject constructor(
 ) : PhoneCallsInteractor {
     private val db = database.phoneCallDao
 
-    override suspend fun addPhoneCalls(userId: String, phoneCalls: List<PhoneCall>) {
+    override suspend fun createPhoneCalls(userId: String, phoneCalls: List<PhoneCall>) {
         repository.createPhoneCalls(phoneCalls.createPhoneCallBodyList(userId))
     }
 
     override fun cachePhoneCall(phoneCall: PhoneCall) =
         db.insert(phoneCall)
+
+    override fun cachePhoneCalls(phoneCalls: List<PhoneCall>) =
+        db.insert(phoneCalls)
 
     override fun addMessageSent(phoneCall: PhoneCall, messageSent: MessageSent) {
         val phoneCallFromDb = db.getByStartDate(phoneCall.startDate)
@@ -37,7 +40,6 @@ class PhoneCallsInteractorImpl @Inject constructor(
         phoneCall.uploadState = uploadState
         db.update(phoneCall)
     }
-
 
     override fun getAll(): List<PhoneCall> =
         db.getAll()

@@ -8,7 +8,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
-import android.provider.CallLog
 import androidx.annotation.RequiresApi
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.auth.domain.interactor.AuthInteractor
@@ -16,13 +15,14 @@ import com.orelzman.mymessages.MainActivity
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.interactors.AnalyticsInteractor
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
-import com.orelzman.mymessages.domain.model.entities.PhoneCall
-import com.orelzman.mymessages.domain.repository.UploadState
+import com.orelzman.mymessages.domain.interactors.SettingsInteractor
+import com.orelzman.mymessages.domain.model.entities.*
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
+import com.orelzman.mymessages.util.CallUtils
 import com.orelzman.mymessages.util.extension.Log
-import com.orelzman.mymessages.util.extension.inSeconds
+import com.orelzman.mymessages.util.extension.appendAll
+import com.orelzman.mymessages.util.extension.compareToBallPark
 import com.orelzman.mymessages.util.extension.log
-import com.orelzman.mymessages.util.extension.toDate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +30,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
-import kotlin.math.absoluteValue
 
 @AndroidEntryPoint
 @ExperimentalPermissionsApi
@@ -55,6 +54,9 @@ class CallsService : Service() {
 
     @Inject
     lateinit var authInteractor: AuthInteractor
+
+    @Inject
+    lateinit var settingsInteractor: SettingsInteractor
 
     @Inject
     lateinit var analyticsInteractor: AnalyticsInteractor
@@ -130,7 +132,7 @@ class CallsService : Service() {
         }
         return builder
             .setContentIntent(pendingIntent)
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setSmallIcon(R.mipmap.ic_launcher_foreground)
             .setColor(0x7d0000)
             .setTicker("Ticker text")
             .setOnlyAlertOnce(true)
@@ -159,15 +161,19 @@ class CallsService : Service() {
                 delay(2000) // Delay to let the calls log populate
                 phoneCalls = phoneCallsInteractor
                     .getAll()
+                    .appendAll(checkCallsNotRecorded())
                     .distinctBy { it.startDate }
                     .filter { it.uploadState == UploadState.NotUploaded }
                     .mapNotNull {
                         it.uploadState = UploadState.BeingUploaded
-                        phoneCallsInteractor.updateCallUploadState(it, UploadState.BeingUploaded)
-                        return@mapNotNull update(this@CallsService, it)
+                        phoneCallsInteractor.updateCallUploadState(
+                            it,
+                            UploadState.BeingUploaded
+                        )
+                        return@mapNotNull CallUtils.update(this@CallsService, it)
                     }
                 authInteractor.getUser()?.userId?.let {
-                    phoneCallsInteractor.addPhoneCalls(
+                    phoneCallsInteractor.createPhoneCalls(
                         it,
                         phoneCalls
                     )
@@ -180,66 +186,53 @@ class CallsService : Service() {
             } catch (exception: Exception) {
                 exception.log(phoneCalls)
                 phoneCalls.forEach {
-                    phoneCallsInteractor.updateCallUploadState(it, uploadState = UploadState.NotUploaded)
+                    phoneCallsInteractor.updateCallUploadState(
+                        it,
+                        uploadState = UploadState.NotUploaded
+                    )
                 }
                 stopService()
             }
         }.invokeOnCompletion {
-            Log.vCustom("About to finish service")
             stopService()
-            Log.vCustom("Service stopped.")
         }
     }
 
-    /**
-     * Updates values according to the call log
-     * *** Test call in background, removed and called again to see if the backlog catches both from the calllog
-     * This has to go to the service because the log is added async.
-     */
-    fun update(context: Context, phoneCall: PhoneCall): PhoneCall? {
-        val details = arrayOf(
-            CallLog.Calls.NUMBER,
-            CallLog.Calls.TYPE,
-            CallLog.Calls.DURATION,
-            CallLog.Calls.CACHED_NAME,
-            CallLog.Calls.DATE
-        )
-        context.contentResolver
-            .query(
-                CallLog.Calls.CONTENT_URI,
-                details,
-                null,
-                null,
-                "${CallLog.Calls.DATE} DESC"
-            )
-            ?.use {
-                while (it.moveToNext()) {
-                    val logStartDate = it.getString(4).toLong().toDate()
-                    if (
-                        phoneCall.number != it.getString(0)
-                        || logStartDate.time.inSeconds < phoneCall.startDate.time.inSeconds - 15
-                        || logStartDate.time.inSeconds > phoneCall.startDate.time.inSeconds + 15
-                    ) continue
-                    val type = it.getString(1)
-                    val duration = it.getString(2).toLong()
-                    phoneCall.name = it.getString(3) ?: ""
-                    phoneCall.startDate = logStartDate
-                    phoneCall.endDate = (phoneCall.startDate.time.inSeconds + duration).toDate()
-                    when (type.toInt()) {
-                        CallLog.Calls.MISSED_TYPE -> phoneCall.missed()
-                        CallLog.Calls.REJECTED_TYPE -> phoneCall.rejected()
-                    }
-                    return phoneCall
-                }
+    private fun checkCallsNotRecorded(): List<PhoneCall> {
+        val phoneCalls = ArrayList<PhoneCall>()
+        val lastUpdateAt = settingsInteractor.getSettings(SettingsKeys.CallsUpdateAt)?.value
+        val date = Date(lastUpdateAt?.toLongOrNull() ?: Date().time)
+        val potentiallyMissedPhoneCalls =
+            CallUtils.getCallLogsByDate(this@CallsService, startDate = date).toPhoneCalls()
+        val savedPhoneCalls = phoneCallsInteractor.getAll()
+        potentiallyMissedPhoneCalls.forEach { potentiallyMissedPhoneCall ->
+            if (savedPhoneCalls.none {
+                    it.number == potentiallyMissedPhoneCall.number
+                            && it.startDate.compareToBallPark(potentiallyMissedPhoneCall.startDate)
+                }) {
+                phoneCalls.add(potentiallyMissedPhoneCall)
             }
-        analyticsInteractor.track("Call Upload Fail", phoneCall)
-        return null
+        }
+        phoneCallsInteractor.cachePhoneCalls(phoneCalls)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                authInteractor.getUser()?.let {
+                    settingsInteractor.createSettings(
+                        Settings(
+                            key = SettingsKeys.CallsUpdateAt, value = Date().time.toString()
+                        ),
+                        userId = it.userId
+                    )
+
+                }
+            } catch (exception: Exception) {
+                exception.log()
+            }
+        }
+        return phoneCalls
     }
 }
-
-fun Date.notEquals(date: Date, maxDifferenceInSeconds: Long = 5): Boolean =
-    (time.inSeconds - date.time.inSeconds).absoluteValue >= maxDifferenceInSeconds
-
 
 enum class ServiceState(val value: Int) {
     UPLOAD_LOGS(0),

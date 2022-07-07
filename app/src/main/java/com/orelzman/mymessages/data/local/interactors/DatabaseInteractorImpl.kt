@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.data.local.interactors.database
+package com.orelzman.mymessages.data.local.interactors
 
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.domain.interactors.DatabaseInteractor

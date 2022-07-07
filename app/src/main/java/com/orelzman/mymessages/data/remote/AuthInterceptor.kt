@@ -9,7 +9,7 @@ class AuthInterceptor (
 ) : Interceptor {
 
     private val lock = Any()
-
+// ToDo: Add user_id to here and remove from requests.
     override fun intercept(chain: Interceptor.Chain): Response =
         takeIf { synchronized(lock) { authInteractor.getToken() != "" } }
             .run { chain.request() }

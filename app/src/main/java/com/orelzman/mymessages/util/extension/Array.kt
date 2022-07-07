@@ -6,3 +6,8 @@ fun <T> ArrayList<T>.addUnique(element: T) {
     }
 }
 
+fun <T> List<T>.appendAll(list: List<T>): List<T> {
+    val array = ArrayList(this)
+    array.addAll(list)
+    return array
+}
