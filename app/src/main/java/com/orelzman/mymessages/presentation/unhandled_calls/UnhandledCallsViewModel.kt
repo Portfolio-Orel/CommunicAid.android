@@ -52,7 +52,7 @@ class UnhandledCallsViewModel @Inject constructor(
      * Sets all the calls that were not handled by the user and might require his attention.
      */
     private fun setCalls() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             authInteractor.getUser()?.userId?.let { userId ->
                 deletedCallsInteractor.getAll(userId)
                     .collect {
