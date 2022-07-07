@@ -10,6 +10,9 @@ interface PhoneCallDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(phoneCall: PhoneCall)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(phoneCalls: List<PhoneCall>)
+
     @Update
     fun update(phoneCall: PhoneCall)
 

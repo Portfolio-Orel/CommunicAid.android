@@ -21,6 +21,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import java.util.*
 import javax.inject.Inject
 
@@ -80,8 +81,12 @@ class MainViewModel @Inject constructor(
     }
 
     private suspend fun getAllSettings() {
-        authInteractor.getUser()?.let {
-            settingsInteractor.getAllSettings(it.userId)
+        try {
+            authInteractor.getUser()?.let {
+                settingsInteractor.getAllSettings(it.userId)
+            }
+        } catch(exception: HttpException) {
+            println()
         }
     }
 

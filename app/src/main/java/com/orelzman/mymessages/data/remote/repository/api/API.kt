@@ -55,9 +55,9 @@ interface API {
         @Body createOrUpdateSettingsBody: CreateOrUpdateSettingsBody
     )
 
-    @PATCH("/settings/{user_id}/{key}")
+    @GET("/settings/{user_id}/{key}")
     suspend fun getSettings(
         @Path("user_id") userId: String,
-        @Path("key") key: String?,
+        @Path("key") key: String,
     ): Response<List<SettingsResponse>>
 }

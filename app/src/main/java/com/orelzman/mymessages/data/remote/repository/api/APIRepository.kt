@@ -97,7 +97,7 @@ class APIRepository @Inject constructor(
 
     override suspend fun getSettings(
         userId: String,
-        key: String?
+        key: String
     ): List<SettingsResponse> {
         val result = api.getSettings(userId, key)
         return result.body

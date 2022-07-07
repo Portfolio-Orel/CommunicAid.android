@@ -13,6 +13,12 @@ enum class SettingsKeys(val keyInServer: String) {
     CallsUpdateAt("calls_update_at");
 
     companion object {
-        fun fromString(value: String): SettingsKeys = SettingsKeys.values().first { it.keyInServer == value }
+        fun fromString(value: String): SettingsKeys? =
+            if (values().any { it.keyInServer == value }) {
+                values().first { it.keyInServer == value }
+            } else {
+                null
+            }
+
     }
 }

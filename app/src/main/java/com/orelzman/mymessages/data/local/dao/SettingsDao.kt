@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.orelzman.mymessages.domain.model.entities.Settings
+import com.orelzman.mymessages.domain.model.entities.SettingsKeys
 
 @Dao
 interface SettingsDao {
@@ -17,7 +18,7 @@ interface SettingsDao {
         FROM Settings
         WHERE `key` = :key
     """)
-    fun get(key: String): Settings?
+    fun get(key: SettingsKeys): Settings?
 
     @Query("""
         SELECT *

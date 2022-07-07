@@ -7,6 +7,7 @@ import android.provider.CallLog
 import android.provider.ContactsContract
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
+import com.orelzman.mymessages.util.extension.compareToBallPark
 import com.orelzman.mymessages.util.extension.inSeconds
 import com.orelzman.mymessages.util.extension.log
 import com.orelzman.mymessages.util.extension.toDate
@@ -31,7 +32,7 @@ object CallUtils {
      * @param endDate is the date of the last call we're looking for.
      * @author Orel Zilberman
      */
-    private fun getCallLogsByDate(
+    fun getCallLogsByDate(
         context: Context,
         startDate: Date = Date(),
         endDate: Date = Date()
@@ -169,8 +170,7 @@ object CallUtils {
                     val logStartDate = it.getString(4).toLong().toDate()
                     if (
                         phoneCall.number != it.getString(0)
-                        || logStartDate.time.inSeconds < phoneCall.startDate.time.inSeconds - 10
-                        || logStartDate.time.inSeconds > phoneCall.startDate.time.inSeconds + 10
+                        || !logStartDate.compareToBallPark(phoneCall.startDate)
                     ) continue
                     val type = it.getString(1)
                     val duration = it.getString(2).toLong()

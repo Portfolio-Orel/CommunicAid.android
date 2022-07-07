@@ -34,5 +34,5 @@ interface Repository {
     suspend fun getUser(userId: String): GetUserResponse?
 
     suspend fun createOrUpdateSettings(createOrUpdateSettingsBody: CreateOrUpdateSettingsBody)
-    suspend fun getSettings(userId: String, key: String? = null): List<SettingsResponse>
+    suspend fun getSettings(userId: String, key: String = ""): List<SettingsResponse>
 }

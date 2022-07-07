@@ -13,7 +13,9 @@ fun List<SettingsResponse>.toSettings(): List<Settings> {
     val array = ArrayList(this)
     val settings = ArrayList<Settings>()
     array.forEach {
-        settings.add((Settings(key = SettingsKeys.fromString(it.key), value = it.value)))
+        SettingsKeys.fromString(it.key)?.let { settingsKey ->
+            settings.add((Settings(key = settingsKey, value = it.value)))
+        }
     }
     return settings
 }
