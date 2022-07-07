@@ -48,4 +48,16 @@ interface API {
 
     @POST("/phoneCalls")
     suspend fun createPhoneCalls(@Body phoneCallsBody: List<CreatePhoneCallBody>): Response<List<String>>
+
+    // Settings
+    @PATCH("/settings")
+    suspend fun createOrUpdateSettings(
+        @Body createOrUpdateSettingsBody: CreateOrUpdateSettingsBody
+    )
+
+    @GET("/settings/{user_id}/{key}")
+    suspend fun getSettings(
+        @Path("user_id") userId: String,
+        @Path("key") key: String,
+    ): Response<List<SettingsResponse>>
 }

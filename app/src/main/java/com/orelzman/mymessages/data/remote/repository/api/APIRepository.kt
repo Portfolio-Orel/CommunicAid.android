@@ -3,10 +3,7 @@ package com.orelzman.mymessages.data.remote.repository.api
 import com.orelzman.mymessages.domain.model.dto.body.create.*
 import com.orelzman.mymessages.domain.model.dto.body.update.UpdateFolderBody
 import com.orelzman.mymessages.domain.model.dto.body.update.UpdateMessageBody
-import com.orelzman.mymessages.domain.model.dto.response.GetDeletedCallsResponse
-import com.orelzman.mymessages.domain.model.dto.response.GetFoldersResponse
-import com.orelzman.mymessages.domain.model.dto.response.GetMessagesResponse
-import com.orelzman.mymessages.domain.model.dto.response.GetUserResponse
+import com.orelzman.mymessages.domain.model.dto.response.*
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.repository.Repository
@@ -93,6 +90,17 @@ class APIRepository @Inject constructor(
     override suspend fun getUser(userId: String): GetUserResponse? {
         val response = api.getUser(userId)
         return response?.body
+    }
+
+    override suspend fun createOrUpdateSettings(createOrUpdateSettingsBody: CreateOrUpdateSettingsBody) =
+        api.createOrUpdateSettings(createOrUpdateSettingsBody)
+
+    override suspend fun getSettings(
+        userId: String,
+        key: String
+    ): List<SettingsResponse> {
+        val result = api.getSettings(userId, key)
+        return result.body
     }
 
     override suspend fun updateMessage(message: Message, oldFolderId: String, newFolderId: String) =

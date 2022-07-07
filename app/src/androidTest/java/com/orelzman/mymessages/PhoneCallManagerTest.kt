@@ -9,7 +9,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
-import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsInteractorImpl
+import com.orelzman.mymessages.data.local.interactors.PhoneCallsInteractorImpl
 import com.orelzman.mymessages.data.local.type_converters.Converters
 import com.orelzman.mymessages.domain.service.phone_call.CallState
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManager

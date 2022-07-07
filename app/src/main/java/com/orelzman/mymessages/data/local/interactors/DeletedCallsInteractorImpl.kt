@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.data.local.interactors.deleted_calls
+package com.orelzman.mymessages.data.local.interactors
 
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.domain.interactors.DeletedCallsInteractor

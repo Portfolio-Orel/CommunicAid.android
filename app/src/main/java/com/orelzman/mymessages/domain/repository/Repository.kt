@@ -1,10 +1,7 @@
 package com.orelzman.mymessages.domain.repository
 
 import com.orelzman.mymessages.domain.model.dto.body.create.*
-import com.orelzman.mymessages.domain.model.dto.response.GetDeletedCallsResponse
-import com.orelzman.mymessages.domain.model.dto.response.GetFoldersResponse
-import com.orelzman.mymessages.domain.model.dto.response.GetMessagesResponse
-import com.orelzman.mymessages.domain.model.dto.response.GetUserResponse
+import com.orelzman.mymessages.domain.model.dto.response.*
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
 
@@ -35,19 +32,7 @@ interface Repository {
 
     suspend fun createUser(createUserBody: CreateUserBody)
     suspend fun getUser(userId: String): GetUserResponse?
-}
 
-enum class UploadState(val value: String) {
-    NotUploaded("NotUploaded"),
-    BeingUploaded("BeingUploaded"),
-    Uploaded("Uploaded");
-
-    companion object {
-        fun fromString(value: String): UploadState {
-            values().forEach {
-                if (it.value == value) return it
-            }
-            return NotUploaded
-        }
-    }
+    suspend fun createOrUpdateSettings(createOrUpdateSettingsBody: CreateOrUpdateSettingsBody)
+    suspend fun getSettings(userId: String, key: String = ""): List<SettingsResponse>
 }

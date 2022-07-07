@@ -12,7 +12,7 @@ val Long.inSeconds: Long
 
 val Long.inMilliseconds: Long
     get() =
-        if ("$this".length <= 10) {
+        if ("$this".length > 10) {
             this
         } else {
             this * 1000

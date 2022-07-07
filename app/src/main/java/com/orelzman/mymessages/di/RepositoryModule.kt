@@ -3,13 +3,7 @@ package com.orelzman.mymessages.di
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.auth.data.interactor.AuthInteractorImpl
 import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.mymessages.data.local.interactors.analytics.AnalyticsInteractorImpl
-import com.orelzman.mymessages.data.local.interactors.database.DatabaseInteractorImpl
-import com.orelzman.mymessages.data.local.interactors.deleted_calls.DeletedCallsInteractorImpl
-import com.orelzman.mymessages.data.local.interactors.folder.FolderInteractorImpl
-import com.orelzman.mymessages.data.local.interactors.message.MessageInteractorImpl
-import com.orelzman.mymessages.data.local.interactors.message_in_folder.MessageInFolderInteractorImpl
-import com.orelzman.mymessages.data.local.interactors.phoneCall.PhoneCallsInteractorImpl
+import com.orelzman.mymessages.data.local.interactors.*
 import com.orelzman.mymessages.data.remote.repository.api.APIRepository
 import com.orelzman.mymessages.domain.interactors.*
 import com.orelzman.mymessages.domain.managers.UnhandledCallsManager
@@ -78,6 +72,9 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun provideUnhandledCallsManager(manager: UnhandledCallsManagerImpl): UnhandledCallsManager
+    abstract fun provideSettingsInteractor(interactor: SettingsInteractorImpl): SettingsInteractor
 
+    @Binds
+    @Singleton
+    abstract fun provideUnhandledCallsManager(manager: UnhandledCallsManagerImpl): UnhandledCallsManager
 }

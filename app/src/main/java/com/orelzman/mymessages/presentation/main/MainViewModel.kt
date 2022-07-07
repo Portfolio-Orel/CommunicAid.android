@@ -7,10 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.mymessages.domain.interactors.FolderInteractor
-import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
-import com.orelzman.mymessages.domain.interactors.MessageInteractor
-import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
+import com.orelzman.mymessages.domain.interactors.*
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.model.entities.MessageSent
@@ -24,6 +21,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import java.util.*
 import javax.inject.Inject
 
@@ -32,6 +30,7 @@ class MainViewModel @Inject constructor(
     private val folderInteractor: FolderInteractor,
     private val messageInteractor: MessageInteractor,
     private val authInteractor: AuthInteractor,
+    private val settingsInteractor: SettingsInteractor,
     private val phoneCallManagerInteractor: PhoneCallManagerInteractor,
     private val phoneCallStatisticsInteractor: PhoneCallsInteractor,
     private val messageInFolderInteractor: MessageInFolderInteractor,
@@ -46,6 +45,7 @@ class MainViewModel @Inject constructor(
             getFolders()
             getMessagesInFolder()
             getUser()
+            getAllSettings()
             observeNumberOnTheLine()
             observeNumberInBackground()
         }.invokeOnCompletion {
@@ -80,6 +80,16 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    private suspend fun getAllSettings() {
+        try {
+            authInteractor.getUser()?.let {
+                settingsInteractor.getAllSettings(it.userId)
+            }
+        } catch(exception: HttpException) {
+            println()
+        }
+    }
+
     fun getFoldersMessages(): List<Message> {
         val messageIds = state.messagesInFolders
             .filter { it.folderId == state.selectedFolder.id }
@@ -90,11 +100,11 @@ class MainViewModel @Inject constructor(
     fun onMessageClick(message: Message, context: Context) {
         Log.vCustom(message.toString())
         val phoneCall =
-        if(state.activeCall?.number == phoneCallManagerInteractor.callInBackground.value?.number) {
-            phoneCallManagerInteractor.callInBackground.value
-        } else {
-            phoneCallManagerInteractor.numberOnTheLine.value
-        }
+            if (state.activeCall?.number == phoneCallManagerInteractor.callInBackground.value?.number) {
+                phoneCallManagerInteractor.callInBackground.value
+            } else {
+                phoneCallManagerInteractor.numberOnTheLine.value
+            }
         if (phoneCall != null) {
             try {
                 viewModelScope.launch(Dispatchers.IO) {

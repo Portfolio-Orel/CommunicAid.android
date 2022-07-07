@@ -5,8 +5,8 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.orelzman.mymessages.domain.model.entities.MessageSent
-import com.orelzman.mymessages.domain.model.entities.PhoneCall
-import com.orelzman.mymessages.domain.repository.UploadState
+import com.orelzman.mymessages.domain.model.entities.SettingsKeys
+import com.orelzman.mymessages.domain.model.entities.UploadState
 import java.util.*
 
 @ProvidedTypeConverter
@@ -32,12 +32,12 @@ class Converters {
         Gson().fromJson(string, Date::class.java)
 
     @TypeConverter
-    fun stringToPhoneCall(string: String): PhoneCall =
-        Gson().fromJson(string, PhoneCall::class.java)
+    fun stringToSettingsKey(string: String): SettingsKeys =
+        Gson().fromJson(string, SettingsKeys::class.java)
 
     @TypeConverter
-    fun phoneCallToString(phoneCall: PhoneCall): String =
-        Gson().toJson(phoneCall)
+    fun settingsKeysToString(settingsKeys: SettingsKeys): String =
+        Gson().toJson(settingsKeys)
 
     @TypeConverter
     fun uploadStateToString(uploadState: UploadState): String = uploadState.name
