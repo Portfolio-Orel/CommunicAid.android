@@ -166,7 +166,7 @@ fun MainScreen(
                 items(state.folders) { folder ->
                     FolderView(
                         folder = folder,
-                        isSelected = state.selectedFolder.id == folder.id,
+                        isSelected = state.selectedFolder?.id == folder.id,
                         modifier = Modifier
                             .height(50.dp)
                             .width(120.dp),
@@ -216,9 +216,6 @@ fun MainScreen(
                         )
                     }
             }
-            LogoutButton(onLogoutComplete = {
-                navigator.navigate(LoginScreenDestination)
-            })
             Button(onClick = {
                 navigator.navigate(
                     DetailsFolderScreenDestination()
@@ -249,6 +246,9 @@ fun MainScreen(
             }) {
                 Text(text = "סטטיסטיקות")
             }
+            LogoutButton(onLogoutComplete = {
+                navigator.navigate(LoginScreenDestination)
+            })
         }
     }
 }

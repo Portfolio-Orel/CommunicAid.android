@@ -2,8 +2,8 @@ package com.orelzman.mymessages.presentation.login.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,7 +28,7 @@ fun Input(
 
     Column(modifier = modifier) {
         Text(title)
-        TextField(
+        OutlinedTextField(
             value = value.value,
             onValueChange = {
                 value.value = it
