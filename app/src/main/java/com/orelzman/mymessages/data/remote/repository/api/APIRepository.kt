@@ -103,6 +103,10 @@ class APIRepository @Inject constructor(
         return result.body
     }
 
+    override suspend fun deleteMessagesFromFolder(folderId: String) {
+        api.deleteMessagesInFolder(folderId = folderId)
+    }
+
     override suspend fun updateMessage(message: Message, oldFolderId: String, newFolderId: String) =
         api.updateMessage(
             UpdateMessageBody(

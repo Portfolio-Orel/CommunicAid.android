@@ -8,6 +8,7 @@ import com.orelzman.mymessages.domain.model.dto.body.create.CreateFolderBody
 import com.orelzman.mymessages.domain.model.dto.response.folders
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.repository.Repository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class FolderInteractorImpl @Inject constructor(
@@ -18,18 +19,22 @@ class FolderInteractorImpl @Inject constructor(
 
     private val db: FolderDao = database.folderDao
 
-    override suspend fun getFolders(userId: String): List<Folder> {
-        var folders = db.getFolders()
-        if (folders.isEmpty()) {
-            folders = repository.getFolders(userId).folders
-            db.insert(folders)
+    override suspend fun initFolders(userId: String) {
+        if (db.getFoldersCount() == 0) {
+            db.insert(repository.getFolders(userId).folders)
         }
-        return folders
+    }
+
+    override fun getFolders(): Flow<List<Folder>> = db.getFolders()
+
+    override suspend fun deleteFolder(userId: String, folder: Folder) {
+        repository.deleteFolder(folder)
+        messageInFolderInteractor.deleteMessagesFromFolder(folder.id)
+        db.delete(folder)
     }
 
     override suspend fun getFolder(folderId: String): Folder =
         db.get(folderId = folderId)
-
 
     override suspend fun createFolder(userId: String, folder: Folder): String? {
         try {

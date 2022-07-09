@@ -2,6 +2,7 @@ package com.orelzman.mymessages.data.local.dao
 
 import androidx.room.*
 import com.orelzman.mymessages.domain.model.entities.Message
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MessageDao {
@@ -15,7 +16,16 @@ interface MessageDao {
         SELECT *
         FROM Message
     """)
-    suspend fun getMessages(): List<Message>
+    fun getMessages(): Flow<List<Message>>
+
+    @Query("""
+        SELECT Count(*)
+        FROM Message
+    """)
+    fun getMessagesCount(): Int
+
+    @Delete
+    fun delete(message: Message)
 
     @Query("DELETE FROM Message")
     suspend fun clear()

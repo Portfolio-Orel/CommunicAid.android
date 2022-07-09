@@ -53,12 +53,12 @@ fun MainScreen(
 
     LaunchedEffect(key1 = viewModel.state.screenToShow) {
         val route =
-        when(viewModel.state.screenToShow) {
-            MainScreens.DetailsMessage -> DetailsMessageScreenDestination(messageId = state.messageToEdit?.id)
-            MainScreens.DetailsFolder -> DetailsFolderScreenDestination(folderId = state.folderToEdit?.id)
-            MainScreens.Default -> null
-        }
-        if(route != null) {
+            when (viewModel.state.screenToShow) {
+                MainScreens.DetailsMessage -> DetailsMessageScreenDestination(messageId = state.messageToEdit?.id)
+                MainScreens.DetailsFolder -> DetailsFolderScreenDestination(folderId = state.folderToEdit?.id)
+                MainScreens.Default -> null
+            }
+        if (route != null) {
             navigator.navigate(route)
             viewModel.navigated()
         }
@@ -163,10 +163,10 @@ fun MainScreen(
                     .padding(8.dp),
                 userScrollEnabled = true,
             ) {
-                items(state.folders) {
+                items(state.folders) { folder ->
                     FolderView(
-                        folder = it,
-                        isSelected = state.selectedFolder.id == it.id,
+                        folder = folder,
+                        isSelected = state.selectedFolder.id == folder.id,
                         modifier = Modifier
                             .height(50.dp)
                             .width(120.dp),
@@ -255,9 +255,6 @@ fun MainScreen(
 
 private fun getMessageWidth(screenWidth: Int, messagesInRow: Int = 4, spaceBetween: Int = 16): Dp {
     val spacesCount = messagesInRow + 1 // Amount of spaces between each message
-    val spaceForMesages = screenWidth - spacesCount * spaceBetween
-    return (spaceForMesages / messagesInRow).dp
+    val spaceForMessages = screenWidth - spacesCount * spaceBetween
+    return (spaceForMessages / messagesInRow).dp
 }
-
-private fun calculateMinIndexForSecondFlowRow(itemsCount: Int, maxItems: Int): Int =
-    itemsCount - itemsCount % maxItems

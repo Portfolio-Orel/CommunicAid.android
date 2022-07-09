@@ -4,9 +4,12 @@ import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.dao.MessageInFolderDao
 import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
 import com.orelzman.mymessages.domain.model.entities.MessageInFolder
+import com.orelzman.mymessages.domain.repository.Repository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class MessageInFolderInteractorImpl @Inject constructor(
+    private val repository: Repository,
     database: LocalDatabase,
 ) : MessageInFolderInteractor {
 
@@ -20,22 +23,26 @@ class MessageInFolderInteractorImpl @Inject constructor(
         db.insert(messagesInFolders)
     }
 
-    override suspend fun getMessagesInFolders(): List<MessageInFolder> =
-        db.getMessageInFolders()
+    override fun getMessagesInFolders(): Flow<List<MessageInFolder>> =
+        db.get()
 
 
     override suspend fun deleteMessageInFolder(messageInFolder: MessageInFolder) {
         db.delete(messageInFolder)
     }
 
+    override suspend fun deleteMessagesFromFolder(folderId: String) {
+        repository.deleteMessagesFromFolder(folderId = folderId)
+        db.delete(folderId)
+    }
+
     override suspend fun getMessageFolderId(messageId: String): String =
         db.getWithMessageId(messageId)
 
     override suspend fun update(messageId: String, oldFolderId: String, newFolderId: String) {
-        val messageInFolder = db.getWithMessageIdAndFolderId(messageId, oldFolderId)
+        db.get(messageId, oldFolderId)
         db.update(
             MessageInFolder(
-                id = messageInFolder.id,
                 messageId = messageId,
                 folderId = newFolderId
             )
