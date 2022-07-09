@@ -32,20 +32,21 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 interactor.initAWS()
+                var isAuthorized = false
                 val user = interactor.getUser()
                 if (user != null) {
-                    confirmUserCreated(user.userId)
+                    isAuthorized = confirmUserCreated(user.userId)
                 } else {
                     databaseInteractor.clear()
                 }
+                state = state.copy(isAuthorized = isAuthorized, isLoading = false)
             } catch (exception: Exception) {
-                exception.log()
                 when (exception) {
                     is UserNotAuthenticatedException -> {/*User needs to login again-do it with saved credentials*/
                     }
                 }
-            } finally {
-                state = state.copy(isLoading = false)
+                exception.log()
+                state = state.copy(isLoading = false, isAuthorized = false)
             }
         }
     }
@@ -115,7 +116,7 @@ class LoginViewModel @Inject constructor(
                 state = state.copy(isLoading = true)
                 val userId = interactor.getUser()?.userId
                 if (userId != null) {
-                    confirmUserCreated(userId)
+                    confirmUserCreated(userId, state.email)
                 } else {
                     state = state.copy(isAuthorized = false)
                 }
@@ -150,19 +151,15 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private suspend fun confirmUserCreated(userId: String) {
-        try {
-            viewModelScope.launch(Dispatchers.IO) {
-                val user = repository.getUser(userId)
-                if (user?.userId == null) {
-                    createUser(userId, user?.email ?: "")
-                }
-                state = state.copy(isAuthorized = true)
+    private suspend fun confirmUserCreated(userId: String, email: String = ""): Boolean {
+        return try {
+            val user = repository.getUser(userId)
+            if (user?.userId == null) {
+                createUser(userId, email)
             }
+            true
         } catch (exception: Exception) {
-            state = state.copy(isAuthorized = false)
-        } finally {
-            state = state.copy(isLoading = false)
+            false
         }
     }
 
