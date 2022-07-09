@@ -60,4 +60,7 @@ interface API {
         @Path("user_id") userId: String,
         @Path("key") key: String,
     ): Response<List<SettingsResponse>>
+
+    @PATCH("/messagesInFolders")
+    suspend fun deleteMessagesInFolder(@Field("folder_id") folderId: String)
 }

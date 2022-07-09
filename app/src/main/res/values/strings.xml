@@ -27,4 +27,6 @@
     <string name="title">כותרת</string>
     <string name="expansion_button">כפתור להרחבה</string>
     <string name="message_saved_successfully">ההודעה נוספה בהצלחה!</string>
+    <string name="save">שמור</string>
+    <string name="cancel">בטל</string>
 </resources>

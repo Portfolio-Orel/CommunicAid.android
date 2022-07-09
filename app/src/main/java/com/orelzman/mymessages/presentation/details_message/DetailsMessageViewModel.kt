@@ -13,6 +13,7 @@ import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,8 +28,9 @@ class DetailsMessageViewModel @Inject constructor(
     init {
         viewModelScope.launch(Dispatchers.Main) {
             authInteractor.getUser()?.userId?.let {
-                val folders = folderInteractor.getFolders(it)
-                state = state.copy(folders = folders)
+                folderInteractor.getFolders().collectLatest {
+                    state = state.copy(folders = it)
+                }
             }
         }
     }

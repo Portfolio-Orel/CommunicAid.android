@@ -11,6 +11,9 @@ import com.orelzman.auth.domain.exception.UserNotConfirmedException
 import com.orelzman.auth.domain.exception.UserNotFoundException
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.domain.interactors.DatabaseInteractor
+import com.orelzman.mymessages.domain.interactors.FolderInteractor
+import com.orelzman.mymessages.domain.interactors.MessageInteractor
+import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.model.dto.body.create.CreateUserBody
 import com.orelzman.mymessages.domain.repository.Repository
 import com.orelzman.mymessages.util.extension.log
@@ -24,6 +27,9 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val interactor: AuthInteractor,
     private val repository: Repository,
+    private val messageInteractor: MessageInteractor,
+    private val folderInteractor: FolderInteractor,
+    private val settingsInteractor: SettingsInteractor,
     private val databaseInteractor: DatabaseInteractor,
 ) : ViewModel() {
     var state by mutableStateOf(LoginState())
@@ -55,7 +61,7 @@ class LoginViewModel @Inject constructor(
         when (event) {
             is LoginEvents.OnLoginCompleted -> {
                 if (event.isAuthorized) {
-                    userLoggedInSuccessfully()
+                    userAuthorizedSuccessfully()
                 } else {
                     loginFailed(event.exception)
                 }
@@ -93,6 +99,14 @@ class LoginViewModel @Inject constructor(
         state = state.copy(username = value)
     }
 
+    private fun initData(userId: String) {
+        viewModelScope.launch(Dispatchers.Main) {
+            messageInteractor.initMessagesAndMessagesInFolders(userId = userId)
+            folderInteractor.initFolders(userId = userId)
+            settingsInteractor.getAllSettings(userId = userId)
+        }
+    }
+
     private fun loginFailed(exception: Exception?) {
         state = when (exception) {
             is InvalidParameterException -> {
@@ -108,23 +122,29 @@ class LoginViewModel @Inject constructor(
                 state.copy(error = "קרתה שגיאה לא צפויה. אנחנו מטפלים בזה")
             }
         }
+        state = state.copy(isLoading = false)
     }
 
-    private fun userLoggedInSuccessfully() {
+    private fun userAuthorizedSuccessfully() {
         viewModelScope.launch(Dispatchers.Main) {
             try {
                 state = state.copy(isLoading = true)
                 val userId = interactor.getUser()?.userId
-                if (userId != null) {
+                val isAuthorized = if (userId != null) {
                     confirmUserCreated(userId, state.email)
                 } else {
-                    state = state.copy(isAuthorized = false)
+                    false
                 }
-
+                if (isAuthorized) {
+                    initData(userId ?: "")
+                }
+                state = state.copy(isAuthorized = isAuthorized)
             } catch (exception: Exception) {
                 exception.log()
                 state = state.copy(isLoading = false)
             }
+        }.invokeOnCompletion {
+            state = state.copy(isLoading = false)
         }
     }
 
@@ -137,7 +157,7 @@ class LoginViewModel @Inject constructor(
                 interactor.confirmUser(username, code)
                 val user = interactor.getUser()
                 if (user?.userId != null) {
-                    state = state.copy(isAuthorized = true)
+                    userAuthorizedSuccessfully()
                 }
             } catch (exception: Exception) {
                 when (exception) {

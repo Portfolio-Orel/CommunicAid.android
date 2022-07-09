@@ -2,6 +2,7 @@ package com.orelzman.mymessages.data.local.dao
 
 import androidx.room.*
 import com.orelzman.mymessages.domain.model.entities.MessageInFolder
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MessageInFolderDao {
@@ -18,7 +19,7 @@ interface MessageInFolderDao {
         FROM MessageInFolder
     """
     )
-    suspend fun getMessageInFolders(): List<MessageInFolder>
+    fun get(): Flow<List<MessageInFolder>>
 
     @Update
     suspend fun update(messageInFolder: MessageInFolder)
@@ -26,14 +27,12 @@ interface MessageInFolderDao {
     @Delete
     suspend fun delete(messageInFolder: MessageInFolder)
 
-    @Query(
-        """
-        SELECT *
+    @Query("""
+        DELETE 
         FROM MessageInFolder
-        WHERE id = :messageInFolderId
-    """
-    )
-    suspend fun get(messageInFolderId: String): MessageInFolder
+        WHERE folderId = :folderId
+    """)
+    suspend fun delete(folderId: String)
 
     @Query(
         """
@@ -51,7 +50,7 @@ interface MessageInFolderDao {
         WHERE messageId = :messageId AND folderId = :folderId
     """
     )
-    suspend fun getWithMessageIdAndFolderId(messageId: String, folderId: String): MessageInFolder
+    suspend fun get(messageId: String, folderId: String): MessageInFolder
 
     @Query("DELETE FROM MessageInFolder")
     suspend fun clear()
