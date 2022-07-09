@@ -65,14 +65,16 @@ class MainViewModel @Inject constructor(
     private fun getFolders() {
         viewModelScope.launch(Dispatchers.Main) {
             folderInteractor.getFolders().collectLatest {
-                state = state.copy(folders = it)
+                if (state.selectedFolder == null && it.isNotEmpty()) {
+                    state = state.copy(folders = it, selectedFolder = it.first())
+                }
             }
         }
     }
 
     fun getFoldersMessages(): List<Message> {
         val messageIds = state.messagesInFolders
-            .filter { it.folderId == state.selectedFolder.id }
+            .filter { it.folderId == state.selectedFolder?.id }
             .map { it.messageId }
         return state.messages.filter { messageIds.contains(it.id) }
     }

@@ -9,7 +9,7 @@ data class MainState(
     val messages: List<Message> = emptyList(),
     val folders: List<Folder> = emptyList(),
     val messagesInFolders: List<MessageInFolder> = emptyList(),
-    val selectedFolder: Folder = Folder(),
+    val selectedFolder: Folder? = null,
 
     val activeCall: PhoneCall? = null,
     val callOnTheLine: PhoneCall? = null,

@@ -31,7 +31,6 @@ fun List<GetMessagesResponse>.toMessagesInFolders(): List<MessageInFolder> {
         with(it) {
             array.add(
                 MessageInFolder(
-                    id = messageInFolderId,
                     messageId = messageId,
                     folderId = folderId
                 )

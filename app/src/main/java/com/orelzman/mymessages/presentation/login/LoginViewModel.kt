@@ -42,6 +42,7 @@ class LoginViewModel @Inject constructor(
                 val user = interactor.getUser()
                 if (user != null) {
                     isAuthorized = confirmUserCreated(user.userId)
+                    userAuthorizedSuccessfully()
                 } else {
                     databaseInteractor.clear()
                 }
@@ -103,7 +104,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Main) {
             messageInteractor.initMessagesAndMessagesInFolders(userId = userId)
             folderInteractor.initFolders(userId = userId)
-            settingsInteractor.getAllSettings(userId = userId)
+            settingsInteractor.initSettings(userId = userId)
         }
     }
 

@@ -34,6 +34,7 @@ fun DetailsMessageScreen(
 ) {
     val context = LocalContext.current
     val state = viewModel.state
+
     LaunchedEffect(key1 = messageId) {
         viewModel.setEdit(messageId = messageId)
     }
@@ -47,6 +48,7 @@ fun DetailsMessageScreen(
             else -> {}
         }
     }
+
 
     MyMessagesTheme {
         Column(
@@ -94,7 +96,6 @@ fun DetailsMessageScreen(
                 maxLines = 30,
                 isError = state.emptyFields.contains(MessageFields.Body)
             )
-
             Dropdown(folders = state.folders, onSelected = { viewModel.setFolderId(it) })
             Spacer(modifier = Modifier.weight(1f))
 
@@ -124,7 +125,7 @@ fun DetailsMessageScreen(
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
-                    onClick = { navigator.navigateUp()},
+                    onClick = { navigator.navigateUp() },
                     modifier = Modifier.padding(end = 32.dp, bottom = 32.dp)
                 ) {
                     Text("בטל")
