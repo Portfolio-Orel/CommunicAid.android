@@ -29,7 +29,7 @@ class LoginViewModel @Inject constructor(
     var state by mutableStateOf(LoginState())
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             try {
                 interactor.initAWS()
                 var isAuthorized = false
