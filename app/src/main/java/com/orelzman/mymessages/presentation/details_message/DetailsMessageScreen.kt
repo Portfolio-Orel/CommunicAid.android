@@ -1,5 +1,6 @@
 package com.orelzman.mymessages.presentation.details_message
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -12,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -31,10 +33,21 @@ fun DetailsMessageScreen(
     viewModel: DetailsMessageViewModel = hiltViewModel(),
     messageId: String?
 ) {
+    val context = LocalContext.current
+    val state = viewModel.state
     LaunchedEffect(key1 = messageId) {
         viewModel.setEdit(messageId = messageId)
     }
-    val state = viewModel.state
+    LaunchedEffect(key1 = viewModel.state.eventMessage) {
+        when (state.eventMessage) {
+            EventsMessages.MessageSaved -> Toast.makeText(
+                context,
+                context.getString(R.string.message_saved_successfully),
+                Toast.LENGTH_LONG
+            ).show()
+            else -> {}
+        }
+    }
 
     MyMessagesTheme {
         Column(
@@ -91,12 +104,18 @@ fun DetailsMessageScreen(
                     onClick = { viewModel.saveMessage() },
                     modifier = Modifier.padding(start = 32.dp, bottom = 32.dp),
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center) {
-                        Text(text = stringResource(R.string.save_message), modifier = Modifier.padding(6.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = stringResource(R.string.save_message),
+                            modifier = Modifier.padding(6.dp)
+                        )
                         if (state.isLoading) {
                             CircularProgressIndicator(
-                                modifier = Modifier.padding(bottom = 12.dp)
+                                modifier = Modifier
+                                    .padding(bottom = 12.dp)
                                     .size(8.dp),
                                 color = Color.White,
                                 strokeWidth = 1.dp

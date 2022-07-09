@@ -13,6 +13,7 @@ data class DetailsMessageState(
     val emptyFields: ArrayList<MessageFields> = ArrayList(),
     val isLoading: Boolean = false, // Message is being uploaded
     val error: String = "",
+    val eventMessage: EventsMessages? = null,
     val messageId: String? = null,
     val isEdit: Boolean = false,
 ) : Loggable {
@@ -38,4 +39,8 @@ enum class MessageFields {
     ShortTitle,
     Body,
     Folder
+}
+
+enum class EventsMessages {
+    MessageSaved
 }

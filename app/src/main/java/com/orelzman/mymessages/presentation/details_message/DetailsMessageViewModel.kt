@@ -77,14 +77,14 @@ class DetailsMessageViewModel @Inject constructor(
 
     fun saveMessage() {
         if (state.isReadyForSave) {
-            state = state.copy(isLoading = true)
+            state = state.copy(isLoading = true, eventMessage = null)
             val message = Message(
                 title = state.title,
                 shortTitle = state.shortTitle,
                 body = state.body,
                 id = state.messageId ?: ""
             )
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch(Dispatchers.Main) {
                 try {
                     authInteractor.getUser()?.userId?.let {
                         if (state.isEdit) {
@@ -102,7 +102,7 @@ class DetailsMessageViewModel @Inject constructor(
                             )
                         }
                     }
-                    state = state.copy(isLoading = false)
+                    state = state.copy(isLoading = false, eventMessage = EventsMessages.MessageSaved)
                     clearValues()
                 } catch (exception: Exception) {
                     exception.log(state)
