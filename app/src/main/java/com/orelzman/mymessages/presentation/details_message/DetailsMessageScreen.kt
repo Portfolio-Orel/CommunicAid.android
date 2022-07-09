@@ -36,10 +36,6 @@ fun DetailsMessageScreen(
     }
     val state = viewModel.state
 
-    if (state.isMessageSaved) {
-        navigator.navigateUp()
-    }
-
     MyMessagesTheme {
         Column(
             modifier = Modifier

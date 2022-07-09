@@ -69,8 +69,8 @@ class DetailsFolderViewModel @Inject constructor(
     }
 
     private fun saveFolder(folder: Folder = Folder()) {
-        state = state.copy(isLoading = true)
         if (state.isReadyForSave) {
+            state = state.copy(isLoading = true)
             try {
                 state = state.copy(isLoading = true)
                 viewModelScope.launch(Dispatchers.IO) {
