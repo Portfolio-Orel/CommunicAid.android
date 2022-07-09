@@ -178,7 +178,7 @@ fun MainScreen(
             FlowRow(
                 modifier = Modifier
                     .padding(start = 10.dp, end = 5.dp)
-                    .fillMaxHeight(0.2F)
+                    .fillMaxHeight(0.5F)
                     .fillMaxWidth(0.9F)
                     .scrollable(
                         orientation = Orientation.Vertical,
@@ -214,10 +214,6 @@ fun MainScreen(
                             }
                         )
                     }
-            }
-
-            Button(onClick = { viewModel.sendCallLogs(context) }) {
-                Text("שלח יומן")
             }
             LogoutButton(onLogoutComplete = {
                 navigator.navigate(LoginScreenDestination)

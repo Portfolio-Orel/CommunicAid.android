@@ -104,11 +104,11 @@ class DetailsMessageViewModel @Inject constructor(
                 }
             }
         } else {
-            val emptyFields = ArrayList<Fields>()
-            if (state.title.isBlank()) emptyFields.add(Fields.Title)
-            if (state.shortTitle.isBlank()) emptyFields.add(Fields.ShortTitle)
-            if (state.body.isBlank()) emptyFields.add(Fields.Body)
-            if (state.currentFolderId.isBlank()) emptyFields.add(Fields.Folder)
+            val emptyFields = ArrayList<MessageFields>()
+            if (state.title.isBlank()) emptyFields.add(MessageFields.Title)
+            if (state.shortTitle.isBlank()) emptyFields.add(MessageFields.ShortTitle)
+            if (state.body.isBlank()) emptyFields.add(MessageFields.Body)
+            if (state.currentFolderId.isBlank()) emptyFields.add(MessageFields.Folder)
             state = state.copy(emptyFields = emptyFields)
         }
     }

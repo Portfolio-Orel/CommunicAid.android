@@ -9,9 +9,11 @@ data class DetailsFolderState(
     val isFolderAdded: Boolean = false,
     val folder: Folder? = null,
     val isEdit: Boolean = false,
-    val isReadyForSave: Boolean = title == "",
+    val emptyFields: List<FolderFields> = emptyList(),
     val error: String = ""
 ) : Loggable {
+    val isReadyForSave: Boolean = title.isNotBlank()
+
     override val data: Map<String, Any>
         get() = mapOf(
             "title" to title,
@@ -22,5 +24,8 @@ data class DetailsFolderState(
             "is_ready_for_save" to isReadyForSave,
             "error" to error,
         )
+}
 
+enum class FolderFields {
+    Title
 }

@@ -8,9 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.domain.interactors.*
-import com.orelzman.mymessages.domain.model.entities.*
+import com.orelzman.mymessages.domain.model.entities.Folder
+import com.orelzman.mymessages.domain.model.entities.Message
+import com.orelzman.mymessages.domain.model.entities.MessageSent
+import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
-import com.orelzman.mymessages.util.CallUtils
 import com.orelzman.mymessages.util.Whatsapp.sendWhatsapp
 import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.copyToClipboard
@@ -85,19 +87,6 @@ class MainViewModel @Inject constructor(
             }
         } catch (exception: HttpException) {
             println()
-        }
-    }
-
-    fun sendCallLogs(context: Context) {
-        val callLogs = CallUtils.getTodaysCallLog(context)
-        viewModelScope.launch(Dispatchers.IO) {
-            authInteractor.getUser()?.let {
-                val phoneCalls = callLogs.toPhoneCalls().map { call ->
-                    call.type = "CALL_LOG"
-                    return@map call
-                }
-                phoneCallsInteractor.createPhoneCalls(it.userId, phoneCalls)
-            }
         }
     }
 
