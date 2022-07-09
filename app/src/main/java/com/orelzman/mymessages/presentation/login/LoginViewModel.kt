@@ -108,6 +108,7 @@ class LoginViewModel @Inject constructor(
                 state.copy(error = "קרתה שגיאה לא צפויה. אנחנו מטפלים בזה")
             }
         }
+        state = state.copy(isLoading = false)
     }
 
     private fun userLoggedInSuccessfully() {
@@ -115,16 +116,19 @@ class LoginViewModel @Inject constructor(
             try {
                 state = state.copy(isLoading = true)
                 val userId = interactor.getUser()?.userId
-                if (userId != null) {
+                val isAuthorized = if (userId != null) {
                     confirmUserCreated(userId, state.email)
                 } else {
-                    state = state.copy(isAuthorized = false)
+                    false
                 }
+                state = state.copy(isAuthorized = isAuthorized)
 
             } catch (exception: Exception) {
                 exception.log()
                 state = state.copy(isLoading = false)
             }
+        }.invokeOnCompletion {
+            state = state.copy(isLoading = false)
         }
     }
 
