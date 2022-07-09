@@ -43,6 +43,7 @@ fun DetailsFolderScreen(
             placeholder = {
                 Text(text = "כותרת")
             },
+            isError =  state.emptyFields.contains(FolderFields.Title)
         )
         Row {
             Button(
