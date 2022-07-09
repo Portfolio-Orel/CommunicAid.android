@@ -30,12 +30,10 @@ import com.orelzman.mymessages.presentation.destinations.*
 import com.orelzman.mymessages.presentation.logout_screen.LogoutButton
 import com.orelzman.mymessages.presentation.main.components.FolderView
 import com.orelzman.mymessages.presentation.main.components.MessageView
-import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 
 @Composable
-@Destination
 fun MainScreen(
     navigator: DestinationsNavigator,
     viewModel: MainViewModel = hiltViewModel(),
@@ -49,21 +47,23 @@ fun MainScreen(
     val messagesOffset = remember { mutableStateOf(0f) }
     val foldersOffset = remember { mutableStateOf(0f) }
 
-
-    if (state.messageToEdit != null) {
-        navigator.navigate(
-            DetailsMessageScreenDestination(messageId = state.messageToEdit.id)
-        )
-    }
-    if (state.folderToEdit != null) {
-        navigator.navigate(
-            DetailsFolderScreenDestination(folderId = state.folderToEdit.id)
-        )
-    }
-
     LaunchedEffect(key1 = viewModel) {
         viewModel.init()
     }
+
+    LaunchedEffect(key1 = viewModel.state.screenToShow) {
+        val route =
+        when(viewModel.state.screenToShow) {
+            MainScreens.DetailsMessage -> DetailsMessageScreenDestination(messageId = state.messageToEdit?.id)
+            MainScreens.DetailsFolder -> DetailsFolderScreenDestination(folderId = state.folderToEdit?.id)
+            MainScreens.Default -> null
+        }
+        if(route != null) {
+            navigator.navigate(route)
+            viewModel.navigated()
+        }
+    }
+
     if (state.isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),

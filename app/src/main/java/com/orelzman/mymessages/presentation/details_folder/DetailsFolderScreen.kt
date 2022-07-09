@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -65,7 +64,7 @@ fun DetailsFolderScreen(
             }
             Spacer(modifier = Modifier.weight(1f))
             Button(
-                onClick = { navigator.navigate(MainScreenDestination) },
+                onClick = { navigator.navigateUp() },
                 modifier = Modifier.padding(end = 32.dp, bottom = 32.dp)
             ) {
                 Text("בטל")

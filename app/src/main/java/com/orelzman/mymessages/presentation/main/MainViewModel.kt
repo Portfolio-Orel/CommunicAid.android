@@ -14,7 +14,6 @@ import com.orelzman.mymessages.domain.model.entities.MessageSent
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
 import com.orelzman.mymessages.util.Whatsapp.sendWhatsapp
-import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.copyToClipboard
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -98,7 +97,6 @@ class MainViewModel @Inject constructor(
     }
 
     fun onMessageClick(message: Message, context: Context) {
-        Log.vCustom(message.toString())
         val phoneCall =
             if (state.activeCall?.number == phoneCallManagerInteractor.callInBackground.value?.number) {
                 phoneCallManagerInteractor.callInBackground.value
@@ -152,16 +150,20 @@ class MainViewModel @Inject constructor(
         selectActiveCall(state.callOnTheLine)
     }
 
+    fun navigated() {
+        state = state.copy(screenToShow = MainScreens.Default)
+    }
+
     private fun selectActiveCall(phoneCall: PhoneCall?) {
         state = state.copy(activeCall = phoneCall)
     }
 
     private fun goToEditMessage(message: Message) {
-        state = state.copy(messageToEdit = message)
+        state = state.copy(messageToEdit = message, screenToShow = MainScreens.DetailsMessage)
     }
 
     private fun goToEditFolder(folder: Folder) {
-        state = state.copy(folderToEdit = folder)
+        state = state.copy(folderToEdit = folder, screenToShow = MainScreens.DetailsFolder)
     }
 
     private fun observeNumberOnTheLine() {

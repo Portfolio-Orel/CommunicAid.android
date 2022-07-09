@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.toSize
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.entities.Folder
-import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -125,7 +124,7 @@ fun DetailsMessageScreen(
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
-                    onClick = { navigator.navigate(MainScreenDestination) },
+                    onClick = { navigator.navigateUp()},
                     modifier = Modifier.padding(end = 32.dp, bottom = 32.dp)
                 ) {
                     Text("בטל")

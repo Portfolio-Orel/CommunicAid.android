@@ -17,9 +17,16 @@ data class MainState(
     val callOnTheLine: PhoneCall? = null,
     val callInBackground: PhoneCall? = null,
 
-    val isLoading: Boolean = false,
+    val isLoading: Boolean = true,
     val isLoggedIn: Boolean = false,
     val maxMessagesInRow: Int = 6,
     val messageToEdit: Message? = null,
-    val folderToEdit: Folder? = null
+    val folderToEdit: Folder? = null,
+    val screenToShow: MainScreens = MainScreens.Default
 )
+
+enum class MainScreens {
+    DetailsMessage,
+    DetailsFolder,
+    Default;
+}
