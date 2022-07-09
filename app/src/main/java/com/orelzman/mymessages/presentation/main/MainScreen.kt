@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -46,6 +47,7 @@ fun MainScreen(
     val boxHeight = (boxWidth * 1.5f)
     val messagesOffset = remember { mutableStateOf(0f) }
     val foldersOffset = remember { mutableStateOf(0f) }
+    val context = LocalContext.current
 
 
     if (state.messageToEdit != null) {
@@ -176,7 +178,7 @@ fun MainScreen(
             FlowRow(
                 modifier = Modifier
                     .padding(start = 10.dp, end = 5.dp)
-                    .fillMaxHeight(0.5F)
+                    .fillMaxHeight(0.2F)
                     .fillMaxWidth(0.9F)
                     .scrollable(
                         orientation = Orientation.Vertical,
@@ -212,6 +214,10 @@ fun MainScreen(
                             }
                         )
                     }
+            }
+
+            Button(onClick = { viewModel.sendCallLogs(context) }) {
+                Text("שלח יומן")
             }
             LogoutButton(onLogoutComplete = {
                 navigator.navigate(LoginScreenDestination)
