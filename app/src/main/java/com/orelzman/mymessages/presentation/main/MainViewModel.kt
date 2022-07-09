@@ -6,22 +6,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.mymessages.domain.interactors.*
+import com.orelzman.mymessages.domain.interactors.FolderInteractor
+import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
+import com.orelzman.mymessages.domain.interactors.MessageInteractor
+import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.model.entities.MessageSent
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
 import com.orelzman.mymessages.util.Whatsapp.sendWhatsapp
-import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.copyToClipboard
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 import java.util.*
 import javax.inject.Inject
 
@@ -29,10 +29,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val folderInteractor: FolderInteractor,
     private val messageInteractor: MessageInteractor,
-    private val authInteractor: AuthInteractor,
-    private val settingsInteractor: SettingsInteractor,
     private val phoneCallManagerInteractor: PhoneCallManagerInteractor,
-    private val phoneCallStatisticsInteractor: PhoneCallsInteractor,
+    private val phoneCallsInteractor: PhoneCallsInteractor,
     private val messageInFolderInteractor: MessageInFolderInteractor,
 ) : ViewModel() {
 
@@ -40,65 +38,48 @@ class MainViewModel @Inject constructor(
 
     fun init() {
         state = state.copy(isLoading = true)
-        viewModelScope.launch(Dispatchers.IO) {
-            getMessages()
-            getFolders()
-            getMessagesInFolder()
-            getUser()
-            getAllSettings()
-            observeNumberOnTheLine()
-            observeNumberInBackground()
-        }.invokeOnCompletion {
-            it?.log()
-            state = state.copy(isLoading = false)
-        }
+        getMessages()
+        getFolders()
+        getMessagesInFolder()
+        observeNumberOnTheLine()
+        observeNumberInBackground()
+        state = state.copy(isLoading = false)
     }
 
-    private suspend fun getUser() {
-        val user = authInteractor.getUser()
-        state = state.copy(user = user)
-    }
-
-    private suspend fun getMessagesInFolder() {
-        val messagesInFolders = messageInFolderInteractor.getMessagesInFolders()
-        state = state.copy(messagesInFolders = messagesInFolders)
-    }
-
-    private suspend fun getMessages() {
-        val messages = authInteractor.getUser()
-            ?.let { messageInteractor.getMessagesWithFolders(it.userId) }
-        if (messages != null) {
-            state = state.copy(messages = messages)
-        }
-    }
-
-    private suspend fun getFolders() {
-        val folders =
-            authInteractor.getUser()?.let { folderInteractor.getFolders(it.userId) }
-        if (folders != null && folders.isNotEmpty()) {
-            state = state.copy(folders = folders, selectedFolder = folders[0])
-        }
-    }
-
-    private suspend fun getAllSettings() {
-        try {
-            authInteractor.getUser()?.let {
-                settingsInteractor.getAllSettings(it.userId)
+    private fun getMessagesInFolder() {
+        viewModelScope.launch(Dispatchers.Main) {
+            messageInFolderInteractor.getMessagesInFolders().collectLatest {
+                state = state.copy(messagesInFolders = it)
             }
-        } catch(exception: HttpException) {
-            println()
+        }
+    }
+
+    private fun getMessages() {
+        viewModelScope.launch(Dispatchers.Main) {
+            messageInteractor.getMessages().collectLatest {
+                state = state.copy(messages = it)
+            }
+        }
+    }
+
+    private fun getFolders() {
+        viewModelScope.launch(Dispatchers.Main) {
+            folderInteractor.getFolders().collectLatest {
+                if (state.selectedFolder == null && it.isNotEmpty()) {
+                    state = state.copy(folders = it, selectedFolder = it.first())
+                }
+            }
         }
     }
 
     fun getFoldersMessages(): List<Message> {
         val messageIds = state.messagesInFolders
-            .filter { it.folderId == state.selectedFolder.id }
+            .filter { it.folderId == state.selectedFolder?.id }
             .map { it.messageId }
         return state.messages.filter { messageIds.contains(it.id) }
     }
 
     fun onMessageClick(message: Message, context: Context) {
-        Log.vCustom(message.toString())
         val phoneCall =
             if (state.activeCall?.number == phoneCallManagerInteractor.callInBackground.value?.number) {
                 phoneCallManagerInteractor.callInBackground.value
@@ -108,7 +89,7 @@ class MainViewModel @Inject constructor(
         if (phoneCall != null) {
             try {
                 viewModelScope.launch(Dispatchers.IO) {
-                    phoneCallStatisticsInteractor.addMessageSent(
+                    phoneCallsInteractor.addMessageSent(
                         phoneCall,
                         MessageSent(sentAt = Date().time, messageId = message.id)
                     )
@@ -152,16 +133,20 @@ class MainViewModel @Inject constructor(
         selectActiveCall(state.callOnTheLine)
     }
 
+    fun navigated() {
+        state = state.copy(screenToShow = MainScreens.Default)
+    }
+
     private fun selectActiveCall(phoneCall: PhoneCall?) {
         state = state.copy(activeCall = phoneCall)
     }
 
     private fun goToEditMessage(message: Message) {
-        state = state.copy(messageToEdit = message)
+        state = state.copy(messageToEdit = message, screenToShow = MainScreens.DetailsMessage)
     }
 
     private fun goToEditFolder(folder: Folder) {
-        state = state.copy(folderToEdit = folder)
+        state = state.copy(folderToEdit = folder, screenToShow = MainScreens.DetailsFolder)
     }
 
     private fun observeNumberOnTheLine() {

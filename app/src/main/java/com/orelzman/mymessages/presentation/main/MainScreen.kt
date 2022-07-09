@@ -5,6 +5,8 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -28,12 +30,10 @@ import com.orelzman.mymessages.presentation.destinations.*
 import com.orelzman.mymessages.presentation.logout_screen.LogoutButton
 import com.orelzman.mymessages.presentation.main.components.FolderView
 import com.orelzman.mymessages.presentation.main.components.MessageView
-import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 
 @Composable
-@Destination
 fun MainScreen(
     navigator: DestinationsNavigator,
     viewModel: MainViewModel = hiltViewModel(),
@@ -47,21 +47,23 @@ fun MainScreen(
     val messagesOffset = remember { mutableStateOf(0f) }
     val foldersOffset = remember { mutableStateOf(0f) }
 
-
-    if (state.messageToEdit != null) {
-        navigator.navigate(
-            DetailsMessageScreenDestination(messageId = state.messageToEdit.id)
-        )
-    }
-    if (state.folderToEdit != null) {
-        navigator.navigate(
-            DetailsFolderScreenDestination(folderId = state.folderToEdit.id)
-        )
-    }
-
     LaunchedEffect(key1 = viewModel) {
         viewModel.init()
     }
+
+    LaunchedEffect(key1 = viewModel.state.screenToShow) {
+        val route =
+            when (viewModel.state.screenToShow) {
+                MainScreens.DetailsMessage -> DetailsMessageScreenDestination(messageId = state.messageToEdit?.id)
+                MainScreens.DetailsFolder -> DetailsFolderScreenDestination(folderId = state.folderToEdit?.id)
+                MainScreens.Default -> null
+            }
+        if (route != null) {
+            navigator.navigate(route)
+            viewModel.navigated()
+        }
+    }
+
     if (state.isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -156,14 +158,15 @@ fun MainScreen(
                 modifier = Modifier.padding(8.dp),
                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
             )
-            Row(
+            LazyRow(
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(8.dp),
+                userScrollEnabled = true,
             ) {
-                state.folders.forEach { folder ->
+                items(state.folders) { folder ->
                     FolderView(
                         folder = folder,
-                        isSelected = state.selectedFolder.id == folder.id,
+                        isSelected = state.selectedFolder?.id == folder.id,
                         modifier = Modifier
                             .height(50.dp)
                             .width(120.dp),
@@ -213,9 +216,6 @@ fun MainScreen(
                         )
                     }
             }
-            LogoutButton(onLogoutComplete = {
-                navigator.navigate(LoginScreenDestination)
-            })
             Button(onClick = {
                 navigator.navigate(
                     DetailsFolderScreenDestination()
@@ -246,15 +246,15 @@ fun MainScreen(
             }) {
                 Text(text = "סטטיסטיקות")
             }
+            LogoutButton(onLogoutComplete = {
+                navigator.navigate(LoginScreenDestination)
+            })
         }
     }
 }
 
 private fun getMessageWidth(screenWidth: Int, messagesInRow: Int = 4, spaceBetween: Int = 16): Dp {
     val spacesCount = messagesInRow + 1 // Amount of spaces between each message
-    val spaceForMesages = screenWidth - spacesCount * spaceBetween
-    return (spaceForMesages / messagesInRow).dp
+    val spaceForMessages = screenWidth - spacesCount * spaceBetween
+    return (spaceForMessages / messagesInRow).dp
 }
-
-private fun calculateMinIndexForSecondFlowRow(itemsCount: Int, maxItems: Int): Int =
-    itemsCount - itemsCount % maxItems

@@ -8,6 +8,7 @@ import com.orelzman.mymessages.domain.model.dto.response.toMessagesInFolders
 import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.model.entities.MessageInFolder
 import com.orelzman.mymessages.domain.repository.Repository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class MessageInteractorImpl @Inject constructor(
@@ -18,9 +19,10 @@ class MessageInteractorImpl @Inject constructor(
 
     private val db = database.messageDao
 
-    override suspend fun getMessagesWithFolders(userId: String): List<Message> {
-        var messages = db.getMessages()
-        if (messages.isEmpty()) {
+    override suspend fun initMessagesAndMessagesInFolders(userId: String): List<Message> {
+        val messagesCount = db.getMessagesCount()
+        var messages: List<Message> = emptyList()
+        if (messagesCount == 0) {
             val response = repository.getMessages(userId)
             messages = response.map { it.toMessage() }
             db.insert(messages)
@@ -28,6 +30,8 @@ class MessageInteractorImpl @Inject constructor(
         }
         return messages
     }
+
+    override fun getMessages(): Flow<List<Message>> = db.getMessages()
 
     override suspend fun createMessage(
         userId: String,
@@ -70,8 +74,16 @@ class MessageInteractorImpl @Inject constructor(
         )
     }
 
-    override suspend fun deleteMessage(message: Message, folderId: String) =
+    override suspend fun deleteMessage(message: Message, folderId: String) {
         repository.deleteMessage(message, folderId)
+        db.delete(message)
+        messageInFolderInteractor.deleteMessageInFolder(
+            MessageInFolder(
+                messageId = message.id,
+                folderId = folderId
+            )
+        )
+    }
 
 
 }

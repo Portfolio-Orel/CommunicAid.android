@@ -24,4 +24,9 @@
     <string name="no_unhandled_calls">אין שיחות שלא טופלו!</string>
     <string name="save_message">שמור</string>
     <string name="no_active_call">אין שיחה</string>
+    <string name="title">כותרת</string>
+    <string name="expansion_button">כפתור להרחבה</string>
+    <string name="message_saved_successfully">ההודעה נוספה בהצלחה!</string>
+    <string name="save">שמור</string>
+    <string name="cancel">בטל</string>
 </resources>

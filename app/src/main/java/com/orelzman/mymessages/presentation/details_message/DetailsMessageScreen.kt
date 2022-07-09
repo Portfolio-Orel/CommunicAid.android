@@ -1,5 +1,6 @@
 package com.orelzman.mymessages.presentation.details_message
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -12,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -19,7 +21,6 @@ import androidx.compose.ui.unit.toSize
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.entities.Folder
-import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -31,14 +32,23 @@ fun DetailsMessageScreen(
     viewModel: DetailsMessageViewModel = hiltViewModel(),
     messageId: String?
 ) {
+    val context = LocalContext.current
+    val state = viewModel.state
+
     LaunchedEffect(key1 = messageId) {
         viewModel.setEdit(messageId = messageId)
     }
-    val state = viewModel.state
-
-    if (state.isMessageSaved) {
-        navigator.navigateUp()
+    LaunchedEffect(key1 = viewModel.state.eventMessage) {
+        when (state.eventMessage) {
+            EventsMessages.MessageSaved -> Toast.makeText(
+                context,
+                context.getString(R.string.message_saved_successfully),
+                Toast.LENGTH_LONG
+            ).show()
+            else -> {}
+        }
     }
+
 
     MyMessagesTheme {
         Column(
@@ -54,7 +64,7 @@ fun DetailsMessageScreen(
                 placeholder = {
                     Text(text = "כותרת")
                 },
-                isError = state.emptyFields.contains(Fields.Body)
+                isError = state.emptyFields.contains(MessageFields.Body)
             )
             Column {
                 OutlinedTextField(
@@ -66,7 +76,7 @@ fun DetailsMessageScreen(
                     placeholder = {
                         Text(text = "כותרת קצרה")
                     },
-                    isError = state.emptyFields.contains(Fields.Body)
+                    isError = state.emptyFields.contains(MessageFields.Body)
                 )
 //                Text(
 //                    "מקסימום 3 תווים",
@@ -84,9 +94,8 @@ fun DetailsMessageScreen(
                     Text(text = "טקסט")
                 },
                 maxLines = 30,
-                isError = state.emptyFields.contains(Fields.Body)
+                isError = state.emptyFields.contains(MessageFields.Body)
             )
-
             Dropdown(folders = state.folders, onSelected = { viewModel.setFolderId(it) })
             Spacer(modifier = Modifier.weight(1f))
 
@@ -95,12 +104,18 @@ fun DetailsMessageScreen(
                     onClick = { viewModel.saveMessage() },
                     modifier = Modifier.padding(start = 32.dp, bottom = 32.dp),
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center) {
-                        Text(text = stringResource(R.string.save_message), modifier = Modifier.padding(6.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = stringResource(R.string.save_message),
+                            modifier = Modifier.padding(6.dp)
+                        )
                         if (state.isLoading) {
                             CircularProgressIndicator(
-                                modifier = Modifier.padding(bottom = 12.dp)
+                                modifier = Modifier
+                                    .padding(bottom = 12.dp)
                                     .size(8.dp),
                                 color = Color.White,
                                 strokeWidth = 1.dp
@@ -110,7 +125,7 @@ fun DetailsMessageScreen(
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
-                    onClick = { navigator.navigate(MainScreenDestination) },
+                    onClick = { navigator.navigateUp() },
                     modifier = Modifier.padding(end = 32.dp, bottom = 32.dp)
                 ) {
                     Text("בטל")
@@ -149,9 +164,9 @@ fun Dropdown(
                     //This value is used to assign to the DropDown the same width
                     textfieldSize = coordinates.size.toSize()
                 },
-            label = { Text("Label") },
+            label = { Text(stringResource(R.string.title)) },
             trailingIcon = {
-                Icon(icon, "contentDescription",
+                Icon(icon, stringResource(R.string.expansion_button),
                     Modifier.clickable { expanded = !expanded })
             }
         )

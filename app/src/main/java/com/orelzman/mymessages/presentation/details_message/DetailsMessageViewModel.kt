@@ -13,6 +13,7 @@ import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,18 +28,9 @@ class DetailsMessageViewModel @Inject constructor(
     init {
         viewModelScope.launch(Dispatchers.Main) {
             authInteractor.getUser()?.userId?.let {
-                val folders = folderInteractor.getFolders(it)
-                state = state.copy(folders = folders)
-            }
-        }
-    }
-
-    fun setEdit(messageId: String?) {
-        messageId?.let {
-            viewModelScope.launch(Dispatchers.Main) {
-                val message = messageInteractor.getMessage(messageId = messageId)
-                val folder = folderInteractor.getFolderWithMessageId(messageId = messageId)
-                setEditValues(message = message, folder = folder)
+                folderInteractor.getFolders().collectLatest {
+                    state = state.copy(folders = it)
+                }
             }
         }
     }
@@ -52,6 +44,20 @@ class DetailsMessageViewModel @Inject constructor(
             oldFolderId = folder.id,
             isEdit = true
         )
+    }
+
+    private fun clearValues() {
+        state = state.copy(title = "", shortTitle = "", body = "", currentFolderId = "")
+    }
+
+    fun setEdit(messageId: String?) {
+        messageId?.let {
+            viewModelScope.launch(Dispatchers.Main) {
+                val message = messageInteractor.getMessage(messageId = messageId)
+                val folder = folderInteractor.getFolderWithMessageId(messageId = messageId)
+                setEditValues(message = message, folder = folder)
+            }
+        }
     }
 
     fun setTitle(value: String) {
@@ -73,14 +79,14 @@ class DetailsMessageViewModel @Inject constructor(
 
     fun saveMessage() {
         if (state.isReadyForSave) {
-            state = state.copy(isLoading = true)
+            state = state.copy(isLoading = true, eventMessage = null)
             val message = Message(
                 title = state.title,
                 shortTitle = state.shortTitle,
                 body = state.body,
                 id = state.messageId ?: ""
             )
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch(Dispatchers.Main) {
                 try {
                     authInteractor.getUser()?.userId?.let {
                         if (state.isEdit) {
@@ -98,17 +104,18 @@ class DetailsMessageViewModel @Inject constructor(
                             )
                         }
                     }
-                    state = state.copy(isLoading = false, isMessageSaved = true)
+                    state = state.copy(isLoading = false, eventMessage = EventsMessages.MessageSaved)
+                    clearValues()
                 } catch (exception: Exception) {
                     exception.log(state)
                 }
             }
         } else {
-            val emptyFields = ArrayList<Fields>()
-            if (state.title.isBlank()) emptyFields.add(Fields.Title)
-            if (state.shortTitle.isBlank()) emptyFields.add(Fields.ShortTitle)
-            if (state.body.isBlank()) emptyFields.add(Fields.Body)
-            if (state.currentFolderId.isBlank()) emptyFields.add(Fields.Folder)
+            val emptyFields = ArrayList<MessageFields>()
+            if (state.title.isBlank()) emptyFields.add(MessageFields.Title)
+            if (state.shortTitle.isBlank()) emptyFields.add(MessageFields.ShortTitle)
+            if (state.body.isBlank()) emptyFields.add(MessageFields.Body)
+            if (state.currentFolderId.isBlank()) emptyFields.add(MessageFields.Folder)
             state = state.copy(emptyFields = emptyFields)
         }
     }

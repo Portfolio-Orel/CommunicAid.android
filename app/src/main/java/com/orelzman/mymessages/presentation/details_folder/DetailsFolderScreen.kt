@@ -10,9 +10,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
+import com.orelzman.mymessages.R
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -41,8 +42,9 @@ fun DetailsFolderScreen(
                 .padding(16.dp)
                 .fillMaxWidth(),
             placeholder = {
-                Text(text = "כותרת")
+                Text(text = stringResource(R.string.title))
             },
+            isError =  state.emptyFields.contains(FolderFields.Title)
         )
         Row {
             Button(
@@ -59,15 +61,15 @@ fun DetailsFolderScreen(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text("שמור")
+                    Text(stringResource(R.string.save))
                 }
             }
             Spacer(modifier = Modifier.weight(1f))
             Button(
-                onClick = { navigator.navigate(MainScreenDestination) },
+                onClick = { navigator.navigateUp() },
                 modifier = Modifier.padding(end = 32.dp, bottom = 32.dp)
             ) {
-                Text("בטל")
+                Text(stringResource(R.string.cancel))
             }
         }
     }

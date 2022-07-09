@@ -6,8 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.interactors.FolderInteractor
+import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -69,8 +69,8 @@ class DetailsFolderViewModel @Inject constructor(
     }
 
     private fun saveFolder(folder: Folder = Folder()) {
-        state = state.copy(isLoading = true)
         if (state.isReadyForSave) {
+            state = state.copy(isLoading = true)
             try {
                 state = state.copy(isLoading = true)
                 viewModelScope.launch(Dispatchers.IO) {
@@ -91,6 +91,10 @@ class DetailsFolderViewModel @Inject constructor(
                 exception.log(state)
                 state = state.copy(isLoading = false, isFolderAdded = true)
             }
+        } else {
+            val emptyFields = ArrayList<FolderFields>()
+            if (state.title.isBlank()) emptyFields.add(FolderFields.Title)
+            state = state.copy(emptyFields = emptyFields)
         }
     }
 }
