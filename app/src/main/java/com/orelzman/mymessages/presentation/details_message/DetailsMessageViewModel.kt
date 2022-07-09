@@ -33,16 +33,6 @@ class DetailsMessageViewModel @Inject constructor(
         }
     }
 
-    fun setEdit(messageId: String?) {
-        messageId?.let {
-            viewModelScope.launch(Dispatchers.Main) {
-                val message = messageInteractor.getMessage(messageId = messageId)
-                val folder = folderInteractor.getFolderWithMessageId(messageId = messageId)
-                setEditValues(message = message, folder = folder)
-            }
-        }
-    }
-
     private fun setEditValues(message: Message, folder: Folder) {
         state = state.copy(
             title = message.title,
@@ -52,6 +42,20 @@ class DetailsMessageViewModel @Inject constructor(
             oldFolderId = folder.id,
             isEdit = true
         )
+    }
+
+    private fun clearValues() {
+        state = state.copy(title = "", shortTitle = "", body = "", currentFolderId = "")
+    }
+
+    fun setEdit(messageId: String?) {
+        messageId?.let {
+            viewModelScope.launch(Dispatchers.Main) {
+                val message = messageInteractor.getMessage(messageId = messageId)
+                val folder = folderInteractor.getFolderWithMessageId(messageId = messageId)
+                setEditValues(message = message, folder = folder)
+            }
+        }
     }
 
     fun setTitle(value: String) {
@@ -73,14 +77,14 @@ class DetailsMessageViewModel @Inject constructor(
 
     fun saveMessage() {
         if (state.isReadyForSave) {
-            state = state.copy(isLoading = true)
+            state = state.copy(isLoading = true, eventMessage = null)
             val message = Message(
                 title = state.title,
                 shortTitle = state.shortTitle,
                 body = state.body,
                 id = state.messageId ?: ""
             )
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch(Dispatchers.Main) {
                 try {
                     authInteractor.getUser()?.userId?.let {
                         if (state.isEdit) {
@@ -98,7 +102,8 @@ class DetailsMessageViewModel @Inject constructor(
                             )
                         }
                     }
-                    state = state.copy(isLoading = false, isMessageSaved = true)
+                    state = state.copy(isLoading = false, eventMessage = EventsMessages.MessageSaved)
+                    clearValues()
                 } catch (exception: Exception) {
                     exception.log(state)
                 }

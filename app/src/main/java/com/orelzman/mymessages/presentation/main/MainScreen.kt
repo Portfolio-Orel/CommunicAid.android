@@ -5,6 +5,8 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -15,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -47,7 +48,6 @@ fun MainScreen(
     val boxHeight = (boxWidth * 1.5f)
     val messagesOffset = remember { mutableStateOf(0f) }
     val foldersOffset = remember { mutableStateOf(0f) }
-    val context = LocalContext.current
 
 
     if (state.messageToEdit != null) {
@@ -158,14 +158,15 @@ fun MainScreen(
                 modifier = Modifier.padding(8.dp),
                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
             )
-            Row(
+            LazyRow(
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(8.dp),
+                userScrollEnabled = true,
             ) {
-                state.folders.forEach { folder ->
+                items(state.folders) {
                     FolderView(
-                        folder = folder,
-                        isSelected = state.selectedFolder.id == folder.id,
+                        folder = it,
+                        isSelected = state.selectedFolder.id == it.id,
                         modifier = Modifier
                             .height(50.dp)
                             .width(120.dp),
