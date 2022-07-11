@@ -8,10 +8,8 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -21,6 +19,7 @@ import androidx.compose.ui.unit.toSize
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.entities.Folder
+import com.orelzman.mymessages.presentation.main.components.ActionButton
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -74,15 +73,10 @@ fun DetailsMessageScreen(
                         .padding(16.dp)
                         .fillMaxWidth(),
                     placeholder = {
-                        Text(text = "כותרת קצרה")
+                        Text(text = stringResource(R.string.message_symbol))
                     },
                     isError = state.emptyFields.contains(MessageFields.Body)
                 )
-//                Text(
-//                    "מקסימום 3 תווים",
-//                    modifier = Modifier
-//                        .size(16.dp)
-//                )
             }
             OutlinedTextField(
                 value = state.body,
@@ -91,45 +85,26 @@ fun DetailsMessageScreen(
                     .padding(16.dp)
                     .fillMaxWidth(),
                 placeholder = {
-                    Text(text = "טקסט")
+                    Text(text = stringResource(R.string.message))
                 },
-                maxLines = 30,
+                maxLines = 7,
                 isError = state.emptyFields.contains(MessageFields.Body)
             )
             Dropdown(folders = state.folders, onSelected = { viewModel.setFolderId(it) })
             Spacer(modifier = Modifier.weight(1f))
 
             Row {
-                Button(
+                ActionButton(
+                    text = stringResource(R.string.save),
+                    isLoading = state.isLoading,
                     onClick = { viewModel.saveMessage() },
-                    modifier = Modifier.padding(start = 32.dp, bottom = 32.dp),
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = stringResource(R.string.save_message),
-                            modifier = Modifier.padding(6.dp)
-                        )
-                        if (state.isLoading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier
-                                    .padding(bottom = 12.dp)
-                                    .size(8.dp),
-                                color = Color.White,
-                                strokeWidth = 1.dp
-                            )
-                        }
-                    }
-                }
+                )
                 Spacer(modifier = Modifier.weight(1f))
-                Button(
+                ActionButton(
+                    isPrimary = false,
+                    text = stringResource(R.string.cancel),
                     onClick = { navigator.navigateUp() },
-                    modifier = Modifier.padding(end = 32.dp, bottom = 32.dp)
-                ) {
-                    Text("בטל")
-                }
+                )
             }
         }
     }

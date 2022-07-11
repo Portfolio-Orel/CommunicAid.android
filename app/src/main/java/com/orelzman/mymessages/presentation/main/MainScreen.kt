@@ -179,7 +179,7 @@ fun MainScreen(
             FlowRow(
                 modifier = Modifier
                     .padding(start = 10.dp, end = 5.dp)
-                    .fillMaxHeight(0.5F)
+                    .fillMaxHeight(0.7F)
                     .fillMaxWidth(0.9F)
                     .scrollable(
                         orientation = Orientation.Vertical,
@@ -199,14 +199,7 @@ fun MainScreen(
                             modifier = Modifier
                                 .width(boxWidth)
                                 .height(boxHeight)
-                                .padding(0.dp)
-                                .scrollable(
-                                    orientation = Orientation.Horizontal,
-                                    state = rememberScrollableState { delta ->
-                                        foldersOffset.value = foldersOffset.value + delta
-                                        delta
-                                    }
-                                ),
+                                .padding(0.dp),
                             onClick = { message, context ->
                                 viewModel.onMessageClick(message, context)
                             },

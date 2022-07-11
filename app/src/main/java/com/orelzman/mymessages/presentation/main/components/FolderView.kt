@@ -49,7 +49,12 @@ fun FolderView(
             text = folder.title,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.titleSmall,
+            color = if (isSelected) {
+                MaterialTheme.colorScheme.onSecondary
+            } else {
+                MaterialTheme.colorScheme.onBackground
+            }
         )
     }
 }
