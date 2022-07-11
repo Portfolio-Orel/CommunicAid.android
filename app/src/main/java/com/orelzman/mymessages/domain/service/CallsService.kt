@@ -18,11 +18,12 @@ import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.model.entities.*
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
-import com.orelzman.mymessages.util.CallUtils
+import com.orelzman.mymessages.util.common.CallUtils
 import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.appendAll
 import com.orelzman.mymessages.util.extension.compareToBallPark
 import com.orelzman.mymessages.util.extension.log
+import com.orelzman.mymessages.util.common.Constants.TIME_TO_ADD_CALL_TO_CALL_LOG
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -158,7 +159,7 @@ class CallsService : Service() {
         var phoneCalls = emptyList<PhoneCall>()
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                delay(2000) // Delay to let the calls log populate
+                delay(TIME_TO_ADD_CALL_TO_CALL_LOG) // Delay to let the calls log populate
                 phoneCalls = phoneCallsInteractor
                     .getAll()
                     .appendAll(checkCallsNotRecorded())

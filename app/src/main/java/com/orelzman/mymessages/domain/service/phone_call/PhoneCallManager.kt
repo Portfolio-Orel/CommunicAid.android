@@ -17,8 +17,8 @@ interface PhoneCallManager {
 }
 
 enum class CallState {
-    INCOMING,
-    OUTGOING,
-    WAITING,
-    IDLE
+    OnCall,
+    Waiting,
+    Ringing,
+    Idle;
 }

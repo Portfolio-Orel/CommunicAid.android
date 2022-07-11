@@ -8,15 +8,12 @@ import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.data.local.LocalDatabase
-import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.data.local.interactors.PhoneCallsInteractorImpl
 import com.orelzman.mymessages.data.local.type_converters.Converters
+import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.service.phone_call.CallState
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManager
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerImpl
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -60,43 +57,48 @@ class PhoneCallManagerTest {
 
     @Test
     fun testIncomingThenWaitingAnsweredThenIncomingAnswered() {
-        incomingCallAnswered( Numbers.OREL)
-        testState(CallState.INCOMING)
+        val count = 30
+        val numberOfCallsInDbFromFunction = 3
+        for (i in 0 until count) {
+            incomingThenWaitingAnsweredThenIncomingAnswered()
+        }
+        printDBSize()
+        printDB()
+        testDBSize(numberOfCallsInDbFromFunction * count)
+    }
+
+    private fun incomingThenWaitingAnsweredThenIncomingAnswered() {
+        incomingCallAnswered(Numbers.OREL)
+        testState(CallState.OnCall)
         waitingCall(Numbers.MOM)
-        testState(CallState.WAITING)
-        printDB()
-        printDBSize()
-        waitingCallAnswered(Numbers.MOM,)
-        printDB()
-        printDBSize()
-        testState(CallState.INCOMING)
+        testState(CallState.Waiting)
+        waitingCallAnswered(Numbers.MOM)
+        testState(CallState.OnCall)
         testLastNumber(Numbers.MOM)
         incomingCall(Numbers.SARA)
         testLastNumber(Numbers.SARA)
-        testState(CallState.WAITING)
+        testState(CallState.Waiting)
         waitingCallAnswered(number = Numbers.SARA)
-        testState(CallState.INCOMING)
-        testDBSize(3)
+        testState(CallState.OnCall)
         hangup()
-        testDBSize(3)
     }
 
     @Test
     fun testIncomingThenWaitingAnsweredThenIncomingRejected() {
         incomingCallAnswered(Numbers.OREL)
-        testState(CallState.INCOMING)
+        testState(CallState.OnCall)
         waitingCall(Numbers.MOM)
-        testState(CallState.WAITING)
+        testState(CallState.Waiting)
         printDB()
         printDBSize()
         waitingCallAnswered(Numbers.MOM, 1000)
         printDB()
         printDBSize()
-        testState(CallState.INCOMING)
+        testState(CallState.OnCall)
         testLastNumber(Numbers.MOM)
         incomingCall(Numbers.SARA)
         testLastNumber(Numbers.SARA)
-        testState(CallState.WAITING)
+        testState(CallState.Waiting)
         waitingCallRejected(Numbers.MOM)
         testDBSize(3)
         hangup()
@@ -106,15 +108,15 @@ class PhoneCallManagerTest {
     @Test
     fun testIncomingThenWaitingAnswered() {
         incomingCallAnswered(Numbers.OREL)
-        testState(CallState.INCOMING)
+        testState(CallState.OnCall)
         waitingCall(Numbers.MOM)
-        testState(CallState.WAITING)
+        testState(CallState.Waiting)
         printDB()
         printDBSize()
         waitingCallAnswered(Numbers.MOM, 1000)
         printDB()
         printDBSize()
-        testState(CallState.INCOMING)
+        testState(CallState.OnCall)
         testLastNumber(Numbers.MOM)
         hangup()
         printDB()
@@ -125,13 +127,13 @@ class PhoneCallManagerTest {
     @Test
     fun testIncomingThenWaitingRejected() {
         incomingCallAnswered(Numbers.OREL)
-        testState(CallState.INCOMING)
+        testState(CallState.OnCall)
 
         waitingCall(Numbers.MOM)
-        testState(CallState.WAITING)
+        testState(CallState.Waiting)
 
         waitingCallRejected(previousNumber = Numbers.OREL)
-        testState(CallState.INCOMING)
+        testState(CallState.OnCall)
         testLastNumber(Numbers.MOM)
 
         hangup(Numbers.OREL)
@@ -151,7 +153,7 @@ class PhoneCallManagerTest {
         for (i in 0 until count) {
             outgoingCallAnswered(duration, number)
             hangup(number)
-            testState(CallState.IDLE)
+            testState(CallState.Idle)
         }
     }
 
@@ -184,23 +186,23 @@ class PhoneCallManagerTest {
 
     private fun hangup(number: Numbers = Numbers.OREL) {
         idle(number = number)
-        testState(CallState.IDLE)
+        testState(CallState.Idle)
     }
 
     private fun waitingCallAnswered(number: Numbers, millis: Long = 100) {
-        if (manager.state.value != CallState.WAITING) throw CantEndWaitingCallFromNotWaitingState
+        if (manager.state.value != CallState.Waiting) throw CantEndWaitingCallFromNotWaitingState
         offhook(number, millis)
     }
 
     private fun waitingCallRejected(previousNumber: Numbers) {
-        if (manager.state.value != CallState.WAITING) throw CantEndWaitingCallFromNotWaitingState
+        if (manager.state.value != CallState.Waiting) throw CantEndWaitingCallFromNotWaitingState
         offhook(previousNumber)
     }
 
     private fun waitingCall(number: Numbers) {
-        if (manager.state.value != CallState.INCOMING
-            && manager.state.value != CallState.OUTGOING
-        ) throw CantStartWaitingFromIdleOrWaitingStates
+        if (manager.state.value != CallState.OnCall) {
+            throw CantStartWaitingFromIdleOrWaitingStates
+        }
         ring(number)
     }
 
@@ -220,9 +222,7 @@ class PhoneCallManagerTest {
     }
 
     private fun changeState(state: States, number: Numbers) {
-        CoroutineScope(Dispatchers.IO).launch {
-            manager.onStateChanged(state.value, number.value)
-        }
+        manager.onStateChanged(state.value, number.value)
     }
 
     private fun testDBSize(sizeExpected: Int) {

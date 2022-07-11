@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.util.utils
+package com.orelzman.mymessages.util.common
 
 import java.util.*
 
