@@ -10,8 +10,8 @@ import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.model.entities.UploadState
 import com.orelzman.mymessages.domain.model.entities.toPhoneCalls
-import com.orelzman.mymessages.util.CallUtils
-import com.orelzman.mymessages.util.utils.DateUtils
+import com.orelzman.mymessages.util.common.CallUtils
+import com.orelzman.mymessages.util.common.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow

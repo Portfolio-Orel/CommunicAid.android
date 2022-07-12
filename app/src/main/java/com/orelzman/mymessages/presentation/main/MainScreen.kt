@@ -90,10 +90,13 @@ fun MainScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        state.activeCall?.number ?: stringResource(R.string.no_active_call),
-                        modifier = Modifier
-                            .padding(8.dp),
-                        style = MaterialTheme.typography.titleMedium
+                        text = if (state.activeCall == "" || state.activeCall == null)
+                            stringResource(R.string.no_active_call)
+                        else
+                            state.activeCall,
+                    modifier = Modifier
+                        .padding(8.dp),
+                    style = MaterialTheme.typography.titleMedium
                     )
                     if (state.callInBackground != null) {
                         Row(
@@ -116,7 +119,7 @@ fun MainScreen(
                                 ),
                                 onClick = { viewModel.setCallOnTheLineActive() }) {
                                 Text(
-                                    state.callOnTheLine?.number ?: "",
+                                    state.callOnTheLine ?: "",
                                     style = MaterialTheme.typography.bodySmall,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
@@ -141,7 +144,7 @@ fun MainScreen(
                                 ),
                                 onClick = { viewModel.setBackgroundCallActive() }) {
                                 Text(
-                                    state.callInBackground.number,
+                                    state.callInBackground,
                                     style = MaterialTheme.typography.bodySmall,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
@@ -179,7 +182,7 @@ fun MainScreen(
             FlowRow(
                 modifier = Modifier
                     .padding(start = 10.dp, end = 5.dp)
-                    .fillMaxHeight(0.5F)
+                    .fillMaxHeight(0.7F)
                     .fillMaxWidth(0.9F)
                     .scrollable(
                         orientation = Orientation.Vertical,
@@ -199,14 +202,7 @@ fun MainScreen(
                             modifier = Modifier
                                 .width(boxWidth)
                                 .height(boxHeight)
-                                .padding(0.dp)
-                                .scrollable(
-                                    orientation = Orientation.Horizontal,
-                                    state = rememberScrollableState { delta ->
-                                        foldersOffset.value = foldersOffset.value + delta
-                                        delta
-                                    }
-                                ),
+                                .padding(0.dp),
                             onClick = { message, context ->
                                 viewModel.onMessageClick(message, context)
                             },

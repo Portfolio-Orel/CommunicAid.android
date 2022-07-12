@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.orelzman.mymessages.domain.model.dto.body.create.CreatePhoneCallBody
-import com.orelzman.mymessages.util.CallType
-import com.orelzman.mymessages.util.CallUtils
+import com.orelzman.mymessages.util.common.CallType
+import com.orelzman.mymessages.util.common.CallUtils
 import com.orelzman.mymessages.util.extension.inSeconds
 import java.util.*
 

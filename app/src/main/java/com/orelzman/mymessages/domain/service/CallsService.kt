@@ -17,17 +17,14 @@ import com.orelzman.mymessages.domain.interactors.AnalyticsInteractor
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.model.entities.*
-import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
-import com.orelzman.mymessages.util.CallUtils
+import com.orelzman.mymessages.util.common.CallUtils
+import com.orelzman.mymessages.util.common.Constants.TIME_TO_ADD_CALL_TO_CALL_LOG
 import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.appendAll
 import com.orelzman.mymessages.util.extension.compareToBallPark
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.*
 import javax.inject.Inject
 
@@ -45,9 +42,6 @@ class CallsService : Service() {
     private lateinit var currentNotification: Notification
     private val notificationID = 1
     private val notificationChannelId = "MyMessages"
-
-    @Inject
-    lateinit var phoneCallManagerInteractor: PhoneCallManagerInteractor
 
     @Inject
     lateinit var phoneCallsInteractor: PhoneCallsInteractor
@@ -81,7 +75,6 @@ class CallsService : Service() {
 
 
     override fun onCreate() {
-        Log.vCustom("Service onCreate")
         super.onCreate()
         currentNotification = createNotification()
         startForeground(notificationID, currentNotification)
@@ -156,49 +149,50 @@ class CallsService : Service() {
 
     private fun uploadCalls() {
         var phoneCalls = emptyList<PhoneCall>()
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                delay(2000) // Delay to let the calls log populate
-                phoneCalls = phoneCallsInteractor
-                    .getAll()
-                    .appendAll(checkCallsNotRecorded())
-                    .distinctBy { it.startDate }
-                    .filter { it.uploadState == UploadState.NotUploaded }
-                    .mapNotNull {
-                        it.uploadState = UploadState.BeingUploaded
-                        phoneCallsInteractor.updateCallUploadState(
-                            it,
-                            UploadState.BeingUploaded
-                        )
-                        return@mapNotNull CallUtils.update(this@CallsService, it)
-                    }
-                authInteractor.getUser()?.userId?.let {
-                    phoneCallsInteractor.createPhoneCalls(
-                        it,
-                        phoneCalls
-                    )
-                    phoneCalls.forEach { call ->
-                        phoneCallsInteractor.updateCallUploadState(call, UploadState.Uploaded)
-                        analyticsInteractor.track("Call Deleted", "call" to call.number)
-                    }
-
-                }
-            } catch (exception: Exception) {
-                exception.log(phoneCalls)
-                phoneCalls.forEach {
+        val uploadJob = CoroutineScope(Dispatchers.IO).async {
+            delay(TIME_TO_ADD_CALL_TO_CALL_LOG)
+            phoneCalls = phoneCallsInteractor
+                .getAll()
+                .appendAll(checkCallsNotRecorded())
+                .distinctBy { it.startDate }
+                .filter { it.uploadState == UploadState.NotUploaded }
+                .mapNotNull {
+                    it.uploadState = UploadState.BeingUploaded
                     phoneCallsInteractor.updateCallUploadState(
                         it,
-                        uploadState = UploadState.NotUploaded
+                        UploadState.BeingUploaded
                     )
+                    return@mapNotNull CallUtils.update(this@CallsService, it)
                 }
+            authInteractor.getUser()?.userId?.let {
+                phoneCallsInteractor.createPhoneCalls(
+                    it,
+                    phoneCalls
+                )
+                phoneCalls.forEach { call ->
+                    phoneCallsInteractor.updateCallUploadState(call, UploadState.Uploaded)
+                    analyticsInteractor.track("Call Deleted", "call" to call.number)
+                }
+            }
+        }
+        try {
+            CoroutineScope(Dispatchers.IO).launch {
+                uploadJob.await()
                 stopService()
             }
-        }.invokeOnCompletion {
+        } catch (e: Exception) {
+            e.log(phoneCalls)
+            phoneCalls.forEach {
+                phoneCallsInteractor.updateCallUploadState(
+                    it,
+                    uploadState = UploadState.NotUploaded
+                )
+            }
             stopService()
         }
     }
 
-    private fun checkCallsNotRecorded(): List<PhoneCall> {
+    private suspend fun checkCallsNotRecorded(): List<PhoneCall> {
         val phoneCalls = ArrayList<PhoneCall>()
         val lastUpdateAt = settingsInteractor.getSettings(SettingsKeys.CallsUpdateAt)?.value
         val date = Date(lastUpdateAt?.toLongOrNull() ?: Date().time)
@@ -214,21 +208,13 @@ class CallsService : Service() {
             }
         }
         phoneCallsInteractor.cachePhoneCalls(phoneCalls)
-
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                authInteractor.getUser()?.let {
-                    settingsInteractor.createSettings(
-                        Settings(
-                            key = SettingsKeys.CallsUpdateAt, value = Date().time.toString()
-                        ),
-                        userId = it.userId
-                    )
-
-                }
-            } catch (exception: Exception) {
-                exception.log()
-            }
+        authInteractor.getUser()?.let {
+            settingsInteractor.createSettings(
+                Settings(
+                    key = SettingsKeys.CallsUpdateAt, value = Date().time.toString()
+                ),
+                userId = it.userId
+            )
         }
         return phoneCalls
     }

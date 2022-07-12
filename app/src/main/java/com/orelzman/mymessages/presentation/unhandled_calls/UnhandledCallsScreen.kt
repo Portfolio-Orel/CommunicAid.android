@@ -24,7 +24,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.orelzman.mymessages.R
-import com.orelzman.mymessages.presentation.BackPressHandler
 import com.orelzman.mymessages.presentation.unhandled_calls.components.UnhandledCallRow
 import com.orelzman.mymessages.util.extension.DefaultDestinationNavigator
 import com.ramcosta.composedestinations.annotation.Destination
@@ -40,9 +39,7 @@ fun UnhandledCallsScreen(
 
     val onBack = { navigator.navigateUp() }
     val state = viewModel.state
-    BackPressHandler {
-        onBack()
-    }
+
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
@@ -56,7 +53,9 @@ fun UnhandledCallsScreen(
                 modifier = Modifier
                     .padding(12.dp)
                     .size(48.dp)
-                    .clickable { onBack() },
+                    .clickable(
+                        onClick = { onBack() },
+                    ),
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }

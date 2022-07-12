@@ -29,12 +29,12 @@ class SettingsInteractorImpl @Inject constructor(
     }
 
     override suspend fun createSettings(settings: Settings, userId: String) {
+        db.insert(settings)
         val createOrUpdateSettingsBody = CreateOrUpdateSettingsBody(
             key = settings.key.keyInServer,
             value = settings.value,
             userId = userId
         )
         repository.createOrUpdateSettings(createOrUpdateSettingsBody)
-        db.insert(settings)
     }
 }
