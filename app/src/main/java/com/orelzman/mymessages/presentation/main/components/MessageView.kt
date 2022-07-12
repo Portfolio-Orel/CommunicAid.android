@@ -6,7 +6,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,39 +29,33 @@ fun MessageView(
     onLongClick: (Message, Context) -> Unit = { _, _ -> }
 ) {
     val context = LocalContext.current
+    val boxHeight = 0.7f
     Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp)),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Card(
+        Box(
             modifier = Modifier
-                .fillMaxHeight(0.7f)
+                .fillMaxHeight(boxHeight)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
                 .combinedClickable(
                     onClick = { onClick(message, context) },
                     onLongClick = { onLongClick(message, context) }
                 )
-
-                .background(MaterialTheme.colorScheme.secondary),
-            elevation = CardDefaults.elevatedCardElevation(),
+                .background(MaterialTheme.colorScheme.primary),
+            contentAlignment = Alignment.Center,
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .wrapContentSize(Alignment.Center)
-                    .padding(12.dp)
-            ) {
-                Text(
-                    text = message.shortTitle,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
+            Text(
+                text = message.shortTitle,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
         }
         Text(
             text = message.title,
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }

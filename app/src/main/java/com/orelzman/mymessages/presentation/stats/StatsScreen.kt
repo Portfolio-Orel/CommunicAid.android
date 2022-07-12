@@ -3,8 +3,6 @@ package com.orelzman.mymessages.presentation.stats
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.orelzman.mymessages.presentation.main.components.ActionButton
 import com.ramcosta.composedestinations.annotation.Destination
 
 @Destination
@@ -93,21 +92,11 @@ fun StatsScreen(
             }
             Spacer(modifier = Modifier.weight(1f))
 
-            Button(onClick = { viewModel.sendCallLogs(context) }) {
-                Row {
-                    Text(if (!state.isLoadingCallLogSend) "שלח יומן" else "שולח...")
-                    if (state.isLoadingCallLogSend) {
-                        Spacer(modifier = Modifier.width(16.dp))
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .height(16.dp)
-                                .width(16.dp),
-                            strokeWidth = 2.dp,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                        )
-                    }
-                }
-            }
+            ActionButton(
+                onClick = { viewModel.sendCallLogs(context) },
+                text = "שלח יומן",
+                isLoading = state.isLoadingCallLogSend
+            )
 
             Row(
                 modifier = Modifier

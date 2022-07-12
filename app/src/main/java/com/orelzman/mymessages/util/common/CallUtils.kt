@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.util
+package com.orelzman.mymessages.util.common
 
 import android.content.Context
 import android.database.Cursor
@@ -11,7 +11,6 @@ import com.orelzman.mymessages.util.extension.compareToBallPark
 import com.orelzman.mymessages.util.extension.inSeconds
 import com.orelzman.mymessages.util.extension.log
 import com.orelzman.mymessages.util.extension.toDate
-import com.orelzman.mymessages.util.utils.DateUtils
 import kotlinx.coroutines.delay
 import java.util.*
 
