@@ -90,10 +90,13 @@ fun MainScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        state.activeCall?.number ?: stringResource(R.string.no_active_call),
-                        modifier = Modifier
-                            .padding(8.dp),
-                        style = MaterialTheme.typography.titleMedium
+                        text = if (state.activeCall == "" || state.activeCall == null)
+                            stringResource(R.string.no_active_call)
+                        else
+                            state.activeCall,
+                    modifier = Modifier
+                        .padding(8.dp),
+                    style = MaterialTheme.typography.titleMedium
                     )
                     if (state.callInBackground != null) {
                         Row(
@@ -116,7 +119,7 @@ fun MainScreen(
                                 ),
                                 onClick = { viewModel.setCallOnTheLineActive() }) {
                                 Text(
-                                    state.callOnTheLine?.number ?: "",
+                                    state.callOnTheLine ?: "",
                                     style = MaterialTheme.typography.bodySmall,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
@@ -141,7 +144,7 @@ fun MainScreen(
                                 ),
                                 onClick = { viewModel.setBackgroundCallActive() }) {
                                 Text(
-                                    state.callInBackground.number,
+                                    state.callInBackground,
                                     style = MaterialTheme.typography.bodySmall,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
