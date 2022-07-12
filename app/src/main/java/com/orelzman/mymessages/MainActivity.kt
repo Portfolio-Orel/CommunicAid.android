@@ -31,11 +31,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val uploadWorkRequest: WorkRequest =
-            OneTimeWorkRequestBuilder<UploadWorker>()
-                .build()
-        WorkManager.getInstance(this)
-            .enqueue(uploadWorkRequest)
         setContent {
             MyMessagesTheme {
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
