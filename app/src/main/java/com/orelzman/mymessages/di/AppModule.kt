@@ -12,6 +12,8 @@ import com.orelzman.mymessages.data.remote.BaseProjectUrl
 import com.orelzman.mymessages.data.remote.EnvironmentRepository
 import com.orelzman.mymessages.data.remote.Environments
 import com.orelzman.mymessages.data.remote.repository.api.API
+import com.orelzman.mymessages.domain.workers.DataSourceCalls
+import com.orelzman.mymessages.domain.workers.DataSourceCallsImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,6 +48,10 @@ object AppModule {
         Environments.Local -> "http://192.168.1.39:4000"
         Environments.Production -> "https://22jwmm93j9.execute-api.us-east-1.amazonaws.com"
     }
+
+    @Provides
+    fun provideDataSourceCalls(dataSource: DataSourceCallsImpl): DataSourceCalls =
+        dataSource
 
     @Provides
     fun provideOkHttpClient(authIneractor: AuthInteractor): OkHttpClient =

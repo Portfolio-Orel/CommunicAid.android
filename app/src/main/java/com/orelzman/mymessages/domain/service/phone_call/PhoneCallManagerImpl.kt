@@ -8,6 +8,7 @@ import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.service.phone_call.exceptions.WaitingThenRingingException
+import com.orelzman.mymessages.domain.workers.DataSourceCalls
 import com.orelzman.mymessages.util.common.CallUtils
 import com.orelzman.mymessages.util.common.Constants.TIME_TO_ADD_CALL_TO_CALL_LOG
 import com.orelzman.mymessages.util.extension.Log
@@ -26,7 +27,8 @@ import javax.inject.Inject
 @ExperimentalPermissionsApi
 class PhoneCallManagerImpl @Inject constructor(
     private val phoneCallInteractor: PhoneCallsInteractor,
-    private val analyticsInteractor: AnalyticsInteractor?
+    private val analyticsInteractor: AnalyticsInteractor?,
+    private val dataSource: DataSourceCalls
 ) : PhoneCallManager {
 
     private val _callInTheBackground: MutableStateFlow<PhoneCall?> = MutableStateFlow(null)
@@ -37,13 +39,16 @@ class PhoneCallManagerImpl @Inject constructor(
     override val state = _state.asStateFlow()
     override val callInBackground = _callInTheBackground.asStateFlow()
 
+    var context: Context? = null
+
     override fun onStateChanged(state: String, number: String, context: Context?) {
         Log.vCustom("state: $state \n number: $number")
+        this.context = context
         analyticsInteractor?.track("Call Status", mapOf("status" to state))
         when (state) {
             TelephonyManager.EXTRA_STATE_IDLE -> onIdleState()
             TelephonyManager.EXTRA_STATE_RINGING -> onRingingState(number)
-            TelephonyManager.EXTRA_STATE_OFFHOOK -> onOffHookState(number, context)
+            TelephonyManager.EXTRA_STATE_OFFHOOK -> onOffHookState(number)
         }
     }
 
@@ -64,7 +69,7 @@ class PhoneCallManagerImpl @Inject constructor(
         }
     }
 
-    private fun onOffHookState(number: String, context: Context?) {
+    private fun onOffHookState(number: String) {
         val previousState = state.value
         when (previousState) {
             CallState.Waiting -> {
@@ -81,15 +86,23 @@ class PhoneCallManagerImpl @Inject constructor(
     }
 
     private fun setBackgroundCall(phoneCall: PhoneCall?) {
-        _callInTheBackground.value = phoneCall
+        CoroutineScope(Dispatchers.Main).launch {
+            dataSource.updateCallInTheBackground(phoneCall?.number)
+        }
     }
 
     private fun setCallOnLine(phoneCall: PhoneCall?) {
         _callOnTheLine.value = phoneCall
+        CoroutineScope(Dispatchers.Main).launch {
+            dataSource.updateCallOnTheLine(phoneCall?.number)
+        }
     }
 
     private fun setStateValue(callState: CallState) {
         _state.value = callState
+        CoroutineScope(Dispatchers.Main).launch {
+            dataSource.updateState(callState.value)
+        }
     }
 
     private fun outgoingCall(number: String) {
@@ -152,8 +165,8 @@ class PhoneCallManagerImpl @Inject constructor(
 
     private fun reset() {
         setStateValue(CallState.Idle)
-        _callOnTheLine.value = null
-        _callInTheBackground.value = null
+        setCallOnLine(null)
+        setBackgroundCall(null)
     }
 }
 

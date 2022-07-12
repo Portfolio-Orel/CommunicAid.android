@@ -17,7 +17,6 @@ import com.orelzman.mymessages.domain.interactors.AnalyticsInteractor
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.model.entities.*
-import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
 import com.orelzman.mymessages.util.common.CallUtils
 import com.orelzman.mymessages.util.common.Constants.TIME_TO_ADD_CALL_TO_CALL_LOG
 import com.orelzman.mymessages.util.extension.Log
@@ -43,9 +42,6 @@ class CallsService : Service() {
     private lateinit var currentNotification: Notification
     private val notificationID = 1
     private val notificationChannelId = "MyMessages"
-
-    @Inject
-    lateinit var phoneCallManagerInteractor: PhoneCallManagerInteractor
 
     @Inject
     lateinit var phoneCallsInteractor: PhoneCallsInteractor

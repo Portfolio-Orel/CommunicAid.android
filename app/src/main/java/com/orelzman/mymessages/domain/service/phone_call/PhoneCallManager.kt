@@ -16,9 +16,18 @@ interface PhoneCallManager {
     fun onStateChanged(state: String, number: String, context: Context? = null)
 }
 
-enum class CallState {
-    OnCall,
-    Waiting,
-    Ringing,
-    Idle;
+enum class CallState(val value: String) {
+    OnCall("OnCall"),
+    Waiting("Waiting"),
+    Ringing("Ringing"),
+    Idle("Idle");
+
+    companion object {
+        fun fromString(value: String): CallState {
+            values().forEach {
+                if (it.value == value) return it
+            }
+            return Idle
+        }
+    }
 }
