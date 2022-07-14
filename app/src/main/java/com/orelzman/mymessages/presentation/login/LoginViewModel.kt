@@ -65,6 +65,7 @@ class LoginViewModel @Inject constructor(
                 if (event.isAuthorized) {
                     userAuthorizedSuccessfully()
                 } else {
+
                     loginFailed(event.exception)
                 }
             }
