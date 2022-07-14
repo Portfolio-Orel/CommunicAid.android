@@ -10,11 +10,11 @@ class AuthInterceptor (
 
     private val lock = Any()
     override fun intercept(chain: Interceptor.Chain): Response =
-        takeIf { synchronized(lock) { authInteractor.getUserSync()?.token != "" } }
+        takeIf { synchronized(lock) { authInteractor.getUser()?.token != "" } }
             .run { chain.request() }
             .newBuilder()
-            .addHeader("Authorization", authInteractor.getUserSync()?.token ?: "")
-            .addHeader("UserId", authInteractor.getUserSync()?.userId ?: "")
+            .addHeader("Authorization", authInteractor.getUser()?.token ?: "")
+            .addHeader("UserId", authInteractor.getUser()?.userId ?: "")
             .build()
             .run { chain.proceed(this) }
 }

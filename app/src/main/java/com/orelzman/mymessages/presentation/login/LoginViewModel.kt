@@ -38,7 +38,7 @@ class LoginViewModel @Inject constructor(
     init {
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                interactor.init(R.raw.awsconfiguration)
+                interactor.init(R.raw.dev_amplifyconfiguration)
                 var isAuthorized = false
                 val user = interactor.getUser()
                 if (user != null) {

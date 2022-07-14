@@ -13,7 +13,6 @@ import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
 import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.AmplifyConfiguration
 import com.amplifyframework.kotlin.core.Amplify
-import com.orelzman.auth.data.repository.AuthRepository
 import com.orelzman.auth.domain.exception.CodeMismatchException
 import com.orelzman.auth.domain.exception.NotAuthorizedException
 import com.orelzman.auth.domain.exception.UserNotConfirmedException
@@ -27,13 +26,11 @@ import javax.inject.Inject
 
 class AuthInteractorImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val authRepository: AuthRepository,
     private val userInteractor: UserInteractor,
 ) : AuthInteractor {
     companion object {
         var isConfigured: Boolean = false
     }
-
 
     override suspend fun init(@RawRes configFileResourceId: Int?) {
         if (isConfigured) return
@@ -48,9 +45,9 @@ class AuthInteractorImpl @Inject constructor(
             }
             isConfigured = true
             Log.v("AuthAWS:::", "AWS configured")
+            return
         } catch (exception: AmplifyException) {
             Log.v("AuthAWS:::", exception.localizedMessage ?: "")
-            return
         } finally {
             if (Amplify.Auth.fetchAuthSession().isSignedIn) {
                 userSignInSuccessfully()
@@ -150,17 +147,21 @@ class AuthInteractorImpl @Inject constructor(
     }
 
     private suspend fun setUser() {
-        val userId = Amplify.Auth.getCurrentUser()?.userId ?: ""
-        val token =
-            (Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession).userPoolTokens.value?.accessToken.toString()
-        var email = ""
-        Amplify.Auth.fetchUserAttributes().forEach {
-            if (it.key == AuthUserAttributeKey.email()) {
-                email = it.value
+        try {
+            val userId = Amplify.Auth.getCurrentUser()?.userId ?: return
+            val token =
+                (Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession).userPoolTokens.value?.accessToken ?: return
+            var email = ""
+            Amplify.Auth.fetchUserAttributes().forEach {
+                if (it.key == AuthUserAttributeKey.email()) {
+                    email = it.value
+                }
             }
+            val user = User(userId = userId, token = token, email = email)
+            userInteractor.save(user)
+        } catch(e:Exception) {
+            Log.v("authAWS:::",  "error")
         }
-        val user = User(userId = userId, token = token, email = email)
-        userInteractor.save(user)
     }
 
     override fun isValidCredentials(email: String, password: String): Boolean =
