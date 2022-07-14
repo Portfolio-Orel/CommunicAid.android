@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,13 +35,17 @@ class ConfirmationViewModel @Inject constructor(
         username: String, code: String,
         onUserConfirmed: (String) -> Unit = {}
     ) {
+        val job = viewModelScope.async {
+            authInteractor.confirmUser(username = username, code = code)
+        }
         try {
-            viewModelScope.launch(Dispatchers.IO) {
-                authInteractor.confirmUser(username = username, code = code)
+            viewModelScope.launch(Dispatchers.Main) {
+                job.await()
                 onUserConfirmed(username)
                 state = ConfirmationState()
             }
         } catch (exception: Exception) {
+
             state = state.copy(isLoading = false, exception = exception)
         }
     }

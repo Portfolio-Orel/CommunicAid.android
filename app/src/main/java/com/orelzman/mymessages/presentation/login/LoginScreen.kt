@@ -20,9 +20,9 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.presentation.confirmation_screen.ConfirmationScreen
+import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
 import com.orelzman.mymessages.presentation.login.components.Input
 import com.orelzman.mymessages.presentation.login_button.LoginButton
-import com.orelzman.mymessages.presentation.main.MainScreen
 import com.orelzman.mymessages.presentation.register_button.RegisterButton
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 import com.orelzman.mymessages.util.extension.DefaultDestinationNavigator
@@ -37,7 +37,9 @@ fun LoginScreen(
 ) { // ToDo: Change MainScreen's name and create a main screen that chooses which composable to show.
     val state = viewModel.state
     if (state.isAuthorized) {
-        MainScreen(navigator = navigator)
+        navigator.navigate(MainScreenDestination) {
+            launchSingleTop = true
+        }
     } else if (state.isLoading) {
         Box(
             modifier = Modifier

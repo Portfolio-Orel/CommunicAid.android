@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.mymessages.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,7 +23,7 @@ class LoginButtonViewModel @Inject constructor(
         state = state.copy(isLoading = true)
         viewModelScope.launch(Dispatchers.IO) {
             state = try {
-                authInteractor.initAWS()
+                authInteractor.init(R.raw.awsconfiguration)
                 authInteractor.signIn(username = username, password = password)
                 onLoginComplete(true, null)
                 state.copy(isLoading = false)

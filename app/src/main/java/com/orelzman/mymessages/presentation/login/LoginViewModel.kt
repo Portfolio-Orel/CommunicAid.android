@@ -10,6 +10,7 @@ import com.orelzman.auth.domain.exception.CodeMismatchException
 import com.orelzman.auth.domain.exception.UserNotConfirmedException
 import com.orelzman.auth.domain.exception.UserNotFoundException
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.interactors.DatabaseInteractor
 import com.orelzman.mymessages.domain.interactors.FolderInteractor
 import com.orelzman.mymessages.domain.interactors.MessageInteractor
@@ -37,7 +38,7 @@ class LoginViewModel @Inject constructor(
     init {
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                interactor.initAWS()
+                interactor.init(R.raw.awsconfiguration)
                 var isAuthorized = false
                 val user = interactor.getUser()
                 if (user != null) {

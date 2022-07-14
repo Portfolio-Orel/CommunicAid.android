@@ -1,6 +1,6 @@
 {
   "auth": {
-    "mymessages27a643bba": {
+    "mymessages203df3f96": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],

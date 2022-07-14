@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.domain.workers
+package com.orelzman.mymessages.domain.common
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
@@ -37,7 +37,6 @@ class DataSourceCallsImpl @Inject constructor(
     override fun userPreferencesFlow(): Flow<CallPreferences> =
         context.callsDataStore.data
             .catch { exception ->
-                // dataStore.data throws an IOException when an error is encountered when reading data
                 if (exception is IOException) {
                     emit(emptyPreferences())
                 } else {

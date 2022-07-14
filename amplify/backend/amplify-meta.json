@@ -1,19 +1,19 @@
 {
   "providers": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-mymessages2-dev-144844-authRole",
-      "UnauthRoleArn": "arn:aws:iam::680454469637:role/amplify-mymessages2-dev-144844-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::680454469637:role/amplify-mymessages2-dev-144844-authRole",
+      "AuthRoleName": "amplify-mymessages2-dev-180617-authRole",
+      "UnauthRoleArn": "arn:aws:iam::680454469637:role/amplify-mymessages2-dev-180617-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::680454469637:role/amplify-mymessages2-dev-180617-authRole",
       "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-mymessages2-dev-144844-deployment",
-      "UnauthRoleName": "amplify-mymessages2-dev-144844-unauthRole",
-      "StackName": "amplify-mymessages2-dev-144844",
-      "StackId": "arn:aws:cloudformation:us-east-1:680454469637:stack/amplify-mymessages2-dev-144844/44adea60-f6d8-11ec-a4cd-0e1313516a21",
-      "AmplifyAppId": "degts2z6ete3x"
+      "DeploymentBucketName": "amplify-mymessages2-dev-180617-deployment",
+      "UnauthRoleName": "amplify-mymessages2-dev-180617-unauthRole",
+      "StackName": "amplify-mymessages2-dev-180617",
+      "StackId": "arn:aws:cloudformation:us-east-1:680454469637:stack/amplify-mymessages2-dev-180617/59e75240-02bd-11ed-87c2-0e4e6f0f2121",
+      "AmplifyAppId": "d2etiknc5otx7y"
     }
   },
   "auth": {
-    "mymessages203df3f96": {
+    "mymessages27a643bba": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
@@ -36,23 +36,20 @@
           "EMAIL"
         ]
       },
-      "providerMetadata": {
-        "s3TemplateURL": "https://s3.amazonaws.com/amplify-mymessages2-dev-144844-deployment/amplify-cfn-templates/auth/mymessages203df3f96-cloudformation-template.json",
-        "logicalId": "authmymessages203df3f96"
-      },
-      "lastPushTimeStamp": "2022-06-28T14:33:18.757Z",
       "output": {
-        "UserPoolId": "us-east-1_3ACm3Ah7S",
-        "AppClientIDWeb": "2fd1rljbn9b0rk21n6q2u5lm",
-        "AppClientID": "4hvncqi9f4hl5o9snhdnc69r8q",
-        "IdentityPoolId": "us-east-1:dd6946a2-db73-451c-b5e1-5208e4c83f9f",
-        "UserPoolArn": "arn:aws:cognito-idp:us-east-1:680454469637:userpool/us-east-1_3ACm3Ah7S",
-        "IdentityPoolName": "mymessages203df3f96_identitypool_03df3f96__dev",
-        "UserPoolName": "mymessages203df3f96_userpool_03df3f96",
-        "HostedUIDomain": "mymessages286a0ebc8-86a0ebc8-dev",
-        "OAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"myapp://callback/\"],\"LogoutURLs\":[\"myapp://signout/\"]}"
+        "UserPoolId": "us-east-1_LEuBEtur7",
+        "AppClientIDWeb": "37njlq2jn656g4ju53kjgju5cr",
+        "AppClientID": "ng2d3jacorrfqrn2l6qb1jl2r",
+        "IdentityPoolId": "us-east-1:87e7a8a5-195c-42fd-b3fc-7e88290e5234",
+        "UserPoolArn": "arn:aws:cognito-idp:us-east-1:680454469637:userpool/us-east-1_LEuBEtur7",
+        "IdentityPoolName": "mymessages27a643bba_identitypool_7a643bba__dev",
+        "UserPoolName": "mymessages27a643bba_userpool_7a643bba"
       },
-      "lastPushDirHash": "fgA6mLxxeCz0e1dO4ULirIq32us="
+      "lastPushTimeStamp": "2022-07-13T17:24:16.507Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-mymessages2-dev-180617-deployment/amplify-cfn-templates/auth/mymessages27a643bba-cloudformation-template.json",
+        "logicalId": "authmymessages27a643bba"
+      }
     }
   }
 }
