@@ -4,14 +4,12 @@ import android.util.Log
 
 class Log {
     companion object {
-        fun vCustom(message: String) {
-            Log.v("MyMessages logs:", message)
-            println("MyMessages: $message")
+        fun v(message: Any) {
+            Log.v("MyMessages logs:", message.toString())
         }
 
         fun eCustom(message: String) {
             Log.e("MyMessages logs:", message)
-            println("MyMessages: $message")
         }
     }
 }

@@ -60,7 +60,7 @@ class CallsService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         currentState = intent?.extras?.get(INTENT_STATE_VALUE) as ServiceState
-        Log.vCustom("Service onStartCommand: $currentState")
+        Log.v("Service onStartCommand: $currentState")
         try {
             analyticsInteractor.track("CallsService", mapOf("status" to currentState.name))
         } catch (exception: Exception) {

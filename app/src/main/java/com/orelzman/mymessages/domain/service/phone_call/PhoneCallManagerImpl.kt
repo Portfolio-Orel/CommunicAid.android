@@ -42,7 +42,7 @@ class PhoneCallManagerImpl @Inject constructor(
     var context: Context? = null
 
     override fun onStateChanged(state: String, number: String, context: Context?) {
-        Log.vCustom("state: $state \n number: $number")
+        Log.v("state: $state \n number: $number")
         this.context = context
         analyticsInteractor?.track("Call Status", mapOf("status" to state))
         when (state) {

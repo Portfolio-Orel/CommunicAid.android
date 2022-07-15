@@ -43,7 +43,7 @@ class RegisterButtonViewModel @Inject constructor(
             try {
                 signUpJob.await()
             } catch (e: Exception) {
-                Log.vCustom(e.localizedMessage ?: "Error signing up")
+                Log.v(e.localizedMessage ?: "Error signing up")
                 state =
                     state.copy(isLoading = false)
             }

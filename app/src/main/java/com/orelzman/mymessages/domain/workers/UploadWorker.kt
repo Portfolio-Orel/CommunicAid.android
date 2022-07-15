@@ -34,7 +34,7 @@ class UploadWorker @AssistedInject constructor(
         try {
             uploadCalls()
         } catch (e: Exception) {
-            Log.vCustom(e.message ?: e.localizedMessage)
+            Log.v(e.message ?: e.localizedMessage)
         }
         return Result.success()
     }

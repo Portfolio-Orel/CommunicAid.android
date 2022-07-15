@@ -17,6 +17,7 @@ import com.orelzman.mymessages.domain.model.dto.body.create.CreateUserBody
 import com.orelzman.mymessages.domain.model.entities.Settings
 import com.orelzman.mymessages.domain.model.entities.SettingsKeys
 import com.orelzman.mymessages.domain.repository.Repository
+import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.hours
 import com.orelzman.mymessages.util.extension.log
 import com.orelzman.mymessages.util.extension.minutes
@@ -43,9 +44,11 @@ class LoginViewModel @Inject constructor(
     init {
         viewModelScope.launch(Dispatchers.Main) {
             try {
+                Log.v("Before checking auth")
                 interactor.init(authConfigFile)
                 var isAuthorized = false
                 val user = interactor.getUser()
+                Log.v("got user: $user")
                 if (user != null) {
                     isAuthorized = confirmUserCreated(user.userId)
                     userAuthorizedSuccessfully()

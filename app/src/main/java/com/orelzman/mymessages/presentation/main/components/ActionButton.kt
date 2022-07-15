@@ -38,7 +38,7 @@ fun ActionButton(
         } else {
             Text(
                 text = text,
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.labelLarge,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 color = if(isPrimary) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground
