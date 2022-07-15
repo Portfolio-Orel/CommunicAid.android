@@ -6,21 +6,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orelzman.auth.domain.exception.CodeMismatchException
-import com.orelzman.auth.domain.exception.UserNotConfirmedException
-import com.orelzman.auth.domain.exception.UserNotFoundException
+import com.orelzman.auth.domain.exception.*
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.mymessages.data.remote.AuthConfigFile
 import com.orelzman.mymessages.domain.interactors.DatabaseInteractor
 import com.orelzman.mymessages.domain.interactors.FolderInteractor
 import com.orelzman.mymessages.domain.interactors.MessageInteractor
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.model.dto.body.create.CreateUserBody
+import com.orelzman.mymessages.domain.model.entities.Settings
+import com.orelzman.mymessages.domain.model.entities.SettingsKeys
 import com.orelzman.mymessages.domain.repository.Repository
+import com.orelzman.mymessages.util.extension.hours
 import com.orelzman.mymessages.util.extension.log
+import com.orelzman.mymessages.util.extension.minutes
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.security.InvalidParameterException
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,13 +36,14 @@ class LoginViewModel @Inject constructor(
     private val folderInteractor: FolderInteractor,
     private val settingsInteractor: SettingsInteractor,
     private val databaseInteractor: DatabaseInteractor,
+    @AuthConfigFile private val authConfigFile: Int,
 ) : ViewModel() {
     var state by mutableStateOf(LoginState())
 
     init {
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                interactor.initAWS()
+                interactor.init(authConfigFile)
                 var isAuthorized = false
                 val user = interactor.getUser()
                 if (user != null) {
@@ -50,6 +56,9 @@ class LoginViewModel @Inject constructor(
             } catch (exception: Exception) {
                 when (exception) {
                     is UserNotAuthenticatedException -> {/*User needs to login again-do it with saved credentials*/
+                    }
+                    is WrongCredentialsException -> {
+
                     }
                 }
                 exception.log()
@@ -110,6 +119,28 @@ class LoginViewModel @Inject constructor(
 
     private fun loginFailed(exception: Exception?) {
         state = when (exception) {
+            is LimitExceededException -> {
+                CoroutineScope(Dispatchers.IO).launch {
+                    interactor.getUser()?.let {
+                        settingsInteractor.createSettings(
+                            Settings(
+                                SettingsKeys.LoginLimitExceeded,
+                                Date().time.toString()
+                            ),
+                            it.userId
+                        )
+                    }
+                }
+                val lastLimitExceedTime =
+                    settingsInteractor.getSettings(SettingsKeys.LoginLimitExceeded)?.value?.toLongOrNull()
+                        ?: Date().time
+                val lastLimitExceedDate = Date(lastLimitExceedTime)
+                state.copy(
+                    error = "ניסית יותר מידי פעמים. תנסה שוב 15 דק׳ מ:${
+                        lastLimitExceedDate.hours()
+                    }:${lastLimitExceedDate.minutes()}"
+                )
+            }
             is InvalidParameterException -> {
                 state.copy(error = "הפרטים שהוזנו לא נכונים...")
             }
@@ -117,6 +148,9 @@ class LoginViewModel @Inject constructor(
                 state.copy(showCodeConfirmation = true)
             }
             is UserNotFoundException -> {
+                state.copy(error = "המשתמש לא מוכר לנו...")
+            }
+            is WrongCredentialsException -> {
                 state.copy(error = "המשתמש לא מוכר לנו...")
             }
             else -> {

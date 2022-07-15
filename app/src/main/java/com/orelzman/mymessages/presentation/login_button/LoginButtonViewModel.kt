@@ -22,7 +22,6 @@ class LoginButtonViewModel @Inject constructor(
         state = state.copy(isLoading = true)
         viewModelScope.launch(Dispatchers.IO) {
             state = try {
-                authInteractor.initAWS()
                 authInteractor.signIn(username = username, password = password)
                 onLoginComplete(true, null)
                 state.copy(isLoading = false)

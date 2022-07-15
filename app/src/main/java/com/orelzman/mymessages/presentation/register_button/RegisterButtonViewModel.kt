@@ -4,10 +4,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.mymessages.util.extension.Log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,7 +27,7 @@ class RegisterButtonViewModel @Inject constructor(
         isSaveCredentials: Boolean = false,
         onRegisterComplete: () -> Unit
     ) {
-        CoroutineScope(Dispatchers.IO).launch {
+        val signUpJob = viewModelScope.async {
             state = state.copy(isLoading = true, isRegisterAttempt = true)
             authInteractor.signUp(
                 email = email,
@@ -35,6 +38,15 @@ class RegisterButtonViewModel @Inject constructor(
             state =
                 state.copy(isLoading = false)
             onRegisterComplete()
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                signUpJob.await()
+            } catch (e: Exception) {
+                Log.vCustom(e.localizedMessage ?: "Error signing up")
+                state =
+                    state.copy(isLoading = false)
+            }
         }
     }
 }

@@ -3,85 +3,57 @@ package com.orelzman.auth.data.interactor
 import android.app.Activity
 import android.content.Context
 import android.util.Log
-import com.amazonaws.mobile.client.AWSMobileClient
+import androidx.annotation.RawRes
+import com.amplifyframework.AmplifyException
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.AuthProvider
 import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
+import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
 import com.amplifyframework.auth.options.AuthSignUpOptions
-import com.amplifyframework.core.Amplify.AlreadyConfiguredException
+import com.amplifyframework.core.AmplifyConfiguration
 import com.amplifyframework.kotlin.core.Amplify
-import com.google.android.gms.auth.api.identity.BeginSignInRequest
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.orelzman.auth.data.repository.AuthRepository
 import com.orelzman.auth.domain.exception.*
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.auth.domain.interactor.UserInteractor
 import com.orelzman.auth.domain.model.User
 import dagger.hilt.android.qualifiers.ApplicationContext
-import io.reactivex.rxjava3.core.Single
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+
 
 class AuthInteractorImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val authRepository: AuthRepository,
     private val userInteractor: UserInteractor,
 ) : AuthInteractor {
     companion object {
         var isConfigured: Boolean = false
     }
 
-    init {
-        CoroutineScope(Dispatchers.IO).launch {
-            initAWS()
-        }
-    }
-
-    override suspend fun initAWS() {
+    override suspend fun init(@RawRes configFileResourceId: Int?) {
         if (isConfigured) return
         try {
             Amplify.addPlugin(AWSCognitoAuthPlugin())
-            Amplify.configure(context)
+            val configFile =
+                configFileResourceId?.let { AmplifyConfiguration.fromConfigFile(context, it) }
+            if (configFile != null) {
+                Amplify.configure(configFile, context)
+            } else {
+                Amplify.configure(context)
+            }
             isConfigured = true
-        } catch (exception: AlreadyConfiguredException) {
-            isConfigured = true
+            Log.v("AuthAWS:::", "AWS configured")
             return
+        } catch (exception: AmplifyException) {
+            Log.v("AuthAWS:::", exception.localizedMessage ?: "")
         } finally {
             if (Amplify.Auth.fetchAuthSession().isSignedIn) {
-                getUser()?.let {
-                    if(userInteractor.get() == null) {
-                        userInteractor.insert(it)
-                    }
-                }
+                userSignInSuccessfully()
             }
         }
     }
 
-    override suspend fun getUser(): User? {
-        if (!Amplify.Auth.fetchAuthSession().isSignedIn) {
-            return null
-        }
-        val user = userInteractor.get()
-        if (user != null) {
-            return user
-        }
-        val userId = Amplify.Auth.getCurrentUser()?.userId ?: ""
-        var email = ""
-        Amplify.Auth.fetchUserAttributes().forEach {
-            if (it.key == AuthUserAttributeKey.email()) {
-                email = it.value
-            }
-        }
-        val token = getToken()
-        return User(userId = userId, token = token, email = email)
-    }
+    override fun getUser(): User? = userInteractor.get()
 
-    override fun getToken(): String =
-        AWSMobileClient.getInstance().tokens.accessToken.tokenString
 
     @Throws
     override suspend fun signUp(
@@ -98,6 +70,7 @@ class AuthInteractorImpl @Inject constructor(
         } catch (exception: Exception) {
             when (exception) {
                 is AuthException.UserNotConfirmedException -> throw UserNotConfirmedException()
+                is AuthException.UsernameExistsException -> throw UsernameExistsException()
                 else -> throw exception
             }
         }
@@ -109,19 +82,20 @@ class AuthInteractorImpl @Inject constructor(
         try {
             val result = Amplify.Auth.confirmSignUp(username, code)
             if (result.isSignUpComplete) {
-                Log.i("AuthQuickstart", "Signup confirmed")
+                userSignInSuccessfully()
+                Log.i("AuthAWS:::", "Signup confirmed")
             } else {
-                Log.i("AuthQuickstart", "Signup confirmation not yet complete")
+                Log.i("AuthAWS:::", "Signup confirmation not yet complete")
             }
         } catch (error: AuthException) {
             when (error) {
                 is AuthException.CodeMismatchException -> {
-                    Amplify.Auth.resendSignUpCode(username)
+                    resendConfirmationCode(username)
                     throw CodeMismatchException()
                 }
-                is AuthException.NotAuthorizedException -> {
-                    throw NotAuthorizedException()
-                }
+                is AuthException.CodeExpiredException -> throw CodeExpiredException()
+                is AuthException.NotAuthorizedException -> throw NotAuthorizedException()
+
                 else -> throw error
             }
         }
@@ -130,9 +104,10 @@ class AuthInteractorImpl @Inject constructor(
     override suspend fun googleAuth(activity: Activity) {
         try {
             val result = Amplify.Auth.signInWithSocialWebUI(AuthProvider.google(), activity)
-            Log.i("AuthQuickstart", "Sign in OK: $result")
+            userSignInSuccessfully()
+            Log.i("AuthAWS:::", "Sign in OK: $result")
         } catch (error: AuthException) {
-            Log.e("AuthQuickstart", "Sign in failed", error)
+            Log.e("AuthAWS:::", "Sign in failed", error)
         }
     }
 
@@ -143,16 +118,23 @@ class AuthInteractorImpl @Inject constructor(
     ) {
         try {
             val result = Amplify.Auth.signIn(username, password)
+            setUser()
             if (result.isSignInComplete) {
-                Log.i("AuthQuickstart", "Sign in succeeded")
+                userSignInSuccessfully()
+                Log.v("AuthAWS:::", "Sign in succeeded")
             } else {
-                Log.e("AuthQuickstart", "Sign in not complete")
+                Log.e("AuthAWS:::", "Sign in not complete")
                 throw Exception("Login failed")
             }
         } catch (exception: Exception) {
+            Log.e("AuthAWS:::", "Sign in not complete with error: ${exception.localizedMessage}")
             when (exception) {
-                is AuthException.UserNotConfirmedException -> throw UserNotConfirmedException()
+                is AuthException.UserNotConfirmedException -> {
+                    resendConfirmationCode(username)
+                    throw UserNotConfirmedException()
+                }
                 is AuthException.UserNotFoundException -> throw UserNotFoundException()
+                is AuthException.NotAuthorizedException -> throw WrongCredentialsException()
                 else -> throw exception
             }
         }
@@ -160,34 +142,41 @@ class AuthInteractorImpl @Inject constructor(
 
     override suspend fun signOut() {
         Amplify.Auth.signOut()
+        userInteractor.clear()
     }
 
-    override fun isAuth(): Single<Boolean> = Single.just(authRepository.isAuth())
-
-    override suspend fun auth(
-        email: String,
-        password: String,
-        isSaveCredentials: Boolean
-    ): User? {
+    private suspend fun resendConfirmationCode(username: String) =
         try {
-            val authResult = authRepository.auth(email, password).await()
-            if (isSaveCredentials) authRepository.saveCredentials(email, password)
-            return authResult.user?.uid?.let { User(userId = it) }
-        } catch (exception: Exception) {
-            throw(UsernamePasswordAuthException(exception))
+            Amplify.Auth.resendSignUpCode(username)
+        } catch (e: AuthException.LimitExceededException) {
+            throw LimitExceededException()
         }
+
+
+    private suspend fun userSignInSuccessfully() {
+        setUser()
     }
 
-    override suspend fun googleAuth(account: GoogleSignInAccount) {
-        val result = account.idToken?.let { authRepository.googleAuth(it) }
-            ?.await()
-//            ?.getResult(TaskException::class.java)
-        println(result)
+    private suspend fun setUser() {
+        try {
+            val userId = Amplify.Auth.getCurrentUser()?.userId ?: return
+            val token =
+                (Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession).userPoolTokens.value?.accessToken
+                    ?: return
+            var email = ""
+            Amplify.Auth.fetchUserAttributes().forEach {
+                if (it.key == AuthUserAttributeKey.email()) {
+                    email = it.value
+                }
+            }
+            val user = User(userId = userId, token = token, email = email)
+            userInteractor.save(user)
+        } catch (e: Exception) {
+            Log.v("authAWS:::", "error")
+        }
     }
 
     override fun isValidCredentials(email: String, password: String): Boolean =
         email.isNotBlank() && password.isNotBlank()
 
-    override val signInRequest: BeginSignInRequest
-        get() = authRepository.signInRequest
 }

@@ -8,7 +8,7 @@ import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.service.phone_call.exceptions.WaitingThenRingingException
-import com.orelzman.mymessages.domain.workers.DataSourceCalls
+import com.orelzman.mymessages.domain.common.DataSourceCalls
 import com.orelzman.mymessages.util.common.CallUtils
 import com.orelzman.mymessages.util.common.Constants.TIME_TO_ADD_CALL_TO_CALL_LOG
 import com.orelzman.mymessages.util.extension.Log

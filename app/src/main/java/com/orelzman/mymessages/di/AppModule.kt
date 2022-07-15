@@ -7,13 +7,14 @@ import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.type_converters.Converters
+import com.orelzman.mymessages.data.remote.AuthConfigFile
 import com.orelzman.mymessages.data.remote.AuthInterceptor
 import com.orelzman.mymessages.data.remote.BaseProjectUrl
 import com.orelzman.mymessages.data.remote.EnvironmentRepository
-import com.orelzman.mymessages.data.remote.Environments
+import com.orelzman.mymessages.data.remote.Environments.*
 import com.orelzman.mymessages.data.remote.repository.api.API
-import com.orelzman.mymessages.domain.workers.DataSourceCalls
-import com.orelzman.mymessages.domain.workers.DataSourceCallsImpl
+import com.orelzman.mymessages.domain.common.DataSourceCalls
+import com.orelzman.mymessages.domain.common.DataSourceCallsImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -45,9 +46,21 @@ object AppModule {
     fun provideBaseUrl(
         environmentRepository: EnvironmentRepository
     ) = when (environmentRepository.currentEnvironment) {
-        Environments.Local -> "http://192.168.1.39:4000"
-        Environments.Production -> "https://22jwmm93j9.execute-api.us-east-1.amazonaws.com"
+        Local -> "http://192.168.1.39:4000"
+        Dev -> "https://22jwmm93j9.execute-api.us-east-1.amazonaws.com"
+        Prod -> "https://w5l4faau04.execute-api.us-east-1.amazonaws.com/"
     }
+
+    @Provides
+    @AuthConfigFile
+    fun provideAuthConfigFile(
+        environmentRepository: EnvironmentRepository
+    ): Int = when(environmentRepository.currentEnvironment) {
+        Local -> R.raw.dev_amplifyconfiguration
+        Dev -> R.raw.dev_amplifyconfiguration
+        Prod -> R.raw.prod_amplifyconfiguration
+    }
+
 
     @Provides
     fun provideDataSourceCalls(dataSource: DataSourceCallsImpl): DataSourceCalls =

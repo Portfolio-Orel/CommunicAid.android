@@ -2,6 +2,11 @@
   "dev": {
     "configLevel": "project",
     "useProfile": true,
-    "profileName": "MyMessages-Admin"
+    "profileName": "MyMessages-dev"
+  },
+  "prod": {
+    "configLevel": "project",
+    "useProfile": true,
+    "profileName": "MyMessages-prod"
   }
 }

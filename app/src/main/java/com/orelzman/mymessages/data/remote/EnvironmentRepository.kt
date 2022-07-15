@@ -2,11 +2,12 @@ package com.orelzman.mymessages.data.remote
 
 import javax.inject.Inject
 
-class EnvironmentRepository @Inject constructor(){
-    val currentEnvironment: Environments = Environments.Production
+class EnvironmentRepository @Inject constructor() {
+    val currentEnvironment: Environments = Environments.Dev
 }
 
 enum class Environments {
-    Production,
-    Local
+    Local,
+    Dev,
+    Prod,
 }
