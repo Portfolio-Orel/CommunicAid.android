@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -12,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -91,6 +93,7 @@ fun DetailsMessageScreen(
             )
             Dropdown(
                 folders = state.folders, onSelected = { viewModel.setSelectedFolder(it) },
+                isError = state.emptyFields.contains(MessageFields.Folder),
                 selected = state.selectedFolder ?: Folder()
             )
             Spacer(modifier = Modifier.weight(1f))
@@ -117,10 +120,12 @@ fun Dropdown(
     modifier: Modifier = Modifier,
     folders: List<Folder>,
     onSelected: (Folder) -> Unit,
+    isError: Boolean = false,
     selected: Folder = Folder()
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedFolder by remember { mutableStateOf(selected) }
+    var textfieldSize by remember { mutableStateOf(Size.Zero) }
 
     LaunchedEffect(key1 = selected) {
         selectedFolder = selected
@@ -130,32 +135,34 @@ fun Dropdown(
         Icons.Filled.KeyboardArrowUp
     else
         Icons.Filled.KeyboardArrowDown
-
     Row(
         modifier = modifier
-            .height(84.dp)
+            .height(82.dp)
             .fillMaxWidth()
             .padding(14.dp)
             .background(color = MaterialTheme.colorScheme.background)
             .clickable {
                 expanded = expanded != true
             }
-            .border(width = 1.dp, color = MaterialTheme.colorScheme.primary),
+            .border(
+                width = 1.dp,
+                color = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onPrimaryContainer,
+                shape = RoundedCornerShape(5.dp)
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             selectedFolder.title,
             modifier = Modifier
-                .clickable { expanded = true }
                 .padding(horizontal = 18.dp),
             style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.onPrimaryContainer
         )
         Spacer(Modifier.weight(1f))
         Icon(
             imageVector = icon,
             contentDescription = stringResource(R.string.expansion_button),
-            tint = MaterialTheme.colorScheme.primary
+            tint = MaterialTheme.colorScheme.onPrimaryContainer
         )
     }
 
@@ -163,14 +170,16 @@ fun Dropdown(
         expanded = expanded,
         onDismissRequest = { expanded = false },
         modifier = Modifier
+            .height(400.dp)
             .fillMaxWidth()
-            .fillMaxHeight(0.3f)
             .background(
-                MaterialTheme.colorScheme.error
+                MaterialTheme.colorScheme.background
             )
     ) {
         folders.forEach {
             DropdownMenuItem(
+                modifier = Modifier
+                    .padding(horizontal = 18.dp),
                 text = {
                     Text(
                         text = it.title,
@@ -184,6 +193,5 @@ fun Dropdown(
                     expanded = false
                 })
         }
-
     }
 }
