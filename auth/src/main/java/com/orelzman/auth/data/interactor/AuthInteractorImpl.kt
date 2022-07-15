@@ -13,10 +13,7 @@ import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
 import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.AmplifyConfiguration
 import com.amplifyframework.kotlin.core.Amplify
-import com.orelzman.auth.domain.exception.CodeMismatchException
-import com.orelzman.auth.domain.exception.NotAuthorizedException
-import com.orelzman.auth.domain.exception.UserNotConfirmedException
-import com.orelzman.auth.domain.exception.UserNotFoundException
+import com.orelzman.auth.domain.exception.*
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.auth.domain.interactor.UserInteractor
 import com.orelzman.auth.domain.model.User
@@ -73,6 +70,7 @@ class AuthInteractorImpl @Inject constructor(
         } catch (exception: Exception) {
             when (exception) {
                 is AuthException.UserNotConfirmedException -> throw UserNotConfirmedException()
+                is AuthException.UsernameExistsException -> throw UsernameExistsException()
                 else -> throw exception
             }
         }
@@ -92,12 +90,12 @@ class AuthInteractorImpl @Inject constructor(
         } catch (error: AuthException) {
             when (error) {
                 is AuthException.CodeMismatchException -> {
-                    Amplify.Auth.resendSignUpCode(username)
+                    resendConfirmationCode(username)
                     throw CodeMismatchException()
                 }
-                is AuthException.NotAuthorizedException -> {
-                    throw NotAuthorizedException()
-                }
+                is AuthException.CodeExpiredException -> throw CodeExpiredException()
+                is AuthException.NotAuthorizedException -> throw NotAuthorizedException()
+
                 else -> throw error
             }
         }
@@ -123,15 +121,20 @@ class AuthInteractorImpl @Inject constructor(
             setUser()
             if (result.isSignInComplete) {
                 userSignInSuccessfully()
-                Log.i("AuthAWS:::", "Sign in succeeded")
+                Log.v("AuthAWS:::", "Sign in succeeded")
             } else {
                 Log.e("AuthAWS:::", "Sign in not complete")
                 throw Exception("Login failed")
             }
         } catch (exception: Exception) {
+            Log.e("AuthAWS:::", "Sign in not complete with error: ${exception.localizedMessage}")
             when (exception) {
-                is AuthException.UserNotConfirmedException -> throw UserNotConfirmedException()
+                is AuthException.UserNotConfirmedException -> {
+                    resendConfirmationCode(username)
+                    throw UserNotConfirmedException()
+                }
                 is AuthException.UserNotFoundException -> throw UserNotFoundException()
+                is AuthException.NotAuthorizedException -> throw WrongCredentialsException()
                 else -> throw exception
             }
         }
@@ -142,6 +145,14 @@ class AuthInteractorImpl @Inject constructor(
         userInteractor.clear()
     }
 
+    private suspend fun resendConfirmationCode(username: String) =
+        try {
+            Amplify.Auth.resendSignUpCode(username)
+        } catch (e: AuthException.LimitExceededException) {
+            throw LimitExceededException()
+        }
+
+
     private suspend fun userSignInSuccessfully() {
         setUser()
     }
@@ -150,7 +161,8 @@ class AuthInteractorImpl @Inject constructor(
         try {
             val userId = Amplify.Auth.getCurrentUser()?.userId ?: return
             val token =
-                (Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession).userPoolTokens.value?.accessToken ?: return
+                (Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession).userPoolTokens.value?.accessToken
+                    ?: return
             var email = ""
             Amplify.Auth.fetchUserAttributes().forEach {
                 if (it.key == AuthUserAttributeKey.email()) {
@@ -159,8 +171,8 @@ class AuthInteractorImpl @Inject constructor(
             }
             val user = User(userId = userId, token = token, email = email)
             userInteractor.save(user)
-        } catch(e:Exception) {
-            Log.v("authAWS:::",  "error")
+        } catch (e: Exception) {
+            Log.v("authAWS:::", "error")
         }
     }
 

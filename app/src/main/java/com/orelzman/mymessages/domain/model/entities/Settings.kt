@@ -10,7 +10,8 @@ data class Settings(
 )
 
 enum class SettingsKeys(val keyInServer: String) {
-    CallsUpdateAt("calls_update_at");
+    CallsUpdateAt("calls_update_at"),
+    LoginLimitExceeded("login_limit_exceeded");
 
     companion object {
         fun fromString(value: String): SettingsKeys? =

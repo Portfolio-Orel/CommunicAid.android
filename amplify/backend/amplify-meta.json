@@ -1,14 +1,14 @@
 {
   "providers": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-mymessages2-dev-180617-authRole",
-      "UnauthRoleArn": "arn:aws:iam::680454469637:role/amplify-mymessages2-dev-180617-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::680454469637:role/amplify-mymessages2-dev-180617-authRole",
+      "AuthRoleName": "amplify-mymessages2-prod-180737-authRole",
+      "UnauthRoleArn": "arn:aws:iam::680454469637:role/amplify-mymessages2-prod-180737-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::680454469637:role/amplify-mymessages2-prod-180737-authRole",
       "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-mymessages2-dev-180617-deployment",
-      "UnauthRoleName": "amplify-mymessages2-dev-180617-unauthRole",
-      "StackName": "amplify-mymessages2-dev-180617",
-      "StackId": "arn:aws:cloudformation:us-east-1:680454469637:stack/amplify-mymessages2-dev-180617/59e75240-02bd-11ed-87c2-0e4e6f0f2121",
+      "DeploymentBucketName": "amplify-mymessages2-prod-180737-deployment",
+      "UnauthRoleName": "amplify-mymessages2-prod-180737-unauthRole",
+      "StackName": "amplify-mymessages2-prod-180737",
+      "StackId": "arn:aws:cloudformation:us-east-1:680454469637:stack/amplify-mymessages2-prod-180737/89836e80-02bd-11ed-af0c-1258be70a299",
       "AmplifyAppId": "d2etiknc5otx7y"
     }
   },

@@ -1,56 +1,15 @@
 {
   "providers": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-mymessages2-dev-180617-authRole",
-      "UnauthRoleArn": "arn:aws:iam::680454469637:role/amplify-mymessages2-dev-180617-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::680454469637:role/amplify-mymessages2-dev-180617-authRole",
+      "AuthRoleName": "amplify-mymessages2-prod-180737-authRole",
+      "UnauthRoleArn": "arn:aws:iam::680454469637:role/amplify-mymessages2-prod-180737-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::680454469637:role/amplify-mymessages2-prod-180737-authRole",
       "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-mymessages2-dev-180617-deployment",
-      "UnauthRoleName": "amplify-mymessages2-dev-180617-unauthRole",
-      "StackName": "amplify-mymessages2-dev-180617",
-      "StackId": "arn:aws:cloudformation:us-east-1:680454469637:stack/amplify-mymessages2-dev-180617/59e75240-02bd-11ed-87c2-0e4e6f0f2121",
+      "DeploymentBucketName": "amplify-mymessages2-prod-180737-deployment",
+      "UnauthRoleName": "amplify-mymessages2-prod-180737-unauthRole",
+      "StackName": "amplify-mymessages2-prod-180737",
+      "StackId": "arn:aws:cloudformation:us-east-1:680454469637:stack/amplify-mymessages2-prod-180737/89836e80-02bd-11ed-af0c-1258be70a299",
       "AmplifyAppId": "d2etiknc5otx7y"
-    }
-  },
-  "auth": {
-    "mymessages27a643bba": {
-      "service": "Cognito",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": [],
-      "customAuth": false,
-      "frontendAuthConfig": {
-        "socialProviders": [],
-        "usernameAttributes": [],
-        "signupAttributes": [
-          "EMAIL"
-        ],
-        "passwordProtectionSettings": {
-          "passwordPolicyMinLength": 8,
-          "passwordPolicyCharacters": []
-        },
-        "mfaConfiguration": "OFF",
-        "mfaTypes": [
-          "SMS"
-        ],
-        "verificationMechanisms": [
-          "EMAIL"
-        ]
-      },
-      "providerMetadata": {
-        "s3TemplateURL": "https://s3.amazonaws.com/amplify-mymessages2-dev-180617-deployment/amplify-cfn-templates/auth/mymessages27a643bba-cloudformation-template.json",
-        "logicalId": "authmymessages27a643bba"
-      },
-      "lastPushTimeStamp": "2022-07-13T15:24:03.934Z",
-      "output": {
-        "UserPoolId": "us-east-1_LEuBEtur7",
-        "AppClientIDWeb": "37njlq2jn656g4ju53kjgju5cr",
-        "AppClientID": "ng2d3jacorrfqrn2l6qb1jl2r",
-        "IdentityPoolId": "us-east-1:87e7a8a5-195c-42fd-b3fc-7e88290e5234",
-        "UserPoolArn": "arn:aws:cognito-idp:us-east-1:680454469637:userpool/us-east-1_LEuBEtur7",
-        "IdentityPoolName": "mymessages27a643bba_identitypool_7a643bba__dev",
-        "UserPoolName": "mymessages27a643bba_userpool_7a643bba"
-      },
-      "lastPushDirHash": "Or43QbQmio7rWuljGJaUcF1Bc+o="
     }
   }
 }

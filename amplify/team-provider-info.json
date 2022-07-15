@@ -43,7 +43,20 @@
     },
     "categories": {
       "auth": {
-        "mymessages27a643bba": {}
+        "mymessages27a643bba": {},
+        "mymessages27ea49d97": {
+          "userPoolId": "us-east-1_3ACm3Ah7S",
+          "userPoolName": "mymessages203df3f96_userpool_03df3f96-dev",
+          "webClientId": "4hvncqi9f4hl5o9snhdnc69r8q",
+          "nativeClientId": "4hvncqi9f4hl5o9snhdnc69r8q",
+          "identityPoolId": "us-east-1:dd6946a2-db73-451c-b5e1-5208e4c83f9f",
+          "identityPoolName": "mymessages203df3f96_identitypool_03df3f96__dev",
+          "allowUnauthenticatedIdentities": false,
+          "authRoleArn": "arn:aws:iam::680454469637:role/amplify-mymessages2-dev-144844-authRole",
+          "authRoleName": "amplify-mymessages2-dev-144844-authRole",
+          "unauthRoleArn": "arn:aws:iam::680454469637:role/amplify-mymessages2-dev-144844-unauthRole",
+          "unauthRoleName": "amplify-mymessages2-dev-144844-unauthRole"
+        }
       }
     }
   }

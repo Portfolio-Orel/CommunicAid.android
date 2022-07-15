@@ -38,15 +38,14 @@ class ConfirmationViewModel @Inject constructor(
         val job = viewModelScope.async {
             authInteractor.confirmUser(username = username, code = code)
         }
-        try {
-            viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.Main) {
+            try {
                 job.await()
-                onUserConfirmed(username)
-                state = ConfirmationState()
+            } catch (exception: Exception) {
+                state = state.copy(isLoading = false, exception = exception)
             }
-        } catch (exception: Exception) {
-
-            state = state.copy(isLoading = false, exception = exception)
+            onUserConfirmed(username)
+            state = ConfirmationState()
         }
     }
 }

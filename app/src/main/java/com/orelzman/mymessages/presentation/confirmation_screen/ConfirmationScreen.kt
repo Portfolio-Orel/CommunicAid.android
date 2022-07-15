@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.confirmation_screen
+import com.orelzman.mymessages.presentation.confirmation_screen.ConfirmationViewModel
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*

@@ -1,5 +1,6 @@
 package com.orelzman.mymessages.presentation.login
 
+import ConfirmationScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orelzman.mymessages.R
-import com.orelzman.mymessages.presentation.confirmation_screen.ConfirmationScreen
 import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
 import com.orelzman.mymessages.presentation.login.components.Input
 import com.orelzman.mymessages.presentation.login_button.LoginButton
