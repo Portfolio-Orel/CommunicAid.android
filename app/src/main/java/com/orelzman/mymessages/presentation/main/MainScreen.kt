@@ -1,5 +1,6 @@
 package com.orelzman.mymessages.presentation.main
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.rememberScrollableState
@@ -34,6 +35,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 
+@ExperimentalFoundationApi
 @Composable
 @Destination
 fun MainScreen(
@@ -47,7 +49,6 @@ fun MainScreen(
         getMessageWidth(screenWidth = screen.screenWidthDp, spaceBetween = spaceBetweenMessages)
     val boxHeight = (boxWidth * 1.5f)
     val messagesOffset = remember { mutableStateOf(0f) }
-    val foldersOffset = remember { mutableStateOf(0f) }
 
     LaunchedEffect(key1 = viewModel) {
         viewModel.init()
@@ -92,10 +93,10 @@ fun MainScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = if (state.activeCall == "" || state.activeCall == null)
+                        text = if (state.activeCall?.number == "" || state.activeCall == null)
                             stringResource(R.string.no_active_call)
                         else
-                            state.activeCall,
+                            state.activeCall.number,
                     modifier = Modifier
                         .padding(8.dp),
                     style = MaterialTheme.typography.titleMedium
@@ -121,7 +122,7 @@ fun MainScreen(
                                 ),
                                 onClick = { viewModel.setCallOnTheLineActive() }) {
                                 Text(
-                                    state.callOnTheLine ?: "",
+                                    state.callOnTheLine?.number ?: "",
                                     style = MaterialTheme.typography.bodySmall,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
@@ -146,7 +147,7 @@ fun MainScreen(
                                 ),
                                 onClick = { viewModel.setBackgroundCallActive() }) {
                                 Text(
-                                    state.callInBackground,
+                                    state.callInBackground.number,
                                     style = MaterialTheme.typography.bodySmall,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
@@ -184,7 +185,7 @@ fun MainScreen(
             FlowRow(
                 modifier = Modifier
                     .padding(start = 10.dp, end = 5.dp)
-                    .fillMaxHeight(0.7F)
+                    .fillMaxHeight(0.6F)
                     .fillMaxWidth(0.9F)
                     .scrollable(
                         orientation = Orientation.Vertical,

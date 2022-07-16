@@ -13,8 +13,6 @@ import com.orelzman.mymessages.data.remote.BaseProjectUrl
 import com.orelzman.mymessages.data.remote.EnvironmentRepository
 import com.orelzman.mymessages.data.remote.Environments.*
 import com.orelzman.mymessages.data.remote.repository.api.API
-import com.orelzman.mymessages.domain.common.DataSourceCalls
-import com.orelzman.mymessages.domain.common.DataSourceCallsImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -60,11 +58,6 @@ object AppModule {
         Dev -> R.raw.dev_amplifyconfiguration
         Prod -> R.raw.prod_amplifyconfiguration
     }
-
-
-    @Provides
-    fun provideDataSourceCalls(dataSource: DataSourceCallsImpl): DataSourceCalls =
-        dataSource
 
     @Provides
     fun provideOkHttpClient(authIneractor: AuthInteractor): OkHttpClient =

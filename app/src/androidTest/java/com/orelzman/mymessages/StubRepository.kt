@@ -13,7 +13,7 @@ class StubRepository : Repository {
     override suspend fun getFolders(userId: String): List<GetFoldersResponse> =
         emptyList()
 
-    override suspend fun createMessage(createMessageBody: CreateMessageBody): String? = null
+    override suspend fun createMessage(createMessageBody: CreateMessageBody): List<String>? = null
 
     override suspend fun createFolder(createFolderBody: CreateFolderBody): String? = null
 

@@ -10,11 +10,8 @@ import com.orelzman.mymessages.domain.interactors.FolderInteractor
 import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
 import com.orelzman.mymessages.domain.interactors.MessageInteractor
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
-import com.orelzman.mymessages.domain.model.entities.Folder
-import com.orelzman.mymessages.domain.model.entities.Message
-import com.orelzman.mymessages.domain.model.entities.MessageSent
+import com.orelzman.mymessages.domain.model.entities.*
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
-import com.orelzman.mymessages.domain.common.DataSourceCalls
 import com.orelzman.mymessages.util.Whatsapp.sendWhatsapp
 import com.orelzman.mymessages.util.extension.copyToClipboard
 import com.orelzman.mymessages.util.extension.log
@@ -32,7 +29,6 @@ class MainViewModel @Inject constructor(
     private val phoneCallManagerInteractor: PhoneCallManagerInteractor,
     private val phoneCallsInteractor: PhoneCallsInteractor,
     private val messageInFolderInteractor: MessageInFolderInteractor,
-    private val dataSource: DataSourceCalls
 ) : ViewModel() {
 
     var state by mutableStateOf(MainState())
@@ -81,12 +77,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun onMessageClick(message: Message, context: Context) {
-        val phoneCall =
-            if (state.activeCall == phoneCallManagerInteractor.callInBackground.value?.number) {
-                phoneCallManagerInteractor.callInBackground.value
-            } else {
-                phoneCallManagerInteractor.numberOnTheLine.value
-            }
+        val phoneCall = state.activeCall
         if (phoneCall != null) {
             try {
                 viewModelScope.launch(Dispatchers.IO) {
@@ -108,7 +99,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun onMessageLongClick(message: Message, context: Context) {
-        val phoneCall = phoneCallManagerInteractor.numberOnTheLine.value
+        val phoneCall = state.activeCall
         if (phoneCall != null) {
             goToEditMessage(message)
         } else {
@@ -138,7 +129,7 @@ class MainViewModel @Inject constructor(
         state = state.copy(screenToShow = MainScreens.Default)
     }
 
-    private fun selectActiveCall(phoneCall: String?) {
+    private fun selectActiveCall(phoneCall: PhoneCall?) {
         state = state.copy(activeCall = phoneCall)
     }
 
@@ -152,12 +143,8 @@ class MainViewModel @Inject constructor(
 
     private fun observeNumberOnTheLine() {
         viewModelScope.launch(Dispatchers.Main) {
-//            phoneCallManagerInteractor.numberOnTheLine.collectLatest {
-//                state = state.copy(callOnTheLine = it)
-//                setCallOnTheLineActive()
-//            }
-            dataSource.userPreferencesFlow().collectLatest {
-                state = state.copy(callOnTheLine = it.callOnTheLine)
+            phoneCallManagerInteractor.callsDataFlow.collectLatest {
+                state = state.copy(callOnTheLine = it.callOnTheLine?.toPhoneCall())
                 setCallOnTheLineActive()
             }
         }
@@ -165,8 +152,8 @@ class MainViewModel @Inject constructor(
 
     private fun observeNumberInBackground() {
         viewModelScope.launch(Dispatchers.Main) {
-            phoneCallManagerInteractor.callInBackground.collectLatest {
-                state = state.copy(callInBackground = it?.number)
+            phoneCallManagerInteractor.callsDataFlow.collectLatest {
+                state = state.copy(callInBackground = it.callInTheBackground?.toPhoneCall())
             }
         }
     }

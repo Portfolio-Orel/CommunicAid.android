@@ -3,15 +3,16 @@ package com.orelzman.mymessages.domain.model.entities
 import android.content.Context
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.gson.Gson
+import com.orelzman.mymessages.domain.interactors.CallType
 import com.orelzman.mymessages.domain.model.dto.body.create.CreatePhoneCallBody
-import com.orelzman.mymessages.util.common.CallType
-import com.orelzman.mymessages.util.common.CallUtils
+import com.orelzman.mymessages.util.common.ContactsUtil
 import com.orelzman.mymessages.util.extension.inSeconds
 import java.util.*
 
 @Entity
 data class PhoneCall(
-    @PrimaryKey var id: String = "",
+    @PrimaryKey var id: String = UUID.randomUUID().toString(),
     val number: String = "",
     var startDate: Date = Date(),
     var endDate: Date = startDate,
@@ -37,7 +38,7 @@ data class PhoneCall(
         get() = (startDate.time.inSeconds != endDate.time.inSeconds)
 
     fun getName(context: Context): String =
-        CallUtils.getContactName(number, context)
+        ContactsUtil.getContactName(number, context)
 
 
     fun missed() {
@@ -47,6 +48,13 @@ data class PhoneCall(
     fun rejected() {
         type = CallType.REJECTED.name
     }
+
+    fun stringify(): String? {
+        val string = Gson().toJson(this)
+        if (string == "null") return null
+        return string
+    }
+
 
     companion object {
         fun waiting(number: String) =
@@ -95,3 +103,6 @@ enum class UploadState(val value: String) {
         }
     }
 }
+
+fun String.toPhoneCall(): PhoneCall? =
+    Gson().fromJson(this, PhoneCall::class.java)

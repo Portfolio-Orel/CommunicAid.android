@@ -50,12 +50,14 @@ class LoginViewModel @Inject constructor(
                 val user = interactor.getUser()
                 Log.v("got user: $user")
                 if (user != null) {
-                    isAuthorized = confirmUserCreated(user.userId)
-                    userAuthorizedSuccessfully()
+                    isAuthorized = true
                 } else {
                     databaseInteractor.clear()
                 }
                 state = state.copy(isAuthorized = isAuthorized, isLoading = false)
+                if(isAuthorized) {
+                    userAuthorizedSuccessfully()
+                }
             } catch (exception: Exception) {
                 when (exception) {
                     is UserNotAuthenticatedException -> {/*User needs to login again-do it with saved credentials*/
@@ -166,7 +168,6 @@ class LoginViewModel @Inject constructor(
     private fun userAuthorizedSuccessfully() {
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                state = state.copy(isLoading = true)
                 val userId = interactor.getUser()?.userId
                 val isAuthorized = if (userId != null) {
                     confirmUserCreated(userId, state.email)
