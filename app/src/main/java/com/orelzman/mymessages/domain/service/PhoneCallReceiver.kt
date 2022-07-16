@@ -9,6 +9,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManager
 import com.orelzman.mymessages.domain.workers.UploadWorker
+import com.orelzman.mymessages.util.extension.Log
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -22,12 +23,12 @@ class PhonecallReceiver : BroadcastReceiver() {
         when (intent?.action) {
             PHONE_STATE -> {
                 val stateStr = intent.extras?.getString(TelephonyManager.EXTRA_STATE)
-                if (stateStr == TelephonyManager.EXTRA_STATE_IDLE) {
-                    startUploadCallsWorker(context)
-                }
                 @Suppress("DEPRECATION") val number =
                     intent.extras?.getString(TelephonyManager.EXTRA_INCOMING_NUMBER)
                         ?: return
+                if (stateStr == TelephonyManager.EXTRA_STATE_IDLE) {
+                    startUploadCallsWorker(context)
+                }
                 stateStr?.let {
                     phoneCallManager.onStateChanged(it, number, context)
                 }
@@ -36,6 +37,7 @@ class PhonecallReceiver : BroadcastReceiver() {
     }
 
     private fun startUploadCallsWorker(context: Context) {
+        Log.v("About to start upload worker")
         val uploadWorkRequest: WorkRequest =
             OneTimeWorkRequestBuilder<UploadWorker>()
                 .build()

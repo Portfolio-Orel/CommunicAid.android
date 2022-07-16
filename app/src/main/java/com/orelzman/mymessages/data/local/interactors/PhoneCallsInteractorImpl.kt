@@ -26,11 +26,12 @@ class PhoneCallsInteractorImpl @Inject constructor(
         db.insert(phoneCalls)
 
     override fun addMessageSent(phoneCall: PhoneCall, messageSent: MessageSent) {
-        val phoneCallFromDb = db.getByStartDate(phoneCall.startDate)
-        val messages = ArrayList(phoneCallFromDb.messagesSent)
-        messages.add(messageSent)
-        phoneCallFromDb.messagesSent = messages
-        db.update(phoneCallFromDb)
+        db.get(phoneCall.id)?.let {
+            val messages = ArrayList(it.messagesSent)
+            messages.add(messageSent)
+            it.messagesSent = messages
+            db.update(it)
+        }
     }
 
     override fun updateCall(phoneCall: PhoneCall) =

@@ -11,7 +11,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -24,19 +23,18 @@ import com.ramcosta.composedestinations.annotation.Destination
 fun StatsScreen(
     viewModel: StatsViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
     val isRefreshing by viewModel.isRefreshing.collectAsState(false)
     val state = viewModel.state
 
     LaunchedEffect(key1 = viewModel) {
-        viewModel.refreshData(context)
+        viewModel.refreshData()
     }
 
     SwipeRefresh(
         modifier = Modifier.fillMaxSize(),
         state = rememberSwipeRefreshState(isRefreshing),
         onRefresh = {
-            viewModel.refreshData(context = context)
+            viewModel.refreshData()
         },
     ) {
         Column(
@@ -93,7 +91,7 @@ fun StatsScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             ActionButton(
-                onClick = { viewModel.sendCallLogs(context) },
+                onClick = { viewModel.sendCallLogs() },
                 text = "שלח יומן",
                 isLoading = state.isLoadingCallLogSend
             )

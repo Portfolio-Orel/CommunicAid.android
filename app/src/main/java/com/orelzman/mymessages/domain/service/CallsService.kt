@@ -14,10 +14,10 @@ import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.MainActivity
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.interactors.AnalyticsInteractor
+import com.orelzman.mymessages.domain.interactors.CallLogInteractor
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.model.entities.*
-import com.orelzman.mymessages.util.common.CallUtils
 import com.orelzman.mymessages.util.common.Constants.TIME_TO_ADD_CALL_TO_CALL_LOG
 import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.appendAll
@@ -55,12 +55,15 @@ class CallsService : Service() {
     @Inject
     lateinit var analyticsInteractor: AnalyticsInteractor
 
+    @Inject
+    lateinit var callLogInteractor: CallLogInteractor
+
     override fun onBind(p0: Intent?): IBinder? =
         null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         currentState = intent?.extras?.get(INTENT_STATE_VALUE) as ServiceState
-        Log.vCustom("Service onStartCommand: $currentState")
+        Log.v("Service onStartCommand: $currentState")
         try {
             analyticsInteractor.track("CallsService", mapOf("status" to currentState.name))
         } catch (exception: Exception) {
@@ -162,7 +165,7 @@ class CallsService : Service() {
                         it,
                         UploadState.BeingUploaded
                     )
-                    return@mapNotNull CallUtils.update(this@CallsService, it)
+                    return@mapNotNull callLogInteractor.update(it)
                 }
             authInteractor.getUser()?.userId?.let {
                 phoneCallsInteractor.createPhoneCalls(
@@ -197,7 +200,7 @@ class CallsService : Service() {
         val lastUpdateAt = settingsInteractor.getSettings(SettingsKeys.CallsUpdateAt)?.value
         val date = Date(lastUpdateAt?.toLongOrNull() ?: Date().time)
         val potentiallyMissedPhoneCalls =
-            CallUtils.getCallLogsByDate(this@CallsService, startDate = date).toPhoneCalls()
+            callLogInteractor.getCallLogsByDate(startDate = date).toPhoneCalls()
         val savedPhoneCalls = phoneCallsInteractor.getAll()
         potentiallyMissedPhoneCalls.forEach { potentiallyMissedPhoneCall ->
             if (savedPhoneCalls.none {

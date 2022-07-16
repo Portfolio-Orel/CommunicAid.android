@@ -1,4 +1,4 @@
-import com.orelzman.mymessages.presentation.confirmation_screen.ConfirmationViewModel
+package com.orelzman.mymessages.presentation.confirmation_screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,7 +17,7 @@ import com.orelzman.mymessages.R
 import com.orelzman.mymessages.presentation.login.components.Input
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
+@ExperimentalMaterial3Api
 @Composable
 fun ConfirmationScreen(
     username: String,
@@ -88,6 +88,7 @@ fun ConfirmationScreen(
     }
 }
 
+@ExperimentalMaterial3Api
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {

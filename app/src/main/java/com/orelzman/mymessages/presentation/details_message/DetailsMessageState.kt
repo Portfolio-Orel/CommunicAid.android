@@ -9,7 +9,7 @@ data class DetailsMessageState(
     val shortTitle: String = "",
     val body: String = "",
     val oldFolderId: String = "", // For Edit
-    val currentFolderId: String = "",
+    val selectedFolder: Folder? = null,
     val emptyFields: ArrayList<MessageFields> = ArrayList(),
     val isLoading: Boolean = false, // Message is being uploaded
     val error: String = "",
@@ -18,14 +18,18 @@ data class DetailsMessageState(
     val isEdit: Boolean = false,
 ) : Loggable {
     val isReadyForSave: Boolean =
-        title.isNotBlank() && shortTitle.isNotBlank() && body.isNotBlank() && currentFolderId.isNotBlank()
+        title.isNotBlank()
+                && shortTitle.isNotBlank()
+                && body.isNotBlank()
+                && selectedFolder != null
+                && selectedFolder.id.isNotBlank()
     override val data: Map<String, Any>
         get() = mapOf(
             "folders" to (folders.map { it.data }),
             "title" to title,
             "short_title" to shortTitle,
             "body" to body,
-            "older_folder_id" to currentFolderId,
+            "older_folder_id" to (selectedFolder?.id ?: ""),
             "empty_fields" to emptyFields.map { it.name },
             "is_loading" to isLoading,
             "error" to error,

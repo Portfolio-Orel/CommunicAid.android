@@ -13,13 +13,12 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.mymessages.domain.interactors.AnalyticsInteractor
+import com.orelzman.mymessages.domain.interactors.CallLogInteractor
 import com.orelzman.mymessages.domain.interactors.DeletedCallsInteractor
 import com.orelzman.mymessages.domain.managers.UnhandledCallsManager
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.DeletedCall
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
-import com.orelzman.mymessages.util.common.CallUtils
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +31,7 @@ class UnhandledCallsViewModel @Inject constructor(
     application: Application,
     private val deletedCallsInteractor: DeletedCallsInteractor,
     private val unhandledCallsManager: UnhandledCallsManager,
-    private val analyticsInteractor: AnalyticsInteractor,
+    private val callLogInteractor: CallLogInteractor,
     private val authInteractor: AuthInteractor,
 ) : AndroidViewModel(application) {
 
@@ -57,7 +56,7 @@ class UnhandledCallsViewModel @Inject constructor(
                 deletedCallsInteractor.getAll(userId)
                     .collect {
                         val callsFromCallLog =
-                            getCallsFromCallLog(context = getApplicationContext())
+                            getCallsFromCallLog()
                         val callsToHandle = unhandledCallsManager.filterUnhandledCalls(
                             deletedCalls = it,
                             callLogs = callsFromCallLog
@@ -104,6 +103,6 @@ class UnhandledCallsViewModel @Inject constructor(
         getApplication<Application>().applicationContext
 
 
-    private fun getCallsFromCallLog(context: Context): ArrayList<CallLogEntity> =
-        CallUtils.getTodaysCallLog(context)
+    private fun getCallsFromCallLog(): ArrayList<CallLogEntity> =
+        callLogInteractor.getTodaysCallLog()
 }

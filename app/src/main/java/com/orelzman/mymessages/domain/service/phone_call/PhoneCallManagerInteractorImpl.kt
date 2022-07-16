@@ -1,15 +1,14 @@
 package com.orelzman.mymessages.domain.service.phone_call
 
-import com.orelzman.mymessages.domain.model.entities.PhoneCall
-import kotlinx.coroutines.flow.StateFlow
+import com.orelzman.mymessages.domain.interactors.CallPreferences
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class PhoneCallManagerInteractorImpl @Inject constructor(
     private val phoneCallManager: PhoneCallManager
 ) : PhoneCallManagerInteractor {
-
-    override val numberOnTheLine: StateFlow<PhoneCall?>
-        get() = phoneCallManager.callOnTheLine
-    override val callInBackground: StateFlow<PhoneCall?>
-        get() = phoneCallManager.callInBackground
+    override val callsDataFlow: Flow<CallPreferences>
+        get() = phoneCallManager.callsDataFlow
+    override val callsData: CallPreferences
+        get() = phoneCallManager.callsData
 }

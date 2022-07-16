@@ -1,6 +1,6 @@
 package com.orelzman.mymessages.domain.model.entities
 
-import com.orelzman.mymessages.util.common.CallType
+import com.orelzman.mymessages.domain.interactors.CallType
 import com.orelzman.mymessages.util.extension.inMilliseconds
 import com.orelzman.mymessages.util.extension.inSeconds
 import com.orelzman.mymessages.util.extension.toDate

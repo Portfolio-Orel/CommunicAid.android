@@ -1,40 +1,38 @@
-package com.orelzman.mymessages.util.common
+package com.orelzman.mymessages.data.local.interactors
 
 import android.content.Context
-import android.database.Cursor
-import android.net.Uri
 import android.provider.CallLog
-import android.provider.ContactsContract
+import com.orelzman.mymessages.domain.interactors.CallLogInteractor
+import com.orelzman.mymessages.domain.interactors.CallType
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
+import com.orelzman.mymessages.util.common.DateUtils
 import com.orelzman.mymessages.util.extension.compareToBallPark
 import com.orelzman.mymessages.util.extension.inSeconds
-import com.orelzman.mymessages.util.extension.log
 import com.orelzman.mymessages.util.extension.toDate
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import java.util.*
+import javax.inject.Inject
 
-/*Consider moving to interactors (because of context injection)*/
-object CallUtils {
+class CallLogInteractorImpl @Inject constructor(@ApplicationContext private val context: Context) :
+    CallLogInteractor {
 
-    fun getTodaysCallLog(context: Context): ArrayList<CallLogEntity> =
+    override fun getTodaysCallLog(): ArrayList<CallLogEntity> =
         getCallLogsByDate(
-            context = context,
             startDate = DateUtils.getStartOfDay(),
             endDate = Date()
         )
 
     /**
      * Returns all the logs of calls that occurred between [startDate] and [endDate].
-     * @param context is the context of the activity/fragment
      * @param startDate is the date of the first call we're looking for.
      * @param endDate is the date of the last call we're looking for.
      * @author Orel Zilberman
      */
-    fun getCallLogsByDate(
-        context: Context,
-        startDate: Date = Date(),
-        endDate: Date = Date()
+    override fun getCallLogsByDate(
+        startDate: Date,
+        endDate: Date
     ): ArrayList<CallLogEntity> {
         val callLogEntities = ArrayList<CallLogEntity>()
         val details = arrayOf(
@@ -77,8 +75,8 @@ object CallUtils {
         return callLogEntities
     }
 
-    suspend fun getLastCallLog(context: Context?, withDelay: Long = 0): CallLogEntity? {
-        delay(withDelay)
+    override suspend fun getLastCallLog(delay: Long): CallLogEntity? {
+        delay(delay)
         var callLog: CallLogEntity? = null
         val details = arrayOf(
             CallLog.Calls.NUMBER,
@@ -87,7 +85,7 @@ object CallUtils {
             CallLog.Calls.CACHED_NAME,
             CallLog.Calls.DATE
         )
-        context?.contentResolver
+        context.contentResolver
             ?.query(
                 CallLog.Calls.CONTENT_URI,
                 details,
@@ -115,40 +113,10 @@ object CallUtils {
         return callLog
     }
 
-    fun getContactName(number: String, context: Context): String {
-        val uri = Uri.withAppendedPath(
-            ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
-            Uri.encode(number)
-        )
-
-        val projection = arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME)
-
-        var contactName = number
-        try {
-            val cursor: Cursor? = context.contentResolver.query(uri, projection, null, null, null)
-
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    contactName = cursor.getString(0)
-                }
-                cursor.close()
-            }
-            return contactName
-        } catch(exception: IllegalArgumentException) {
-            // Number not found
-            return number
-        } catch (exception: Exception) {
-            exception.log()
-            return number
-        }
-    }
-
     /**
      * Updates values according to the call log
-     * *** Test call in background, removed and called again to see if the backlog catches both from the calllog
-     * This has to go to the service because the log is added async.
      */
-    fun update(context: Context, phoneCall: PhoneCall): PhoneCall? {
+    override fun update(phoneCall: PhoneCall): PhoneCall? {
         val details = arrayOf(
             CallLog.Calls.NUMBER,
             CallLog.Calls.TYPE,
@@ -186,16 +154,4 @@ object CallUtils {
         return null
     }
 
-}
-
-enum class CallType(val value: Int) {
-    MISSED(CallLog.Calls.MISSED_TYPE),
-    INCOMING(CallLog.Calls.INCOMING_TYPE),
-    OUTGOING(CallLog.Calls.OUTGOING_TYPE),
-    REJECTED(CallLog.Calls.REJECTED_TYPE),
-    BLOCK(CallLog.Calls.BLOCKED_TYPE);
-
-    companion object {
-        fun fromInt(value: Int): CallType = values().first { it.value == value }
-    }
 }
