@@ -1,16 +1,12 @@
 package com.orelzman.mymessages.presentation.login
 
-import ConfirmationScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orelzman.mymessages.R
+import com.orelzman.mymessages.presentation.confirmation_screen.ConfirmationScreen
 import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
 import com.orelzman.mymessages.presentation.login.components.Input
 import com.orelzman.mymessages.presentation.login_button.LoginButton
@@ -29,6 +26,7 @@ import com.orelzman.mymessages.util.extension.DefaultDestinationNavigator
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
+@ExperimentalMaterial3Api
 @Composable
 @Destination(start = true)
 fun LoginScreen(
@@ -59,6 +57,7 @@ fun LoginScreen(
     }
 }
 
+@ExperimentalMaterial3Api
 @Composable
 private fun ContentView(viewModel: LoginViewModel) {
     val state = viewModel.state
@@ -168,7 +167,7 @@ private fun ContentView(viewModel: LoginViewModel) {
         }
     }
 }
-
+@ExperimentalMaterial3Api
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {

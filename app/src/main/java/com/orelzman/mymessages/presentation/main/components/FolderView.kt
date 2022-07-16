@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.orelzman.mymessages.domain.model.entities.Folder
 
 
-@OptIn(ExperimentalFoundationApi::class)
+@ExperimentalFoundationApi
 @Composable
 fun FolderView(
     folder: Folder,
