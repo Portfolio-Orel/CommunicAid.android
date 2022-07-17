@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.confirmation_screen
+package com.orelzman.mymessages.presentation.components.confirmation_pop_up
 
 
 data class ConfirmationState(

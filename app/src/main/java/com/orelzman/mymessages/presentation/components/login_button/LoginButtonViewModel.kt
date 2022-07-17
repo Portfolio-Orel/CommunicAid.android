@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.logout_screen
+package com.orelzman.mymessages.presentation.components.login_button
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -13,20 +13,21 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LogoutButtonViewModel @Inject constructor(
+class LoginButtonViewModel @Inject constructor(
     private val authInteractor: AuthInteractor,
 ): ViewModel() {
-    var state by mutableStateOf(LogoutButtonState())
+    var state by mutableStateOf(LoginButtonState())
 
-    fun logout(onLogoutComplete: () -> Unit) {
+    fun login(username: String, password: String, onLoginComplete: (Boolean, Exception?) -> Unit) {
         state = state.copy(isLoading = true)
         viewModelScope.launch(Dispatchers.IO) {
             state = try {
-                authInteractor.signOut()
-                onLogoutComplete()
+                authInteractor.signIn(username = username, password = password)
+                onLoginComplete(true, null)
                 state.copy(isLoading = false)
             } catch(exception: Exception) {
                 Log.e("AWSAuth", exception.message ?: "")
+                onLoginComplete(false, exception)
                 state.copy(isLoading = false)
             }
         }

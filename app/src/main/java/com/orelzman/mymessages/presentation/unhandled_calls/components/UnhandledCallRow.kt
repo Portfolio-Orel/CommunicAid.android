@@ -79,16 +79,14 @@ private fun Modifier.localIconSize(): Modifier = this.size(34.dp)
 @Composable
 fun DefaultPreview2() {
     MyMessagesTheme {
-        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-            UnhandledCallRow(
-                phoneCall = PhoneCall(
-                    number = "0543056286",
-                    startDate = Date(),
-                    endDate = Date(),
-                    isWaiting = false,
-                    messagesSent = listOf()
-                )
+        UnhandledCallRow(
+            phoneCall = PhoneCall(
+                number = "0543056286",
+                startDate = Date(),
+                endDate = Date(),
+                isWaiting = false,
+                messagesSent = listOf()
             )
-        }
+        )
     }
 }

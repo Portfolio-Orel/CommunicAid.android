@@ -20,11 +20,14 @@ data class MainState(
     val maxMessagesInRow: Int = 6,
     val messageToEdit: Message? = null,
     val folderToEdit: Folder? = null,
-    val screenToShow: MainScreens = MainScreens.Default
+
+    val screenToShow: MainScreens = MainScreens.Main
 )
 
 enum class MainScreens {
     DetailsMessage,
     DetailsFolder,
-    Default;
+    Stats,
+    UnhandledCalls,
+    Main;
 }

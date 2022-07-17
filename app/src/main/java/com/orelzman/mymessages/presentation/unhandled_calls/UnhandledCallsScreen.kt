@@ -1,6 +1,5 @@
 package com.orelzman.mymessages.presentation.unhandled_calls
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -29,39 +28,16 @@ import com.orelzman.mymessages.util.extension.DefaultDestinationNavigator
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
-@Destination
 @Composable
+@Destination
 fun UnhandledCallsScreen(
-    navigator: DestinationsNavigator,
     viewModel: UnhandledCallsViewModel = hiltViewModel()
 ) {
     val isRefreshing by viewModel.isRefreshing.collectAsState(false)
 
-    val onBack = { navigator.navigateUp() }
     val state = viewModel.state
 
     Column(modifier = Modifier.fillMaxSize()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .zIndex(2f),
-            horizontalArrangement = Arrangement.End,
-        ) {
-            Icon(
-                imageVector = Icons.Filled.ArrowBack,
-                contentDescription = "Go back from unhandled calls",
-                modifier = Modifier
-                    .padding(12.dp)
-                    .size(48.dp)
-                    .clickable(
-                        onClick = { onBack() },
-                    ),
-                tint = MaterialTheme.colorScheme.onBackground
-            )
-        }
-        Divider(
-            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-        )
         SwipeRefresh(
             modifier = Modifier.fillMaxSize(),
             state = rememberSwipeRefreshState(isRefreshing),
@@ -121,5 +97,5 @@ fun UnhandledCallsScreen(
 @Preview
 @Composable
 fun UnhandledCallsScreen_Preview() {
-    UnhandledCallsScreen(navigator = DefaultDestinationNavigator())
+    UnhandledCallsScreen()
 }

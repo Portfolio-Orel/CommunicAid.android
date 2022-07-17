@@ -125,8 +125,12 @@ class MainViewModel @Inject constructor(
         selectActiveCall(state.callOnTheLine)
     }
 
+    fun navigateTo(screen: MainScreens) {
+        state = state.copy(screenToShow = screen)
+    }
+
     fun navigated() {
-        state = state.copy(screenToShow = MainScreens.Default)
+        state = state.copy(screenToShow = MainScreens.Main)
     }
 
     private fun selectActiveCall(phoneCall: PhoneCall?) {

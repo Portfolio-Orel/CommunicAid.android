@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.logout_screen
+package com.orelzman.mymessages.presentation.components.logout_button
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height

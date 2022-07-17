@@ -18,6 +18,7 @@ import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.auth.domain.interactor.UserInteractor
 import com.orelzman.auth.domain.model.User
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 
@@ -53,6 +54,7 @@ class AuthInteractorImpl @Inject constructor(
     }
 
     override fun getUser(): User? = userInteractor.get()
+    override fun getUserFlow(): Flow<User?> = userInteractor.getFlow()
 
 
     @Throws

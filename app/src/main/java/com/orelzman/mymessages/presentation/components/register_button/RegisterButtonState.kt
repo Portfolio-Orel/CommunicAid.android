@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.register_button
+package com.orelzman.mymessages.presentation.components.register_button
 
 data class RegisterButtonState(
     var isLoading: Boolean = false,
