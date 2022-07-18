@@ -88,7 +88,7 @@ private fun Content(
                             .height(50.dp)
                             .width(120.dp),
                         onClick = { viewModel.setSelectedFolder(it) },
-                        onLongClick = { viewModel.onFolderLongClick(it) }
+                        onLongClick = { navController.navigate(Screen.DetailsFolder.withArgs(folder.id)) }
                     )
                 }
             }
@@ -120,8 +120,8 @@ private fun Content(
                             onClick = { message, context ->
                                 viewModel.onMessageClick(message, context)
                             },
-                            onLongClick = { message, _ ->
-                                navController.navigate(Screen.DetailsMessage.withArgs(message.id))
+                            onLongClick = { message, context ->
+                                viewModel.onMessageLongClick(message, context)
                             }
                         )
                     }

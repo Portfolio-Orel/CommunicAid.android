@@ -1,11 +1,13 @@
 package com.orelzman.mymessages.presentation.details_folder
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -20,11 +22,19 @@ fun DetailsFolderScreen(
     folderId: String? = null
 ) {
     val state = viewModel.state
+    val context = LocalContext.current
+
     LaunchedEffect(key1 = folderId) {
         viewModel.setEdit(folderId)
     }
-    if (state.isFolderAdded) {
-        navController.navigateUp()
+    LaunchedEffect(key1 = state.isFolderAdded) {
+        if (state.isFolderAdded) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.folder_saved_successfully),
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
     Column(
         modifier = Modifier

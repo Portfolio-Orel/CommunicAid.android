@@ -39,84 +39,93 @@ fun MyMessagesApp(
 ) {
     val navHostController = rememberNavController()
     val navController = navHostController as NavController
-    
+
     if (!viewModel.isAuthorized) {
-            LoginScreen()
-        } else {
-            CustomScaffold(
-                startRoute = Screen.Main.route,
-                navController = navHostController,
-                bottomBar = {
-                    BottomBar(navController = it)
-                },
-                floatingActionButton = {
-                    MultiFab(
-                        fabs = listOf(
-                            MiniFloatingAction(
-                                action = {
-                                    navController.navigate(
-                                        Screen.DetailsMessage.route
-                                    ) {
-                                        popUpTo(navHostController.graph.findStartDestination().id) {
-                                            inclusive = false
-                                        }
-                                        launchSingleTop = true
+        LoginScreen()
+    } else {
+        CustomScaffold(
+            startRoute = Screen.Main.route,
+            navController = navHostController,
+            bottomBar = {
+                BottomBar(navController = it)
+            },
+            floatingActionButton = {
+                MultiFab(
+                    fabs = listOf(
+                        MiniFloatingAction(
+                            action = {
+                                navController.navigate(
+                                    Screen.DetailsMessage.route
+                                ) {
+                                    popUpTo(navHostController.graph.findStartDestination().id) {
+                                        inclusive = false
                                     }
-                                },
-                                icon = painterResource(id = R.drawable.ic_new_message),
-                                description = ""
-                            ),
-                            MiniFloatingAction(
-                                action = {
-                                    navController.navigate(
-                                        Screen.DetailsFolder.route
-                                    ) {
-                                        popUpTo(navHostController.graph.findStartDestination().id) {
-                                            inclusive = false
-                                        }
-                                        launchSingleTop = true
+                                    launchSingleTop = true
+                                }
+                            },
+                            icon = painterResource(id = R.drawable.ic_new_message),
+                            description = ""
+                        ),
+                        MiniFloatingAction(
+                            action = {
+                                navController.navigate(
+                                    Screen.DetailsFolder.route
+                                ) {
+                                    popUpTo(navHostController.graph.findStartDestination().id) {
+                                        inclusive = false
                                     }
-                                },
-                                icon = painterResource(id = R.drawable.ic_new_folder),
-                                description = ""
-                            ),
-                            MiniFloatingAction(
-                                action = { viewModel.signOut() },
-                                icon = painterResource(id = R.drawable.ic_login),
-                                description = stringResource(R.string.sign_out)
-                            )
+                                    launchSingleTop = true
+                                }
+                            },
+                            icon = painterResource(id = R.drawable.ic_new_folder),
+                            description = ""
+                        ),
+                        MiniFloatingAction(
+                            action = { viewModel.signOut() },
+                            icon = painterResource(id = R.drawable.ic_login),
+                            description = stringResource(R.string.sign_out)
                         )
-                        , fabIcon = Icons.Filled.Add
+                    ), fabIcon = Icons.Filled.Add
+                )
+            },
+            floatingActionButtonPosition = FabPosition.End,
+            topBar = {}
+        ) {
+            NavHost(navController = navHostController, startDestination = "main") {
+                composable(route = Screen.Main.route) { MainScreen(navController = navHostController) }
+                composable(route = Screen.Login.route) { LoginScreen() }
+                composable(route = Screen.UnhandledCalls.route) { UnhandledCallsScreen() }
+                composable(route = Screen.Statistics.route) { StatsScreen() }
+                composable(
+                    route = Screen.DetailsMessage.route + "?messageId={messageId}",
+                    arguments = listOf(
+                        navArgument("messageId") {
+                            type = NavType.StringType
+                            defaultValue = null
+                            nullable = true
+                        }
                     )
-                },
-                floatingActionButtonPosition = FabPosition.Center,
-                topBar = {}
                 ) {
-                NavHost(navController = navHostController, startDestination = "main") {
-                    composable(route = Screen.Main.route) { MainScreen(navController = navHostController) }
-                    composable(route = Screen.Login.route) { LoginScreen() }
-                    composable(route = Screen.UnhandledCalls.route) { UnhandledCallsScreen() }
-                    composable(route = Screen.Statistics.route) { StatsScreen() }
-                    composable(
-                        route = Screen.DetailsMessage.route + "/{messageId}",
-                        arguments = listOf(
-                            navArgument("messageId") {
-                                type = NavType.StringType
-                                defaultValue = null
-                                nullable = true
-                            }
-                        )
-                    ) { DetailsMessageScreen(navController = navHostController) }
-                    composable(
-                        route = Screen.DetailsFolder.route + "/{folderId}",
-                        arguments = listOf(
-                            navArgument("folderId") {
-                                type = NavType.StringType
-                                defaultValue = null
-                                nullable = true
-                            }
-                        )) { DetailsFolderScreen(navController = navHostController) }
+                    DetailsMessageScreen(
+                        navController = navHostController,
+                        messageId = it.arguments?.getString("messageId")
+                    )
+                }
+                composable(
+                    route = Screen.DetailsFolder.route + "?folderId={folderId}",
+                    arguments = listOf(
+                        navArgument("folderId") {
+                            type = NavType.StringType
+                            defaultValue = null
+                            nullable = true
+                        }
+                    )) {
+                    DetailsFolderScreen(
+                        navController = navHostController,
+                        folderId = it.arguments?.getString("userId")
+                    )
                 }
             }
         }
+    }
 }

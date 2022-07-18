@@ -3,22 +3,23 @@ package com.orelzman.mymessages.presentation.components.multi_fab
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 
 @Composable
 fun MiniFloatingActionButton(
     miniFloatingAction: MiniFloatingAction,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = { }
 ) {
     FloatingActionButton(
         modifier = modifier,
         shape = RoundedCornerShape(50),
-        onClick = { miniFloatingAction.action() }) {
+        onClick = {
+            miniFloatingAction.action()
+            onClick()
+        }) {
         Icon(
             painter = miniFloatingAction.icon,
             contentDescription = miniFloatingAction.description

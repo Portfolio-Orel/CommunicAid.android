@@ -20,13 +20,14 @@
     <string name="confirmation_code">קוד אישור</string>
     <string name="loging_out">מתנתק…</string>
     <string name="logout">התנתק</string>
-    <string name="wrong_credentials">הפרטים שהוזנו לא נכונים...</string>
+    <string name="wrong_credentials">הפרטים שהוזנו לא נכונים…</string>
     <string name="no_unhandled_calls">אין שיחות שלא טופלו!</string>
     <string name="save_message">שמור</string>
     <string name="no_active_call">אין שיחה</string>
     <string name="title">כותרת</string>
     <string name="expansion_button">כפתור להרחבה</string>
     <string name="message_saved_successfully">ההודעה נוספה בהצלחה!</string>
+    <string name="folder_saved_successfully">התיקייה נוספה בהצלחה!</string>
     <string name="save">שמור</string>
     <string name="cancel">בטל</string>
     <string name="message_symbol">סימול</string>
