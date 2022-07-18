@@ -11,20 +11,23 @@ data class MainState(
     val messagesInFolders: List<MessageInFolder> = emptyList(),
     val selectedFolder: Folder? = null,
 
-    val activeCall: String? = null,
-    val callOnTheLine: String? = null,
-    val callInBackground: String? = null,
+    val activeCall: PhoneCall? = null,
+    val callOnTheLine: PhoneCall? = null,
+    val callInBackground: PhoneCall? = null,
 
     val isLoading: Boolean = true,
     val isLoggedIn: Boolean = false,
     val maxMessagesInRow: Int = 6,
     val messageToEdit: Message? = null,
     val folderToEdit: Folder? = null,
-    val screenToShow: MainScreens = MainScreens.Default
+
+    val screenToShow: MainScreens = MainScreens.Main
 )
 
 enum class MainScreens {
     DetailsMessage,
     DetailsFolder,
-    Default;
+    Stats,
+    UnhandledCalls,
+    Main;
 }

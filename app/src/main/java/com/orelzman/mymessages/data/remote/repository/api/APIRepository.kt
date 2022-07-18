@@ -22,7 +22,7 @@ class APIRepository @Inject constructor(
         return result.body
     }
 
-    override suspend fun createMessage(createMessageBody: CreateMessageBody): String {
+    override suspend fun createMessage(createMessageBody: CreateMessageBody): List<String> {
         val result = api.createMessage(createMessageBody)
         return result.body
     }

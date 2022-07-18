@@ -32,5 +32,12 @@ amplify-build-config.json
 amplify-gradle-config.json
 amplifytools.xcconfig
 .secret-*
+*_secrets.json
+*awsconfiguration.json
+*configuration.json
 **.sample
 #amplify-do-not-edit-end
+app/src/main/res/raw/prod_secrets.json
+app/src/main/res/raw/dev_secrets.json
+app/src/main/res/raw/awsconfiguration.json
+app/src/main/res/raw/amplifyconfiguration.json

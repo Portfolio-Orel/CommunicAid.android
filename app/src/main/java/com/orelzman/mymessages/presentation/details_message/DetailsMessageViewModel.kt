@@ -10,6 +10,7 @@ import com.orelzman.mymessages.domain.interactors.FolderInteractor
 import com.orelzman.mymessages.domain.interactors.MessageInteractor
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
+import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -42,12 +43,13 @@ class DetailsMessageViewModel @Inject constructor(
             shortTitle = message.shortTitle,
             messageId = message.id,
             oldFolderId = folder.id,
+            selectedFolder = folder,
             isEdit = true
         )
     }
 
     private fun clearValues() {
-        state = state.copy(title = "", shortTitle = "", body = "", currentFolderId = "")
+        state = state.copy(title = "", shortTitle = "", body = "", selectedFolder = null)
     }
 
     fun setEdit(messageId: String?) {
@@ -73,8 +75,8 @@ class DetailsMessageViewModel @Inject constructor(
         state = state.copy(body = value)
     }
 
-    fun setFolderId(value: String) {
-        state = state.copy(currentFolderId = value)
+    fun setSelectedFolder(value: Folder) {
+        state = state.copy(selectedFolder = value)
     }
 
     fun saveMessage() {
@@ -93,14 +95,14 @@ class DetailsMessageViewModel @Inject constructor(
                             messageInteractor.updateMessage(
                                 userId = it,
                                 message = message,
-                                newFolderId = state.currentFolderId,
+                                newFolderId = state.selectedFolder?.id ?: "",
                                 oldFolderId = state.oldFolderId
                             )
                         } else {
                             messageInteractor.createMessage(
                                 userId = it,
                                 message = message,
-                                folderId = state.currentFolderId
+                                folderId = state.selectedFolder?.id ?: ""
                             )
                         }
                     }
@@ -115,7 +117,7 @@ class DetailsMessageViewModel @Inject constructor(
             if (state.title.isBlank()) emptyFields.add(MessageFields.Title)
             if (state.shortTitle.isBlank()) emptyFields.add(MessageFields.ShortTitle)
             if (state.body.isBlank()) emptyFields.add(MessageFields.Body)
-            if (state.currentFolderId.isBlank()) emptyFields.add(MessageFields.Folder)
+            if (state.selectedFolder == null) emptyFields.add(MessageFields.Folder)
             state = state.copy(emptyFields = emptyFields)
         }
     }

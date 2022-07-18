@@ -38,17 +38,17 @@ val Typography = Typography(
     labelSmall = TextStyle(
         fontFamily = fontsVarelaround,
         fontWeight = FontWeight.Normal,
-        fontSize = 18.sp
+        fontSize = 12.sp
     ),
     labelMedium = TextStyle(
         fontFamily = fontsVarelaround,
         fontWeight = FontWeight.Normal,
-        fontSize = 20.sp
+        fontSize = 14.sp
     ),
     labelLarge = TextStyle(
         fontFamily = fontsVarelaround,
         fontWeight = FontWeight.Normal,
-        fontSize = 22.sp
+        fontSize = 18.sp
     ),
     /* Other default text styles to override
     button = TextStyle(

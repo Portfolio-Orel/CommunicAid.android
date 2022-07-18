@@ -6,10 +6,10 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.domain.interactors.AnalyticsInteractor
+import com.orelzman.mymessages.domain.interactors.CallLogInteractor
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.model.entities.*
-import com.orelzman.mymessages.util.common.CallUtils
 import com.orelzman.mymessages.util.common.Constants
 import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.appendAll
@@ -27,6 +27,7 @@ class UploadWorker @AssistedInject constructor(
     private val authInteractor: AuthInteractor,
     private val phoneCallsInteractor: PhoneCallsInteractor,
     private val settingsInteractor: SettingsInteractor,
+    private val callLogInteractor: CallLogInteractor,
     private val analyticsInteractor: AnalyticsInteractor
 ) : Worker(context, workerParams) {
 
@@ -34,12 +35,13 @@ class UploadWorker @AssistedInject constructor(
         try {
             uploadCalls()
         } catch (e: Exception) {
-            Log.vCustom(e.message ?: e.localizedMessage)
+            Log.v(e.message ?: e.localizedMessage)
         }
         return Result.success()
     }
 
     private fun uploadCalls() {
+        Log.v("Started uploading worker")
         var phoneCalls = emptyList<PhoneCall>()
         val uploadJob = CoroutineScope(Dispatchers.IO).async {
             delay(Constants.TIME_TO_ADD_CALL_TO_CALL_LOG)
@@ -54,8 +56,9 @@ class UploadWorker @AssistedInject constructor(
                         it,
                         UploadState.BeingUploaded
                     )
-                    return@mapNotNull CallUtils.update(context, it)
+                    return@mapNotNull callLogInteractor.update(it)
                 }
+            Log.v("phone calls to upload: $phoneCalls")
             authInteractor.getUser()?.userId?.let {
                 phoneCallsInteractor.createPhoneCalls(
                     it,
@@ -67,17 +70,19 @@ class UploadWorker @AssistedInject constructor(
                 }
             }
         }
-        try {
-            CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
                 uploadJob.await()
-            }
-        } catch (e: Exception) {
-            e.log(phoneCalls)
-            phoneCalls.forEach {
-                phoneCallsInteractor.updateCallUploadState(
-                    it,
-                    uploadState = UploadState.NotUploaded
-                )
+            } catch (e: Exception) {
+                e.log(phoneCalls)
+                Log.v("Worker failed, reason: $e")
+                phoneCalls.forEach {
+                    phoneCallsInteractor.updateCallUploadState(
+                        it,
+                        uploadState = UploadState.NotUploaded
+                    )
+                }
+                Log.v("Upload Worker done.")
             }
         }
     }
@@ -87,7 +92,7 @@ class UploadWorker @AssistedInject constructor(
         val lastUpdateAt = settingsInteractor.getSettings(SettingsKeys.CallsUpdateAt)?.value
         val date = Date(lastUpdateAt?.toLongOrNull() ?: Date().time)
         val potentiallyMissedPhoneCalls =
-            CallUtils.getCallLogsByDate(context, startDate = date).toPhoneCalls()
+            callLogInteractor.getCallLogsByDate(startDate = date).toPhoneCalls()
         val savedPhoneCalls = phoneCallsInteractor.getAll()
         potentiallyMissedPhoneCalls.forEach { potentiallyMissedPhoneCall ->
             if (savedPhoneCalls.none {

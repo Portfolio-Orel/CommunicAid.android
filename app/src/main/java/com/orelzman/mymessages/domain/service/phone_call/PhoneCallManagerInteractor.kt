@@ -1,9 +1,9 @@
 package com.orelzman.mymessages.domain.service.phone_call
 
-import com.orelzman.mymessages.domain.model.entities.PhoneCall
-import kotlinx.coroutines.flow.StateFlow
+import com.orelzman.mymessages.domain.interactors.CallPreferences
+import kotlinx.coroutines.flow.Flow
 
 interface PhoneCallManagerInteractor {
-    val numberOnTheLine: StateFlow<PhoneCall?>
-    val callInBackground: StateFlow<PhoneCall?>
+    val callsDataFlow: Flow<CallPreferences>
+    val callsData: CallPreferences
 }

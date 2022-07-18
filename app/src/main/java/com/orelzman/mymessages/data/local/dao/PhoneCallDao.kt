@@ -37,7 +37,14 @@ interface PhoneCallDao {
         FROM PhoneCall
         WHERE startDate == :startDate
     """)
-    fun getByStartDate(startDate: Date): PhoneCall
+    fun getByStartDate(startDate: Date): PhoneCall?
+
+    @Query("""
+        SELECT *
+        FROM PhoneCall
+        WHERE id = :id
+    """)
+    fun get(id: String): PhoneCall?
 
     @Query("""
         DELETE FROM PhoneCall

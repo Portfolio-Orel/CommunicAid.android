@@ -132,6 +132,10 @@ dependencies {
     // Auth
     implementation project(':auth')
 
+    // Navigation
+    implementation "com.google.accompanist:accompanist-navigation-material:0.24.11-rc"
+    implementation "com.google.accompanist:accompanist-navigation-animation:0.24.11-rc"
+
     // Permissions
     implementation "com.google.accompanist:accompanist-permissions:0.21.1-beta"
 
@@ -158,4 +162,5 @@ dependencies {
 
     // Mixpanel
     implementation 'com.mixpanel.android:mixpanel-android:6.+'
+
 }

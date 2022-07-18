@@ -1,8 +1,11 @@
 package com.orelzman.auth.domain.interactor
 
 import com.orelzman.auth.domain.model.User
+import kotlinx.coroutines.flow.Flow
 
 interface UserInteractor {
-    fun insert(user: User)
+    fun save(user: User)
     fun get(): User?
+    fun getFlow(): Flow<User?>
+    fun clear()
 }

@@ -1,16 +1,15 @@
 package com.orelzman.mymessages.presentation.stats
 
-import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.mymessages.domain.interactors.CallLogInteractor
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.model.entities.UploadState
 import com.orelzman.mymessages.domain.model.entities.toPhoneCalls
-import com.orelzman.mymessages.util.common.CallUtils
 import com.orelzman.mymessages.util.common.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,16 +21,17 @@ import javax.inject.Inject
 @HiltViewModel
 class StatsViewModel @Inject constructor(
     private val phoneCallsInteractor: PhoneCallsInteractor,
-    private val authInteractor: AuthInteractor
+    private val authInteractor: AuthInteractor,
+    private val callLogInteractor: CallLogInteractor
     ) : ViewModel() {
     var state by mutableStateOf(StatsState())
 
     val isRefreshing = MutableSharedFlow<Boolean>()
 
 
-    fun sendCallLogs(context: Context) {
+    fun sendCallLogs() {
         state = state.copy(isLoadingCallLogSend = true)
-        val callLogs = CallUtils.getTodaysCallLog(context)
+        val callLogs = callLogInteractor.getTodaysCallLog()
         viewModelScope.launch(Dispatchers.IO) {
             authInteractor.getUser()?.let {
                 val phoneCalls = callLogs.toPhoneCalls().map { call ->
@@ -45,7 +45,7 @@ class StatsViewModel @Inject constructor(
         }
     }
 
-    fun refreshData(context: Context) {
+    fun refreshData() {
         viewModelScope.launch(Dispatchers.Main) {
             val todaysDate = DateUtils.getStartOfDay()
             val cal = Calendar.getInstance()
@@ -59,7 +59,7 @@ class StatsViewModel @Inject constructor(
                 minutes = "0$minutes"
             }
             val phoneCalls = phoneCallsInteractor.getAll().filter { it.startDate > todaysDate }
-            val callsCountToday = CallUtils.getTodaysCallLog(context).size
+            val callsCountToday = callLogInteractor.getTodaysCallLog().size
             val callsNotUploaded =
                 phoneCalls.filter { it.uploadState == UploadState.NotUploaded }.size
             val callsUploaded = phoneCalls.filter { it.uploadState == UploadState.Uploaded }.size

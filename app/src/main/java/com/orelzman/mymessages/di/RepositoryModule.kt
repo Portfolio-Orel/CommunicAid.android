@@ -29,52 +29,46 @@ abstract class RepositoryModule {
     ): AuthInteractor
 
     @Binds
-    @Singleton
     abstract fun provideRepository(repository: APIRepository): Repository
 
     @Binds
-    @Singleton
     abstract fun provideMessageInteractor(interactor: MessageInteractorImpl): MessageInteractor
 
     @Binds
-    @Singleton
     abstract fun provideFolderInteractor(interactor: FolderInteractorImpl): FolderInteractor
 
     @Binds
-    @Singleton
     abstract fun provideMessageInFolderInteractor(interactor: MessageInFolderInteractorImpl): MessageInFolderInteractor
 
     @Binds
-    @Singleton
     abstract fun providePhoneCallsInteractor(interactor: PhoneCallsInteractorImpl): PhoneCallsInteractor
 
     @Binds
-    @Singleton
     abstract fun provideUnhandledCallsInteractor(unhandledCallsInteractor: DeletedCallsInteractorImpl): DeletedCallsInteractor
 
     @ExperimentalPermissionsApi
     @Binds
-    @Singleton
     abstract fun providePhoneCallManager(manager: PhoneCallManagerImpl): PhoneCallManager
 
     @ExperimentalPermissionsApi
     @Binds
-    @Singleton
     abstract fun providePhoneCallManagerInteractor(interactor: PhoneCallManagerInteractorImpl): PhoneCallManagerInteractor
 
     @Binds
-    @Singleton
     abstract fun provideDatabaseInteractor(interactor: DatabaseInteractorImpl): DatabaseInteractor
 
     @Binds
-    @Singleton
     abstract fun provideAnalyticsInteractor(interactor: AnalyticsInteractorImpl): AnalyticsInteractor
 
     @Binds
-    @Singleton
     abstract fun provideSettingsInteractor(interactor: SettingsInteractorImpl): SettingsInteractor
 
     @Binds
-    @Singleton
     abstract fun provideUnhandledCallsManager(manager: UnhandledCallsManagerImpl): UnhandledCallsManager
+
+    @Binds
+    abstract fun provideDataSourceCallsInteractor(interactorImpl: DataSourceCallsInteractorImpl): DataSourceCallsInteractor
+
+    @Binds
+    abstract fun provideCallLogInteractor(interactorImpl: CallLogInteractorImpl): CallLogInteractor
 }

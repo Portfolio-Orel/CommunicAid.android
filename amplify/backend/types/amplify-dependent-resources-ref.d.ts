@@ -1,15 +1,1 @@
-export type AmplifyDependentResourcesAttributes = {
-    "auth": {
-        "mymessages203df3f96": {
-            "IdentityPoolId": "string",
-            "IdentityPoolName": "string",
-            "HostedUIDomain": "string",
-            "OAuthMetadata": "string",
-            "UserPoolId": "string",
-            "UserPoolArn": "string",
-            "UserPoolName": "string",
-            "AppClientIDWeb": "string",
-            "AppClientID": "string"
-        }
-    }
-}
+export type AmplifyDependentResourcesAttributes = {}

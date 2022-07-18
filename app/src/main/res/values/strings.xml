@@ -31,4 +31,6 @@
     <string name="cancel">בטל</string>
     <string name="message_symbol">סימול</string>
     <string name="message">הודעה</string>
+    <string name="statistics">סטטיסטיקה</string>
+    <string name="main">ראשי</string>
 </resources>

@@ -8,9 +8,12 @@ import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.data.local.LocalDatabase
+import com.orelzman.mymessages.data.local.interactors.DataSourceCallsInteractorImpl
 import com.orelzman.mymessages.data.local.interactors.PhoneCallsInteractorImpl
 import com.orelzman.mymessages.data.local.type_converters.Converters
+import com.orelzman.mymessages.domain.interactors.CallType
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
+import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.service.phone_call.CallState
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManager
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerImpl
@@ -24,6 +27,7 @@ import org.junit.runner.RunWith
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
+@Suppress("SameParameterValue")
 @RunWith(AndroidJUnit4::class)
 @SmallTest
 class PhoneCallManagerTest {
@@ -33,7 +37,10 @@ class PhoneCallManagerTest {
 
     private lateinit var mockContext: Context
 
-    @OptIn(ExperimentalPermissionsApi::class)
+    private val callLogInteractor: StubCallLogInteractor = StubCallLogInteractor()
+    private var callsNotInLog: ArrayList<Pair<Numbers, CallType>> = ArrayList()
+
+    @ExperimentalPermissionsApi
     @Before
     fun setUp() {
         mockContext = InstrumentationRegistry.getInstrumentation().targetContext
@@ -45,11 +52,14 @@ class PhoneCallManagerTest {
             .fallbackToDestructiveMigration()
             .allowMainThreadQueries()
             .build()
-        interactor =
+        this.interactor =
             PhoneCallsInteractorImpl(repository = StubRepository(), database = db)
-        manager = PhoneCallManagerImpl(
-            phoneCallInteractor = interactor,
-            null
+
+        this.manager = PhoneCallManagerImpl(
+            phoneCallInteractor = this.interactor,
+            null,
+            DataSourceCallsInteractorImpl(context = mockContext),
+            callLogInteractor
         )
         idle(Numbers.OREL)
         db.clearAllTables()
@@ -129,14 +139,14 @@ class PhoneCallManagerTest {
         incomingCallAnswered(Numbers.OREL)
         testState(CallState.OnCall)
 
-        waitingCall(Numbers.MOM)
+        waitingCall(Numbers.DAD)
         testState(CallState.Waiting)
 
         waitingCallRejected(previousNumber = Numbers.OREL)
         testState(CallState.OnCall)
-        testLastNumber(Numbers.MOM)
+        testLastNumber(Numbers.DAD)
 
-        hangup(Numbers.OREL)
+        hangup(Numbers.OREL, CallType.INCOMING)
 
         testDBSize(2)
     }
@@ -151,14 +161,10 @@ class PhoneCallManagerTest {
 
     private fun outgoingCallsAnsweredAndHangup(count: Int, number: Numbers, duration: Long) {
         for (i in 0 until count) {
-            outgoingCallAnswered(duration, number)
-            hangup(number)
+            outgoingCall(duration, number)
+            hangup(number, CallType.OUTGOING)
             testState(CallState.Idle)
         }
-    }
-
-    private fun outgoingCallAnswered(millis: Long, number: Numbers) {
-        offhook(number, millis)
     }
 
     @Test
@@ -171,39 +177,70 @@ class PhoneCallManagerTest {
     private fun incomingCallsAnsweredAndHangup(count: Int, number: Numbers, duration: Long = 100) {
         for (i in 0 until count) {
             incomingCallAnswered(number, duration)
-            hangup(number)
+            hangup(number, CallType.INCOMING)
         }
     }
 
     private fun incomingCallAnswered(number: Numbers, millis: Long = 100) {
-        ring(number)
+        incomingCall(number, millis)
         offhook(number, millis)
     }
 
     private fun incomingCall(number: Numbers, millis: Long = 100) {
         ring(number, millis)
+        callsNotInLog.add(Pair(number, CallType.INCOMING))
     }
 
-    private fun hangup(number: Numbers = Numbers.OREL) {
+    private fun outgoingCall(millis: Long, number: Numbers) {
+        offhook(number, millis)
+        callsNotInLog.add(Pair(number, CallType.OUTGOING))
+    }
+
+
+    private fun waitingCall(number: Numbers) {
+        if (getState() != CallState.OnCall) {
+            throw CantStartWaitingFromIdleOrWaitingStates
+        }
+        ring(number)
+        callsNotInLog.add(Pair(number, CallType.INCOMING))
+    }
+
+    private fun hangup(number: Numbers, type: CallType) {
         idle(number = number)
+        callLogInteractor.addToCallLog(
+            CallLogEntity(
+                number = number.value,
+                duration = 0,
+                name = "",
+                time = 0,
+                callLogType = type
+            )
+        )
+        callsNotInLog.remove(Pair(number, type))
         testState(CallState.Idle)
     }
 
+    private fun hangup() {
+        callLogInteractor.addToCallLog(callsNotInLog.map {
+            CallLogEntity(
+                number = it.first.value,
+                duration = 0,
+                name = "",
+                time = 0,
+                callLogType = it.second
+            )
+        })
+        callsNotInLog = ArrayList()
+    }
+
     private fun waitingCallAnswered(number: Numbers, millis: Long = 100) {
-        if (manager.state.value != CallState.Waiting) throw CantEndWaitingCallFromNotWaitingState
+        if (getState() != CallState.Waiting) throw CantEndWaitingCallFromNotWaitingState
         offhook(number, millis)
     }
 
     private fun waitingCallRejected(previousNumber: Numbers) {
-        if (manager.state.value != CallState.Waiting) throw CantEndWaitingCallFromNotWaitingState
+        if (getState() != CallState.Waiting) throw CantEndWaitingCallFromNotWaitingState
         offhook(previousNumber)
-    }
-
-    private fun waitingCall(number: Numbers) {
-        if (manager.state.value != CallState.OnCall) {
-            throw CantStartWaitingFromIdleOrWaitingStates
-        }
-        ring(number)
     }
 
     private fun idle(number: Numbers, sleepTime: Long = 100) {
@@ -222,28 +259,30 @@ class PhoneCallManagerTest {
     }
 
     private fun changeState(state: States, number: Numbers) {
-        manager.onStateChanged(state.value, number.value)
+        manager.onStateChanged(state.value, number.value, mockContext)
     }
 
     private fun testDBSize(sizeExpected: Int) {
-        val calls = interactor.getAll()
+        val calls = this.interactor.getAll()
         assert(calls.size == sizeExpected)
     }
 
     private fun printDB() {
-        println("TEST::: ${interactor.getAll().map { it.number }}")
+        println("TEST::: ${this.interactor.getAll().map { it.number }}")
     }
 
     private fun printDBSize() {
-        println("TEST::: ${interactor.getAll().size}")
+        println("TEST::: ${this.interactor.getAll().size}")
     }
 
     private fun testState(state: CallState) =
-        assert(manager.state.value == state)
+        assert(getState() == state)
 
     private fun testLastNumber(number: Numbers) =
-        assert(interactor.getAll().last().number == number.value)
+        assert(this.interactor.getAll().last().number == number.value)
 
+    private fun getState(): CallState =
+        CallState.fromString(this.manager.callsData.callState ?: "") ?: throw Exception("No state")
 
     @After
     fun teardown() {

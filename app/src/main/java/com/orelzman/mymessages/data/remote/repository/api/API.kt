@@ -17,7 +17,7 @@ interface API {
 
     // Messages
     @POST("/messages")
-    suspend fun createMessage(@Body messageBody: CreateMessageBody): Response<String>
+    suspend fun createMessage(@Body messageBody: CreateMessageBody): Response<List<String>>
 
     @GET("/messages/{user_id}")
     suspend fun getMessages(@Path("user_id") userId: String): Response<List<GetMessagesResponse>>

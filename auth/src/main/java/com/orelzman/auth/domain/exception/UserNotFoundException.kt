@@ -1,4 +1,3 @@
 package com.orelzman.auth.domain.exception
 
-class UserNotFoundException: Exception() {
-}
+class UserNotFoundException: Exception()
