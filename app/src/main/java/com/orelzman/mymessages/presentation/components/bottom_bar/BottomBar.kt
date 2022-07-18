@@ -8,8 +8,13 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.util.Screen
 
@@ -32,29 +37,35 @@ private val Screen.label: Int
 
 @Composable
 fun BottomBar(
-    currentDestination: Screen,
-    onBottomBarItemClick: (Screen) -> Unit
+    navController: NavHostController,
 ) {
     val bottomBarDestinations = listOf(Screen.UnhandledCalls, Screen.Main)
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
 
     NavigationBar {
-        bottomBarDestinations.forEach { destination ->
+        bottomBarDestinations.forEach { screen ->
             NavigationBarItem(
                 icon = {
-                    destination.icon?.let {
+                    screen.icon?.let {
                         Icon(
                             imageVector = it,
-                            contentDescription = stringResource(destination.label)
+                            contentDescription = stringResource(screen.label)
                         )
                     }
                 },
                 label = {
-                    Text(stringResource(destination.label))
+                    Text(stringResource(screen.label))
                 },
                 alwaysShowLabel = false,
-                selected = currentDestination.route == destination.route,
+                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                 onClick = {
-                    onBottomBarItemClick(destination)
+                    navController.navigate(screen.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            inclusive = false
+                        }
+                        launchSingleTop = true
+                    }
                 },
             )
         }

@@ -19,7 +19,9 @@ class UserInteractorImpl @Inject constructor(
 
     override fun getFlow(): Flow<User?> = userDB.getUserFlow()
 
-    override fun clear() =
+    override fun clear() {
         userDB.clear()
+        userDB.insert(User())
+    }
 
 }

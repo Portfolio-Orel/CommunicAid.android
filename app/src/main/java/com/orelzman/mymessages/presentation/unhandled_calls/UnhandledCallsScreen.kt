@@ -4,9 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,12 +22,9 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.presentation.unhandled_calls.components.UnhandledCallRow
-import com.orelzman.mymessages.util.extension.DefaultDestinationNavigator
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+
 
 @Composable
-@Destination
 fun UnhandledCallsScreen(
     viewModel: UnhandledCallsViewModel = hiltViewModel()
 ) {

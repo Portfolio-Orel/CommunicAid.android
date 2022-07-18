@@ -19,9 +19,11 @@ import com.orelzman.mymessages.domain.managers.UnhandledCallsManager
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.DeletedCall
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
+import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -51,7 +53,7 @@ class UnhandledCallsViewModel @Inject constructor(
      * Sets all the calls that were not handled by the user and might require his attention.
      */
     private fun setCalls() {
-        viewModelScope.launch(Dispatchers.Main) {
+        val job = viewModelScope.async {
             authInteractor.getUser()?.userId?.let { userId ->
                 deletedCallsInteractor.getAll(userId)
                     .collect {
@@ -63,6 +65,14 @@ class UnhandledCallsViewModel @Inject constructor(
                         )
                         state = state.copy(callsToHandle = callsToHandle)
                     }
+            }
+        }
+        viewModelScope.launch(Dispatchers.Main) {
+            try {
+                job.await()
+            } catch (e: Exception) {
+                e.log()
+                Log.eCustom(e.message ?: "Failed to get unhandled calls")
             }
         }
     }

@@ -35,4 +35,5 @@
     <string name="main">ראשי</string>
     <string name="details_message">details_message</string>
     <string name="details_folder">details_folder</string>
+    <string name="sign_out">Sign out</string>
 </resources>

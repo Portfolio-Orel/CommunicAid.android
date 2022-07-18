@@ -7,13 +7,9 @@ import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import com.orelzman.mymessages.R
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,28 +18,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.orelzman.mymessages.presentation.BackPressHandler
-import com.orelzman.mymessages.presentation.components.CustomScaffold
-import com.orelzman.mymessages.presentation.components.bottom_bar.BottomBar
-import com.orelzman.mymessages.presentation.components.multi_fab.MiniFloatingAction
-import com.orelzman.mymessages.presentation.components.multi_fab.MultiFab
-import com.orelzman.mymessages.presentation.destinations.DetailsFolderScreenDestination
-import com.orelzman.mymessages.presentation.destinations.DetailsMessageScreenDestination
 import com.orelzman.mymessages.presentation.main.components.FolderView
 import com.orelzman.mymessages.presentation.main.components.MessageView
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @ExperimentalFoundationApi
 @Composable
 fun MainScreen(
@@ -189,7 +173,6 @@ fun MainScreen(
 @Composable
 private fun Content(
     modifier: Modifier = Modifier,
-    navigator: DestinationsNavigator,
     viewModel: MainViewModel
 ) {
     val state = viewModel.state
@@ -201,22 +184,8 @@ private fun Content(
     val boxHeight = (boxWidth * 1.5f)
     val messagesOffset = remember { mutableStateOf(0f) }
 
-
     LaunchedEffect(key1 = viewModel) {
         viewModel.init()
-    }
-
-    LaunchedEffect(key1 = viewModel.state.screenToShow) {
-        val route =
-            when (viewModel.state.screenToShow) {
-                MainScreens.DetailsMessage -> DetailsMessageScreenDestination(messageId = state.messageToEdit?.id)
-                MainScreens.DetailsFolder -> DetailsFolderScreenDestination(folderId = state.folderToEdit?.id)
-                else -> null
-            }
-        if (route != null) {
-            navigator.navigate(route)
-            viewModel.navigated()
-        }
     }
 
     if (state.isLoading) {

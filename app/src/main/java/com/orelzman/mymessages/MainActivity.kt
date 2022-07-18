@@ -69,38 +69,11 @@ class MainActivity : ComponentActivity() {
                         }
                     ) // ToDo: add assurance that the permissions were granted
 
-                    val navHostController = rememberNavController()
-                    NavHost(navController = navHostController, startDestination = "main") {
-                        composable(route = Screen.Main.route) { MainScreen() }
-                        composable(route = Screen.Login.route) { LoginScreen() }
-                        composable(route = Screen.UnhandledCalls.route) { UnhandledCallsScreen() }
-                        composable(route = Screen.Statistics.route) { StatsScreen() }
-                        composable(
-                            route = Screen.DetailsMessage.route + "/{messageId}",
-                            arguments = listOf(
-                                navArgument("messageId") {
-                                    type = NavType.StringType
-                                    defaultValue = null
-                                    nullable = true
-                                }
-                            )
-                        ) { DetailsMessageScreen() }
-                        composable(
-                            route = Screen.DetailsFolder.route + "/{folderId}",
-                            arguments = listOf(
-                                navArgument("folderId") {
-                                    type = NavType.StringType
-                                    defaultValue = null
-                                    nullable = true
-                                }
-                            )) { DetailsFolderScreen() }
-                    }
-
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
                     ) {
-                        MyMessagesApp(navController = navHostController)
+                        MyMessagesApp()
                     }
                 }
             }

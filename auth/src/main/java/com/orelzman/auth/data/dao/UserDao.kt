@@ -24,10 +24,10 @@ interface UserDao {
         FROM User
     """
     )
-    fun getUserFlow(): Flow<User>
+    fun getUserFlow(): Flow<User?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(user: User)
+    fun insert(user: User?)
 
     @Query(
         """

@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.presentation.main.components.ActionButton
@@ -25,6 +26,7 @@ import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 
 @Composable
 fun DetailsMessageScreen(
+    navController: NavController,
     viewModel: DetailsMessageViewModel = hiltViewModel(),
     messageId: String? = null
 ) {
@@ -104,7 +106,7 @@ fun DetailsMessageScreen(
                 ActionButton(
                     isPrimary = false,
                     text = stringResource(R.string.cancel),
-                    onClick = { navigator.navigateUp() },
+                    onClick = { navController.navigateUp() },
                 )
             }
         }

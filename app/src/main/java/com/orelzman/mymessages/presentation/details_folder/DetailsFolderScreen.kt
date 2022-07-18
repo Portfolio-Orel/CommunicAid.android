@@ -9,11 +9,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.presentation.main.components.ActionButton
 
 @Composable
 fun DetailsFolderScreen(
+    navController: NavController,
     viewModel: DetailsFolderViewModel = hiltViewModel(),
     folderId: String? = null
 ) {
@@ -22,7 +24,7 @@ fun DetailsFolderScreen(
         viewModel.setEdit(folderId)
     }
     if (state.isFolderAdded) {
-        navigator.navigateUp()
+        navController.navigateUp()
     }
     Column(
         modifier = Modifier
@@ -49,7 +51,7 @@ fun DetailsFolderScreen(
             ActionButton(
                 isPrimary = false,
                 text = stringResource(R.string.cancel),
-                onClick = { navigator.navigateUp() },
+                onClick = { navController.navigateUp() },
             )
         }
     }

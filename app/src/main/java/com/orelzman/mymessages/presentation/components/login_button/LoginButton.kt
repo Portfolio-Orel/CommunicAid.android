@@ -22,8 +22,8 @@ fun LoginButton(
     username: String,
     password: String,
     onLoginComplete: (Boolean, Exception?) -> Unit,
-    onLoginClick: () -> Unit = {},
     modifier: Modifier = Modifier,
+    onLoginClick: () -> Unit = {},
     viewModel: LoginButtonViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state
@@ -37,6 +37,7 @@ fun LoginButton(
                     password = password,
                     onLoginComplete = onLoginComplete
                 )
+                onLoginClick()
             }
         ),
         shape = Shapes.medium,
