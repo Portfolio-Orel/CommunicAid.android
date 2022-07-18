@@ -1,6 +1,5 @@
 package com.orelzman.mymessages.presentation.main
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.rememberScrollableState
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,159 +19,30 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
 import com.orelzman.mymessages.presentation.main.components.FolderView
 import com.orelzman.mymessages.presentation.main.components.MessageView
+import com.orelzman.mymessages.util.Screen
 
 
 @ExperimentalFoundationApi
 @Composable
 fun MainScreen(
+    navController: NavController,
     viewModel: MainViewModel = hiltViewModel(),
 ) {
-    val state = viewModel.state
-
-//    Scaffold(
-//        topBar = {
-//            Box(
-//                modifier = Modifier.fillMaxWidth(),
-//                contentAlignment = Alignment.Center
-//            ) {
-//                Column(
-//                    verticalArrangement = Arrangement.Center,
-//                    horizontalAlignment = Alignment.CenterHorizontally
-//                ) {
-//                    Text(
-//                        text = if (state.activeCall?.number == "" || state.activeCall == null)
-//                            stringResource(R.string.no_active_call)
-//                        else
-//                            state.activeCall.number,
-//                        modifier = Modifier
-//                            .padding(8.dp),
-//                        style = MaterialTheme.typography.titleMedium
-//                    )
-//                    if (state.callInBackground != null) {
-//                        Row(
-//                            verticalAlignment = Alignment.CenterVertically,
-//                            horizontalArrangement = Arrangement.Center,
-//                        ) {
-//                            Button(
-//                                modifier = Modifier
-//                                    .border(
-//                                        1.dp,
-//                                        color = MaterialTheme.colorScheme.primary,
-//                                        shape = RoundedCornerShape(32.dp)
-//                                    )
-//                                    .width(150.dp)
-//                                    .height(36.dp),
-//                                colors = ButtonDefaults.buttonColors(
-//                                    containerColor =
-//                                    if (state.activeCall == state.callOnTheLine) MaterialTheme.colorScheme.primary
-//                                    else Color.Transparent
-//                                ),
-//                                onClick = { viewModel.setCallOnTheLineActive() }) {
-//                                Text(
-//                                    state.callOnTheLine?.number ?: "",
-//                                    style = MaterialTheme.typography.bodySmall,
-//                                    maxLines = 1,
-//                                    overflow = TextOverflow.Ellipsis,
-//                                    color = if (state.activeCall == state.callOnTheLine) MaterialTheme.colorScheme.onPrimary
-//                                    else MaterialTheme.colorScheme.onBackground
-//                                )
-//                            }
-//
-//                            Button(
-//                                modifier = Modifier
-//                                    .border(
-//                                        1.dp,
-//                                        color = MaterialTheme.colorScheme.primary,
-//                                        shape = RoundedCornerShape(32.dp)
-//                                    )
-//                                    .width(150.dp)
-//                                    .height(36.dp),
-//                                colors = ButtonDefaults.buttonColors(
-//                                    containerColor =
-//                                    if (state.activeCall == state.callInBackground) MaterialTheme.colorScheme.primary
-//                                    else Color.Transparent
-//                                ),
-//                                onClick = { viewModel.setBackgroundCallActive() }) {
-//                                Text(
-//                                    state.callInBackground.number,
-//                                    style = MaterialTheme.typography.bodySmall,
-//                                    maxLines = 1,
-//                                    overflow = TextOverflow.Ellipsis,
-//                                    color = if (state.activeCall == state.callInBackground) MaterialTheme.colorScheme.onPrimary
-//                                    else MaterialTheme.colorScheme.onBackground
-//                                )
-//
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//            Divider(
-//                modifier = Modifier.padding(8.dp),
-//                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-//            )
-//        },
-//        bottomBar = { destination ->
-//            BottomBar(
-//                currentDestination = destination,
-//                onBottomBarItemClick = {
-//                    navigator.navigate(it) {
-//                        launchSingleTop = true
-//                    }
-//                }
-//            )
-//        },
-//        floatingActionButton = {
-//            MultiFab(
-//                fabs = listOf(
-//                    MiniFloatingAction(
-//                        action = {
-//                            navigator.navigate(
-//                                DetailsMessageScreenDestination()
-//                            )
-//                        },
-//                        icon = painterResource(id = R.drawable.ic_new_message),
-//                        description = ""
-//                    ),
-//                    MiniFloatingAction(
-//                        action = {
-//                            navigator.navigate(
-//                                DetailsFolderScreenDestination()
-//                            )
-//                        },
-//                        icon = painterResource(id = R.drawable.ic_new_folder),
-//                        description = ""
-//                    )
-//                ), fabIcon = Icons.Filled.Add
-//            )
-//        },
-//        floatingActionButtonPosition = FabPosition.Center,
-//        content = {
-//            when (state.screenToShow) {
-//                MainScreens.Stats -> StatsScreen()
-//                MainScreens.UnhandledCalls -> UnhandledCallsScreen()
-//                else -> Content(
-//                    modifier = Modifier.padding(it),
-//                    navigator = navigator,
-//                    viewModel = viewModel
-//                )
-//            }
-//        }
-//    )
-
-
+    Content(navController = navController, viewModel = viewModel)
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun Content(
-    modifier: Modifier = Modifier,
-    viewModel: MainViewModel
+    navController: NavController,
+    viewModel: MainViewModel,
+    modifier: Modifier = Modifier
 ) {
     val state = viewModel.state
     val screen = LocalConfiguration.current
@@ -251,8 +120,8 @@ private fun Content(
                             onClick = { message, context ->
                                 viewModel.onMessageClick(message, context)
                             },
-                            onLongClick = { message, context ->
-                                viewModel.onMessageLongClick(message, context)
+                            onLongClick = { message, _ ->
+                                navController.navigate(Screen.DetailsMessage.withArgs(message.id))
                             }
                         )
                     }

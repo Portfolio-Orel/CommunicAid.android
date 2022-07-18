@@ -38,7 +38,8 @@ fun MyMessagesApp(
     viewModel: MyMessagesViewModel = hiltViewModel()
 ) {
     val navHostController = rememberNavController()
-
+    val navController = navHostController as NavController
+    
     if (!viewModel.isAuthorized) {
             LoginScreen()
         } else {
@@ -53,7 +54,7 @@ fun MyMessagesApp(
                         fabs = listOf(
                             MiniFloatingAction(
                                 action = {
-                                    (navHostController as NavController).navigate(
+                                    navController.navigate(
                                         Screen.DetailsMessage.route
                                     ) {
                                         popUpTo(navHostController.graph.findStartDestination().id) {
@@ -67,7 +68,7 @@ fun MyMessagesApp(
                             ),
                             MiniFloatingAction(
                                 action = {
-                                    (navHostController as NavController).navigate(
+                                    navController.navigate(
                                         Screen.DetailsFolder.route
                                     ) {
                                         popUpTo(navHostController.graph.findStartDestination().id) {
@@ -92,7 +93,7 @@ fun MyMessagesApp(
                 topBar = {}
                 ) {
                 NavHost(navController = navHostController, startDestination = "main") {
-                    composable(route = Screen.Main.route) { MainScreen() }
+                    composable(route = Screen.Main.route) { MainScreen(navController = navHostController) }
                     composable(route = Screen.Login.route) { LoginScreen() }
                     composable(route = Screen.UnhandledCalls.route) { UnhandledCallsScreen() }
                     composable(route = Screen.Statistics.route) { StatsScreen() }
