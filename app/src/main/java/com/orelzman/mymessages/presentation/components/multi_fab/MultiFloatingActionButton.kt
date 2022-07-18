@@ -1,6 +1,5 @@
 package com.orelzman.mymessages.presentation.components.multi_fab
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +11,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
@@ -39,11 +37,11 @@ fun MultiFab(
         animationSpec = tween(durationMillis = 250)
     )
 
-    val color: Color by animateColorAsState(
-        if (state == MultiFabState.EXPANDED) MaterialTheme.colorScheme.secondaryContainer
-        else MaterialTheme.colorScheme.secondary,
-        animationSpec = tween(durationMillis = 250)
-    )
+//    val color: Color by animateColorAsState(
+//        if (state == MultiFabState.EXPANDED) MaterialTheme.colorScheme.secondaryContainer
+//        else MaterialTheme.colorScheme.secondary,
+//        animationSpec = tween(durationMillis = 250)
+//    )
     Column(
         horizontalAlignment = Alignment.End,
         verticalArrangement = Arrangement.spacedBy(20.dp)
@@ -69,7 +67,7 @@ fun MultiFab(
                     scaleX = scaleFab,
                     scaleY = scaleFab
                 ),
-            containerColor = color,
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
             shape = RoundedCornerShape(50),
             onClick = {
                 state =

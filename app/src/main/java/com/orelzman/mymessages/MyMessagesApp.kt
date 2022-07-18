@@ -126,7 +126,7 @@ fun MyMessagesApp(
                     )) {
                     DetailsFolderScreen(
                         navController = navHostController,
-                        folderId = it.arguments?.getString("userId")
+                        folderId = it.arguments?.getString("folderId")
                     )
                 }
             }
