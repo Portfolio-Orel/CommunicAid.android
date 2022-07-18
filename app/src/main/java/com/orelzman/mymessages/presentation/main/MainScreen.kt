@@ -57,6 +57,19 @@ private fun Content(
         viewModel.init()
     }
 
+    LaunchedEffect(key1 = state.screenToShow) {
+        when (state.screenToShow) {
+            MainScreens.DetailsFolder -> {
+                navController.navigate(Screen.DetailsFolder.withArgs(state.folderToEdit?.id))
+            }
+            MainScreens.DetailsMessage -> {
+                navController.navigate(Screen.DetailsMessage.withArgs(state.messageToEdit?.id))
+            }
+            else -> {}
+        }
+        viewModel.navigated()
+    }
+
     if (state.isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -88,7 +101,7 @@ private fun Content(
                             .height(50.dp)
                             .width(120.dp),
                         onClick = { viewModel.setSelectedFolder(it) },
-                        onLongClick = { navController.navigate(Screen.DetailsFolder.withArgs(folder.id)) }
+                        onLongClick = { viewModel.onFolderLongClick(it) }
                     )
                 }
             }

@@ -96,13 +96,15 @@ fun MyMessagesApp(
                 composable(route = Screen.Login.route) { LoginScreen() }
                 composable(route = Screen.UnhandledCalls.route) { UnhandledCallsScreen() }
                 composable(route = Screen.Statistics.route) { StatsScreen() }
+                composable(route = Screen.DetailsMessage.route) {
+                    DetailsMessageScreen(navController = navHostController)
+                }
                 composable(
-                    route = Screen.DetailsMessage.route + "?messageId={messageId}",
+                    route = Screen.DetailsMessage.route + "/{messageId}",
                     arguments = listOf(
                         navArgument("messageId") {
                             type = NavType.StringType
-                            defaultValue = null
-                            nullable = true
+                            defaultValue = ""
                         }
                     )
                 ) {
@@ -111,13 +113,15 @@ fun MyMessagesApp(
                         messageId = it.arguments?.getString("messageId")
                     )
                 }
+                composable(route = Screen.DetailsFolder.route) {
+                    DetailsFolderScreen(navController = navHostController)
+                }
                 composable(
-                    route = Screen.DetailsFolder.route + "?folderId={folderId}",
+                    route = Screen.DetailsFolder.route + "/{folderId}",
                     arguments = listOf(
                         navArgument("folderId") {
                             type = NavType.StringType
-                            defaultValue = null
-                            nullable = true
+                            defaultValue = ""
                         }
                     )) {
                     DetailsFolderScreen(

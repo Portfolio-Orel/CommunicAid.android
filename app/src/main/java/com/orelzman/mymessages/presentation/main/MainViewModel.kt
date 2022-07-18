@@ -125,12 +125,12 @@ class MainViewModel @Inject constructor(
         selectActiveCall(state.callOnTheLine)
     }
 
-    fun navigateTo(screen: MainScreens) {
+    private fun navigateTo(screen: MainScreens) {
         state = state.copy(screenToShow = screen)
     }
 
     fun navigated() {
-        state = state.copy(screenToShow = MainScreens.Main)
+        state = state.copy(screenToShow = MainScreens.Default)
     }
 
     private fun selectActiveCall(phoneCall: PhoneCall?) {
@@ -138,11 +138,13 @@ class MainViewModel @Inject constructor(
     }
 
     private fun goToEditMessage(message: Message) {
-        state = state.copy(messageToEdit = message, screenToShow = MainScreens.DetailsMessage)
+        state = state.copy(messageToEdit = message)
+        navigateTo(MainScreens.DetailsMessage)
     }
 
     private fun goToEditFolder(folder: Folder) {
-        state = state.copy(folderToEdit = folder, screenToShow = MainScreens.DetailsFolder)
+        state = state.copy(folderToEdit = folder)
+        navigateTo(MainScreens.DetailsFolder)
     }
 
     private fun observeNumberOnTheLine() {

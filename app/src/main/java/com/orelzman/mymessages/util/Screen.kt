@@ -11,11 +11,11 @@ sealed class Screen(val route: String, @StringRes val resourceId: Int) {
     object DetailsMessage : Screen("details_message", R.string.details_message)
     object DetailsFolder : Screen("details_folder", R.string.details_folder)
 
-    fun withArgs(vararg args: String): String =
+    fun withArgs(vararg args: String?): String =
         buildString {
             append(route)
             args.forEach { arg ->
-                append("/$arg")
+                append("/${arg ?: ""}")
             }
         }
 
