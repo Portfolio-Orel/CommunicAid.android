@@ -11,15 +11,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.presentation.main.components.ActionButton
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
-@Destination
 @Composable
 fun DetailsFolderScreen(
-    navigator: DestinationsNavigator,
     viewModel: DetailsFolderViewModel = hiltViewModel(),
-    folderId: String?
+    folderId: String? = null
 ) {
     val state = viewModel.state
     LaunchedEffect(key1 = folderId) {

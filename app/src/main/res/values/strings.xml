@@ -33,4 +33,6 @@
     <string name="message">הודעה</string>
     <string name="statistics">סטטיסטיקה</string>
     <string name="main">ראשי</string>
+    <string name="details_message">details_message</string>
+    <string name="details_folder">details_folder</string>
 </resources>

@@ -10,9 +10,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
-class MyMessagesViewModel(
+class MyMessagesViewModel @Inject constructor(
     authInteractor: AuthInteractor
 ) : ViewModel() {
 
@@ -22,7 +23,7 @@ class MyMessagesViewModel(
         viewModelScope.launch(Dispatchers.Main) {
             authInteractor.getUserFlow().collectLatest {
                 if (it != null) {
-                    isAuthorized = true
+                    isAuthorized = it.token != "" && it.userId != ""
                 }
             }
         }

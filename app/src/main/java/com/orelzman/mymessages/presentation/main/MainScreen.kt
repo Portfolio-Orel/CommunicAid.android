@@ -46,56 +46,11 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @ExperimentalFoundationApi
 @Composable
-@Destination
 fun MainScreen(
-    navigator: DestinationsNavigator,
     viewModel: MainViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state
-    BackPressHandler {
-        navigator.popBackStack()
-    }
 
-    val navController = rememberAnimatedNavController()
-    CustomScaffold(
-        navController = navController,
-        bottomBar = { destination ->
-            BottomBar(
-                currentDestination = destination,
-                onBottomBarItemClick = {
-                    navigator.navigate(it) {
-                        launchSingleTop = true
-                    }
-                }
-            )
-        },
-        floatingActionButton = {
-            MultiFab(
-                fabs = listOf(
-                    MiniFloatingAction(
-                        action = {
-                            navigator.navigate(
-                                DetailsMessageScreenDestination()
-                            )
-                        },
-                        icon = painterResource(id = R.drawable.ic_new_message),
-                        description = ""
-                    ),
-                    MiniFloatingAction(
-                        action = {
-                            navigator.navigate(
-                                DetailsFolderScreenDestination()
-                            )
-                        },
-                        icon = painterResource(id = R.drawable.ic_new_folder),
-                        description = ""
-                    )
-                ), fabIcon = Icons.Filled.Add
-            )
-        },
-        floatingActionButtonPosition = FabPosition.Center,
-
-    )
 //    Scaffold(
 //        topBar = {
 //            Box(

@@ -22,15 +22,11 @@ import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.presentation.main.components.ActionButton
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
-@Destination
 fun DetailsMessageScreen(
-    navigator: DestinationsNavigator,
     viewModel: DetailsMessageViewModel = hiltViewModel(),
-    messageId: String?
+    messageId: String? = null
 ) {
     val context = LocalContext.current
     val state = viewModel.state

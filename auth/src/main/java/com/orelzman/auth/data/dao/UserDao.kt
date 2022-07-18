@@ -10,24 +10,30 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface UserDao {
 
-    @Query("""
+    @Query(
+        """
         SELECT *
         FROM User
-    """)
+    """
+    )
     fun get(): User?
 
-    @Query("""
+    @Query(
+        """
         SELECT *
         FROM User
-    """)
+    """
+    )
     fun getUserFlow(): Flow<User>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(user: User)
 
-    @Query("""
+    @Query(
+        """
         DELETE 
         FROM User
-    """)
+    """
+    )
     fun clear()
 }

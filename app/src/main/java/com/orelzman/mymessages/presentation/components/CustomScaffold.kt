@@ -8,6 +8,7 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.plusAssign
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
@@ -16,6 +17,8 @@ import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.orelzman.mymessages.presentation.NavGraphs
 import com.orelzman.mymessages.presentation.destinations.Destination
 import com.orelzman.mymessages.presentation.startDestination
+import com.orelzman.mymessages.util.Screen
+import com.ramcosta.composedestinations.spec.Route
 
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
@@ -23,24 +26,23 @@ import com.orelzman.mymessages.presentation.startDestination
 )
 @Composable
 fun CustomScaffold(
-    navController: NavHostController,
-    topBar: @Composable (Destination) -> Unit = {},
-    bottomBar: @Composable (Destination) -> Unit = {},
+    startRoute: String,
+    navController: NavController,
+    topBar: @Composable (Screen) -> Unit = {},
+    bottomBar: @Composable (Screen) -> Unit = {},
     floatingActionButton: @Composable () -> Unit = {},
     floatingActionButtonPosition: FabPosition = FabPosition.End,
     content: @Composable (PaddingValues) -> Unit = {},
 ) {
-    val destination = navController.currentDestination ?: NavGraphs.root.startDestination
     val bottomSheetNavigator = rememberBottomSheetNavigator()
-    navController.navigatorProvider += bottomSheetNavigator
 
     ModalBottomSheetLayout(
         bottomSheetNavigator = bottomSheetNavigator,
         sheetShape = RoundedCornerShape(16.dp)
     ) {
         Scaffold(
-            topBar = { topBar(destination as Destination) },
-            bottomBar = { bottomBar(destination as Destination) },
+            topBar = {  },
+            bottomBar = { bottomBar(destination) },
             content = content,
             floatingActionButton = floatingActionButton,
             floatingActionButtonPosition = floatingActionButtonPosition
