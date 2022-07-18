@@ -1,5 +1,6 @@
 package com.orelzman.mymessages.presentation.login
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,27 +17,33 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orelzman.mymessages.R
-import com.orelzman.mymessages.presentation.confirmation_screen.ConfirmationScreen
+import com.orelzman.mymessages.presentation.NavGraphs
+import com.orelzman.mymessages.presentation.components.confirmation_pop_up.ConfirmationScreen
 import com.orelzman.mymessages.presentation.destinations.MainScreenDestination
 import com.orelzman.mymessages.presentation.login.components.Input
-import com.orelzman.mymessages.presentation.login_button.LoginButton
-import com.orelzman.mymessages.presentation.register_button.RegisterButton
+import com.orelzman.mymessages.presentation.components.login_button.LoginButton
+import com.orelzman.mymessages.presentation.components.register_button.RegisterButton
+import com.orelzman.mymessages.presentation.destinations.LoginScreenDestination
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 import com.orelzman.mymessages.util.extension.DefaultDestinationNavigator
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.popUpTo
 
+@OptIn(ExperimentalFoundationApi::class)
 @ExperimentalMaterial3Api
 @Composable
 @Destination(start = true)
 fun LoginScreen(
     navigator: DestinationsNavigator,
     viewModel: LoginViewModel = hiltViewModel()
-) { // ToDo: Change MainScreen's name and create a main screen that chooses which composable to show.
+) {
     val state = viewModel.state
     if (state.isAuthorized) {
         navigator.navigate(MainScreenDestination) {
-            launchSingleTop = true
+            popUpTo(LoginScreenDestination) {
+                inclusive = true
+            }
         }
     } else if (state.isLoading) {
         Box(

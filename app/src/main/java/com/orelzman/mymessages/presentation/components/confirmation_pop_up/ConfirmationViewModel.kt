@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.confirmation_screen
+package com.orelzman.mymessages.presentation.components.confirmation_pop_up
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

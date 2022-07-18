@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.register_button
+package com.orelzman.mymessages.presentation.components.register_button
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable

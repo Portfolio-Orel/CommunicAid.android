@@ -3,6 +3,7 @@ package com.orelzman.auth.domain.interactor
 import android.app.Activity
 import androidx.annotation.RawRes
 import com.orelzman.auth.domain.model.User
+import kotlinx.coroutines.flow.Flow
 
 interface AuthInteractor {
 
@@ -31,6 +32,7 @@ interface AuthInteractor {
     suspend fun googleAuth(activity: Activity)
 
     fun getUser(): User?
+    fun getUserFlow(): Flow<User?>
 
     /**
      * Checks if the credentials entered are valid

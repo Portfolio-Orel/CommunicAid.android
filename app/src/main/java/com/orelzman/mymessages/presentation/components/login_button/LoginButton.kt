@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.login_button
+package com.orelzman.mymessages.presentation.components.login_button
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable

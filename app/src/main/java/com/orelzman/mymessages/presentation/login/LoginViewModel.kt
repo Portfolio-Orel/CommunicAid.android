@@ -44,7 +44,6 @@ class LoginViewModel @Inject constructor(
     init {
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                Log.v("Before checking auth")
                 interactor.init(authConfigFile)
                 var isAuthorized = false
                 val user = interactor.getUser()

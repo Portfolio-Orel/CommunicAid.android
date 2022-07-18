@@ -27,6 +27,7 @@ import org.junit.runner.RunWith
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
+@Suppress("SameParameterValue")
 @RunWith(AndroidJUnit4::class)
 @SmallTest
 class PhoneCallManagerTest {
@@ -138,12 +139,12 @@ class PhoneCallManagerTest {
         incomingCallAnswered(Numbers.OREL)
         testState(CallState.OnCall)
 
-        waitingCall(Numbers.MOM)
+        waitingCall(Numbers.DAD)
         testState(CallState.Waiting)
 
         waitingCallRejected(previousNumber = Numbers.OREL)
         testState(CallState.OnCall)
-        testLastNumber(Numbers.MOM)
+        testLastNumber(Numbers.DAD)
 
         hangup(Numbers.OREL, CallType.INCOMING)
 
