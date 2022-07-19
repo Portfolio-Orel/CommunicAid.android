@@ -5,6 +5,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,58 +32,74 @@ fun UnhandledCallsScreen(
     val isRefreshing by viewModel.isRefreshing.collectAsState(false)
 
     val state = viewModel.state
-
-    Column(modifier = Modifier.fillMaxSize()) {
-        SwipeRefresh(
-            modifier = Modifier.fillMaxSize(),
-            state = rememberSwipeRefreshState(isRefreshing),
-            onRefresh = { viewModel.refresh() },
+    if(state.isLoading){
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-            Column(
+            CircularProgressIndicator(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
+                    .height(48.dp)
+                    .width(48.dp),
+                strokeWidth = 2.dp,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
+
+    } else {
+        Column(modifier = Modifier.fillMaxSize()) {
+            SwipeRefresh(
+                modifier = Modifier.fillMaxSize(),
+                state = rememberSwipeRefreshState(isRefreshing),
+                onRefresh = { viewModel.refresh() },
             ) {
-                if (state.callsToHandle.isEmpty()) {
-                    Spacer(Modifier.weight(1f))
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .zIndex(1f),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                    ) {
-                        Icon(
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    if (state.callsToHandle.isEmpty()) {
+                        Spacer(Modifier.weight(1f))
+                        Column(
                             modifier = Modifier
-                                .size(92.dp)
-                                .padding(8.dp),
-                            imageVector = Icons.Filled.Done,
-                            contentDescription = "Done icon",
-                            tint = MaterialTheme.colorScheme.tertiary
-                        )
-                        Text(
-                            stringResource(R.string.no_unhandled_calls),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                    Spacer(Modifier.weight(1f))
-                } else {
-                    state.callsToHandle.forEach {
-                        Box(
-                            modifier = Modifier
-                                .height(60.dp)
-                                .padding(),
+                                .fillMaxSize()
+                                .zIndex(1f),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
                         ) {
-                            UnhandledCallRow(
-                                phoneCall = it.phoneCall,
-                                onDelete = { viewModel.onDelete(it) },
-                                onCall = { viewModel.onCall(it) },
-                                onClick = { viewModel.onCall(it) }
+                            Icon(
+                                modifier = Modifier
+                                    .size(92.dp)
+                                    .padding(8.dp),
+                                imageVector = Icons.Filled.Done,
+                                contentDescription = "Done icon",
+                                tint = MaterialTheme.colorScheme.tertiary
+                            )
+                            Text(
+                                stringResource(R.string.no_unhandled_calls),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onBackground
                             )
                         }
+                        Spacer(Modifier.weight(1f))
+                    } else {
+                        state.callsToHandle.forEach {
+                            Box(
+                                modifier = Modifier
+                                    .height(60.dp)
+                                    .padding(),
+                            ) {
+                                UnhandledCallRow(
+                                    phoneCall = it.phoneCall,
+                                    onDelete = { viewModel.onDelete(it) },
+                                    onCall = { viewModel.onCall(it) },
+                                    onClick = { viewModel.onCall(it) }
+                                )
+                            }
+                        }
+                        Spacer(Modifier.weight(1f))
                     }
-                    Spacer(Modifier.weight(1f))
                 }
             }
         }

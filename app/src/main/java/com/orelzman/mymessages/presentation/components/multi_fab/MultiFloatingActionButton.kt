@@ -22,12 +22,7 @@ fun MultiFab(
     iconExpanded: Painter = iconCollapsed
 ) {
     var state by remember { mutableStateOf(MultiFabState.COLLAPSED) }
-
-    val scaleMini: Float by animateFloatAsState(
-        if (state == MultiFabState.EXPANDED) 1f else 0f,
-        animationSpec = tween(durationMillis = 250)
-    )
-
+    val itemsCount = fabs.size
     val scaleFab: Float by animateFloatAsState(
         if (state == MultiFabState.EXPANDED) 1.2f else 1f,
         animationSpec = tween(durationMillis = 250)
@@ -54,13 +49,13 @@ fun MultiFab(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        fabs.forEach {
+        fabs.forEachIndexed { index, it ->
             MiniFloatingActionButton(
                 modifier = Modifier
                     .graphicsLayer(
                         alpha = alpha,
-                        scaleX = scaleMini,
-                        scaleY = scaleMini,
+                        scaleX = getScaleMini(state, itemsCount - index),
+                        scaleY = getScaleMini(state, itemsCount - index),
                     ),
                 miniFloatingAction = it,
                 onClick = {
@@ -88,6 +83,15 @@ fun MultiFab(
             )
         }
     }
+}
+
+@Composable
+private fun getScaleMini(state: MultiFabState, position: Int): Float {
+    val scaleMini: Float by animateFloatAsState(
+        if (state == MultiFabState.EXPANDED) 1f else 0f,
+        animationSpec = tween(durationMillis = 150 + 120 * position)
+    )
+    return scaleMini
 }
 
 

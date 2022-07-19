@@ -18,7 +18,7 @@ import com.orelzman.mymessages.presentation.main.components.ActionButton
 
 @Composable
 fun StatsScreen(
-    viewModel: StatsViewModel = hiltViewModel()
+    viewModel: StatisticsViewModel = hiltViewModel()
 ) {
     val isRefreshing by viewModel.isRefreshing.collectAsState(false)
     val state = viewModel.state

@@ -63,12 +63,13 @@ class UnhandledCallsViewModel @Inject constructor(
                             deletedCalls = it,
                             callLogs = callsFromCallLog
                         )
-                        state = state.copy(callsToHandle = callsToHandle)
+                        state = state.copy(callsToHandle = callsToHandle, isLoading = false)
                     }
             }
         }
         viewModelScope.launch(Dispatchers.Main) {
             try {
+                state = state.copy(isLoading = true)
                 job.await()
             } catch (e: Exception) {
                 e.log()

@@ -1,6 +1,6 @@
 package com.orelzman.mymessages.presentation.stats
 
-data class StatsState(
+data class StatisticsState(
     val callsCountToday: Int = 0,
     val callsNotUploaded: Int = 0,
     val callsUploaded: Int = 0,

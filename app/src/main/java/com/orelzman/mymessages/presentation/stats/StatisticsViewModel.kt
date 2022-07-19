@@ -19,12 +19,12 @@ import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-class StatsViewModel @Inject constructor(
+class StatisticsViewModel @Inject constructor(
     private val phoneCallsInteractor: PhoneCallsInteractor,
     private val authInteractor: AuthInteractor,
     private val callLogInteractor: CallLogInteractor
     ) : ViewModel() {
-    var state by mutableStateOf(StatsState())
+    var state by mutableStateOf(StatisticsState())
 
     val isRefreshing = MutableSharedFlow<Boolean>()
 

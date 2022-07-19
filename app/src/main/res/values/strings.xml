@@ -44,4 +44,13 @@
     <string name="outgoing_calls">שיחות יוצאות</string>
     <string name="unknown">לא ידוע</string>
     <string name="messages_sent_count_by_type">כמות הודעות שנשלחו לפי קטגוריה</string>
+    <string name="today">היום</string>
+    <string name="yesterday">אתמול</string>
+    <string name="saturday">שבת</string>
+    <string name="friday">שישי</string>
+    <string name="thursday">חמישי</string>
+    <string name="wednesday">רביעי</string>
+    <string name="tuesday">שלישי</string>
+    <string name="monday">שני</string>
+    <string name="sunday">ראשון</string>
 </resources>

@@ -50,18 +50,9 @@ fun MyMessagesApp(
                 MultiFab(
                     fabs = listOf(
                         MiniFloatingAction(
-                            action = {
-                                navController.navigate(
-                                    Screen.DetailsMessage.route
-                                ) {
-                                    popUpTo(navHostController.graph.findStartDestination().id) {
-                                        inclusive = false
-                                    }
-                                    launchSingleTop = true
-                                }
-                            },
-                            icon = painterResource(id = R.drawable.ic_new_message),
-                            description = ""
+                            action = { viewModel.signOut() },
+                            icon = painterResource(id = R.drawable.ic_login),
+                            description = stringResource(R.string.sign_out)
                         ),
                         MiniFloatingAction(
                             action = {
@@ -78,10 +69,19 @@ fun MyMessagesApp(
                             description = ""
                         ),
                         MiniFloatingAction(
-                            action = { viewModel.signOut() },
-                            icon = painterResource(id = R.drawable.ic_login),
-                            description = stringResource(R.string.sign_out)
-                        )
+                            action = {
+                                navController.navigate(
+                                    Screen.DetailsMessage.route
+                                ) {
+                                    popUpTo(navHostController.graph.findStartDestination().id) {
+                                        inclusive = false
+                                    }
+                                    launchSingleTop = true
+                                }
+                            },
+                            icon = painterResource(id = R.drawable.ic_new_message),
+                            description = ""
+                        ),
                     ),
                     iconCollapsed = painterResource(R.drawable.ic_arrow_left),
                     iconExpanded = painterResource(R.drawable.ic_close),
