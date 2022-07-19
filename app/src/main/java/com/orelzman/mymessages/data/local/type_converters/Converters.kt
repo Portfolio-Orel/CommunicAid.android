@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.orelzman.mymessages.domain.model.entities.MessageSent
 import com.orelzman.mymessages.domain.model.entities.SettingsKeys
+import com.orelzman.mymessages.domain.model.entities.StatisticsTypes
 import com.orelzman.mymessages.domain.model.entities.UploadState
 import java.util.*
 
@@ -13,6 +14,7 @@ import java.util.*
 class Converters {
 
     private val messagesSentListType = object : TypeToken<List<MessageSent>?>() {}.type
+    private val mapType = object : TypeToken<Map<String, Any>>() {}.type
 
     @TypeConverter
     fun stringToMessagesSent(string: String?): List<MessageSent> =
@@ -44,5 +46,19 @@ class Converters {
 
     @TypeConverter
     fun stringToUploadState(string: String): UploadState = UploadState.fromString(string)
+
+    @TypeConverter
+    fun statisticsTypeToString(statisticsType: StatisticsTypes): String =
+        Gson().toJson(statisticsType)
+
+    @TypeConverter
+    fun stringToStatisticsType(string: String): StatisticsTypes = StatisticsTypes.fromString(string)
+
+    @TypeConverter
+    fun mapOfAnysToString(map: Map<String, Any>): String =
+        Gson().toJson(map)
+
+    @TypeConverter
+    fun stringToMapOfAnys(string: String): Map<String, Any> = Gson().fromJson(string, mapType)
 
 }

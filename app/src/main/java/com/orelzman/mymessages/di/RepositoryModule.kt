@@ -3,7 +3,7 @@ package com.orelzman.mymessages.di
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.auth.data.interactor.AuthInteractorImpl
 import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.mymessages.data.local.interactors.*
+import com.orelzman.mymessages.data.interactors.*
 import com.orelzman.mymessages.data.remote.repository.api.APIRepository
 import com.orelzman.mymessages.domain.interactors.*
 import com.orelzman.mymessages.domain.managers.UnhandledCallsManager

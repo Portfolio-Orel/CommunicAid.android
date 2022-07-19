@@ -3,10 +3,7 @@
 package com.orelzman.mymessages
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -85,10 +82,11 @@ fun MyMessagesApp(
                             icon = painterResource(id = R.drawable.ic_login),
                             description = stringResource(R.string.sign_out)
                         )
-                    ), fabIcon = Icons.Filled.Add
+                    ),
+                    iconCollapsed = painterResource(R.drawable.ic_arrow_left),
+                    iconExpanded = painterResource(R.drawable.ic_close),
                 )
             },
-            floatingActionButtonPosition = FabPosition.End,
             topBar = {}
         ) {
             NavHost(navController = navHostController, startDestination = "main") {

@@ -5,10 +5,10 @@ import androidx.room.Room
 import com.google.gson.Gson
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.R
+import com.orelzman.mymessages.data.interceptor.AuthInterceptor
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.type_converters.Converters
 import com.orelzman.mymessages.data.remote.AuthConfigFile
-import com.orelzman.mymessages.data.remote.AuthInterceptor
 import com.orelzman.mymessages.data.remote.BaseProjectUrl
 import com.orelzman.mymessages.data.remote.EnvironmentRepository
 import com.orelzman.mymessages.data.remote.Environments.*
@@ -63,6 +63,7 @@ object AppModule {
     fun provideOkHttpClient(authIneractor: AuthInteractor): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor(authIneractor))
+//            .addInterceptor(ResponseInterceptor())
             .connectTimeout(30L, TimeUnit.SECONDS)
             .readTimeout(30L, TimeUnit.SECONDS)
             .build()

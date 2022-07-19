@@ -37,4 +37,11 @@
     <string name="details_message">details_message</string>
     <string name="details_folder">details_folder</string>
     <string name="sign_out">Sign out</string>
+    <string name="folder">תיקייה</string>
+    <string name="incoming_calls">שיחות נכנסות</string>
+    <string name="missed_calls">שיחות שלא נענו</string>
+    <string name="rejected_calls">שיחות שנדחו</string>
+    <string name="outgoing_calls">שיחות יוצאות</string>
+    <string name="unknown">לא ידוע</string>
+    <string name="messages_sent_count_by_type">כמות הודעות שנשלחו לפי קטגוריה</string>
 </resources>

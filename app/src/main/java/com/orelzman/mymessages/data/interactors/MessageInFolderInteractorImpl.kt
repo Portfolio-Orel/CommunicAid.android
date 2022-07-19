@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.data.local.interactors
+package com.orelzman.mymessages.data.interactors
 
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.dao.MessageInFolderDao

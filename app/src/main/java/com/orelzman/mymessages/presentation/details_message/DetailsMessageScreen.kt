@@ -13,7 +13,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -22,7 +21,6 @@ import androidx.navigation.NavController
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.presentation.main.components.ActionButton
-import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 
 @Composable
 fun DetailsMessageScreen(
@@ -46,70 +44,69 @@ fun DetailsMessageScreen(
             else -> {}
         }
     }
-
-
-    MyMessagesTheme {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            OutlinedTextField(
-                value = state.title,
-                onValueChange = { viewModel.setTitle(it) },
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(18.dp)
+    ) {
+        Row(horizontalArrangement = Arrangement.SpaceAround) {
+            ActionButton(
                 modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                placeholder = {
-                    Text(text = "כותרת")
-                },
-                isError = state.emptyFields.contains(MessageFields.Body)
-            )
-            Column {
-                OutlinedTextField(
-                    value = state.shortTitle,
-                    onValueChange = { viewModel.setShortTitle(it) },
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                    placeholder = {
-                        Text(text = stringResource(R.string.message_symbol))
-                    },
-                    isError = state.emptyFields.contains(MessageFields.Body)
-                )
-            }
-            OutlinedTextField(
-                value = state.body,
-                onValueChange = { viewModel.setBody(it) },
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                placeholder = {
-                    Text(text = stringResource(R.string.message))
-                },
-                maxLines = 7,
-                isError = state.emptyFields.contains(MessageFields.Body)
-            )
-            Dropdown(
-                folders = state.folders, onSelected = { viewModel.setSelectedFolder(it) },
-                isError = state.emptyFields.contains(MessageFields.Folder),
-                selected = state.selectedFolder ?: Folder()
+                    .width(120.dp)
+                    .height(48.dp),
+                text = stringResource(R.string.save),
+                isLoading = state.isLoading,
+                onClick = { viewModel.saveMessage() },
             )
             Spacer(modifier = Modifier.weight(1f))
-
-            Row {
-                ActionButton(
-                    text = stringResource(R.string.save),
-                    isLoading = state.isLoading,
-                    onClick = { viewModel.saveMessage() },
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                ActionButton(
-                    isPrimary = false,
-                    text = stringResource(R.string.cancel),
-                    onClick = { navController.navigateUp() },
-                )
-            }
+            ActionButton(
+                modifier = Modifier
+                    .width(120.dp)
+                    .height(48.dp),
+                isPrimary = false,
+                text = stringResource(R.string.cancel),
+                onClick = { navController.navigateUp() },
+            )
         }
+        OutlinedTextField(
+            value = state.title,
+            onValueChange = { viewModel.setTitle(it) },
+            modifier = Modifier
+                .fillMaxWidth(),
+            placeholder = {
+                Text(text = "כותרת")
+            },
+            isError = state.emptyFields.contains(MessageFields.Body)
+        )
+        Column {
+            OutlinedTextField(
+                value = state.shortTitle,
+                onValueChange = { viewModel.setShortTitle(it) },
+                modifier = Modifier
+                    .fillMaxWidth(),
+                placeholder = {
+                    Text(text = stringResource(R.string.message_symbol))
+                },
+                isError = state.emptyFields.contains(MessageFields.Body)
+            )
+        }
+        OutlinedTextField(
+            value = state.body,
+            onValueChange = { viewModel.setBody(it) },
+            modifier = Modifier
+                .fillMaxWidth(),
+            placeholder = {
+                Text(text = stringResource(R.string.message))
+            },
+            maxLines = 7,
+            isError = state.emptyFields.contains(MessageFields.Body)
+        )
+        Dropdown(
+            folders = state.folders, onSelected = { viewModel.setSelectedFolder(it) },
+            isError = state.emptyFields.contains(MessageFields.Folder),
+            selected = state.selectedFolder ?: Folder()
+        )
     }
 }
 
@@ -123,7 +120,6 @@ fun Dropdown(
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedFolder by remember { mutableStateOf(selected) }
-    var textfieldSize by remember { mutableStateOf(Size.Zero) }
 
     LaunchedEffect(key1 = selected) {
         selectedFolder = selected
@@ -135,9 +131,8 @@ fun Dropdown(
         Icons.Filled.KeyboardArrowDown
     Row(
         modifier = modifier
-            .height(82.dp)
+            .height(56.dp)
             .fillMaxWidth()
-            .padding(14.dp)
             .background(color = MaterialTheme.colorScheme.background)
             .clickable {
                 expanded = expanded != true
@@ -150,7 +145,7 @@ fun Dropdown(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            selectedFolder.title,
+            if (selectedFolder.title == "") stringResource(R.string.folder) else selectedFolder.title,
             modifier = Modifier
                 .padding(horizontal = 18.dp),
             style = MaterialTheme.typography.labelLarge,

@@ -1,18 +1,13 @@
 package com.orelzman.mymessages.presentation.components
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 
-@OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
-    ExperimentalMaterialNavigationApi::class
-)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomScaffold(
     startRoute: String,
@@ -23,12 +18,6 @@ fun CustomScaffold(
     floatingActionButtonPosition: FabPosition = FabPosition.End,
     content: @Composable (PaddingValues) -> Unit,
 ) {
-//    val bottomSheetNavigator = rememberBottomSheetNavigator()
-
-//    ModalBottomSheetLayout(
-//        bottomSheetNavigator = bottomSheetNavigator,
-//        sheetShape = RoundedCornerShape(16.dp)
-//    ) {
         Scaffold(
             topBar = {  },
             bottomBar = { bottomBar(navController) },

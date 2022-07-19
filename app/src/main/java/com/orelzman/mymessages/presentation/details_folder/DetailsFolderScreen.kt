@@ -39,30 +39,37 @@ fun DetailsFolderScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .padding(16.dp),
+    verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
-        OutlinedTextField(
-            value = state.title,
-            onValueChange = { viewModel.setTitle(it) },
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            placeholder = {
-                Text(text = stringResource(R.string.title))
-            },
-            isError = state.emptyFields.contains(FolderFields.Title)
-        )
-        Row {
+        Row(horizontalArrangement = Arrangement.SpaceAround) {
             ActionButton(
+                modifier = Modifier
+                    .width(120.dp)
+                    .height(48.dp),
                 text = stringResource(R.string.save),
                 isLoading = state.isLoading,
                 onClick = { viewModel.onSaveClick() },
             )
             Spacer(modifier = Modifier.weight(1f))
             ActionButton(
+                modifier = Modifier
+                    .width(120.dp)
+                    .height(48.dp),
                 isPrimary = false,
                 text = stringResource(R.string.cancel),
                 onClick = { navController.navigateUp() },
             )
         }
+        OutlinedTextField(
+            value = state.title,
+            onValueChange = { viewModel.setTitle(it) },
+            modifier = Modifier
+                .fillMaxWidth(),
+            placeholder = {
+                Text(text = stringResource(R.string.title))
+            },
+            isError = state.emptyFields.contains(FolderFields.Title)
+        )
     }
 }

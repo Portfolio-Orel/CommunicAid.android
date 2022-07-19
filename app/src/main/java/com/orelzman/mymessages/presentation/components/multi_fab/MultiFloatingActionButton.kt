@@ -3,7 +3,7 @@ package com.orelzman.mymessages.presentation.components.multi_fab
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -12,13 +12,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun MultiFab(
     fabs: List<MiniFloatingAction>,
-    fabIcon: ImageVector,
+    iconCollapsed: Painter,
+    iconExpanded: Painter = iconCollapsed
 ) {
     var state by remember { mutableStateOf(MultiFabState.COLLAPSED) }
 
@@ -28,9 +29,16 @@ fun MultiFab(
     )
 
     val scaleFab: Float by animateFloatAsState(
-        if (state == MultiFabState.EXPANDED) 1.15f else 1f,
+        if (state == MultiFabState.EXPANDED) 1.2f else 1f,
         animationSpec = tween(durationMillis = 250)
     )
+
+    val rotate: Float by animateFloatAsState(
+        if (state == MultiFabState.EXPANDED) 180f else 0f,
+        animationSpec = tween(durationMillis = 250)
+    )
+
+    val icon = if (state == MultiFabState.EXPANDED) iconExpanded else iconCollapsed
 
     val alpha: Float by animateFloatAsState(
         if (state == MultiFabState.EXPANDED) 1f else 0f,
@@ -42,9 +50,9 @@ fun MultiFab(
 //        else MaterialTheme.colorScheme.secondary,
 //        animationSpec = tween(durationMillis = 250)
 //    )
-    Column(
-        horizontalAlignment = Alignment.End,
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         fabs.forEach {
             MiniFloatingActionButton(
@@ -65,7 +73,8 @@ fun MultiFab(
             modifier = Modifier
                 .graphicsLayer(
                     scaleX = scaleFab,
-                    scaleY = scaleFab
+                    scaleY = scaleFab,
+                    rotationZ = rotate
                 ),
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
             shape = RoundedCornerShape(50),
@@ -74,7 +83,7 @@ fun MultiFab(
                     if (state == MultiFabState.COLLAPSED) MultiFabState.EXPANDED else MultiFabState.COLLAPSED
             }) {
             Icon(
-                imageVector = fabIcon,
+                painter = icon,
                 contentDescription = "Main Fab",
             )
         }

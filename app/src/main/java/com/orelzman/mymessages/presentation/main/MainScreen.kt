@@ -92,11 +92,10 @@ private fun Content(
         Column(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(22.dp)
         ) {
             ActiveCallBar(viewModel = viewModel)
             LazyRow(
-                modifier = Modifier
-                    .padding(16.dp),
                 userScrollEnabled = true,
             ) {
                 items(state.folders) { folder ->

@@ -28,6 +28,9 @@ class StatsViewModel @Inject constructor(
 
     val isRefreshing = MutableSharedFlow<Boolean>()
 
+    init {
+        refreshData()
+    }
 
     fun sendCallLogs() {
         state = state.copy(isLoadingCallLogSend = true)

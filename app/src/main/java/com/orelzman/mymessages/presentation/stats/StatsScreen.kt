@@ -6,7 +6,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -23,10 +22,6 @@ fun StatsScreen(
 ) {
     val isRefreshing by viewModel.isRefreshing.collectAsState(false)
     val state = viewModel.state
-
-    LaunchedEffect(key1 = viewModel) {
-        viewModel.refreshData()
-    }
 
     SwipeRefresh(
         modifier = Modifier.fillMaxSize(),
