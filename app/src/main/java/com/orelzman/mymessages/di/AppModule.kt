@@ -44,9 +44,10 @@ object AppModule {
     fun provideBaseUrl(
         environmentRepository: EnvironmentRepository
     ) = when (environmentRepository.currentEnvironment) {
-        Local -> "http://192.168.1.39:4000"
+        Local -> "http://192.168.192.248:4000"
         Dev -> "https://22jwmm93j9.execute-api.us-east-1.amazonaws.com"
         Prod -> "https://w5l4faau04.execute-api.us-east-1.amazonaws.com/"
+        LocalEmulator -> "http://10.0.2.2:4000"
     }
 
     @Provides
@@ -57,6 +58,7 @@ object AppModule {
         Local -> R.raw.dev_amplifyconfiguration
         Dev -> R.raw.dev_amplifyconfiguration
         Prod -> R.raw.prod_amplifyconfiguration
+        LocalEmulator -> R.raw.dev_amplifyconfiguration
     }
 
     @Provides

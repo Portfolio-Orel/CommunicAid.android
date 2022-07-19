@@ -7,6 +7,7 @@ import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.model.entities.UploadState
 import com.orelzman.mymessages.domain.model.entities.createPhoneCallBodyList
 import com.orelzman.mymessages.domain.repository.Repository
+import java.util.*
 import javax.inject.Inject
 
 class PhoneCallsInteractorImpl @Inject constructor(
@@ -44,6 +45,10 @@ class PhoneCallsInteractorImpl @Inject constructor(
 
     override fun getAll(): List<PhoneCall> =
         db.getAll()
+
+    override fun getAllFromDate(fromDate: Date): List<PhoneCall> =
+        db.getAllFromDate(fromDate)
+
 
     override fun clear() = db.clear()
     override fun remove(phoneCalls: List<PhoneCall>) = db.remove(phoneCalls)

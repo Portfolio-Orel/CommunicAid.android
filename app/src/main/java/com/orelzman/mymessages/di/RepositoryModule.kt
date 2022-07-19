@@ -32,19 +32,19 @@ abstract class RepositoryModule {
     abstract fun provideRepository(repository: APIRepository): Repository
 
     @Binds
-    abstract fun provideMessageInteractor(interactor: MessageInteractorImpl): MessageInteractor
+    abstract fun provideMessageInteractor(interactorImpl: MessageInteractorImpl): MessageInteractor
 
     @Binds
-    abstract fun provideFolderInteractor(interactor: FolderInteractorImpl): FolderInteractor
+    abstract fun provideFolderInteractor(interactorImpl: FolderInteractorImpl): FolderInteractor
 
     @Binds
-    abstract fun provideMessageInFolderInteractor(interactor: MessageInFolderInteractorImpl): MessageInFolderInteractor
+    abstract fun provideMessageInFolderInteractor(interactorImpl: MessageInFolderInteractorImpl): MessageInFolderInteractor
 
     @Binds
-    abstract fun providePhoneCallsInteractor(interactor: PhoneCallsInteractorImpl): PhoneCallsInteractor
+    abstract fun providePhoneCallsInteractor(interactorImpl: PhoneCallsInteractorImpl): PhoneCallsInteractor
 
     @Binds
-    abstract fun provideUnhandledCallsInteractor(unhandledCallsInteractor: DeletedCallsInteractorImpl): DeletedCallsInteractor
+    abstract fun provideUnhandledCallsInteractor(interactorImpl: DeletedCallsInteractorImpl): DeletedCallsInteractor
 
     @ExperimentalPermissionsApi
     @Binds
@@ -52,16 +52,16 @@ abstract class RepositoryModule {
 
     @ExperimentalPermissionsApi
     @Binds
-    abstract fun providePhoneCallManagerInteractor(interactor: PhoneCallManagerInteractorImpl): PhoneCallManagerInteractor
+    abstract fun providePhoneCallManagerInteractor(interactorImpl: PhoneCallManagerInteractorImpl): PhoneCallManagerInteractor
 
     @Binds
-    abstract fun provideDatabaseInteractor(interactor: DatabaseInteractorImpl): DatabaseInteractor
+    abstract fun provideDatabaseInteractor(interactorImpl: DatabaseInteractorImpl): DatabaseInteractor
 
     @Binds
-    abstract fun provideAnalyticsInteractor(interactor: AnalyticsInteractorImpl): AnalyticsInteractor
+    abstract fun provideAnalyticsInteractor(interactorImpl: AnalyticsInteractorImpl): AnalyticsInteractor
 
     @Binds
-    abstract fun provideSettingsInteractor(interactor: SettingsInteractorImpl): SettingsInteractor
+    abstract fun provideSettingsInteractor(interactorImpl: SettingsInteractorImpl): SettingsInteractor
 
     @Binds
     abstract fun provideUnhandledCallsManager(manager: UnhandledCallsManagerImpl): UnhandledCallsManager
@@ -71,4 +71,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideCallLogInteractor(interactorImpl: CallLogInteractorImpl): CallLogInteractor
+
+    @Binds
+    abstract fun provideStatisticsInteractor(interactorImpl: StatisticsInteractorImpl): StatisticsInteractor
 }

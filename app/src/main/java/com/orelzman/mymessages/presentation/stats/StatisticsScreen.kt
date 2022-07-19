@@ -6,21 +6,21 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.orelzman.mymessages.R
 import com.orelzman.mymessages.presentation.main.components.ActionButton
 
 @Composable
 fun StatsScreen(
     viewModel: StatisticsViewModel = hiltViewModel()
 ) {
-    val isRefreshing by viewModel.isRefreshing.collectAsState(false)
+    val isRefreshing = viewModel.isRefreshing
     val state = viewModel.state
 
     SwipeRefresh(
@@ -42,9 +42,9 @@ fun StatsScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(text = "שיחות היום: ", style = MaterialTheme.typography.titleMedium)
+                Text(text = stringResource(R.string.incoming_calls_colon), style = MaterialTheme.typography.titleMedium)
                 Text(
-                    text = state.callsCountToday.toString(),
+                    text = state.callsCount.incomingCount.toString(),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
@@ -53,9 +53,9 @@ fun StatsScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(text = "שיחות שלא הועלו: ", style = MaterialTheme.typography.titleMedium)
+                Text(text = stringResource(R.string.outgoing_calls_colon), style = MaterialTheme.typography.titleMedium)
                 Text(
-                    text = state.callsNotUploaded.toString(),
+                    text = state.callsCount.outgoingCount.toString(),
                     style = MaterialTheme.typography.titleMedium
                 )
             }

@@ -1,11 +1,11 @@
 package com.orelzman.mymessages
 
 import android.content.Context
+import com.orelzman.mymessages.domain.interactors.CallType
 import com.orelzman.mymessages.domain.managers.UnhandledCallsManager
 import com.orelzman.mymessages.domain.managers.UnhandledCallsManagerImpl
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.DeletedCall
-import com.orelzman.mymessages.util.common.CallType
 import com.orelzman.mymessages.util.common.DateUtils
 import org.junit.Assert.assertTrue
 import org.junit.Before

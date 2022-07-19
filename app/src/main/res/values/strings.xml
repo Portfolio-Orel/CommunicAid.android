@@ -53,4 +53,6 @@
     <string name="tuesday">שלישי</string>
     <string name="monday">שני</string>
     <string name="sunday">ראשון</string>
+    <string name="incoming_calls_colon">שיחות נכנסות:</string>
+    <string name="outgoing_calls_colon">שיחות יוצאות:</string>
 </resources>

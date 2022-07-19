@@ -8,12 +8,12 @@ import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.domain.interactors.CallLogInteractor
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
+import com.orelzman.mymessages.domain.interactors.StatisticsInteractor
 import com.orelzman.mymessages.domain.model.entities.UploadState
 import com.orelzman.mymessages.domain.model.entities.toPhoneCalls
 import com.orelzman.mymessages.util.common.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -22,14 +22,15 @@ import javax.inject.Inject
 class StatisticsViewModel @Inject constructor(
     private val phoneCallsInteractor: PhoneCallsInteractor,
     private val authInteractor: AuthInteractor,
-    private val callLogInteractor: CallLogInteractor
+    private val callLogInteractor: CallLogInteractor,
+    private val statisticsInteractor: StatisticsInteractor
     ) : ViewModel() {
     var state by mutableStateOf(StatisticsState())
 
-    val isRefreshing = MutableSharedFlow<Boolean>()
+    var isRefreshing by mutableStateOf(false)
 
     init {
-        refreshData()
+        setData()
     }
 
     fun sendCallLogs() {
@@ -49,8 +50,13 @@ class StatisticsViewModel @Inject constructor(
     }
 
     fun refreshData() {
-        viewModelScope.launch(Dispatchers.Main) {
-            val todaysDate = DateUtils.getStartOfDay()
+        isRefreshing = true
+        setData()
+    }
+
+    private fun setData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val startOfTodayDate = DateUtils.getStartOfDay()
             val cal = Calendar.getInstance()
             cal.time = Date()
             var hours = cal.get(Calendar.HOUR_OF_DAY).toString()
@@ -61,7 +67,7 @@ class StatisticsViewModel @Inject constructor(
             if(minutes.length < 2) {
                 minutes = "0$minutes"
             }
-            val phoneCalls = phoneCallsInteractor.getAll().filter { it.startDate > todaysDate }
+            val phoneCalls = phoneCallsInteractor.getAllFromDate(startOfTodayDate)
             val callsCountToday = callLogInteractor.getTodaysCallLog().size
             val callsNotUploaded =
                 phoneCalls.filter { it.uploadState == UploadState.NotUploaded }.size
@@ -69,13 +75,19 @@ class StatisticsViewModel @Inject constructor(
             val callsBeingUploaded =
                 phoneCalls.filter { it.uploadState == UploadState.BeingUploaded }.size
 
+            val callsCount = statisticsInteractor.getCallsCountByType()
+            val messageSent = statisticsInteractor.getMessagesSentCount()
+
             state = state.copy(
                 callsCountToday = callsCountToday,
                 callsNotUploaded = callsNotUploaded,
                 callsUploaded = callsUploaded,
                 callsBeingUploaded = callsBeingUploaded,
+                callsCount = callsCount,
+                messageSent = messageSent,
                 lastUpdateDate = "$hours:$minutes"
             )
+            isRefreshing = false
         }
     }
 }
