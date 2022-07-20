@@ -107,12 +107,12 @@ class APIRepository @Inject constructor(
         api.deleteMessagesInFolder(folderId = folderId)
     }
 
-    override suspend fun getCallsCountByType(): CallsCountResponse {
+    override suspend fun getCallsCountByType(): GetCallsCountResponse {
         val result = api.getCallsCountByType()
         return result.body
     }
 
-    override suspend fun getMessagesSentCount(): List<MessagesSentCountResponse> {
+    override suspend fun getMessagesSentCount(): List<GetMessagesSentCountResponse> {
         val result = api.getMessagesSentCount()
         return result.body
     }

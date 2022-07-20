@@ -17,7 +17,7 @@ import com.orelzman.mymessages.R
 import com.orelzman.mymessages.presentation.main.components.ActionButton
 
 @Composable
-fun StatsScreen(
+fun StatisticsScreen(
     viewModel: StatisticsViewModel = hiltViewModel()
 ) {
     val isRefreshing = viewModel.isRefreshing
@@ -42,9 +42,12 @@ fun StatsScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(text = stringResource(R.string.incoming_calls_colon), style = MaterialTheme.typography.titleMedium)
                 Text(
-                    text = state.callsCount.incomingCount.toString(),
+                    text = stringResource(R.string.incoming_calls_colon),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = state.incomingCount.toString(),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
@@ -53,31 +56,12 @@ fun StatsScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(text = stringResource(R.string.outgoing_calls_colon), style = MaterialTheme.typography.titleMedium)
                 Text(
-                    text = state.callsCount.outgoingCount.toString(),
+                    text = stringResource(R.string.outgoing_calls_colon),
                     style = MaterialTheme.typography.titleMedium
                 )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(text = "שיחות שהועלו: ", style = MaterialTheme.typography.titleMedium)
                 Text(
-                    text = state.callsUploaded.toString(),
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(text = "שיחות תקועות: ", style = MaterialTheme.typography.titleMedium)
-                Text(
-                    text = state.callsBeingUploaded.toString(),
+                    text = state.outgoingCount.toString(),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
@@ -88,17 +72,6 @@ fun StatsScreen(
                 text = "שלח יומן",
                 isLoading = state.isLoadingCallLogSend
             )
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(text = "עודכן לאחרונה: ", style = MaterialTheme.typography.titleSmall)
-                Text(text = state.lastUpdateDate, style = MaterialTheme.typography.titleSmall)
-            }
         }
     }
 }

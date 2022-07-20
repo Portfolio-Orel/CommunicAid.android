@@ -23,7 +23,7 @@ import com.orelzman.mymessages.presentation.details_folder.DetailsFolderScreen
 import com.orelzman.mymessages.presentation.details_message.DetailsMessageScreen
 import com.orelzman.mymessages.presentation.login.LoginScreen
 import com.orelzman.mymessages.presentation.main.MainScreen
-import com.orelzman.mymessages.presentation.stats.StatsScreen
+import com.orelzman.mymessages.presentation.stats.StatisticsScreen
 import com.orelzman.mymessages.presentation.unhandled_calls.UnhandledCallsScreen
 import com.orelzman.mymessages.util.Screen
 
@@ -93,7 +93,7 @@ fun MyMessagesApp(
                 composable(route = Screen.Main.route) { MainScreen(navController = navHostController) }
                 composable(route = Screen.Login.route) { LoginScreen() }
                 composable(route = Screen.UnhandledCalls.route) { UnhandledCallsScreen() }
-                composable(route = Screen.Statistics.route) { StatsScreen() }
+                composable(route = Screen.Statistics.route) { StatisticsScreen() }
                 composable(route = Screen.DetailsMessage.route) {
                     DetailsMessageScreen(navController = navHostController)
                 }

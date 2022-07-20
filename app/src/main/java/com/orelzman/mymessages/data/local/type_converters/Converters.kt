@@ -52,13 +52,14 @@ class Converters {
         Gson().toJson(statisticsType)
 
     @TypeConverter
-    fun stringToStatisticsType(string: String): StatisticsTypes = StatisticsTypes.fromString(string)
+    fun stringToStatisticsType(string: String): StatisticsTypes =
+        Gson().fromJson(string, StatisticsTypes::class.java)
 
     @TypeConverter
-    fun mapOfAnysToString(map: Map<String, Any>): String =
-        Gson().toJson(map)
+    fun anyToString(any: Any): String =
+        Gson().toJson(any)
 
     @TypeConverter
-    fun stringToMapOfAnys(string: String): Map<String, Any> = Gson().fromJson(string, mapType)
+    fun stringToAny(string: String): Any = Gson().fromJson(string, Any::class.java)
 
 }

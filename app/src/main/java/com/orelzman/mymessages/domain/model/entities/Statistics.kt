@@ -7,7 +7,7 @@ import com.orelzman.mymessages.R
 @Entity(primaryKeys = ["key", "value"])
 data class Statistics(
     val key: StatisticsTypes,
-    val value: Map<String, Any>
+    val value: Any
 )
 
 enum class StatisticsTypes(val value: String, @StringRes val label: Int) {
@@ -17,15 +17,4 @@ enum class StatisticsTypes(val value: String, @StringRes val label: Int) {
     RejectedCalls("OutgoingCount", R.string.rejected_calls),
     MessagesCount("MessagesCount", R.string.messages_sent_count_by_type),
     Unknown("Unknown", R.string.unknown);
-
-
-    companion object {
-        fun fromString(value: String): StatisticsTypes =
-            if (SettingsKeys.values().any { it.keyInServer == value }) {
-                values().first { it.value == value }
-            } else {
-                Unknown
-            }
-
-    }
 }

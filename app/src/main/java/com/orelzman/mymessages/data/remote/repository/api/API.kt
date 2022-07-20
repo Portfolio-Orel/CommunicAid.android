@@ -67,9 +67,9 @@ interface API {
 
     // Statistics
     @GET("/statistics/callsCount")
-    suspend fun getCallsCountByType(): Response<CallsCountResponse>
+    suspend fun getCallsCountByType(): Response<GetCallsCountResponse>
 
     @GET("/statistics/messagesSentCount")
-    suspend fun getMessagesSentCount(): Response<List<MessagesSentCountResponse>>
+    suspend fun getMessagesSentCount(): Response<List<GetMessagesSentCountResponse>>
 
 }

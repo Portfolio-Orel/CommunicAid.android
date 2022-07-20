@@ -1,15 +1,12 @@
 package com.orelzman.mymessages.presentation.stats
 
-import com.orelzman.mymessages.domain.model.dto.response.CallsCountResponse
-import com.orelzman.mymessages.domain.model.dto.response.MessagesSentCountResponse
+import com.orelzman.mymessages.domain.model.dto.response.GetMessagesSentCountResponse
 
 data class StatisticsState(
-    val callsCountToday: Int = 0,
-    val callsNotUploaded: Int = 0,
-    val callsUploaded: Int = 0,
-    val callsBeingUploaded: Int = 0,
-    val callsCount: CallsCountResponse = CallsCountResponse(),
-    val messageSent: List<MessagesSentCountResponse> = emptyList(),
-    val lastUpdateDate: String = "לא עודכן",
+    val incomingCount: Int = 0,
+    val outgoingCount: Int = 0,
+    val messagesSentCount: List<Pair<String, Int>> = emptyList(),
+    val messageSent: List<GetMessagesSentCountResponse> = emptyList(),
+    val isLoading: Boolean = false,
     val isLoadingCallLogSend: Boolean = false
     )

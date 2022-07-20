@@ -9,13 +9,14 @@ import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.domain.interactors.CallLogInteractor
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.interactors.StatisticsInteractor
-import com.orelzman.mymessages.domain.model.entities.UploadState
+import com.orelzman.mymessages.domain.model.entities.StatisticsTypes
 import com.orelzman.mymessages.domain.model.entities.toPhoneCalls
-import com.orelzman.mymessages.util.common.DateUtils
+import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,13 +25,45 @@ class StatisticsViewModel @Inject constructor(
     private val authInteractor: AuthInteractor,
     private val callLogInteractor: CallLogInteractor,
     private val statisticsInteractor: StatisticsInteractor
-    ) : ViewModel() {
+) : ViewModel() {
     var state by mutableStateOf(StatisticsState())
 
     var isRefreshing by mutableStateOf(false)
 
     init {
-        setData()
+        getData()
+        observeStatistics()
+    }
+
+    private fun observeStatistics() {
+        viewModelScope.launch(Dispatchers.Main) {
+            statisticsInteractor.getStatistics().collectLatest { statistics ->
+                var incomingCount = 0
+                var outgoingCount = 0
+                val messagesSentCount = ArrayList<Pair<String, Int>>()
+                statistics.forEach {
+                    when(it.key) {
+                        StatisticsTypes.IncomingCount -> incomingCount = it.value.toString().toFloat().toInt()
+                        StatisticsTypes.OutgoingCount -> outgoingCount = it.value.toString().toFloat().toInt()
+                        StatisticsTypes.MessagesCount -> {
+                            val value = it.value as? Pair<*, *> ?: return@forEach
+                            val messageTitle = value.first.toString()
+                            val timesSent = it.value.toString().toFloat().toInt()
+                            messagesSentCount.add(Pair(messageTitle, timesSent))
+                        }
+                        StatisticsTypes.Unknown -> {
+
+                        }
+                        else -> {}
+                    }
+                }
+                state = state.copy(
+                    incomingCount = incomingCount,
+                    outgoingCount = outgoingCount,
+                    messagesSentCount = messagesSentCount
+                )
+            }
+        }
     }
 
     fun sendCallLogs() {
@@ -51,43 +84,24 @@ class StatisticsViewModel @Inject constructor(
 
     fun refreshData() {
         isRefreshing = true
-        setData()
+        getData()
     }
 
-    private fun setData() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val startOfTodayDate = DateUtils.getStartOfDay()
-            val cal = Calendar.getInstance()
-            cal.time = Date()
-            var hours = cal.get(Calendar.HOUR_OF_DAY).toString()
-            var minutes = cal.get(Calendar.MINUTE).toString()
-            if(hours.length < 2) {
-                hours = "0$hours"
+    private fun getData() {
+        val job = viewModelScope.async {
+            statisticsInteractor.getCallsCountByType()
+            statisticsInteractor.getMessagesSentCount()
+        }
+        viewModelScope.launch(Dispatchers.Main) {
+            try {
+                state = state.copy(isLoading = true)
+                job.await()
+            } catch (e: Exception) {
+                e.log()
+            } finally {
+                isRefreshing = false
+                state = state.copy(isLoading = false)
             }
-            if(minutes.length < 2) {
-                minutes = "0$minutes"
-            }
-            val phoneCalls = phoneCallsInteractor.getAllFromDate(startOfTodayDate)
-            val callsCountToday = callLogInteractor.getTodaysCallLog().size
-            val callsNotUploaded =
-                phoneCalls.filter { it.uploadState == UploadState.NotUploaded }.size
-            val callsUploaded = phoneCalls.filter { it.uploadState == UploadState.Uploaded }.size
-            val callsBeingUploaded =
-                phoneCalls.filter { it.uploadState == UploadState.BeingUploaded }.size
-
-            val callsCount = statisticsInteractor.getCallsCountByType()
-            val messageSent = statisticsInteractor.getMessagesSentCount()
-
-            state = state.copy(
-                callsCountToday = callsCountToday,
-                callsNotUploaded = callsNotUploaded,
-                callsUploaded = callsUploaded,
-                callsBeingUploaded = callsBeingUploaded,
-                callsCount = callsCount,
-                messageSent = messageSent,
-                lastUpdateDate = "$hours:$minutes"
-            )
-            isRefreshing = false
         }
     }
 }
