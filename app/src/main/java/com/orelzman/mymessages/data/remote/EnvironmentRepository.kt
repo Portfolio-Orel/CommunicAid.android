@@ -10,4 +10,5 @@ enum class Environments {
     Local,
     Dev,
     Prod,
+    LocalEmulator
 }

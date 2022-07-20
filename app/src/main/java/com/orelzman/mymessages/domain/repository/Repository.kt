@@ -37,4 +37,7 @@ interface Repository {
     suspend fun getSettings(userId: String, key: String = ""): List<SettingsResponse>
 
     suspend fun deleteMessagesFromFolder(folderId: String)
+
+    suspend fun getCallsCountByType(): GetCallsCountResponse
+    suspend fun getMessagesSentCount(): List<GetMessagesSentCountResponse>
 }

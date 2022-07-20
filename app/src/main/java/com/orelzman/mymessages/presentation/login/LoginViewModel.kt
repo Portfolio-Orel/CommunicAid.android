@@ -54,7 +54,7 @@ class LoginViewModel @Inject constructor(
                     databaseInteractor.clear()
                 }
                 state = state.copy(isAuthorized = isAuthorized, isLoading = false)
-                if(isAuthorized) {
+                if (isAuthorized) {
                     userAuthorizedSuccessfully()
                 }
             } catch (exception: Exception) {
@@ -75,7 +75,7 @@ class LoginViewModel @Inject constructor(
         when (event) {
             is LoginEvents.OnLoginCompleted -> {
                 if (event.isAuthorized) {
-                    userAuthorizedSuccessfully()
+                    userAuthorizedSuccessfully(true)
                 } else {
                     loginFailed(event.exception)
                 }
@@ -113,8 +113,11 @@ class LoginViewModel @Inject constructor(
         state = state.copy(username = value)
     }
 
-    private fun initData(userId: String) {
+    private fun initData(userId: String, clearData: Boolean) {
         viewModelScope.launch(Dispatchers.Main) {
+            if (clearData) {
+                databaseInteractor.clear()
+            }
             messageInteractor.initMessagesAndMessagesInFolders(userId = userId)
             folderInteractor.initFolders(userId = userId)
             settingsInteractor.initSettings(userId = userId)
@@ -164,9 +167,9 @@ class LoginViewModel @Inject constructor(
         state = state.copy(isLoading = false)
     }
 
-    private fun userAuthorizedSuccessfully() {
+    private fun userAuthorizedSuccessfully(clearData: Boolean = false) {
         viewModelScope.launch(Dispatchers.Main) {
-            try {
+            state = try {
                 val userId = interactor.getUser()?.userId
                 val isAuthorized = if (userId != null) {
                     confirmUserCreated(userId, state.email)
@@ -174,12 +177,12 @@ class LoginViewModel @Inject constructor(
                     false
                 }
                 if (isAuthorized) {
-                    initData(userId ?: "")
+                    initData(userId ?: "", clearData)
                 }
-                state = state.copy(isAuthorized = isAuthorized)
+                state.copy(isAuthorized = isAuthorized)
             } catch (exception: Exception) {
                 exception.log()
-                state = state.copy(isLoading = false)
+                state.copy(isLoading = false)
             }
         }.invokeOnCompletion {
             state = state.copy(isLoading = false)

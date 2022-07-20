@@ -6,29 +6,22 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.orelzman.mymessages.R
 import com.orelzman.mymessages.presentation.main.components.ActionButton
-import com.ramcosta.composedestinations.annotation.Destination
 
-@Destination
 @Composable
-fun StatsScreen(
-    viewModel: StatsViewModel = hiltViewModel()
+fun StatisticsScreen(
+    viewModel: StatisticsViewModel = hiltViewModel()
 ) {
-    val isRefreshing by viewModel.isRefreshing.collectAsState(false)
+    val isRefreshing = viewModel.isRefreshing
     val state = viewModel.state
-
-    LaunchedEffect(key1 = viewModel) {
-        viewModel.refreshData()
-    }
 
     SwipeRefresh(
         modifier = Modifier.fillMaxSize(),
@@ -49,9 +42,12 @@ fun StatsScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(text = "שיחות היום: ", style = MaterialTheme.typography.titleMedium)
                 Text(
-                    text = state.callsCountToday.toString(),
+                    text = stringResource(R.string.incoming_calls_colon),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = state.incomingCount.toString(),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
@@ -60,31 +56,12 @@ fun StatsScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(text = "שיחות שלא הועלו: ", style = MaterialTheme.typography.titleMedium)
                 Text(
-                    text = state.callsNotUploaded.toString(),
+                    text = stringResource(R.string.outgoing_calls_colon),
                     style = MaterialTheme.typography.titleMedium
                 )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(text = "שיחות שהועלו: ", style = MaterialTheme.typography.titleMedium)
                 Text(
-                    text = state.callsUploaded.toString(),
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(text = "שיחות תקועות: ", style = MaterialTheme.typography.titleMedium)
-                Text(
-                    text = state.callsBeingUploaded.toString(),
+                    text = state.outgoingCount.toString(),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
@@ -95,17 +72,6 @@ fun StatsScreen(
                 text = "שלח יומן",
                 isLoading = state.isLoadingCallLogSend
             )
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(text = "עודכן לאחרונה: ", style = MaterialTheme.typography.titleSmall)
-                Text(text = state.lastUpdateDate, style = MaterialTheme.typography.titleSmall)
-            }
         }
     }
 }
