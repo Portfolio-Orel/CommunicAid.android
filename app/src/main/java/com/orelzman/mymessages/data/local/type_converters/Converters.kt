@@ -26,12 +26,12 @@ class Converters {
 
 
     @TypeConverter
-    fun dateToString(date: Date): String =
-        Gson().toJson(date)
+    fun dateToLong(date: Date): Long =
+        date.time
 
     @TypeConverter
-    fun stringToDate(string: String): Date =
-        Gson().fromJson(string, Date::class.java)
+    fun longToDate(long: Long): Date =
+        Date(long)
 
     @TypeConverter
     fun stringToSettingsKey(string: String): SettingsKeys =

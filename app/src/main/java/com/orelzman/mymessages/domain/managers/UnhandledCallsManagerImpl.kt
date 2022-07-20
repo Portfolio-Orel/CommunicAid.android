@@ -15,9 +15,9 @@ class UnhandledCallsManagerImpl @Inject constructor(): UnhandledCallsManager {
             )
         )
         val actualCallsHandled = ArrayList(filterByCallsHandled(callLogs = callLogs))
-        val allActualCallsHandled =
+        val allActualCallsHandledNumbers =
             (actualCallsHandled.numbers + actualDeletedUnhandledCalls.numbers).distinct()
-        return callLogs.unhandledCalls.filter { !allActualCallsHandled.contains(it.phoneCall.number) }
+        return callLogs.unhandledCalls.filter { !allActualCallsHandledNumbers.contains(it.phoneCall.number) }
             .sortedByDescending { it.time }
             .distinctBy { it.number }
     }

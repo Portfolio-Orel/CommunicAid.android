@@ -19,12 +19,12 @@ import com.orelzman.mymessages.domain.managers.UnhandledCallsManager
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.DeletedCall
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
+import com.orelzman.mymessages.util.common.DateUtils.getStartOfDay
 import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,23 +39,22 @@ class UnhandledCallsViewModel @Inject constructor(
 
     var state by mutableStateOf(UnhandledCallsState())
 
-    val isRefreshing = MutableSharedFlow<Boolean>()
+    var isRefreshing by mutableStateOf(false)
 
     init {
-        setCalls()
+        observeCalls()
     }
 
     fun refresh() {
-        setCalls()
+        isRefreshing = true
+        fetchDeletedCalls()
     }
 
-    /**
-     * Sets all the calls that were not handled by the user and might require his attention.
-     */
-    private fun setCalls() {
-        val job = viewModelScope.async {
+    private fun observeCalls() {
+        state = state.copy(isLoading = true)
+        viewModelScope.launch(Dispatchers.Main) {
             authInteractor.getUser()?.userId?.let { userId ->
-                deletedCallsInteractor.getAll(userId)
+                deletedCallsInteractor.getAll(userId, getStartOfDay())
                     .collect {
                         val callsFromCallLog =
                             getCallsFromCallLog()
@@ -67,13 +66,25 @@ class UnhandledCallsViewModel @Inject constructor(
                     }
             }
         }
+    }
+
+    /**
+     * Sets all the calls that were not handled by the user and might require his attention.
+     */
+    private fun fetchDeletedCalls() {
+        val job = viewModelScope.async {
+            authInteractor.getUser()?.userId?.let { userId ->
+                deletedCallsInteractor.fetch(userId)
+            }
+        }
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                state = state.copy(isLoading = true)
                 job.await()
             } catch (e: Exception) {
                 e.log()
                 Log.eCustom(e.message ?: "Failed to get unhandled calls")
+            } finally {
+                isRefreshing = false
             }
         }
     }

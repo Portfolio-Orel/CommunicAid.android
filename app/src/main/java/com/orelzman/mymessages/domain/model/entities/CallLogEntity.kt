@@ -22,8 +22,8 @@ class CallLogEntity(
         get() =
             PhoneCall(
                 number = number,
-                startDate = Date(),
-                endDate = time.toDate(),
+                startDate = time.toDate(),
+                endDate = (time + duration).toDate(),
                 type = CallType.INCOMING.name
             )
 }

@@ -5,8 +5,8 @@ import com.orelzman.mymessages.domain.interactors.DeletedCallsInteractor
 import com.orelzman.mymessages.domain.model.dto.body.create.CreateDeletedCallBody
 import com.orelzman.mymessages.domain.model.entities.DeletedCall
 import com.orelzman.mymessages.domain.repository.Repository
-import com.orelzman.mymessages.util.common.DateUtils
 import kotlinx.coroutines.flow.Flow
+import java.util.*
 import javax.inject.Inject
 
 class DeletedCallsInteractorImpl @Inject constructor(
@@ -23,29 +23,39 @@ class DeletedCallsInteractorImpl @Inject constructor(
                 userId = userId,
                 deleteDate = deletedCall.deleteDate.time
             )
-            repository.createDeletedCall(createDeletedCallBody)
-            deletedCall.isInDB = true
+            val id: String? = repository.createDeletedCall(createDeletedCallBody)
+            if(id != null) {
+                db.delete(deletedCall)
+                deletedCall.isInDB = true
+                deletedCall.id = id
+                db.insert(deletedCall)
+            }
         } catch (exception: Exception) {
             throw exception
-        } finally {
-            db.insert(deletedCalls = deletedCall)
         }
     }
 
-    override suspend fun getAll(userId: String): Flow<List<DeletedCall>> {
-        if (db.getAllOnce().isEmpty()) {
-            val result = repository.getDeletedCalls(userId)
-            val deletedCallsList = result.map {
-                DeletedCall(
-                    id = it.id,
-                    number = it.number,
-                    deleteDate = it.deleteDate,
-                    isInDB = true
-                )
-            }
-            db.insert(deletedCallsList)
+    override suspend fun fetch(userId: String) =
+        initDeletedCalls(userId)
+
+
+    override suspend fun getAll(userId: String, startDate: Date): Flow<List<DeletedCall>> {
+        if (db.getAllOnce(startDate.time).isEmpty()) {
+            initDeletedCalls(userId)
         }
-        return db.getAll(DateUtils.getStartOfDay())
+        return db.getAll(startDate.time)
     }
 
+    private suspend fun initDeletedCalls(userId: String) {
+        val result = repository.getDeletedCalls(userId)
+        val deletedCallsList = result.map {
+            DeletedCall(
+                id = it.id,
+                number = it.number,
+                deleteDate = it.deleteDate,
+                isInDB = true
+            )
+        }
+        db.insert(deletedCallsList)
+    }
 }

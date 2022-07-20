@@ -10,8 +10,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -29,7 +27,7 @@ import com.orelzman.mymessages.presentation.unhandled_calls.components.Unhandled
 fun UnhandledCallsScreen(
     viewModel: UnhandledCallsViewModel = hiltViewModel()
 ) {
-    val isRefreshing by viewModel.isRefreshing.collectAsState(false)
+    val isRefreshing = viewModel.isRefreshing
 
     val state = viewModel.state
     if(state.isLoading){
