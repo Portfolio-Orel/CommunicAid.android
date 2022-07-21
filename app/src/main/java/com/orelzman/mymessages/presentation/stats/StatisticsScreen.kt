@@ -1,6 +1,8 @@
 package com.orelzman.mymessages.presentation.stats
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -14,7 +16,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.orelzman.mymessages.R
-import com.orelzman.mymessages.presentation.main.components.ActionButton
+import com.orelzman.mymessages.domain.model.BarItem
+import com.orelzman.mymessages.domain.model.DonutItem
+import com.orelzman.mymessages.presentation.components.charts.bar.BarChart
+import com.orelzman.mymessages.presentation.components.charts.donut.DonutChart
 
 @Composable
 fun StatisticsScreen(
@@ -37,41 +42,64 @@ fun StatisticsScreen(
             verticalArrangement = Arrangement.spacedBy(30.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = stringResource(R.string.incoming_calls_colon),
-                    style = MaterialTheme.typography.titleMedium
+            DonutChart(
+                item = DonutItem(
+                    title = {
+                        Text(
+                            text = stringResource(R.string.incoming_calls),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    },
+                    textInside = {
+                        Text(
+                            text = state.incomingCount.toString(),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    },
+                    outerColor = MaterialTheme.colorScheme.secondary,
+                    innerColor = MaterialTheme.colorScheme.background
                 )
-                Text(
-                    text = state.incomingCount.toString(),
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = stringResource(R.string.outgoing_calls_colon),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Text(
-                    text = state.outgoingCount.toString(),
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
-            Spacer(modifier = Modifier.weight(1f))
-
-            ActionButton(
-                onClick = { viewModel.sendCallLogs() },
-                text = "שלח יומן",
-                isLoading = state.isLoadingCallLogSend
             )
+            DonutChart(
+                item = DonutItem(
+                    title = {
+                        Text(
+                            text = stringResource(R.string.outgoing_calls),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    },
+                    textInside = {
+                        Text(
+                            text = state.outgoingCount.toString(),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    },
+                    outerColor = MaterialTheme.colorScheme.secondary,
+                    innerColor = MaterialTheme.colorScheme.background
+                )
+            )
+            BarChart(items = createBarItemList(state.messagesSentCount))
         }
     }
+}
+
+@Composable
+private fun createBarItemList(list: List<Pair<String, Int>>, maxItems: Int = 5): List<BarItem> {
+    val barItems = ArrayList<BarItem>()
+    list.forEachIndexed { index, it ->
+        if (index == maxItems) return@forEachIndexed
+        barItems.add(
+            BarItem(
+                title = it.first,
+                value = it.second.toFloat(),
+                color = if (index % 2 == 0) MaterialTheme.colorScheme.secondary.copy(alpha = 0.8f)
+                else MaterialTheme.colorScheme.secondary
+            )
+        )
+    }
+    return barItems
 }

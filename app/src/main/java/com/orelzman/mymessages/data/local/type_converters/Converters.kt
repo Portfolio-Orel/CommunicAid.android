@@ -61,5 +61,4 @@ class Converters {
 
     @TypeConverter
     fun stringToAny(string: String): Any = Gson().fromJson(string, Any::class.java)
-
 }

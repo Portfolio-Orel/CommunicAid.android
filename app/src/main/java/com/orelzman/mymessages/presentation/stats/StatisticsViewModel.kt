@@ -42,17 +42,16 @@ class StatisticsViewModel @Inject constructor(
                 var outgoingCount = 0
                 val messagesSentCount = ArrayList<Pair<String, Int>>()
                 statistics.forEach {
-                    when(it.key) {
-                        StatisticsTypes.IncomingCount -> incomingCount = it.value.toString().toFloat().toInt()
-                        StatisticsTypes.OutgoingCount -> outgoingCount = it.value.toString().toFloat().toInt()
+                    when (it.key) {
+                        StatisticsTypes.IncomingCount -> incomingCount =
+                            it.value.toString().toFloatOrNull()?.toInt() ?: 0
+                        StatisticsTypes.OutgoingCount -> outgoingCount =
+                            it.value.toString().toFloatOrNull()?.toInt() ?: 0
                         StatisticsTypes.MessagesCount -> {
-                            val value = it.value as? Pair<*, *> ?: return@forEach
-                            val messageTitle = value.first.toString()
-                            val timesSent = it.value.toString().toFloat().toInt()
+                            val value = it.value as? Map<*, *> ?: return@forEach
+                            val messageTitle = value["title"].toString()
+                            val timesSent = value["count"].toString().toFloatOrNull()?.toInt() ?: return@forEach
                             messagesSentCount.add(Pair(messageTitle, timesSent))
-                        }
-                        StatisticsTypes.Unknown -> {
-
                         }
                         else -> {}
                     }

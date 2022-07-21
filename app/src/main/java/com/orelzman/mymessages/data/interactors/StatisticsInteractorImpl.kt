@@ -22,23 +22,32 @@ class StatisticsInteractorImpl @Inject constructor(
         initCallsCountByType()
     }
 
-    override suspend fun getMessagesSentCount(){
+    override suspend fun getMessagesSentCount() {
         initMessagesSentCount()
     }
 
     private suspend fun initCallsCountByType() {
         val result = repository.getCallsCountByType()
-        db.insert(listOf(Statistics(StatisticsTypes.IncomingCount, result.incomingCount),
-        Statistics(StatisticsTypes.OutgoingCount, result.outgoingCount),
-        Statistics(StatisticsTypes.MissedCount, result.missedCount),
-        Statistics(StatisticsTypes.RejectedCalls, result.rejectedCount)))
+        db.insert(
+            listOf(
+                Statistics(StatisticsTypes.IncomingCount, result.incomingCount),
+                Statistics(StatisticsTypes.OutgoingCount, result.outgoingCount),
+                Statistics(StatisticsTypes.MissedCount, result.missedCount),
+                Statistics(StatisticsTypes.RejectedCalls, result.rejectedCount)
+            )
+        )
     }
 
     private suspend fun initMessagesSentCount() {
         val result = repository.getMessagesSentCount()
         val statisticsList = ArrayList<Statistics>()
         result.forEach {
-            statisticsList.add(Statistics(StatisticsTypes.MessagesCount, Pair(it.title, it.count)))
+            statisticsList.add(
+                Statistics(
+                    StatisticsTypes.MessagesCount,
+                    mapOf("title" to it.title, "count" to it.count)
+                )
+            )
         }
         db.insert(statisticsList)
     }
