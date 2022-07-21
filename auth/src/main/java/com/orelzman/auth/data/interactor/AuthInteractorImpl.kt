@@ -142,6 +142,19 @@ class AuthInteractorImpl @Inject constructor(
         }
     }
 
+    override suspend fun refreshToken() {
+        val session = Amplify.Auth.fetchAuthSession()
+        userInteractor.get()?.let {
+            val user = User(
+                userId = it.userId,
+                token = (session as AWSCognitoAuthSession).userPoolTokens.value?.accessToken
+                    ?: throw CouldNotRefreshTokenException(),
+                email = it.email
+            )
+            userInteractor.save(user)
+        }
+    }
+
     override suspend fun signOut() {
         Amplify.Auth.signOut()
         userInteractor.clear()

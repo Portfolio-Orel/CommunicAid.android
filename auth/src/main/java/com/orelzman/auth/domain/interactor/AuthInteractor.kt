@@ -21,6 +21,8 @@ interface AuthInteractor {
         isSaveCredentials: Boolean = false
     )
 
+    suspend fun refreshToken()
+
     /**
      * Used after sign up.
      */

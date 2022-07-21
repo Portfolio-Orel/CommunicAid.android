@@ -37,9 +37,11 @@ fun BarChart(
             maxValue = maxValue,
             minValue = 0.0,
             color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.height(160.dp)
+            modifier = Modifier
+                .height(160.dp)
+                .padding(8.dp)
         )
-        items.forEach {
+        items.sortedBy { it.value }.forEach {
             Bar(
                 Modifier
                     .clickable {
@@ -77,7 +79,7 @@ fun Bar(
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.Bottom
     ) {
         Text(
             text = if (isSelected) barItem.value.toString() else "",
