@@ -15,6 +15,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.orelzman.mymessages.domain.model.BarItem
+import com.orelzman.mymessages.presentation.components.charts.side_values.SideValues
 
 @Composable
 fun BarChart(
@@ -22,7 +23,9 @@ fun BarChart(
 ) {
     val viewModel = BarViewModel(items)
     var selectedBar by remember { mutableStateOf<BarItem?>(null) }
-
+    val maxValue = remember(items) {
+        items.maxOfOrNull { it.value }?.toDouble() ?: 100.0
+    }
     Row(
         modifier = Modifier
             .height(160.dp)
@@ -30,14 +33,23 @@ fun BarChart(
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.Center
     ) {
+        SideValues(
+            maxValue = maxValue,
+            minValue = 0.0,
+            color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.height(160.dp)
+        )
         items.forEach {
             Bar(
                 Modifier
-                    .clickable { selectedBar = it }
+                    .clickable {
+                        selectedBar = if (selectedBar == it) null
+                        else it
+                    }
                     .padding(horizontal = 2.dp),
                 barItem = it,
                 normalizedValue = viewModel.getNormalizedValue(it),
-                width = 30f,
+                width = 38f,
                 maxHeight = 100f,
                 isSelected = it == selectedBar
             )
@@ -56,7 +68,6 @@ fun Bar(
     isSelected: Boolean = false
 ) {
     val animatedFloat = remember { Animatable(0f) }
-
     LaunchedEffect(animatedFloat) {
         animatedFloat.animateTo(
             targetValue = normalizedValue * maxHeight,

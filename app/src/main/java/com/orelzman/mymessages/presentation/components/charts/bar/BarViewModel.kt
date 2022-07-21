@@ -17,9 +17,9 @@ class BarViewModel(items: List<BarItem>) : ViewModel() {
     private fun normalizeItems(items: List<BarItem>) {
         if(items.isEmpty()) return
         val normalizedItems = ArrayList<BarItem>()
-        val maxValue = items.maxOf { it.value }
+        val maxValue = items.maxOfOrNull { it.value }
         items.forEach {
-            val normalizedValue = it.value.normalizeBetween0AndMax(0f, maxValue, state.maxValue.toFloat())
+            val normalizedValue = it.value.normalizeBetween0AndMax(0f, maxValue ?: 0f, state.maxValue.toFloat())
             normalizedItems.add(BarItem(it.title, normalizedValue, it.color))
         }
         state = state.copy(normalizedItems = normalizedItems)
