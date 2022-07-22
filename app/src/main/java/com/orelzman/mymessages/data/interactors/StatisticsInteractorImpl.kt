@@ -41,7 +41,7 @@ class StatisticsInteractorImpl @Inject constructor(
     private suspend fun initMessagesSentCount() {
         val result = repository.getMessagesSentCount()
         val statisticsList = ArrayList<Statistics>()
-        result.forEach {
+        result?.forEach {
             statisticsList.add(
                 Statistics(
                     StatisticsTypes.MessagesCount,

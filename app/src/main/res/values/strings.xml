@@ -55,4 +55,9 @@
     <string name="sunday">ראשון</string>
     <string name="incoming_calls_colon">שיחות נכנסות:</string>
     <string name="outgoing_calls_colon">שיחות יוצאות:</string>
+    <string name="error_wrong_credentials_inserted">הפרטים שהוזנו לא נכונים…</string>
+    <string name="error_user_not_confirmed">עוד לא הגענו לאישור המשתמש שלך.. אוטוטו אנחנו שם!</string>
+    <string name="error_user_not_signed_in">המשתמש לא מוכר לנו…</string>
+    <string name="error_unknown">קרתה שגיאה לא צפויה. אנחנו מטפלים בזה</string>
+    <string name="empty_string"/>
 </resources>

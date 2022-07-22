@@ -64,7 +64,7 @@ private fun ContentView(viewModel: LoginViewModel) {
                 onDismiss = {
                     viewModel.hideRegistrationConfirmation()
                 }, onUserConfirmed = {
-                    viewModel.onEvent(LoginEvents.UserRegisteredSuccessfully)
+                    viewModel.onEvent(LoginEvents.OnLoginCompleted(true, null))
                 })
         }
     }
@@ -124,20 +124,21 @@ private fun ContentView(viewModel: LoginViewModel) {
                     password = state.password,
                     email = state.email,
                     onRegisterComplete = { viewModel.onEvent(LoginEvents.UserRegisteredSuccessfully) })
-            } else {
-                LoginButton(
-                    username = state.username,
-                    password = state.password,
-                    onLoginComplete = { isAuthorized, exception ->
-                        viewModel.onEvent(
-                            LoginEvents.OnLoginCompleted(
-                                isAuthorized = isAuthorized,
-                                exception = exception
-                            )
+            }
+            LoginButton(
+                username = state.username,
+                password = state.password,
+                onLoginComplete = { isAuthorized, exception ->
+                    viewModel.onEvent(
+                        LoginEvents.OnLoginCompleted(
+                            isAuthorized = isAuthorized,
+                            exception = exception
                         )
-                    },
-                    onLoginClick = { viewModel.onLoginClick() }
-                )
+                    )
+                },
+                onLoginClick = { viewModel.onLoginClick() }
+            )
+            if (!state.isRegister) {
                 Text(
                     stringResource(R.string.register),
                     modifier = Modifier
@@ -150,7 +151,7 @@ private fun ContentView(viewModel: LoginViewModel) {
                 )
             }
             Text(
-                state.error ?: "",
+                text = stringResource(state.error ?: R.string.empty_string),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error
             )

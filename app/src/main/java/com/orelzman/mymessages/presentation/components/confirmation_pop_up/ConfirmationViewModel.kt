@@ -22,7 +22,7 @@ class ConfirmationViewModel @Inject constructor(
     fun onCodeChange(
         value: String,
         username: String,
-        onUserConfirmed: (String) -> Unit = {}
+        onUserConfirmed: () -> Unit = {}
     ) {
         state = state.copy(code = value, username = username, exception = null)
         if (value.length == 6) {
@@ -33,10 +33,11 @@ class ConfirmationViewModel @Inject constructor(
 
     private fun confirmCode(
         username: String, code: String,
-        onUserConfirmed: (String) -> Unit = {}
+        onUserConfirmed: () -> Unit = {}
     ) {
         val job = viewModelScope.async {
             authInteractor.confirmUser(username = username, code = code)
+            onUserConfirmed()
         }
         viewModelScope.launch(Dispatchers.Main) {
             try {
@@ -44,8 +45,7 @@ class ConfirmationViewModel @Inject constructor(
             } catch (exception: Exception) {
                 state = state.copy(isLoading = false, exception = exception)
             }
-            onUserConfirmed(username)
-            state = ConfirmationState()
+            onUserConfirmed()
         }
     }
 }

@@ -39,5 +39,5 @@ interface Repository {
     suspend fun deleteMessagesFromFolder(folderId: String)
 
     suspend fun getCallsCountByType(): GetCallsCountResponse
-    suspend fun getMessagesSentCount(): List<GetMessagesSentCountResponse>
+    suspend fun getMessagesSentCount(): List<GetMessagesSentCountResponse>?
 }
