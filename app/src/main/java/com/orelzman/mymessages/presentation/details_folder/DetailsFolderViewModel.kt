@@ -50,7 +50,7 @@ class DetailsFolderViewModel @Inject constructor(
     }
 
     fun onSaveClick() {
-        if(state.isEdit) {
+        if (state.isEdit) {
             state.folder?.let {
                 with(it) {
                     val folder = Folder(
@@ -85,11 +85,12 @@ class DetailsFolderViewModel @Inject constructor(
                         }
                     }
                 }.invokeOnCompletion {
-                    state = state.copy(isLoading = false, isFolderAdded = true)
+                    state = state.copy(isLoading = false, isFolderAdded = it == null)
+                    it?.log()
                 }
             } catch (exception: Exception) {
                 exception.log(state)
-                state = state.copy(isLoading = false, isFolderAdded = true)
+                state = state.copy(isLoading = false, isFolderAdded = false)
             }
         } else {
             val emptyFields = ArrayList<FolderFields>()

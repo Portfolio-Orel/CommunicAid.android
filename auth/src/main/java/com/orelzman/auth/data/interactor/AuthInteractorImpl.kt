@@ -120,10 +120,14 @@ class AuthInteractorImpl @Inject constructor(
     ) {
         try {
             val result = Amplify.Auth.signIn(username, password)
-            setUser()
             if (result.isSignInComplete) {
                 userSignInSuccessfully()
                 Log.v("AuthAWS:::", "Sign in succeeded")
+                (Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession).awsCredentials.error?.localizedMessage?.let {
+                    Log.v("AuthAWS:::",
+                        it
+                    )
+                }
             } else {
                 Log.e("AuthAWS:::", "Sign in not complete")
                 throw Exception("Login failed")
@@ -139,6 +143,19 @@ class AuthInteractorImpl @Inject constructor(
                 is AuthException.NotAuthorizedException -> throw WrongCredentialsException()
                 else -> throw exception
             }
+        }
+    }
+
+    override suspend fun refreshToken() {
+        val session = Amplify.Auth.fetchAuthSession()
+        userInteractor.get()?.let {
+            val user = User(
+                userId = it.userId,
+                token = (session as AWSCognitoAuthSession).userPoolTokens.value?.accessToken
+                    ?: throw CouldNotRefreshTokenException(),
+                email = it.email
+            )
+            userInteractor.save(user)
         }
     }
 
@@ -174,7 +191,7 @@ class AuthInteractorImpl @Inject constructor(
             val user = User(userId = userId, token = token, email = email)
             userInteractor.save(user)
         } catch (e: Exception) {
-            Log.v("authAWS:::", "error")
+            Log.v("AuthAWS:::", "error")
         }
     }
 

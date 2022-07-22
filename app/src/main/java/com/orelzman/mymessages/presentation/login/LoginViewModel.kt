@@ -6,27 +6,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orelzman.auth.domain.exception.*
+import com.orelzman.auth.domain.exception.CodeMismatchException
+import com.orelzman.auth.domain.exception.UserNotConfirmedException
+import com.orelzman.auth.domain.exception.UserNotFoundException
+import com.orelzman.auth.domain.exception.WrongCredentialsException
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.mymessages.R
 import com.orelzman.mymessages.data.remote.AuthConfigFile
 import com.orelzman.mymessages.domain.interactors.DatabaseInteractor
 import com.orelzman.mymessages.domain.interactors.FolderInteractor
 import com.orelzman.mymessages.domain.interactors.MessageInteractor
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.model.dto.body.create.CreateUserBody
-import com.orelzman.mymessages.domain.model.entities.Settings
-import com.orelzman.mymessages.domain.model.entities.SettingsKeys
 import com.orelzman.mymessages.domain.repository.Repository
 import com.orelzman.mymessages.util.extension.Log
-import com.orelzman.mymessages.util.extension.hours
 import com.orelzman.mymessages.util.extension.log
-import com.orelzman.mymessages.util.extension.minutes
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.security.InvalidParameterException
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -54,7 +52,7 @@ class LoginViewModel @Inject constructor(
                     databaseInteractor.clear()
                 }
                 state = state.copy(isAuthorized = isAuthorized, isLoading = false)
-                if(isAuthorized) {
+                if (isAuthorized) {
                     userAuthorizedSuccessfully()
                 }
             } catch (exception: Exception) {
@@ -75,13 +73,14 @@ class LoginViewModel @Inject constructor(
         when (event) {
             is LoginEvents.OnLoginCompleted -> {
                 if (event.isAuthorized) {
-                    userAuthorizedSuccessfully()
+                    userAuthorizedSuccessfully(true)
                 } else {
                     loginFailed(event.exception)
                 }
             }
             is LoginEvents.UserRegisteredSuccessfully -> state =
                 state.copy(showCodeConfirmation = true)
+
             is LoginEvents.ConfirmSignup -> confirmSignup(
                 username = state.username,
                 code = event.code
@@ -113,8 +112,11 @@ class LoginViewModel @Inject constructor(
         state = state.copy(username = value)
     }
 
-    private fun initData(userId: String) {
+    private fun initData(userId: String, clearData: Boolean) {
         viewModelScope.launch(Dispatchers.Main) {
+            if (clearData) {
+                databaseInteractor.clear()
+            }
             messageInteractor.initMessagesAndMessagesInFolders(userId = userId)
             folderInteractor.initFolders(userId = userId)
             settingsInteractor.initSettings(userId = userId)
@@ -123,63 +125,44 @@ class LoginViewModel @Inject constructor(
 
     private fun loginFailed(exception: Exception?) {
         state = when (exception) {
-            is LimitExceededException -> {
-                CoroutineScope(Dispatchers.IO).launch {
-                    interactor.getUser()?.let {
-                        settingsInteractor.createSettings(
-                            Settings(
-                                SettingsKeys.LoginLimitExceeded,
-                                Date().time.toString()
-                            ),
-                            it.userId
-                        )
-                    }
-                }
-                val lastLimitExceedTime =
-                    settingsInteractor.getSettings(SettingsKeys.LoginLimitExceeded)?.value?.toLongOrNull()
-                        ?: Date().time
-                val lastLimitExceedDate = Date(lastLimitExceedTime)
-                state.copy(
-                    error = "ניסית יותר מידי פעמים. תנסה שוב 15 דק׳ מ:${
-                        lastLimitExceedDate.hours()
-                    }:${lastLimitExceedDate.minutes()}"
-                )
-            }
             is InvalidParameterException -> {
-                state.copy(error = "הפרטים שהוזנו לא נכונים...")
+                state.copy(error = R.string.error_wrong_credentials_inserted)
             }
             is UserNotConfirmedException -> {
-                state.copy(showCodeConfirmation = true)
+                state.copy(error = R.string.error_user_not_confirmed)
             }
             is UserNotFoundException -> {
-                state.copy(error = "המשתמש לא מוכר לנו...")
+                state.copy(error = R.string.error_user_not_signed_in)
             }
             is WrongCredentialsException -> {
-                state.copy(error = "המשתמש לא מוכר לנו...")
+                state.copy(error = R.string.error_wrong_credentials_inserted)
             }
             else -> {
-                state.copy(error = "קרתה שגיאה לא צפויה. אנחנו מטפלים בזה")
+                state.copy(error = R.string.error_unknown)
             }
         }
         state = state.copy(isLoading = false)
     }
 
-    private fun userAuthorizedSuccessfully() {
+    private fun userAuthorizedSuccessfully(clearData: Boolean = false) {
         viewModelScope.launch(Dispatchers.Main) {
-            try {
+            state = try {
                 val userId = interactor.getUser()?.userId
-                val isAuthorized = if (userId != null) {
+                val isAuthorized = if (userId != null && userId != "") {
                     confirmUserCreated(userId, state.email)
                 } else {
                     false
                 }
                 if (isAuthorized) {
-                    initData(userId ?: "")
+                    initData(userId ?: "", clearData)
                 }
-                state = state.copy(isAuthorized = isAuthorized)
+                state.copy(
+                    isAuthorized = isAuthorized,
+                    error = if (!isAuthorized) R.string.error_unknown else R.string.empty_string
+                )
             } catch (exception: Exception) {
                 exception.log()
-                state = state.copy(isLoading = false)
+                state.copy(isLoading = false)
             }
         }.invokeOnCompletion {
             state = state.copy(isLoading = false)

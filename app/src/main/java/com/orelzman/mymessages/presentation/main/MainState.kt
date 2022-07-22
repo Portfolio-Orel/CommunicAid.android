@@ -21,13 +21,11 @@ data class MainState(
     val messageToEdit: Message? = null,
     val folderToEdit: Folder? = null,
 
-    val screenToShow: MainScreens = MainScreens.Main
+    val screenToShow: MainScreens = MainScreens.Default
 )
 
 enum class MainScreens {
     DetailsMessage,
     DetailsFolder,
-    Stats,
-    UnhandledCalls,
-    Main;
+    Default;
 }

@@ -1,5 +1,6 @@
 package com.orelzman.mymessages.presentation.unhandled_calls.components
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,18 +10,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
+import com.orelzman.mymessages.util.extension.getDayFormatted
+import com.orelzman.mymessages.util.extension.getHourHHMM
 import java.util.*
 
 @Composable
@@ -31,6 +31,8 @@ fun UnhandledCallRow(
     onCall: (PhoneCall) -> Unit = { _ -> },
     onClick: (PhoneCall) -> Unit = { _ -> }
 ) {
+    val context = LocalContext.current
+
     Row(
         modifier = modifier
             .fillMaxSize()
@@ -54,9 +56,9 @@ fun UnhandledCallRow(
                 style = MaterialTheme.typography.titleSmall
             )
             Text(
-                "14:12 • אתמול",
+                phoneCall.startDate.format(context),
                 color = MaterialTheme.colorScheme.surface.copy(alpha = 0.3f),
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodyMedium
             )
         }
         Spacer(modifier = Modifier.weight(1f))
@@ -74,6 +76,10 @@ fun UnhandledCallRow(
 
 private fun Modifier.localPadding(): Modifier = this.padding(horizontal = 12.dp)
 private fun Modifier.localIconSize(): Modifier = this.size(34.dp)
+
+private fun Date.format(context: Context): String =
+    "${getDayFormatted(context)} • ${getHourHHMM()}"
+
 
 @Preview(showBackground = true)
 @Composable

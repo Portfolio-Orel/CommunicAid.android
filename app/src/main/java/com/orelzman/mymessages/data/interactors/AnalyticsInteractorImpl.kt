@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.data.local.interactors
+package com.orelzman.mymessages.data.interactors
 
 import android.content.Context
 import com.mixpanel.android.mpmetrics.MixpanelAPI

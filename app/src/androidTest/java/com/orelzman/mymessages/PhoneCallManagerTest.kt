@@ -8,8 +8,8 @@ import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.data.local.LocalDatabase
-import com.orelzman.mymessages.data.local.interactors.DataSourceCallsInteractorImpl
-import com.orelzman.mymessages.data.local.interactors.PhoneCallsInteractorImpl
+import com.orelzman.mymessages.data.interactors.DataSourceCallsInteractorImpl
+import com.orelzman.mymessages.data.interactors.PhoneCallsInteractorImpl
 import com.orelzman.mymessages.data.local.type_converters.Converters
 import com.orelzman.mymessages.domain.interactors.CallType
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor

@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.data.remote
+package com.orelzman.mymessages.data.interceptor
 
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import okhttp3.Interceptor
@@ -6,6 +6,7 @@ import okhttp3.Response
 
 class AuthInterceptor (
     private val authInteractor: AuthInteractor
+
 ) : Interceptor {
 
     private val lock = Any()

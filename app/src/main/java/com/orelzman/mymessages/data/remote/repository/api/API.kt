@@ -63,4 +63,13 @@ interface API {
 
     @PATCH("/messagesInFolders")
     suspend fun deleteMessagesInFolder(@Field("folder_id") folderId: String)
+
+
+    // Statistics
+    @GET("/statistics/callsCount")
+    suspend fun getCallsCountByType(): Response<GetCallsCountResponse>
+
+    @GET("/statistics/messagesSentCount")
+    suspend fun getMessagesSentCount(): Response<List<GetMessagesSentCountResponse>>
+
 }

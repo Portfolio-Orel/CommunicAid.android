@@ -1,12 +1,8 @@
 package com.orelzman.mymessages.data.local.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.orelzman.mymessages.domain.model.entities.DeletedCall
 import kotlinx.coroutines.flow.Flow
-import java.util.*
 
 @Dao
 interface DeletedCallsDao {
@@ -24,13 +20,17 @@ interface DeletedCallsDao {
         WHERE deleteDate > :startDate
     """
     )
-    fun getAll(startDate: Date): Flow<List<DeletedCall>>
+    fun getAll(startDate: Long): Flow<List<DeletedCall>>
 
     @Query(
         """
         SELECT *
         FROM DeletedCall
+        where deleteDate > :startDate
     """
     )
-    fun getAllOnce(): List<DeletedCall>
+    fun getAllOnce(startDate: Long): List<DeletedCall>
+
+    @Delete
+    fun delete(deletedCall: DeletedCall)
 }

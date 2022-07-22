@@ -14,8 +14,8 @@ import java.util.*
 data class PhoneCall(
     @PrimaryKey var id: String = UUID.randomUUID().toString(),
     val number: String = "",
-    var startDate: Date = Date(),
-    var endDate: Date = startDate,
+    var startDate: Date,
+    var endDate: Date,
     var name: String = "",
     var isWaiting: Boolean = false,
     var messagesSent: List<MessageSent> = emptyList(),
@@ -58,13 +58,13 @@ data class PhoneCall(
 
     companion object {
         fun waiting(number: String) =
-            PhoneCall(number = number, isWaiting = true, type = CallType.INCOMING.name)
+            PhoneCall(number = number, isWaiting = true, type = CallType.INCOMING.name, startDate = Date(), endDate = Date())
 
         fun incoming(number: String) =
-            PhoneCall(number = number, isWaiting = false, type = CallType.INCOMING.name)
+            PhoneCall(number = number, isWaiting = false, type = CallType.INCOMING.name, startDate = Date(), endDate = Date())
 
         fun outgoing(number: String) =
-            PhoneCall(number = number, isWaiting = false, type = CallType.OUTGOING.name)
+            PhoneCall(number = number, isWaiting = false, type = CallType.OUTGOING.name, startDate = Date(), endDate = Date())
     }
 }
 
