@@ -27,8 +27,8 @@ interface AuthInteractor {
      * Used after sign up.
      */
     suspend fun confirmUser(
-        username: String = "user123",
-        code: String = "162774"
+        username: String,
+        code: String
     )
 
     suspend fun googleAuth(activity: Activity)
