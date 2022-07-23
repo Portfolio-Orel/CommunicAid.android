@@ -7,7 +7,7 @@ interface MessageInFolderInteractor {
     fun getMessagesInFolders(): Flow<List<MessageInFolder>>
     suspend fun insert(messageInFolder: MessageInFolder)
     suspend fun insert(messagesInFolders: List<MessageInFolder>)
-    suspend fun deleteMessageInFolder(messageInFolder: MessageInFolder)
+    suspend fun delete(messageInFolder: MessageInFolder)
     suspend fun deleteMessagesFromFolder(folderId: String)
     suspend fun getMessageFolderId(messageId: String): String
     suspend fun update(messageId: String, oldFolderId: String, newFolderId: String)

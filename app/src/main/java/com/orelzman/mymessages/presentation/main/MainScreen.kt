@@ -114,7 +114,6 @@ private fun Content(
             FlowRow(
                 modifier = Modifier
                     .padding(start = 10.dp, end = 5.dp)
-                    .fillMaxHeight(0.6F)
                     .fillMaxWidth(0.9F)
                     .scrollable(
                         orientation = Orientation.Vertical,
@@ -122,10 +121,11 @@ private fun Content(
                             messagesOffset.value = messagesOffset.value + delta
                             delta
                         }
-                    ),
+                    )
+                    .fillMaxHeight(0.6F),
                 mainAxisSpacing = spaceBetweenMessages.dp,
-                mainAxisAlignment = MainAxisAlignment.Start,
-                mainAxisSize = SizeMode.Wrap
+                mainAxisAlignment = MainAxisAlignment.SpaceEvenly,
+                mainAxisSize = SizeMode.Expand
             ) {
                 viewModel.getFoldersMessages()
                     .forEach {

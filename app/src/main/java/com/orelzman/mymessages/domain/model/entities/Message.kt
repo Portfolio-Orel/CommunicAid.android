@@ -11,8 +11,8 @@ data class Message(
     val timesUsed: Int = 0,
     val isActive: Boolean = true,
     val position: Int = 0,
-    @PrimaryKey val id: String = ""
-) : Loggable {
+    @PrimaryKey val id: String = "",
+) : Loggable, Uploadable() {
 
     constructor(message: Message, id: String) : this(
         title = message.title,
@@ -22,17 +22,6 @@ data class Message(
         isActive = message.isActive,
         id = id
     )
-
-    companion object {
-        val default = Message(
-            title = "Title",
-            shortTitle = "Short title",
-            body = "Body",
-            timesUsed = 4,
-            isActive = true,
-            id = "id"
-        )
-    }
 
     override val data: Map<String, Any>
         get() = mapOf(
@@ -44,7 +33,15 @@ data class Message(
             "position" to position,
             "id" to id
         )
-}
 
-fun List<Message>.getByIds(ids: List<String>): List<Message> =
-    filter { ids.contains(it.id) }
+    companion object {
+        val default = Message(
+            title = "Title",
+            shortTitle = "Short title",
+            body = "Body",
+            timesUsed = 4,
+            isActive = true,
+            id = "id"
+        )
+    }
+}

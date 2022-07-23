@@ -13,7 +13,7 @@ data class DeletedCall(
     val number: String = "",
     val deleteDate: Date = Date(),
     var isInDB: Boolean = false,
-) : Loggable {
+) : Loggable, Uploadable() {
 
     override val data: Map<String, Any>
         get() = mapOf(

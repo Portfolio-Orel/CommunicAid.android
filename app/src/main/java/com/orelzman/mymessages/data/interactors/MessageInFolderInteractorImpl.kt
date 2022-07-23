@@ -27,7 +27,7 @@ class MessageInFolderInteractorImpl @Inject constructor(
         db.get()
 
 
-    override suspend fun deleteMessageInFolder(messageInFolder: MessageInFolder) {
+    override suspend fun delete(messageInFolder: MessageInFolder) {
         db.delete(messageInFolder)
     }
 
