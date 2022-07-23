@@ -10,7 +10,7 @@ import com.orelzman.mymessages.domain.model.entities.Message
  * TODO: Think of a way to inject it with the uid
  */
 interface Repository {
-    suspend fun createMessages(createMessageBody: CreateMessageBody): List<String>?
+    suspend fun createMessage(createMessageBody: CreateMessageBody): List<String>?
     suspend fun getMessages(userId: String): List<GetMessagesResponse>
     suspend fun deleteMessage(message: Message, folderId: String)
     suspend fun updateMessage(

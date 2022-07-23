@@ -56,7 +56,7 @@ class MessageInteractorImpl @Inject constructor(
         messageInFolderInteractor.insert(tempMessageInFolder)
 
         val messageIds =
-            repository.createMessages(CreateMessageBody.fromMessage(userId, message, folderId))
+            repository.createMessage(CreateMessageBody.fromMessage(userId, message, folderId))
         messageIds?.forEach { messageId ->
             val messageWithId = Message(message, messageId)
             messageWithId.setUploadState(UploadState.Uploaded)
