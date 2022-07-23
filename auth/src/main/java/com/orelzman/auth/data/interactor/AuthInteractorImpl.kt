@@ -28,6 +28,7 @@ class AuthInteractorImpl @Inject constructor(
 ) : AuthInteractor {
     companion object {
         var isConfigured: Boolean = false
+        const val TAG = "AuthAWS:::"
     }
 
     override suspend fun init(@RawRes configFileResourceId: Int?) {
@@ -42,10 +43,10 @@ class AuthInteractorImpl @Inject constructor(
                 Amplify.configure(context)
             }
             isConfigured = true
-            Log.v("AuthAWS:::", "AWS configured")
+            Log.v(TAG, "AWS configured")
             return
         } catch (exception: AmplifyException) {
-            Log.v("AuthAWS:::", exception.localizedMessage ?: "")
+            Log.v(TAG, exception.localizedMessage ?: "")
         } finally {
             if (Amplify.Auth.fetchAuthSession().isSignedIn) {
                 userSignInSuccessfully()
@@ -85,9 +86,9 @@ class AuthInteractorImpl @Inject constructor(
             val result = Amplify.Auth.confirmSignUp(username, code)
             if (result.isSignUpComplete) {
                 userSignInSuccessfully()
-                Log.i("AuthAWS:::", "Signup confirmed")
+                Log.i(TAG, "Signup confirmed")
             } else {
-                Log.i("AuthAWS:::", "Signup confirmation not yet complete")
+                Log.i(TAG, "Signup confirmation not yet complete")
             }
         } catch (error: AuthException) {
             when (error) {
@@ -107,9 +108,9 @@ class AuthInteractorImpl @Inject constructor(
         try {
             val result = Amplify.Auth.signInWithSocialWebUI(AuthProvider.google(), activity)
             userSignInSuccessfully()
-            Log.i("AuthAWS:::", "Sign in OK: $result")
+            Log.i(TAG, "Sign in OK: $result")
         } catch (error: AuthException) {
-            Log.e("AuthAWS:::", "Sign in failed", error)
+            Log.e(TAG, "Sign in failed", error)
         }
     }
 
@@ -123,13 +124,13 @@ class AuthInteractorImpl @Inject constructor(
             setUser()
             if (result.isSignInComplete) {
                 userSignInSuccessfully()
-                Log.v("AuthAWS:::", "Sign in succeeded")
+                Log.v(TAG, "Sign in succeeded")
             } else {
-                Log.e("AuthAWS:::", "Sign in not complete")
+                Log.e(TAG, "Sign in not complete")
                 throw Exception("Login failed")
             }
         } catch (exception: Exception) {
-            Log.e("AuthAWS:::", "Sign in not complete with error: ${exception.localizedMessage}")
+            Log.e(TAG, "Sign in not complete with error: ${exception.localizedMessage}")
             when (exception) {
                 is AuthException.UserNotConfirmedException -> {
                     resendConfirmationCode(username)
@@ -151,6 +152,7 @@ class AuthInteractorImpl @Inject constructor(
                     ?: throw CouldNotRefreshTokenException(),
                 email = it.email
             )
+            Log.v(TAG, "Refreshed Token: ${user.token}")
             userInteractor.save(user)
         }
     }
@@ -187,7 +189,7 @@ class AuthInteractorImpl @Inject constructor(
             val user = User(userId = userId, token = token, email = email)
             userInteractor.save(user)
         } catch (e: Exception) {
-            Log.v("authAWS:::", "error")
+            Log.v(TAG, "error")
         }
     }
 

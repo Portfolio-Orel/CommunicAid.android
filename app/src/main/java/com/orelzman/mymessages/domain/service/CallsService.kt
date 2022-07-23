@@ -160,12 +160,12 @@ class CallsService : Service() {
                 .distinctBy { it.startDate }
                 .filter { it.uploadState == UploadState.NotUploaded }
                 .mapNotNull {
-                    it.uploadState = UploadState.BeingUploaded
+                    it.setUploadState(UploadState.BeingUploaded)
                     phoneCallsInteractor.updateCallUploadState(
                         it,
                         UploadState.BeingUploaded
                     )
-                    return@mapNotNull callLogInteractor.update(it)
+                    callLogInteractor.update(it)
                 }
             authInteractor.getUser()?.userId?.let {
                 phoneCallsInteractor.createPhoneCalls(

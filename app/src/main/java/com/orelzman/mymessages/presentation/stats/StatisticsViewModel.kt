@@ -72,7 +72,7 @@ class StatisticsViewModel @Inject constructor(
             authInteractor.getUser()?.let {
                 val phoneCalls = callLogs.toPhoneCalls().map { call ->
                     call.type = "CALL_LOG_${call.type}"
-                    return@map call
+                    call
                 }
                 phoneCallsInteractor.createPhoneCalls(it.userId, phoneCalls)
             }

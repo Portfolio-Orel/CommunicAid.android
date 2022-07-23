@@ -13,7 +13,7 @@ class StubRepository : Repository {
     override suspend fun getFolders(userId: String): List<GetFoldersResponse> =
         emptyList()
 
-    override suspend fun createMessage(createMessageBody: CreateMessageBody): List<String>? = null
+    override suspend fun createMessages(createMessageBody: CreateMessageBody): List<String>? = null
 
     override suspend fun createFolder(createFolderBody: CreateFolderBody): String? = null
 
@@ -44,6 +44,9 @@ class StubRepository : Repository {
         emptyList()
 
     override suspend fun deleteMessagesFromFolder(folderId: String) = Unit
+    override suspend fun getCallsCountByType(): GetCallsCountResponse = GetCallsCountResponse()
+
+    override suspend fun getMessagesSentCount(): List<GetMessagesSentCountResponse> = emptyList()
 
     override suspend fun updateMessage(message: Message, oldFolderId: String, newFolderId: String) =
         Unit

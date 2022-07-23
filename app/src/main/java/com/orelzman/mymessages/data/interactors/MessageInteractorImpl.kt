@@ -7,8 +7,10 @@ import com.orelzman.mymessages.domain.model.dto.body.create.CreateMessageBody
 import com.orelzman.mymessages.domain.model.dto.response.toMessagesInFolders
 import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.model.entities.MessageInFolder
+import com.orelzman.mymessages.domain.model.entities.UploadState
 import com.orelzman.mymessages.domain.repository.Repository
 import kotlinx.coroutines.flow.Flow
+import java.util.*
 import javax.inject.Inject
 
 class MessageInteractorImpl @Inject constructor(
@@ -24,7 +26,12 @@ class MessageInteractorImpl @Inject constructor(
         var messages: List<Message> = emptyList()
         if (messagesCount == 0) {
             val response = repository.getMessages(userId)
-            messages = response.map { it.toMessage() }
+            messages = response
+                .map { it.toMessage() }
+                .map {
+                    it.setUploadState(UploadState.Uploaded)
+                    it
+                }
             db.insert(messages)
             messageInFolderInteractor.insert(response.toMessagesInFolders())
         }
@@ -38,17 +45,29 @@ class MessageInteractorImpl @Inject constructor(
         message: Message,
         folderId: String
     ) {
+        val tempId = UUID.randomUUID().toString()
+        val tempMessage = Message(message, tempId)
+        val tempMessageInFolder = MessageInFolder(tempId, folderId)
+
+        message.setUploadState(UploadState.BeingUploaded)
+        tempMessageInFolder.setUploadState(UploadState.BeingUploaded)
+
+        db.insert(tempMessage)
+        messageInFolderInteractor.insert(tempMessageInFolder)
+
         val messageIds =
-            repository.createMessage(CreateMessageBody.fromMessage(userId, message, folderId))
-                ?: return
-        messageIds.forEach {
-            db.insert(Message(message, it))
-            messageInFolderInteractor.insert(
-                MessageInFolder(
-                    messageId = it,
-                    folderId = folderId
-                )
-            )
+            repository.createMessages(CreateMessageBody.fromMessage(userId, message, folderId))
+        messageIds?.forEach { messageId ->
+            val messageWithId = Message(message, messageId)
+            messageWithId.setUploadState(UploadState.Uploaded)
+
+            db.delete(tempMessage)
+            messageInFolderInteractor.delete(tempMessageInFolder)
+
+            val messageInFolder = MessageInFolder(messageId = messageId, folderId = folderId)
+            messageInFolder.setUploadState(UploadState.Uploaded)
+            db.insert(messageWithId)
+            messageInFolderInteractor.insert(messageInFolder)
         }
     }
 
@@ -77,7 +96,7 @@ class MessageInteractorImpl @Inject constructor(
     override suspend fun deleteMessage(message: Message, folderId: String) {
         repository.deleteMessage(message, folderId)
         db.delete(message)
-        messageInFolderInteractor.deleteMessageInFolder(
+        messageInFolderInteractor.delete(
             MessageInFolder(
                 messageId = message.id,
                 folderId = folderId

@@ -10,7 +10,7 @@ data class Folder(
     val timesUsed: Int = 0,
     val position: Int = 0,
     @PrimaryKey val id: String = "",
-) : Loggable {
+) : Loggable, Uploadable() {
     override val data: Map<String, Any>
         get() = mapOf(
             "title" to title,
