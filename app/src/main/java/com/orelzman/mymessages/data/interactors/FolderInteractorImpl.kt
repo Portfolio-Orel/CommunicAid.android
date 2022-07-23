@@ -71,6 +71,7 @@ class FolderInteractorImpl @Inject constructor(
 
     override suspend fun deleteFolder(folder: Folder) {
         repository.deleteFolder(folder)
+        messageInFolderInteractor.deleteMessagesFromFolder(folder.id)
         db.delete(folder)
     }
 
