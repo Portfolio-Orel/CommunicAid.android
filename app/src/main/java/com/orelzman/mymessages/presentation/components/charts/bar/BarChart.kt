@@ -21,6 +21,7 @@ import com.orelzman.mymessages.presentation.components.charts.side_values.SideVa
 fun BarChart(
     items: List<BarItem>,
 ) {
+    if(items.isEmpty()) return
     val viewModel = BarViewModel(items)
     var selectedBar by remember { mutableStateOf<BarItem?>(null) }
     val maxValue = remember(items) {

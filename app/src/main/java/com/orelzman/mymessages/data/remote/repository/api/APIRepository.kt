@@ -112,7 +112,7 @@ class APIRepository @Inject constructor(
         return result.body
     }
 
-    override suspend fun getMessagesSentCount(): List<GetMessagesSentCountResponse> {
+    override suspend fun getMessagesSentCount(): List<GetMessagesSentCountResponse>? {
         val result = api.getMessagesSentCount()
         return result.body
     }

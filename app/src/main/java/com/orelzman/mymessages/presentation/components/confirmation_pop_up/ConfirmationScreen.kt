@@ -22,7 +22,7 @@ import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 fun ConfirmationScreen(
     username: String,
     onDismiss: () -> Unit,
-    onUserConfirmed: (String) -> Unit,
+    onUserConfirmed: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ConfirmationViewModel = hiltViewModel()
 ) {

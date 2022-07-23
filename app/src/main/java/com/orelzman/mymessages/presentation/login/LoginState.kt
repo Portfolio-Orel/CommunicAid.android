@@ -1,5 +1,7 @@
 package com.orelzman.mymessages.presentation.login
 
+import androidx.annotation.StringRes
+
 data class LoginState(
     var isLoading: Boolean = true,
     var username: String = "",
@@ -8,5 +10,5 @@ data class LoginState(
     var isRegister: Boolean = false,
     var showCodeConfirmation: Boolean = false,
     var isAuthorized: Boolean = false,
-    var error: String? = null,
+    @StringRes var error: Int? = null,
 )

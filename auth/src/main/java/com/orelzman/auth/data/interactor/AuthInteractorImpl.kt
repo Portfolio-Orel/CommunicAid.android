@@ -121,10 +121,15 @@ class AuthInteractorImpl @Inject constructor(
     ) {
         try {
             val result = Amplify.Auth.signIn(username, password)
-            setUser()
             if (result.isSignInComplete) {
                 userSignInSuccessfully()
                 Log.v(TAG, "Sign in succeeded")
+                Log.v("AuthAWS:::", "Sign in succeeded")
+                (Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession).awsCredentials.error?.localizedMessage?.let {
+                    Log.v("AuthAWS:::",
+                        it
+                    )
+                }
             } else {
                 Log.e(TAG, "Sign in not complete")
                 throw Exception("Login failed")
