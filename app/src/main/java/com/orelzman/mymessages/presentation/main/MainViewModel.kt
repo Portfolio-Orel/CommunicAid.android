@@ -17,6 +17,7 @@ import com.orelzman.mymessages.util.extension.copyToClipboard
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
@@ -79,8 +80,7 @@ class MainViewModel @Inject constructor(
     fun onMessageClick(message: Message, context: Context) {
         val phoneCall = state.activeCall
         if (phoneCall != null) {
-            try {
-                viewModelScope.launch(Dispatchers.IO) {
+                val sendMessageJob = viewModelScope.async {
                     phoneCallsInteractor.addMessageSent(
                         phoneCall,
                         MessageSent(sentAt = Date().time, messageId = message.id)
@@ -90,8 +90,16 @@ class MainViewModel @Inject constructor(
                         message.body
                     )
                 }
-            } catch (exception: Exception) {
-                exception.log()
+            val updateTimesUsedJob = viewModelScope.async {
+                messageInteractor.increaseTimesUsed(message.id)
+            }
+            viewModelScope.launch(Dispatchers.IO) {
+                try {
+                    sendMessageJob.await()
+                    updateTimesUsedJob.await()
+                } catch (exception: Exception) {
+                    exception.log()
+                }
             }
         } else {
             goToEditMessage(message = message)

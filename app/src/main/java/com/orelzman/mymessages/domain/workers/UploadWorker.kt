@@ -47,9 +47,9 @@ class UploadWorker @AssistedInject constructor(
             delay(Constants.TIME_TO_ADD_CALL_TO_CALL_LOG)
             phoneCalls = phoneCallsInteractor
                 .getAll()
-                .appendAll(checkCallsNotRecorded())
                 .distinctBy { it.startDate }
                 .filter { it.uploadState == UploadState.NotUploaded }
+                .appendAll(checkCallsNotRecorded())
                 .mapNotNull {
                     it.setUploadState(UploadState.BeingUploaded)
                     phoneCallsInteractor.updateCallUploadState(
@@ -103,6 +103,11 @@ class UploadWorker @AssistedInject constructor(
             }
         }
         phoneCallsInteractor.cachePhoneCalls(phoneCalls)
+        updateCallsUpdateTime()
+        return phoneCalls
+    }
+
+    private suspend fun updateCallsUpdateTime() {
         authInteractor.getUser()?.let {
             settingsInteractor.createSettings(
                 Settings(
@@ -111,6 +116,5 @@ class UploadWorker @AssistedInject constructor(
                 userId = it.userId
             )
         }
-        return phoneCalls
     }
 }

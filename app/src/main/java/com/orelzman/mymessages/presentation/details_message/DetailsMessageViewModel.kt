@@ -52,11 +52,12 @@ class DetailsMessageViewModel @Inject constructor(
     }
 
     fun setEdit(messageId: String?) {
-        messageId?.let {
+        messageId?.let { id ->
             viewModelScope.launch(Dispatchers.Main) {
-                val message = messageInteractor.getMessage(messageId = messageId)
                 val folder = folderInteractor.getFolderWithMessageId(messageId = messageId)
-                setEditValues(message = message, folder = folder)
+                messageInteractor.getMessage(messageId = id)?.let { message ->
+                    setEditValues(message = message, folder = folder)
+                }
             }
         }
     }
@@ -79,7 +80,7 @@ class DetailsMessageViewModel @Inject constructor(
     }
 
     fun saveMessage() {
-        if(state.isLoading) return
+        if (state.isLoading) return
         if (state.isReadyForSave) {
             state = state.copy(isLoading = true, eventMessage = null)
             val message = Message(
@@ -93,24 +94,27 @@ class DetailsMessageViewModel @Inject constructor(
                     authInteractor.getUser()?.userId?.let {
                         if (state.isEdit) {
                             messageInteractor.updateMessage(
-                                userId = it,
                                 message = message,
-                                newFolderId = state.selectedFolder?.id ?: "",
+                                newFolderId = state.selectedFolder?.id,
                                 oldFolderId = state.oldFolderId
                             )
                         } else {
-                            messageInteractor.createMessage(
-                                userId = it,
-                                message = message,
-                                folderId = state.selectedFolder?.id ?: ""
-                            )
+                            state.selectedFolder?.id?.let { folderId ->
+                                messageInteractor.createMessage(
+                                    userId = it,
+                                    message = message,
+                                    folderId = folderId
+                                )
+                            }
                         }
                     }
-                    state = state.copy(isLoading = false, eventMessage = EventsMessages.MessageSaved)
+                    state =
+                        state.copy(isLoading = false, eventMessage = EventsMessages.MessageSaved)
                     clearValues()
                 } catch (exception: Exception) {
                     exception.log(state)
-                    state = state.copy(isLoading = false, eventMessage = EventsMessages.MessageSaved)
+                    state =
+                        state.copy(isLoading = false, eventMessage = EventsMessages.MessageSaved)
                 }
             }
         } else {

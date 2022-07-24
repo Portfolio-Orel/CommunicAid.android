@@ -71,26 +71,27 @@ class MessageInteractorImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMessage(messageId: String): Message =
+    override suspend fun getMessage(messageId: String): Message? =
         db.getMessage(messageId = messageId)
 
     override suspend fun updateMessage(
-        userId: String,
         message: Message,
-        oldFolderId: String,
-        newFolderId: String
+        oldFolderId: String?,
+        newFolderId: String?
     ) {
+        db.update(message)
         repository.updateMessage(
             message = message,
             oldFolderId = oldFolderId,
             newFolderId = newFolderId
         )
-        db.update(message)
-        messageInFolderInteractor.update(
-            messageId = message.id,
-            oldFolderId = oldFolderId,
-            newFolderId = newFolderId
-        )
+        if(oldFolderId != null && newFolderId != null) {
+            messageInFolderInteractor.update(
+                messageId = message.id,
+                oldFolderId = oldFolderId,
+                newFolderId = newFolderId
+            )
+        }
     }
 
     override suspend fun deleteMessage(message: Message, folderId: String) {
@@ -101,6 +102,14 @@ class MessageInteractorImpl @Inject constructor(
                 messageId = message.id,
                 folderId = folderId
             )
+        )
+    }
+
+    override suspend fun increaseTimesUsed(messageId: String) {
+        val message = db.getMessage(messageId) ?: return
+        message.timesUsed += 1
+        updateMessage(
+            message = message
         )
     }
 

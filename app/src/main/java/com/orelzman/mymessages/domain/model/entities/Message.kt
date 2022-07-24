@@ -8,9 +8,9 @@ data class Message(
     val title: String = "",
     val shortTitle: String = "",
     val body: String = "",
-    val timesUsed: Int = 0,
+    var timesUsed: Int = 0,
     val isActive: Boolean = true,
-    val position: Int = 0,
+    var position: Int = 0,
     @PrimaryKey val id: String = "",
 ) : Loggable, Uploadable() {
 
