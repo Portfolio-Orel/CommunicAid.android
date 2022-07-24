@@ -31,6 +31,7 @@ class PhoneCallsInteractorImpl @Inject constructor(
         db.get(phoneCall.id)?.let { it ->
             val messages = ArrayList(it.messagesSent)
             messages.addUniqueWithPredicate(messageSent) {  it1 -> it1.messageId == messageSent.messageId }
+
             it.messagesSent = messages
             db.update(it)
         }
