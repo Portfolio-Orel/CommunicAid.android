@@ -7,6 +7,7 @@ import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.model.entities.UploadState
 import com.orelzman.mymessages.domain.model.entities.createPhoneCallBodyList
 import com.orelzman.mymessages.domain.repository.Repository
+import com.orelzman.mymessages.util.extension.addUniqueWithPredicate
 import java.util.*
 import javax.inject.Inject
 
@@ -27,9 +28,10 @@ class PhoneCallsInteractorImpl @Inject constructor(
         db.insert(phoneCalls)
 
     override fun addMessageSent(phoneCall: PhoneCall, messageSent: MessageSent) {
-        db.get(phoneCall.id)?.let {
+        db.get(phoneCall.id)?.let { it ->
             val messages = ArrayList(it.messagesSent)
-            messages.add(messageSent)
+            messages.addUniqueWithPredicate(messageSent) {  it1 -> it1.messageId == messageSent.messageId }
+
             it.messagesSent = messages
             db.update(it)
         }

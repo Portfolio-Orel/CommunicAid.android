@@ -1,7 +1,13 @@
 package com.orelzman.mymessages.util.extension
 
 fun <T> ArrayList<T>.addUnique(element: T) {
-    if(!contains(element)) {
+    if (!contains(element)) {
+        add(element)
+    }
+}
+
+fun <T> ArrayList<T>.addUniqueWithPredicate(element: T, predicate: (T) -> Boolean) {
+    if (predicate(element)) {
         add(element)
     }
 }
