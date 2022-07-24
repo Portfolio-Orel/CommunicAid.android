@@ -2,9 +2,6 @@ package com.orelzman.mymessages.presentation.main
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -24,10 +21,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
 import com.orelzman.mymessages.R
+import com.orelzman.mymessages.presentation.components.scrollable_flowrow.ScrollableFlowRow
 import com.orelzman.mymessages.presentation.main.components.FolderView
 import com.orelzman.mymessages.presentation.main.components.MessageView
 import com.orelzman.mymessages.util.Screen
@@ -98,7 +95,10 @@ private fun Content(
             LazyRow(
                 userScrollEnabled = true,
             ) {
-                items(state.folders) { folder ->
+                items(
+                    state.folders
+                        .sortedByDescending { it.timesUsed }
+                ) { folder ->
                     FolderView(
                         folder = folder,
                         isSelected = state.selectedFolder?.id == folder.id,
@@ -111,23 +111,17 @@ private fun Content(
                 }
             }
 
-            FlowRow(
+            ScrollableFlowRow(
                 modifier = Modifier
                     .padding(start = 10.dp, end = 5.dp)
                     .fillMaxWidth(0.9F)
-                    .scrollable(
-                        orientation = Orientation.Vertical,
-                        state = rememberScrollableState { delta ->
-                            messagesOffset.value = messagesOffset.value + delta
-                            delta
-                        }
-                    )
-                    .fillMaxHeight(0.6F),
+                    .fillMaxHeight(0.7F),
                 mainAxisSpacing = spaceBetweenMessages.dp,
                 mainAxisAlignment = MainAxisAlignment.SpaceEvenly,
                 mainAxisSize = SizeMode.Expand
             ) {
                 viewModel.getFoldersMessages()
+                    .sortedByDescending { it.timesUsed }
                     .forEach {
                         MessageView(
                             message = it,
