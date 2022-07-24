@@ -15,8 +15,8 @@ interface Repository {
     suspend fun deleteMessage(message: Message, folderId: String)
     suspend fun updateMessage(
         message: Message,
-        oldFolderId: String,
-        newFolderId: String
+        oldFolderId: String? = null,
+        newFolderId: String? = null
     )
 
     suspend fun createFolder(createFolderBody: CreateFolderBody): String?

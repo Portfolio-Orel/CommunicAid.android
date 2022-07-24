@@ -35,7 +35,7 @@ interface MessageDao {
         FROM Message
         WHERE id = :messageId
     """)
-    suspend fun getMessage(messageId: String): Message
+    suspend fun getMessage(messageId: String): Message?
 
     @Update
     suspend fun update(message: Message)

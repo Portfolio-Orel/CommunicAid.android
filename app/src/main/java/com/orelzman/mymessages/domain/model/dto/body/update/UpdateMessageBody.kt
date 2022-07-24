@@ -9,7 +9,7 @@ data class UpdateMessageBody(
     @SerializedName("body") val body: String,
     @SerializedName("times_used") val times_used: Int,
     @SerializedName("is_active") val isActive: Boolean,
-    @SerializedName("folder_id") val folderId: String,
-    @SerializedName("previous_folder_id") val previousFolderId: String,
     @SerializedName("position") val position: Int,
+    @SerializedName("folder_id") val folderId: String? = null,
+    @SerializedName("previous_folder_id") val previousFolderId: String? = null,
 )
