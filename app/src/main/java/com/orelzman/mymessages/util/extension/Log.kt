@@ -4,12 +4,14 @@ import android.util.Log
 
 class Log {
     companion object {
+        private const val TAG = ":::MyMessages:::"
+        
         fun v(message: Any) {
-            Log.v("MyMessages logs:", message.toString())
+            Log.v(TAG, message.toString())
         }
 
         fun eCustom(message: String) {
-            Log.e("MyMessages logs:", message)
+            Log.e(TAG, message)
         }
     }
 }

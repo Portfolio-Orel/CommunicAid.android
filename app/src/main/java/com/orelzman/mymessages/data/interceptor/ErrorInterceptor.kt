@@ -1,5 +1,6 @@
 package com.orelzman.mymessages.data.interceptor
 
+import com.orelzman.auth.domain.exception.CouldNotRefreshTokenException
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +15,11 @@ class ErrorInterceptor(
         val response = chain.proceed(chain.request())
         when (response.code()) {
             401 -> CoroutineScope(Dispatchers.IO).launch {
-                authInteractor.refreshToken()
+                try {
+                    authInteractor.refreshToken()
+                } catch(e: CouldNotRefreshTokenException) {
+                    authInteractor.signOut()
+                }
             }
         }
         return response

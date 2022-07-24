@@ -7,8 +7,10 @@ import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
 import com.orelzman.mymessages.domain.model.dto.body.create.CreateFolderBody
 import com.orelzman.mymessages.domain.model.dto.response.folders
 import com.orelzman.mymessages.domain.model.entities.Folder
+import com.orelzman.mymessages.domain.model.entities.UploadState
 import com.orelzman.mymessages.domain.repository.Repository
 import kotlinx.coroutines.flow.Flow
+import java.util.*
 import javax.inject.Inject
 
 class FolderInteractorImpl @Inject constructor(
@@ -21,7 +23,14 @@ class FolderInteractorImpl @Inject constructor(
 
     override suspend fun initFolders(userId: String) {
         if (db.getFoldersCount() == 0) {
-            db.insert(repository.getFolders(userId).folders)
+            val folders = repository
+                .getFolders(userId)
+                .folders
+                .map {
+                    it.setUploadState(UploadState.Uploaded)
+                    it
+                }
+            db.insert(folders)
         }
     }
 
@@ -37,22 +46,21 @@ class FolderInteractorImpl @Inject constructor(
         db.get(folderId = folderId)
 
     override suspend fun createFolder(userId: String, folder: Folder): String? {
-        try {
-            val folderId = repository.createFolder(
-                CreateFolderBody(
-                    title = folder.title,
-                    userId = userId,
-                    position = null
-                )
-            ) ?: return null
-
-            db.insert(Folder(folder, folderId))
-            return folderId
-        } catch (exception: Exception) {
-            // ToDo
-            return null
-        }
-
+        val tempFolder = Folder(folder, UUID.randomUUID().toString())
+        tempFolder.setUploadState(UploadState.BeingUploaded)
+        db.insert(tempFolder)
+        val folderId = repository.createFolder(
+            CreateFolderBody(
+                title = folder.title,
+                userId = userId,
+                position = null
+            )
+        ) ?: return null
+        val newFolder = Folder(folder, folderId)
+        newFolder.setUploadState(UploadState.Uploaded)
+        db.delete(tempFolder)
+        db.insert(newFolder)
+        return folderId
     }
 
     override suspend fun updateFolder(folder: Folder) {
@@ -63,6 +71,7 @@ class FolderInteractorImpl @Inject constructor(
 
     override suspend fun deleteFolder(folder: Folder) {
         repository.deleteFolder(folder)
+        messageInFolderInteractor.deleteMessagesFromFolder(folder.id)
         db.delete(folder)
     }
 

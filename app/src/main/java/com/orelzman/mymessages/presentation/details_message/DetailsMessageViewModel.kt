@@ -10,7 +10,6 @@ import com.orelzman.mymessages.domain.interactors.FolderInteractor
 import com.orelzman.mymessages.domain.interactors.MessageInteractor
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
-import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -80,6 +79,7 @@ class DetailsMessageViewModel @Inject constructor(
     }
 
     fun saveMessage() {
+        if(state.isLoading) return
         if (state.isReadyForSave) {
             state = state.copy(isLoading = true, eventMessage = null)
             val message = Message(
@@ -110,6 +110,7 @@ class DetailsMessageViewModel @Inject constructor(
                     clearValues()
                 } catch (exception: Exception) {
                     exception.log(state)
+                    state = state.copy(isLoading = false, eventMessage = EventsMessages.MessageSaved)
                 }
             }
         } else {

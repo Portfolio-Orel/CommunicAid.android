@@ -16,8 +16,9 @@ interface FolderDao {
     @Query("""
         SELECT *
         FROM Folder
+        Where isActive = :isActive
     """)
-    fun getFolders(): Flow<List<Folder>>
+    fun getFolders(isActive: Boolean = true): Flow<List<Folder>>
 
     @Query("""
         SELECT Count(*)
@@ -28,7 +29,7 @@ interface FolderDao {
     @Update
     suspend fun update(folder: Folder)
 
-    @Delete
+    @Delete()
     suspend fun delete(folder: Folder)
 
     @Query("""

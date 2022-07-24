@@ -20,8 +20,7 @@ data class PhoneCall(
     var isWaiting: Boolean = false,
     var messagesSent: List<MessageSent> = emptyList(),
     var type: String = CallType.INCOMING.name,
-    var uploadState: UploadState = UploadState.NotUploaded
-) : Loggable {
+) : Loggable, Uploadable() {
 
     override val data: Map<String, Any>
         get() = mapOf(
@@ -87,21 +86,6 @@ fun List<PhoneCall>.createPhoneCallBodyList(userId: String): List<CreatePhoneCal
         }
     }
     return array
-}
-
-enum class UploadState(val value: String) {
-    NotUploaded("NotUploaded"),
-    BeingUploaded("BeingUploaded"),
-    Uploaded("Uploaded");
-
-    companion object {
-        fun fromString(value: String): UploadState {
-            values().forEach {
-                if (it.value == value) return it
-            }
-            return NotUploaded
-        }
-    }
 }
 
 fun String.toPhoneCall(): PhoneCall? =

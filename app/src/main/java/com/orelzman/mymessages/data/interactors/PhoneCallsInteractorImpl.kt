@@ -39,7 +39,7 @@ class PhoneCallsInteractorImpl @Inject constructor(
         db.update(phoneCall)
 
     override fun updateCallUploadState(phoneCall: PhoneCall, uploadState: UploadState) {
-        phoneCall.uploadState = uploadState
+        phoneCall.setUploadState(uploadState)
         db.update(phoneCall)
     }
 
@@ -50,7 +50,6 @@ class PhoneCallsInteractorImpl @Inject constructor(
         db.getAllFromDate(fromDate)
 
 
-    override fun clear() = db.clear()
     override fun remove(phoneCalls: List<PhoneCall>) = db.remove(phoneCalls)
-
+    override fun clear() = db.clear()
 }

@@ -50,6 +50,7 @@ class DetailsFolderViewModel @Inject constructor(
     }
 
     fun onSaveClick() {
+        if(state.isLoading) return
         if (state.isEdit) {
             state.folder?.let {
                 with(it) {

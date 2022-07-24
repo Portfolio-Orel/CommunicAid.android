@@ -44,6 +44,9 @@ class StubRepository : Repository {
         emptyList()
 
     override suspend fun deleteMessagesFromFolder(folderId: String) = Unit
+    override suspend fun getCallsCountByType(): GetCallsCountResponse = GetCallsCountResponse()
+
+    override suspend fun getMessagesSentCount(): List<GetMessagesSentCountResponse> = emptyList()
 
     override suspend fun updateMessage(message: Message, oldFolderId: String, newFolderId: String) =
         Unit
