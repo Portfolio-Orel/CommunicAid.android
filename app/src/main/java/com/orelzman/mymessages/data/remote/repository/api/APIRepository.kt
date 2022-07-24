@@ -117,7 +117,7 @@ class APIRepository @Inject constructor(
         return result.body
     }
 
-    override suspend fun updateMessage(message: Message, oldFolderId: String, newFolderId: String) =
+    override suspend fun updateMessage(message: Message, oldFolderId: String?, newFolderId: String?) =
         api.updateMessage(
             UpdateMessageBody(
                 messageId = message.id,
