@@ -25,7 +25,7 @@ interface Repository {
     suspend fun updateFolder(folder: Folder)
 
     suspend fun createDeletedCall(createDeletedCallBody: CreateDeletedCallBody): String?
-    suspend fun getDeletedCalls(userId: String): List<GetDeletedCallsResponse>
+    suspend fun getDeletedCalls(): List<GetDeletedCallsResponse>
 
     suspend fun createPhoneCall(createPhoneCallBody: CreatePhoneCallBody): String?
     suspend fun createPhoneCalls(createPhoneCallBody: List<CreatePhoneCallBody>): List<String>

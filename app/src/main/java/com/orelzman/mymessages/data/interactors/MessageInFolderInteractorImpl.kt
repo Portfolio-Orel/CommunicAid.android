@@ -36,7 +36,7 @@ class MessageInFolderInteractorImpl @Inject constructor(
         db.delete(folderId)
     }
 
-    override suspend fun getMessageFolderId(messageId: String): String =
+    override suspend fun getMessageFolderId(messageId: String): String? =
         db.getWithMessageId(messageId)
 
     override suspend fun update(messageId: String, oldFolderId: String, newFolderId: String) {

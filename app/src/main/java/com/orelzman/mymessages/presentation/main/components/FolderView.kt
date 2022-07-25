@@ -2,6 +2,7 @@ package com.orelzman.mymessages.presentation.main.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,7 +43,8 @@ fun FolderView(
             )
             .combinedClickable(
                 onClick = { onClick(folder) },
-                onLongClick = { onLongClick(folder) }),
+                onLongClick = { onLongClick(folder) })
+            .border(1.dp, MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(4.dp)),
         contentAlignment = Alignment.Center
     ) {
         Text(

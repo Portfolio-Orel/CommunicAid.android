@@ -79,8 +79,8 @@ class APIRepository @Inject constructor(
         return result.body
     }
 
-    override suspend fun getDeletedCalls(userId: String): List<GetDeletedCallsResponse> {
-        val result = api.getDeletedCalls(userId)
+    override suspend fun getDeletedCalls(): List<GetDeletedCallsResponse> {
+        val result = api.getDeletedCalls()
         return result.body
     }
 

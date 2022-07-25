@@ -1,5 +1,6 @@
 package com.orelzman.mymessages.data.interactors
 
+import com.orelzman.mymessages.data.exception.MessageNotFoundException
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
 import com.orelzman.mymessages.domain.interactors.MessageInteractor
@@ -41,7 +42,6 @@ class MessageInteractorImpl @Inject constructor(
     override fun getMessages(): Flow<List<Message>> = db.getMessages()
 
     override suspend fun createMessage(
-        userId: String,
         message: Message,
         folderId: String
     ) {
@@ -49,14 +49,13 @@ class MessageInteractorImpl @Inject constructor(
         val tempMessage = Message(message, tempId)
         val tempMessageInFolder = MessageInFolder(tempId, folderId)
 
-        message.setUploadState(UploadState.BeingUploaded)
         tempMessageInFolder.setUploadState(UploadState.BeingUploaded)
 
         db.insert(tempMessage)
         messageInFolderInteractor.insert(tempMessageInFolder)
 
         val messageIds =
-            repository.createMessage(CreateMessageBody.fromMessage(userId, message, folderId))
+            repository.createMessage(CreateMessageBody.fromMessage(message, folderId))
         messageIds?.forEach { messageId ->
             val messageWithId = Message(message, messageId)
             messageWithId.setUploadState(UploadState.Uploaded)
@@ -94,7 +93,8 @@ class MessageInteractorImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteMessage(message: Message, folderId: String) {
+    override suspend fun deleteMessage(message: Message) {
+        val folderId = messageInFolderInteractor.getMessageFolderId(message.id) ?: throw MessageNotFoundException()
         repository.deleteMessage(message, folderId)
         db.delete(message)
         messageInFolderInteractor.delete(

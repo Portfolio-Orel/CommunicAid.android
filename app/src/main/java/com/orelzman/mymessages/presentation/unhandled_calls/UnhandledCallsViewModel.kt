@@ -43,6 +43,7 @@ class UnhandledCallsViewModel @Inject constructor(
 
     init {
         observeCalls()
+        Log.v("test1")
     }
 
     fun refresh() {
@@ -52,19 +53,15 @@ class UnhandledCallsViewModel @Inject constructor(
 
     private fun observeCalls() {
         state = state.copy(isLoading = true)
-        viewModelScope.launch(Dispatchers.Main) {
-            authInteractor.getUser()?.userId?.let { userId ->
-                deletedCallsInteractor.getAll(userId, getStartOfDay())
-                    .collect {
-                        val callsFromCallLog =
-                            getCallsFromCallLog()
-                        val callsToHandle = unhandledCallsManager.filterUnhandledCalls(
-                            deletedCalls = it,
-                            callLogs = callsFromCallLog
-                        )
-                        state = state.copy(callsToHandle = callsToHandle, isLoading = false)
-                    }
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            deletedCallsInteractor.getAll(getStartOfDay())
+                .collect {
+                    val callsToHandle = unhandledCallsManager.filterUnhandledCalls(
+                        deletedCalls = it,
+                        callLogs = getCallsFromCallLog()
+                    )
+                    state = state.copy(callsToHandle = callsToHandle, isLoading = false)
+                }
         }
     }
 
@@ -74,7 +71,7 @@ class UnhandledCallsViewModel @Inject constructor(
     private fun fetchDeletedCalls() {
         val job = viewModelScope.async {
             authInteractor.getUser()?.userId?.let { userId ->
-                deletedCallsInteractor.fetch(userId)
+                deletedCallsInteractor.fetchDeletedCalls(userId)
             }
         }
         viewModelScope.launch(Dispatchers.Main) {

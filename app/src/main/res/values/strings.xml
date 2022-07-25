@@ -26,6 +26,7 @@
     <string name="no_active_call">אין שיחה</string>
     <string name="title">כותרת</string>
     <string name="expansion_button">כפתור להרחבה</string>
+    <string name="message_updated_successfully">ההודעה נערכה בהצלחה!</string>
     <string name="message_saved_successfully">ההודעה נוספה בהצלחה!</string>
     <string name="folder_saved_successfully">התיקייה נוספה בהצלחה!</string>
     <string name="save">שמור</string>
@@ -60,4 +61,7 @@
     <string name="error_user_not_signed_in">המשתמש לא מוכר לנו…</string>
     <string name="error_unknown">קרתה שגיאה לא צפויה. אנחנו מטפלים בזה</string>
     <string name="empty_string"/>
+    <string name="delete_message">מחק הודעה</string>
+    <string name="message_deleted_successfully">ההודעה נמחקה בהצלחה</string>
+    <string name="messages_restored_successfully">ההודעה שוחזרה בהצלחה</string>
 </resources>

@@ -75,8 +75,8 @@ class FolderInteractorImpl @Inject constructor(
         db.delete(folder)
     }
 
-    override suspend fun getFolderWithMessageId(messageId: String): Folder {
-        val folderId = messageInFolderInteractor.getMessageFolderId(messageId)
+    override suspend fun getFolderWithMessageId(messageId: String): Folder? {
+        val folderId = messageInFolderInteractor.getMessageFolderId(messageId) ?: return null
         return db.get(folderId)
     }
 

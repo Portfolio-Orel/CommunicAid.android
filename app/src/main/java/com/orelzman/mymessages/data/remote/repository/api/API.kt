@@ -39,8 +39,8 @@ interface API {
     @POST("/deletedCalls")
     suspend fun createDeletedCall(@Body deletedCallBody: CreateDeletedCallBody): Response<String>
 
-    @GET("/deletedCalls/{user_id}")
-    suspend fun getDeletedCalls(@Path("user_id") userId: String): Response<List<GetDeletedCallsResponse>>
+    @GET("/deletedCalls")
+    suspend fun getDeletedCalls(): Response<List<GetDeletedCallsResponse>>
 
     // Phone Calls
     @POST("/phoneCall")

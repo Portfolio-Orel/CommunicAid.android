@@ -6,6 +6,6 @@ import java.util.*
 
 interface DeletedCallsInteractor {
     suspend fun create(userId: String, deletedCall: DeletedCall)
-    suspend fun fetch(userId: String)
-    suspend fun getAll(userId: String, startDate: Date): Flow<List<DeletedCall>>
+    suspend fun fetchDeletedCalls(userId: String)
+    suspend fun getAll(startDate: Date): Flow<List<DeletedCall>>
 }
