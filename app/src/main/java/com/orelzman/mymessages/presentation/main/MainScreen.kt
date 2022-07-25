@@ -112,7 +112,7 @@ private fun Content(
                 modifier = Modifier
                     .padding(start = 3.dp, end = 2.dp)
                     .fillMaxWidth(0.95F)
-                    .fillMaxHeight(0.83F),
+                    .fillMaxHeight(0.7F),
                 mainAxisSpacing = spaceBetweenMessages.dp,
                 mainAxisAlignment = MainAxisAlignment.SpaceEvenly,
                 mainAxisSize = SizeMode.Expand

@@ -66,6 +66,7 @@ class StatisticsViewModel @Inject constructor(
                 state = state.copy(
                     incomingCount = incomingCount + missedCount + rejectedCount,
                     outgoingCount = outgoingCount,
+                    totalCallsCount = incomingCount + incomingCount + missedCount + rejectedCount,
                     messagesSentCount = messagesSentCount
                 )
             }
