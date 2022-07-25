@@ -5,10 +5,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -95,6 +92,7 @@ fun UnhandledCallsScreen(
                                     onClick = { viewModel.onCall(it) }
                                 )
                             }
+                            Divider(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f))
                         }
                         Spacer(Modifier.weight(1f))
                     }

@@ -18,6 +18,7 @@ class StatisticsInteractorImpl @Inject constructor(
     override suspend fun getStatistics(): Flow<List<Statistics>> =
         db.getAllFlow()
 
+
     override suspend fun getCallsCountByType() {
         initCallsCountByType()
     }

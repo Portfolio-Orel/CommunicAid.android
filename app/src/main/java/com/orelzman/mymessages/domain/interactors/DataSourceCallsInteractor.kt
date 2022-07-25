@@ -10,6 +10,8 @@ interface DataSourceCallsInteractor {
     fun callsPreferencesFlow(): Flow<CallPreferences>
     fun callsPrefrences(): SharedPreferences
 
+    suspend fun init()
+
     suspend fun updateCallOnTheLine(callOnTheLine: PhoneCall?)
     suspend fun updateCallInTheBackground(callInTheBackground: PhoneCall?)
     suspend fun updateState(state: CallState?)

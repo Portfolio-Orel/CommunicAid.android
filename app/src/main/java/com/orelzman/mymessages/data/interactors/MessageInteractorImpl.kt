@@ -22,11 +22,11 @@ class MessageInteractorImpl @Inject constructor(
 
     private val db = database.messageDao
 
-    override suspend fun initMessagesAndMessagesInFolders(userId: String): List<Message> {
+    override suspend fun initWithMessagesInFolders(): List<Message> {
         val messagesCount = db.getMessagesCount()
         var messages: List<Message> = emptyList()
         if (messagesCount == 0) {
-            val response = repository.getMessages(userId)
+            val response = repository.getMessages()
             messages = response
                 .map { it.toMessage() }
                 .map {

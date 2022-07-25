@@ -11,7 +11,7 @@ import com.orelzman.mymessages.domain.model.entities.Message
  */
 interface Repository {
     suspend fun createMessage(createMessageBody: CreateMessageBody): List<String>?
-    suspend fun getMessages(userId: String): List<GetMessagesResponse>
+    suspend fun getMessages(): List<GetMessagesResponse>
     suspend fun deleteMessage(message: Message, folderId: String)
     suspend fun updateMessage(
         message: Message,
@@ -20,7 +20,7 @@ interface Repository {
     )
 
     suspend fun createFolder(createFolderBody: CreateFolderBody): String?
-    suspend fun getFolders(userId: String): List<GetFoldersResponse>
+    suspend fun getFolders(): List<GetFoldersResponse>
     suspend fun deleteFolder(folder: Folder)
     suspend fun updateFolder(folder: Folder)
 
@@ -34,7 +34,7 @@ interface Repository {
     suspend fun getUser(userId: String): GetUserResponse?
 
     suspend fun createOrUpdateSettings(createOrUpdateSettingsBody: CreateOrUpdateSettingsBody)
-    suspend fun getSettings(userId: String, key: String = ""): List<SettingsResponse>
+    suspend fun getSettings(key: String = ""): List<SettingsResponse>
 
     suspend fun deleteMessagesFromFolder(folderId: String)
 

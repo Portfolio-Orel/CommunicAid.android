@@ -35,18 +35,14 @@ class DeletedCallsInteractorImpl @Inject constructor(
         }
     }
 
-    override suspend fun fetchDeletedCalls(userId: String) =
-        initDeletedCalls()
-
-
     override suspend fun getAll(startDate: Date): Flow<List<DeletedCall>> {
-        if (db.getAllOnce(startDate.time).isEmpty()) {
-            initDeletedCalls()
+        if (db.getDBSize() == 0) {
+            init()
         }
-        return db.getAll(startDate.time)
+        return db.getAll()
     }
 
-    private suspend fun initDeletedCalls() {
+    override suspend fun init() {
         val result = repository.getDeletedCalls()
         val deletedCallsList = result.map {
             DeletedCall(
@@ -56,6 +52,7 @@ class DeletedCallsInteractorImpl @Inject constructor(
                 isInDB = true
             )
         }
+        db.clear()
         db.insert(deletedCallsList)
     }
 }

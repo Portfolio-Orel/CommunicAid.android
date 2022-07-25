@@ -5,6 +5,6 @@ import com.orelzman.mymessages.domain.model.entities.SettingsKeys
 
 interface SettingsInteractor {
     fun getSettings(key: SettingsKeys): Settings?
-    suspend fun initSettings(userId: String): List<Settings>
+    suspend fun init()
     suspend fun createSettings(settings: Settings, userId: String)
 }

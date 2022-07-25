@@ -56,6 +56,11 @@ class DataSourceCallsInteractorImpl @Inject constructor(
     override fun callsPrefrences(): SharedPreferences =
         context.callsSharedPrefrences
 
+    override suspend fun init() {
+        updateCallOnTheLine(null)
+        updateCallInTheBackground(null)
+    }
+
 
     override suspend fun updateCallOnTheLine(callOnTheLine: PhoneCall?) {
         updateSharedPrefrences(PreferencesKeys.CALL_ON_LINE.name, callOnTheLine?.stringify())

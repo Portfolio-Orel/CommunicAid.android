@@ -12,13 +12,13 @@ import javax.inject.Inject
 class APIRepository @Inject constructor(
     private val api: API
 ) : Repository {
-    override suspend fun getMessages(userId: String): List<GetMessagesResponse> {
-        val result = api.getMessages(userId)
+    override suspend fun getMessages(): List<GetMessagesResponse> {
+        val result = api.getMessages()
         return result.body
     }
 
-    override suspend fun getFolders(userId: String): List<GetFoldersResponse> {
-        val result = api.getFolders(userId)
+    override suspend fun getFolders(): List<GetFoldersResponse> {
+        val result = api.getFolders()
         return result.body
     }
 
@@ -96,10 +96,9 @@ class APIRepository @Inject constructor(
         api.createOrUpdateSettings(createOrUpdateSettingsBody)
 
     override suspend fun getSettings(
-        userId: String,
         key: String
     ): List<SettingsResponse> {
-        val result = api.getSettings(userId, key)
+        val result = api.getSettings(key)
         return result.body
     }
 

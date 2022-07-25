@@ -18,14 +18,9 @@ class SettingsInteractorImpl @Inject constructor(
     override fun getSettings(key: SettingsKeys): Settings? =
         db.get(key)
 
-    override suspend fun initSettings(userId: String): List<Settings> {
-        val settings = db.getAll()
-        if (settings.isEmpty()) {
-            val result = repository.getSettings(userId)
-            db.insert(result.toSettings())
-            return result.toSettings()
-        }
-        return settings
+    override suspend fun init() {
+        val result = repository.getSettings()
+        db.insert(result.toSettings())
     }
 
     override suspend fun createSettings(settings: Settings, userId: String) {

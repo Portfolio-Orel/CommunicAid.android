@@ -55,7 +55,7 @@ abstract class RepositoryModule {
     abstract fun providePhoneCallManagerInteractor(interactorImpl: PhoneCallManagerInteractorImpl): PhoneCallManagerInteractor
 
     @Binds
-    abstract fun provideDatabaseInteractor(interactorImpl: DatabaseInteractorImpl): DatabaseInteractor
+    abstract fun provideDatabaseInteractor(interactorImpl: GeneralInteractorImpl): GeneralInteractor
 
     @Binds
     abstract fun provideAnalyticsInteractor(interactorImpl: AnalyticsInteractorImpl): AnalyticsInteractor

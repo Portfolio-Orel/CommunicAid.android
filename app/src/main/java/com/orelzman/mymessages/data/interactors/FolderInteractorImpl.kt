@@ -21,17 +21,15 @@ class FolderInteractorImpl @Inject constructor(
 
     private val db: FolderDao = database.folderDao
 
-    override suspend fun initFolders(userId: String) {
-        if (db.getFoldersCount() == 0) {
-            val folders = repository
-                .getFolders(userId)
-                .folders
-                .map {
-                    it.setUploadState(UploadState.Uploaded)
-                    it
-                }
-            db.insert(folders)
-        }
+    override suspend fun init() {
+        val folders = repository
+            .getFolders()
+            .folders
+            .map {
+                it.setUploadState(UploadState.Uploaded)
+                it
+            }
+        db.insert(folders)
     }
 
     override fun getFolders(): Flow<List<Folder>> = db.getFolders()

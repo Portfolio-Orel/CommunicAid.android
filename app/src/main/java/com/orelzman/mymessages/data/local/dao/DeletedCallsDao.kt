@@ -17,20 +17,31 @@ interface DeletedCallsDao {
         """
         SELECT *
         FROM DeletedCall
-        WHERE deleteDate > :startDate
     """
     )
-    fun getAll(startDate: Long): Flow<List<DeletedCall>>
+    fun getAll(): Flow<List<DeletedCall>>
 
     @Query(
         """
         SELECT *
         FROM DeletedCall
-        where deleteDate > :startDate
+        WHERE DATE(deleteDate) > DATE(:startDate)
     """
     )
     fun getAllOnce(startDate: Long): List<DeletedCall>
 
+    @Query("""
+        SELECT COUNT(*)
+        FROM DeletedCall
+    """)
+    fun getDBSize(): Int
+
     @Delete
     fun delete(deletedCall: DeletedCall)
+
+    @Query("""
+        DELETE
+        FROM DeletedCall
+    """)
+    fun clear()
 }

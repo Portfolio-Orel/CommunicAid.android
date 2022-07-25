@@ -36,28 +36,28 @@ fun UnhandledCallRow(
     Row(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.inverseSurface),
+            .background(MaterialTheme.colorScheme.background),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = Icons.Filled.Phone,
-            contentDescription = "Remove unhandled call",
+            contentDescription = "Call unhandled call",
             modifier = Modifier
                 .localPadding()
                 .localIconSize()
                 .clickable { onCall(phoneCall) },
-            tint = MaterialTheme.colorScheme.surface
+            tint = MaterialTheme.colorScheme.onBackground
         )
         Column(modifier = Modifier
             .clickable { onClick(phoneCall) }) {
             Text(
                 text = phoneCall.getName(LocalContext.current),
-                color = MaterialTheme.colorScheme.surface,
+                color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.titleSmall
             )
             Text(
                 phoneCall.startDate.format(context),
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.3f),
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f),
                 style = MaterialTheme.typography.bodyMedium
             )
         }

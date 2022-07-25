@@ -16,11 +16,11 @@ interface API {
     suspend fun getUser(@Path("user_id") userId: String): Response<GetUserResponse>?
 
     // Messages
+    @GET("/messages")
+    suspend fun getMessages(): Response<List<GetMessagesResponse>>
+
     @POST("/messages")
     suspend fun createMessage(@Body messageBody: CreateMessageBody): Response<List<String>>
-
-    @GET("/messages/{user_id}")
-    suspend fun getMessages(@Path("user_id") userId: String): Response<List<GetMessagesResponse>>
 
     @PATCH("/messages")
     suspend fun updateMessage(@Body message: UpdateMessageBody)
@@ -29,8 +29,8 @@ interface API {
     @POST("/folders")
     suspend fun createFolder(@Body folderBody: CreateFolderBody): Response<String>
 
-    @GET("/folders/{user_id}")
-    suspend fun getFolders(@Path("user_id") userId: String): Response<List<GetFoldersResponse>>
+    @GET("/folders")
+    suspend fun getFolders(): Response<List<GetFoldersResponse>>
 
     @PATCH("/folders")
     suspend fun updateFolder(@Body folder: UpdateFolderBody)
@@ -55,9 +55,8 @@ interface API {
         @Body createOrUpdateSettingsBody: CreateOrUpdateSettingsBody
     )
 
-    @GET("/settings/{user_id}/{key}")
+    @GET("/settings/{key}")
     suspend fun getSettings(
-        @Path("user_id") userId: String,
         @Path("key") key: String,
     ): Response<List<SettingsResponse>>
 

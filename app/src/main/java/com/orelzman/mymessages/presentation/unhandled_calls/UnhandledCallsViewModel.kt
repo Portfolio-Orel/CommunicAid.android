@@ -26,6 +26,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,7 +44,6 @@ class UnhandledCallsViewModel @Inject constructor(
 
     init {
         observeCalls()
-        Log.v("test1")
     }
 
     fun refresh() {
@@ -52,14 +52,17 @@ class UnhandledCallsViewModel @Inject constructor(
     }
 
     private fun observeCalls() {
+        Log.v("started observing")
         state = state.copy(isLoading = true)
         viewModelScope.launch(Dispatchers.IO) {
             deletedCallsInteractor.getAll(getStartOfDay())
                 .collect {
+                    Log.v("Starting getting unhandled: ${Date().time}")
                     val callsToHandle = unhandledCallsManager.filterUnhandledCalls(
                         deletedCalls = it,
                         callLogs = getCallsFromCallLog()
                     )
+                    Log.v("Ended getting unhandled: ${Date().time}")
                     state = state.copy(callsToHandle = callsToHandle, isLoading = false)
                 }
         }
@@ -70,9 +73,7 @@ class UnhandledCallsViewModel @Inject constructor(
      */
     private fun fetchDeletedCalls() {
         val job = viewModelScope.async {
-            authInteractor.getUser()?.userId?.let { userId ->
-                deletedCallsInteractor.fetchDeletedCalls(userId)
-            }
+            deletedCallsInteractor.init()
         }
         viewModelScope.launch(Dispatchers.Main) {
             try {
