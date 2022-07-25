@@ -59,6 +59,7 @@ class DataSourceCallsInteractorImpl @Inject constructor(
     override suspend fun init() {
         updateCallOnTheLine(null)
         updateCallInTheBackground(null)
+        updateState(null)
     }
 
 
