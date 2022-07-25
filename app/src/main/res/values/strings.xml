@@ -39,10 +39,10 @@
     <string name="details_folder">details_folder</string>
     <string name="sign_out">Sign out</string>
     <string name="folder">תיקייה</string>
-    <string name="incoming_calls">שיחות נכנסות</string>
-    <string name="missed_calls">שיחות שלא נענו</string>
-    <string name="rejected_calls">שיחות שנדחו</string>
-    <string name="outgoing_calls">שיחות יוצאות</string>
+    <string name="incoming_calls">נכנסות</string>
+    <string name="missed_calls">לא נענו</string>
+    <string name="rejected_calls">נדחו</string>
+    <string name="outgoing_calls">יוצאות</string>
     <string name="unknown">לא ידוע</string>
     <string name="messages_sent_count_by_type">כמות הודעות שנשלחו לפי קטגוריה</string>
     <string name="today">היום</string>
@@ -64,4 +64,5 @@
     <string name="delete_message">מחק הודעה</string>
     <string name="message_deleted_successfully">ההודעה נמחקה בהצלחה</string>
     <string name="messages_restored_successfully">ההודעה שוחזרה בהצלחה</string>
+    <string name="total">סה״כ</string>
 </resources>
