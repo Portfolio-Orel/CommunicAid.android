@@ -29,11 +29,13 @@ fun ScrollableFlowRow(
     val lineHeightPixels = with(LocalDensity.current) { 34.sp.toPx() }
     val scrollAmount = ((4 / 6) * lineHeightPixels).toInt()
     val scrollState = ScrollState(scrollAmount)
+    val scrollStateNone = ScrollState(0)
     var scrollModifier = modifier
     scrollModifier = if(scrollDirection == ScrollDirection.Vertical) {
         scrollModifier.verticalScroll(scrollState)
     } else {
         scrollModifier.horizontalScroll(scrollState)
+            .verticalScroll(scrollStateNone)
     }
 
     FlowRow(

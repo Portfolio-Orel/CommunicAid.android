@@ -46,7 +46,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun getMessagesInFolder() {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Main).launch {
             messageInFolderInteractor.getMessagesInFolders().collectLatest {
                 state = state.copy(messagesInFolders = it)
             }
@@ -54,15 +54,15 @@ class MainViewModel @Inject constructor(
     }
 
     private fun getMessages() {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Main).launch {
             messageInteractor.getMessages().collectLatest {
                 state = state.copy(messages = it)
             }
         }
     }
 
-    private fun getFolders() {
-        CoroutineScope(Dispatchers.IO).launch {
+    private fun getFolders() { // ToDo: Consider removed flow because the viewmodel rebuilds everytime anyway.
+        CoroutineScope(Dispatchers.Main).launch {
             folderInteractor.getFolders().collectLatest {
                 if (state.selectedFolder == null && it.isNotEmpty()) {
                     state = state.copy(folders = it.sortedByDescending { folder -> folder.timesUsed }, selectedFolder = it.maxByOrNull { folder -> folder.timesUsed }!!)
@@ -157,7 +157,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun observeNumberOnTheLine() {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Main).launch {
             phoneCallManagerInteractor.callsDataFlow.collectLatest {
                 state = state.copy(callOnTheLine = it.callOnTheLine?.toPhoneCall())
                 setCallOnTheLineActive()
@@ -166,7 +166,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun observeNumberInBackground() {
-        CoroutineScope(Dispatchers.IO).launch{
+        CoroutineScope(Dispatchers.Main).launch{
             phoneCallManagerInteractor.callsDataFlow.collectLatest {
                 state = state.copy(callInBackground = it.callInTheBackground?.toPhoneCall())
             }

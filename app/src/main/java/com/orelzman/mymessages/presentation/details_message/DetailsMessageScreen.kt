@@ -107,7 +107,7 @@ fun DetailsMessageScreen(
             modifier = Modifier
                 .fillMaxWidth(),
             placeholder = {
-                Text(text = "כותרת")
+                Text(text = stringResource(R.string.title))
             },
             isError = state.emptyFields.contains(MessageFields.Body)
         )
@@ -146,12 +146,6 @@ fun DetailsMessageScreen(
         DeleteButton(isLoading = state.isLoadingDelete) {
             viewModel.deleteMessage()
         }
-
-        Spacer(Modifier.weight(1f))
-//        SnackbarHost(
-//            modifier = Modifier.zIndex(999999f),
-//            hostState = snackbarHostState
-//        )
     }
 }
 

@@ -46,7 +46,7 @@ private fun Content(
 ) {
     val state = viewModel.state
     val screen = LocalConfiguration.current
-    val spaceBetweenMessages = 26
+    val spaceBetweenMessages = 18
     val boxWidth =
         getMessageWidth(screenWidth = screen.screenWidthDp, spaceBetween = spaceBetweenMessages)
 
@@ -72,7 +72,7 @@ private fun Content(
     if (state.isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             CircularProgressIndicator(
                 modifier = Modifier
@@ -86,10 +86,11 @@ private fun Content(
         Column(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(22.dp)
         ) {
             ActiveCallBar(viewModel = viewModel)
             LazyRow(
+                modifier = Modifier
+                    .padding(bottom = 8.dp),
                 userScrollEnabled = true,
             ) {
                 items(
@@ -109,14 +110,14 @@ private fun Content(
 
             ScrollableFlowRow(
                 modifier = Modifier
-                    .padding(start = 10.dp, end = 5.dp)
-                    .fillMaxWidth(0.9F)
-                    .fillMaxHeight(0.7F),
+                    .padding(start = 3.dp, end = 2.dp)
+                    .fillMaxWidth(0.95F)
+                    .fillMaxHeight(0.83F),
                 mainAxisSpacing = spaceBetweenMessages.dp,
                 mainAxisAlignment = MainAxisAlignment.SpaceEvenly,
                 mainAxisSize = SizeMode.Expand
             ) {
-                viewModel.getFoldersMessages()
+                viewModel.getFoldersMessages() // ToDo: Problematic?
                     .sortedByDescending { it.timesUsed }
                     .forEach {
                         MessageView(
@@ -159,8 +160,8 @@ fun ActiveCallBar(viewModel: MainViewModel) {
                     else
                         state.activeCall.number,
                     modifier = Modifier
-                        .padding(8.dp),
-                    style = MaterialTheme.typography.titleMedium
+                        .padding(6.dp),
+                    style = MaterialTheme.typography.titleSmall
                 )
                 if (state.callInBackground != null) {
                     Row(
@@ -228,7 +229,7 @@ fun ActiveCallBar(viewModel: MainViewModel) {
     }
 }
 
-private fun getMessageWidth(screenWidth: Int, messagesInRow: Int = 4, spaceBetween: Int = 16): Dp {
+private fun getMessageWidth(screenWidth: Int, messagesInRow: Int = 4, spaceBetween: Int = 4): Dp {
     val spacesCount = messagesInRow + 1 // Amount of spaces between each message
     val spaceForMessages = screenWidth - spacesCount * spaceBetween
     return (spaceForMessages / messagesInRow).dp

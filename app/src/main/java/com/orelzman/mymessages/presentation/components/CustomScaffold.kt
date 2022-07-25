@@ -25,8 +25,8 @@ fun CustomScaffold(
         topBar = { },
         bottomBar = { bottomBar(navController) },
         content = content,
-        floatingActionButton = floatingActionButton,
-        floatingActionButtonPosition = floatingActionButtonPosition,
+//        floatingActionButton = floatingActionButton,
+//        floatingActionButtonPosition = floatingActionButtonPosition,
         snackbarHost = {
             SnackbarHost(hostState = SnackbarController.getInstance().snackbarHostState.value)
         }
