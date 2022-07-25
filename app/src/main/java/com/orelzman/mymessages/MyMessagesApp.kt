@@ -3,10 +3,15 @@
 package com.orelzman.mymessages
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -89,7 +94,15 @@ fun MyMessagesApp(
             },
             topBar = {}
         ) {
-            NavHost(navController = navHostController, startDestination = "main") {
+            NavHost(
+                modifier = Modifier.padding(
+                    top = it.calculateTopPadding(),
+                    start = it.calculateStartPadding(LayoutDirection.Rtl),
+                    end = it.calculateEndPadding(LayoutDirection.Rtl),
+                    bottom = it.calculateBottomPadding()
+                ),
+                navController = navHostController, startDestination = "main"
+            ) {
                 composable(route = Screen.Main.route) { MainScreen(navController = navHostController) }
                 composable(route = Screen.Login.route) { LoginScreen() }
                 composable(route = Screen.UnhandledCalls.route) { UnhandledCallsScreen() }

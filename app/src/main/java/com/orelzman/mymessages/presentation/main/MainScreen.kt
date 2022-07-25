@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -21,7 +20,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
-import com.orelzman.mymessages.R
 import com.orelzman.mymessages.presentation.components.scrollable_flowrow.ScrollableFlowRow
 import com.orelzman.mymessages.presentation.main.components.FolderView
 import com.orelzman.mymessages.presentation.main.components.MessageView
@@ -112,7 +110,7 @@ private fun Content(
                 modifier = Modifier
                     .padding(start = 3.dp, end = 2.dp)
                     .fillMaxWidth(0.95F)
-                    .fillMaxHeight(0.7F),
+                    .fillMaxHeight(0.9F),
                 mainAxisSpacing = spaceBetweenMessages.dp,
                 mainAxisAlignment = MainAxisAlignment.SpaceEvenly,
                 mainAxisSize = SizeMode.Expand
@@ -154,15 +152,6 @@ fun ActiveCallBar(viewModel: MainViewModel) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = if (state.activeCall?.number == "" || state.activeCall == null)
-                        stringResource(R.string.no_active_call)
-                    else
-                        state.activeCall.number,
-                    modifier = Modifier
-                        .padding(6.dp),
-                    style = MaterialTheme.typography.titleSmall
-                )
                 if (state.callInBackground != null) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
