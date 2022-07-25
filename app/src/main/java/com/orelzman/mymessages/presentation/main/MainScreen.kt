@@ -20,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
+import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.presentation.components.scrollable_flowrow.ScrollableFlowRow
 import com.orelzman.mymessages.presentation.main.components.FolderView
 import com.orelzman.mymessages.presentation.main.components.MessageView
@@ -85,7 +86,20 @@ private fun Content(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            ActiveCallBar(viewModel = viewModel)
+            if (state.callInBackground != null) {
+                WaitingCallBar(
+                    activeCall = state.activeCall,
+                    callOnTheLine = state.callOnTheLine,
+                    callInBackground = state.callInBackground,
+                    setCallInBackground = {
+                        viewModel.setBackgroundCallActive()
+                    },
+                    setCallOnTheLine = {
+                        viewModel.setCallOnTheLineActive()
+                    }
+                )
+            }
+
             LazyRow(
                 modifier = Modifier
                     .padding(bottom = 8.dp),
@@ -138,9 +152,13 @@ private fun Content(
 }
 
 @Composable
-fun ActiveCallBar(viewModel: MainViewModel) {
-    val state = viewModel.state
-
+fun WaitingCallBar(
+    activeCall: PhoneCall?,
+    callOnTheLine: PhoneCall?,
+    callInBackground: PhoneCall,
+    setCallInBackground: () -> Unit,
+    setCallOnTheLine: () -> Unit
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -152,73 +170,75 @@ fun ActiveCallBar(viewModel: MainViewModel) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (state.callInBackground != null) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                    ) {
-                        Button(
-                            modifier = Modifier
-                                .border(
-                                    1.dp,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    shape = RoundedCornerShape(32.dp)
-                                )
-                                .width(150.dp)
-                                .height(36.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor =
-                                if (state.activeCall == state.callOnTheLine) MaterialTheme.colorScheme.primary
-                                else Color.Transparent
-                            ),
-                            onClick = { viewModel.setCallOnTheLineActive() }) {
-                            Text(
-                                state.callOnTheLine?.number ?: "",
-                                style = MaterialTheme.typography.bodySmall,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                color = if (state.activeCall == state.callOnTheLine) MaterialTheme.colorScheme.onPrimary
-                                else MaterialTheme.colorScheme.onBackground
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Button(
+                        modifier = Modifier
+                            .border(
+                                1.dp,
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = RoundedCornerShape(32.dp)
                             )
-                        }
+                            .width(150.dp)
+                            .height(36.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor =
+                            if (activeCall == callOnTheLine) MaterialTheme.colorScheme.primary
+                            else Color.Transparent
+                        ),
+                        onClick = { setCallOnTheLine() }) {
+                        Text(
+                            callOnTheLine?.number ?: "",
+                            style = MaterialTheme.typography.bodySmall,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            color = if (activeCall == callOnTheLine) MaterialTheme.colorScheme.onPrimary
+                            else MaterialTheme.colorScheme.onBackground
+                        )
+                    }
 
-                        Button(
-                            modifier = Modifier
-                                .border(
-                                    1.dp,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    shape = RoundedCornerShape(32.dp)
-                                )
-                                .width(150.dp)
-                                .height(36.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor =
-                                if (state.activeCall == state.callInBackground) MaterialTheme.colorScheme.primary
-                                else Color.Transparent
-                            ),
-                            onClick = { viewModel.setBackgroundCallActive() }) {
-                            Text(
-                                state.callInBackground.number,
-                                style = MaterialTheme.typography.bodySmall,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                color = if (state.activeCall == state.callInBackground) MaterialTheme.colorScheme.onPrimary
-                                else MaterialTheme.colorScheme.onBackground
+                    Button(
+                        modifier = Modifier
+                            .border(
+                                1.dp,
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = RoundedCornerShape(32.dp)
                             )
+                            .width(150.dp)
+                            .height(36.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor =
+                            if (activeCall == callInBackground) MaterialTheme.colorScheme.primary
+                            else Color.Transparent
+                        ),
+                        onClick = { setCallInBackground() }) {
+                        Text(
+                            callInBackground.number,
+                            style = MaterialTheme.typography.bodySmall,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            color = if (activeCall == callInBackground) MaterialTheme.colorScheme.onPrimary
+                            else MaterialTheme.colorScheme.onBackground
+                        )
 
-                        }
                     }
                 }
+                Divider(
+                    modifier = Modifier.padding(8.dp),
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                )
             }
         }
-        Divider(
-            modifier = Modifier.padding(8.dp),
-            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-        )
     }
 }
 
-private fun getMessageWidth(screenWidth: Int, messagesInRow: Int = 4, spaceBetween: Int = 4): Dp {
+private fun getMessageWidth(
+    screenWidth: Int,
+    messagesInRow: Int = 4,
+    spaceBetween: Int = 4
+): Dp {
     val spacesCount = messagesInRow + 1 // Amount of spaces between each message
     val spaceForMessages = screenWidth - spacesCount * spaceBetween
     return (spaceForMessages / messagesInRow).dp

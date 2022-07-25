@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package com.orelzman.mymessages
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -24,6 +22,7 @@ import com.orelzman.mymessages.presentation.components.CustomScaffold
 import com.orelzman.mymessages.presentation.components.bottom_bar.BottomBar
 import com.orelzman.mymessages.presentation.components.multi_fab.MiniFloatingAction
 import com.orelzman.mymessages.presentation.components.multi_fab.MultiFab
+import com.orelzman.mymessages.presentation.components.top_app_bar.TopAppBar
 import com.orelzman.mymessages.presentation.details_folder.DetailsFolderScreen
 import com.orelzman.mymessages.presentation.details_message.DetailsMessageScreen
 import com.orelzman.mymessages.presentation.login.LoginScreen
@@ -33,7 +32,7 @@ import com.orelzman.mymessages.presentation.unhandled_calls.UnhandledCallsScreen
 import com.orelzman.mymessages.util.Screen
 
 @OptIn(
-    ExperimentalMaterial3Api::class
+    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class
 )
 @Composable
 fun MyMessagesApp(
@@ -46,8 +45,8 @@ fun MyMessagesApp(
         LoginScreen()
     } else {
         CustomScaffold(
-            startRoute = Screen.Main.route,
             navController = navHostController,
+            topBar = { TopAppBar() },
             bottomBar = {
                 BottomBar(navController = it)
             },
@@ -92,7 +91,6 @@ fun MyMessagesApp(
                     iconExpanded = painterResource(R.drawable.ic_close),
                 )
             },
-            topBar = {}
         ) {
             NavHost(
                 modifier = Modifier.padding(
@@ -118,10 +116,10 @@ fun MyMessagesApp(
                             defaultValue = ""
                         }
                     )
-                ) {
-                    DetailsMessageScreen(
+                ) { navBackStack ->
+                DetailsMessageScreen(
                         navController = navHostController,
-                        messageId = it.arguments?.getString("messageId")
+                        messageId = navBackStack.arguments?.getString("messageId")
                     )
                 }
                 composable(route = Screen.DetailsFolder.route) {
@@ -134,10 +132,10 @@ fun MyMessagesApp(
                             type = NavType.StringType
                             defaultValue = ""
                         }
-                    )) {
+                    )) { navBackStack ->
                     DetailsFolderScreen(
                         navController = navHostController,
-                        folderId = it.arguments?.getString("folderId")
+                        folderId = navBackStack.arguments?.getString("folderId")
                     )
                 }
             }

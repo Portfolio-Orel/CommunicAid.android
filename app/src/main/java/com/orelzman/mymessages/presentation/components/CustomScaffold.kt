@@ -7,15 +7,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import com.orelzman.mymessages.presentation.components.top_app_bar.TopAppBar
 import com.orelzman.mymessages.presentation.components.util.SnackbarController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomScaffold(
-    startRoute: String,
     navController: NavHostController,
-    topBar: @Composable (String) -> Unit = {},
+    topBar: @Composable () -> Unit = {},
     bottomBar: @Composable (NavHostController) -> Unit = {},
     floatingActionButton: @Composable () -> Unit = {},
     floatingActionButtonPosition: FabPosition = FabPosition.End,
@@ -23,7 +21,7 @@ fun CustomScaffold(
 ) {
 
     Scaffold(
-        topBar = { TopAppBar() },
+        topBar = topBar,
         bottomBar = { bottomBar(navController) },
         content = content,
         floatingActionButton = floatingActionButton,
