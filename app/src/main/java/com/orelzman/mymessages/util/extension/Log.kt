@@ -1,17 +1,42 @@
 package com.orelzman.mymessages.util.extension
 
 import android.util.Log
+import com.datadog.android.log.Logger
 
 class Log {
     companion object {
         private const val TAG = ":::MyMessages:::"
-        
-        fun v(message: Any) {
-            Log.v(TAG, message.toString())
+        private val logger = Logger.Builder()
+            .setNetworkInfoEnabled(true)
+            .setLogcatLogsEnabled(true)
+            .setDatadogLogsEnabled(true)
+            .setLoggerName("MyMessages Logger")
+            .build()
+
+        fun v(
+            message: String,
+            throwable: Throwable? = null,
+            attributes: Map<String, Any?> = emptyMap()
+        ) {
+            Log.v(TAG, "$message\n$attributes")
+            logger.v(
+                message = message,
+                throwable = throwable,
+                attributes = attributes
+            )
         }
 
-        fun eCustom(message: String) {
-            Log.e(TAG, message)
+        fun e(
+            message: String,
+            throwable: Throwable? = null,
+            attributes: Map<String, Any?> = emptyMap()
+        ) {
+            Log.e(TAG, "$message\n$throwable\n${attributes}")
+            logger.e(
+                message = message,
+                throwable = throwable,
+                attributes = attributes
+            )
         }
     }
 }

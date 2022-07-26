@@ -10,7 +10,7 @@ fun Throwable.log(values: Map<String, String> = emptyMap()) {
         crashlytics.setCustomKey(key, value)
     }
     crashlytics.log(stackTraceToString())
-    Log.v("Crash logged. $this")
+    Log.e("Crash logged", this, values)
     throw this
 }
 
@@ -22,7 +22,7 @@ fun Throwable.log(loggable: Loggable) {
     crashlytics.log(stackTraceToString())
 }
 
-fun Throwable.log(loggableList: List<Loggable>) {
+fun Throwable.log(loggableList: List<Loggable> = emptyList(), message: String = "") {
     val crashlytics = Firebase.crashlytics
     loggableList.forEach { loggable ->
         for ((key, value) in loggable.data) {
@@ -30,4 +30,5 @@ fun Throwable.log(loggableList: List<Loggable>) {
         }
     }
     crashlytics.log(stackTraceToString())
+
 }

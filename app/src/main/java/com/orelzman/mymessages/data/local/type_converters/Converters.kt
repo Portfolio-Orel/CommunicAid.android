@@ -14,7 +14,6 @@ import java.util.*
 class Converters {
 
     private val messagesSentListType = object : TypeToken<List<MessageSent>?>() {}.type
-    private val mapType = object : TypeToken<Map<String, Any>>() {}.type
 
     @TypeConverter
     fun stringToMessagesSent(string: String?): List<MessageSent> =
