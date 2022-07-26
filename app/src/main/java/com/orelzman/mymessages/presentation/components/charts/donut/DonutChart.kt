@@ -74,7 +74,7 @@ private fun AnimatedOuterCircle(size: Dp, color: Color) {
             startAngle = 0f,
             sweepAngle = 360f * animatedFloat.value,
             useCenter = false,
-            style = Stroke(width = 25f, cap = StrokeCap.Round),
+            style = Stroke(width = 6f, cap = StrokeCap.Round),
         )
     }
 }

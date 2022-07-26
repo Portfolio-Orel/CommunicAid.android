@@ -35,13 +35,12 @@ class UploadWorker @AssistedInject constructor(
         try {
             uploadCalls()
         } catch (e: Exception) {
-            Log.v(e.message ?: e.localizedMessage)
+            Log.e(e.message ?: e.localizedMessage)
         }
         return Result.success()
     }
 
     private fun uploadCalls() {
-        Log.v("Started uploading worker")
         var phoneCalls = emptyList<PhoneCall>()
         val uploadJob = CoroutineScope(Dispatchers.IO).async {
             delay(Constants.TIME_TO_ADD_CALL_TO_CALL_LOG)
@@ -75,7 +74,7 @@ class UploadWorker @AssistedInject constructor(
                 uploadJob.await()
             } catch (e: Exception) {
                 e.log(phoneCalls)
-                Log.v("Worker failed, reason: $e")
+                Log.e("Worker failed, reason: $e")
                 phoneCalls.forEach {
                     phoneCallsInteractor.updateCallUploadState(
                         it,

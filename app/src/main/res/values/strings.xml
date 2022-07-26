@@ -26,6 +26,7 @@
     <string name="no_active_call">אין שיחה</string>
     <string name="title">כותרת</string>
     <string name="expansion_button">כפתור להרחבה</string>
+    <string name="message_updated_successfully">ההודעה נערכה בהצלחה!</string>
     <string name="message_saved_successfully">ההודעה נוספה בהצלחה!</string>
     <string name="folder_saved_successfully">התיקייה נוספה בהצלחה!</string>
     <string name="save">שמור</string>
@@ -38,10 +39,10 @@
     <string name="details_folder">details_folder</string>
     <string name="sign_out">Sign out</string>
     <string name="folder">תיקייה</string>
-    <string name="incoming_calls">שיחות נכנסות</string>
-    <string name="missed_calls">שיחות שלא נענו</string>
-    <string name="rejected_calls">שיחות שנדחו</string>
-    <string name="outgoing_calls">שיחות יוצאות</string>
+    <string name="incoming_calls">נכנסות</string>
+    <string name="missed_calls">לא נענו</string>
+    <string name="rejected_calls">נדחו</string>
+    <string name="outgoing_calls">יוצאות</string>
     <string name="unknown">לא ידוע</string>
     <string name="messages_sent_count_by_type">כמות הודעות שנשלחו לפי קטגוריה</string>
     <string name="today">היום</string>
@@ -60,4 +61,9 @@
     <string name="error_user_not_signed_in">המשתמש לא מוכר לנו…</string>
     <string name="error_unknown">קרתה שגיאה לא צפויה. אנחנו מטפלים בזה</string>
     <string name="empty_string"/>
+    <string name="delete_message">מחק הודעה</string>
+    <string name="message_deleted_successfully">ההודעה נמחקה בהצלחה</string>
+    <string name="messages_restored_successfully">ההודעה שוחזרה בהצלחה</string>
+    <string name="total">סה״כ</string>
+    <string name="copied_to_clipboard">ההודעה הועתקה ללוח</string>
 </resources>

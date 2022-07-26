@@ -52,19 +52,15 @@ class UnhandledCallsViewModel @Inject constructor(
 
     private fun observeCalls() {
         state = state.copy(isLoading = true)
-        viewModelScope.launch(Dispatchers.Main) {
-            authInteractor.getUser()?.userId?.let { userId ->
-                deletedCallsInteractor.getAll(userId, getStartOfDay())
-                    .collect {
-                        val callsFromCallLog =
-                            getCallsFromCallLog()
-                        val callsToHandle = unhandledCallsManager.filterUnhandledCalls(
-                            deletedCalls = it,
-                            callLogs = callsFromCallLog
-                        )
-                        state = state.copy(callsToHandle = callsToHandle, isLoading = false)
-                    }
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            deletedCallsInteractor.getAll(getStartOfDay())
+                .collect {
+                    val callsToHandle = unhandledCallsManager.filterUnhandledCalls(
+                        deletedCalls = it,
+                        callLogs = getCallsFromCallLog()
+                    )
+                    state = state.copy(callsToHandle = callsToHandle, isLoading = false)
+                }
         }
     }
 
@@ -73,16 +69,14 @@ class UnhandledCallsViewModel @Inject constructor(
      */
     private fun fetchDeletedCalls() {
         val job = viewModelScope.async {
-            authInteractor.getUser()?.userId?.let { userId ->
-                deletedCallsInteractor.fetch(userId)
-            }
+            deletedCallsInteractor.init()
         }
         viewModelScope.launch(Dispatchers.Main) {
             try {
                 job.await()
             } catch (e: Exception) {
                 e.log()
-                Log.eCustom(e.message ?: "Failed to get unhandled calls")
+                Log.e(e.message ?: "Failed to get unhandled calls")
             } finally {
                 isRefreshing = false
             }
@@ -101,8 +95,8 @@ class UnhandledCallsViewModel @Inject constructor(
                             number = phoneCall.number
                         )
                     )
-                } catch (exception: Exception) {
-                    exception.log()
+                } catch (e: Exception) {
+                    e.log()
                 }
             }
         }

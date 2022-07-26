@@ -20,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.entities.Folder
+import com.orelzman.mymessages.presentation.components.util.SnackbarController
 import com.orelzman.mymessages.presentation.main.components.ActionButton
 
 @Composable
@@ -30,6 +31,8 @@ fun DetailsMessageScreen(
 ) {
     val context = LocalContext.current
     val state = viewModel.state
+    val snackbarController = SnackbarController.getInstance()
+
 
     LaunchedEffect(key1 = messageId) {
         viewModel.setEdit(messageId = messageId)
@@ -41,12 +44,40 @@ fun DetailsMessageScreen(
                 context.getString(R.string.message_saved_successfully),
                 Toast.LENGTH_LONG
             ).show()
+            EventsMessages.MessageUpdated -> Toast.makeText(
+                context,
+                context.getString(R.string.message_updated_successfully),
+                Toast.LENGTH_LONG
+            ).show()
+            EventsMessages.MessageDeleted -> {
+                val result = snackbarController.showSnackbar(
+                    message = context.getString(R.string.message_deleted_successfully),
+                    actionLabel = context.getString(R.string.cancel),
+                    withDismissAction = true,
+                    duration = SnackbarDuration.Short
+                )
+                if (result == SnackbarResult.ActionPerformed) {
+                    viewModel.undoDelete()
+                } else {
+                    navController.navigateUp()
+                }
+
+            }
+            EventsMessages.MessageRestored -> {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.messages_restored_successfully),
+                    Toast.LENGTH_LONG
+                ).show()
+                navController.navigateUp()
+            }
             else -> {}
         }
     }
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
+            .fillMaxHeight(0.9f)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
@@ -69,16 +100,18 @@ fun DetailsMessageScreen(
                 onClick = { navController.navigateUp() },
             )
         }
+
         OutlinedTextField(
             value = state.title,
             onValueChange = { viewModel.setTitle(it) },
             modifier = Modifier
                 .fillMaxWidth(),
             placeholder = {
-                Text(text = "כותרת")
+                Text(text = stringResource(R.string.title))
             },
             isError = state.emptyFields.contains(MessageFields.Body)
         )
+
         Column {
             OutlinedTextField(
                 value = state.shortTitle,
@@ -91,6 +124,7 @@ fun DetailsMessageScreen(
                 isError = state.emptyFields.contains(MessageFields.Body)
             )
         }
+
         OutlinedTextField(
             value = state.body,
             onValueChange = { viewModel.setBody(it) },
@@ -102,11 +136,16 @@ fun DetailsMessageScreen(
             maxLines = 7,
             isError = state.emptyFields.contains(MessageFields.Body)
         )
+
         Dropdown(
             folders = state.folders, onSelected = { viewModel.setSelectedFolder(it) },
             isError = state.emptyFields.contains(MessageFields.Folder),
             selected = state.selectedFolder ?: Folder()
         )
+
+        DeleteButton(isLoading = state.isLoadingDelete) {
+            viewModel.deleteMessage()
+        }
     }
 }
 
@@ -186,5 +225,30 @@ fun Dropdown(
                     expanded = false
                 })
         }
+    }
+}
+
+@Composable
+fun DeleteButton(
+    isLoading: Boolean,
+    onDelete: () -> Unit
+) {
+    if (isLoading) {
+        CircularProgressIndicator(
+            modifier = Modifier
+                .height(16.dp)
+                .width(16.dp),
+            strokeWidth = 2.dp,
+            color = MaterialTheme.colorScheme.error,
+        )
+    } else {
+        Text(
+            modifier = Modifier.clickable {
+                onDelete()
+            },
+            text = stringResource(R.string.delete_message),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.error
+        )
     }
 }

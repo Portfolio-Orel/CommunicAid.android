@@ -78,7 +78,7 @@ class PhoneCallManagerImpl @Inject constructor(
             CallState.Ringing -> {
                 incomingAnswered()
             }
-            else -> throw Exception("Weird exception - onOffHookState: $number ${dataSource.getState()}")
+            else -> Exception("Weird exception - onOffHookState: $number ${dataSource.getState()}").log()
         }
     }
 

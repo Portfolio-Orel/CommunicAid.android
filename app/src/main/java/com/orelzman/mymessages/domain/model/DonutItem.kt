@@ -11,8 +11,8 @@ import androidx.compose.ui.graphics.Color.Companion.White
 data class DonutItem(
     val title: @Composable ColumnScope.() -> Unit,
     val textInside: @Composable BoxScope.() -> Unit,
-    val outerSize: Float = 100f,
-    val innerSize: Float = 80f,
+    val outerSize: Float = 70f,
+    val innerSize: Float = 50f,
     val outerColor: Color = Red,
     val innerColor: Color = White,
 )

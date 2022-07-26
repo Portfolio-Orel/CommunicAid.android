@@ -3,6 +3,7 @@ package com.orelzman.mymessages.presentation.main.components
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,7 +25,7 @@ import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 fun MessageView(
     message: Message,
     modifier: Modifier = Modifier,
-    onClick: (Message, Context) -> Unit,
+    onClick: (Message) -> Unit,
     onLongClick: (Message, Context) -> Unit = { _, _ -> }
 ) {
     val context = LocalContext.current
@@ -37,18 +38,23 @@ fun MessageView(
             modifier = Modifier
                 .fillMaxHeight(boxHeight)
                 .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    shape = RoundedCornerShape(12.dp)
+                )
                 .clip(RoundedCornerShape(12.dp))
                 .combinedClickable(
-                    onClick = { onClick(message, context) },
+                    onClick = { onClick(message) },
                     onLongClick = { onLongClick(message, context) }
                 )
-                .background(MaterialTheme.colorScheme.primary),
+                .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = message.shortTitle,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onPrimary
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
         Text(
@@ -79,7 +85,7 @@ fun DefaultPreview() {
                     modifier = Modifier
                         .height(80.dp)
                         .width(70.dp),
-                    onClick = { _, _ -> }
+                    onClick = { _ -> }
                 )
             }
         }

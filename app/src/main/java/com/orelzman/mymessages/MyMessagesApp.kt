@@ -1,12 +1,15 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package com.orelzman.mymessages
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -19,6 +22,7 @@ import com.orelzman.mymessages.presentation.components.CustomScaffold
 import com.orelzman.mymessages.presentation.components.bottom_bar.BottomBar
 import com.orelzman.mymessages.presentation.components.multi_fab.MiniFloatingAction
 import com.orelzman.mymessages.presentation.components.multi_fab.MultiFab
+import com.orelzman.mymessages.presentation.components.top_app_bar.TopAppBar
 import com.orelzman.mymessages.presentation.details_folder.DetailsFolderScreen
 import com.orelzman.mymessages.presentation.details_message.DetailsMessageScreen
 import com.orelzman.mymessages.presentation.login.LoginScreen
@@ -28,7 +32,7 @@ import com.orelzman.mymessages.presentation.unhandled_calls.UnhandledCallsScreen
 import com.orelzman.mymessages.util.Screen
 
 @OptIn(
-    ExperimentalMaterial3Api::class
+    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class
 )
 @Composable
 fun MyMessagesApp(
@@ -41,8 +45,8 @@ fun MyMessagesApp(
         LoginScreen()
     } else {
         CustomScaffold(
-            startRoute = Screen.Main.route,
             navController = navHostController,
+            topBar = { TopAppBar() },
             bottomBar = {
                 BottomBar(navController = it)
             },
@@ -87,9 +91,16 @@ fun MyMessagesApp(
                     iconExpanded = painterResource(R.drawable.ic_close),
                 )
             },
-            topBar = {}
         ) {
-            NavHost(navController = navHostController, startDestination = "main") {
+            NavHost(
+                modifier = Modifier.padding(
+                    top = it.calculateTopPadding(),
+                    bottom = it.calculateBottomPadding(),
+                    end = it.calculateEndPadding(LayoutDirection.Rtl),
+                    start = it.calculateStartPadding(LayoutDirection.Rtl)
+                ),
+                navController = navHostController, startDestination =  Screen.Main.route
+            ) {
                 composable(route = Screen.Main.route) { MainScreen(navController = navHostController) }
                 composable(route = Screen.Login.route) { LoginScreen() }
                 composable(route = Screen.UnhandledCalls.route) { UnhandledCallsScreen() }
@@ -105,10 +116,10 @@ fun MyMessagesApp(
                             defaultValue = ""
                         }
                     )
-                ) {
-                    DetailsMessageScreen(
+                ) { navBackStack ->
+                DetailsMessageScreen(
                         navController = navHostController,
-                        messageId = it.arguments?.getString("messageId")
+                        messageId = navBackStack.arguments?.getString("messageId")
                     )
                 }
                 composable(route = Screen.DetailsFolder.route) {
@@ -121,10 +132,10 @@ fun MyMessagesApp(
                             type = NavType.StringType
                             defaultValue = ""
                         }
-                    )) {
+                    )) { navBackStack ->
                     DetailsFolderScreen(
                         navController = navHostController,
-                        folderId = it.arguments?.getString("folderId")
+                        folderId = navBackStack.arguments?.getString("folderId")
                     )
                 }
             }

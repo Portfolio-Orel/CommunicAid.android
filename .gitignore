@@ -31,6 +31,8 @@ amplifyconfiguration.dart
 amplify-build-config.json
 amplify-gradle-config.json
 amplifytools.xcconfig
+datadog_config.json
+
 .secret-*
 *_secrets.json
 *awsconfiguration.json
@@ -41,3 +43,4 @@ app/src/main/res/raw/prod_secrets.json
 app/src/main/res/raw/dev_secrets.json
 app/src/main/res/raw/awsconfiguration.json
 app/src/main/res/raw/amplifyconfiguration.json
+datadog_config.json

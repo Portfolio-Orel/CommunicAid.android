@@ -2,6 +2,7 @@ package com.orelzman.mymessages.presentation.details_message
 
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Loggable
+import com.orelzman.mymessages.domain.model.entities.Message
 
 data class DetailsMessageState(
     val folders: List<Folder> = emptyList(),
@@ -12,6 +13,11 @@ data class DetailsMessageState(
     val selectedFolder: Folder? = null,
     val emptyFields: ArrayList<MessageFields> = ArrayList(),
     val isLoading: Boolean = false, // Message is being uploaded
+
+    val isLoadingDelete: Boolean = false,
+    val messageDeleted: Message? = null,
+    val messageDeletedFolderId: String? = null,
+
     val error: String = "",
     val eventMessage: EventsMessages? = null,
     val messageId: String? = null,
@@ -46,5 +52,9 @@ enum class MessageFields {
 }
 
 enum class EventsMessages {
-    MessageSaved
+    MessageSaved,
+    MessageUpdated,
+    MessageDeleted,
+    MessageRestored,
+    Error;
 }

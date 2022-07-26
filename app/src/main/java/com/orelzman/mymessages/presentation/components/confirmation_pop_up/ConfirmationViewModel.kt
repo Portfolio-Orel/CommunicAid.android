@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -42,8 +43,9 @@ class ConfirmationViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Main) {
             try {
                 job.await()
-            } catch (exception: Exception) {
-                state = state.copy(isLoading = false, exception = exception)
+            } catch (e: Exception) {
+                e.log()
+                state = state.copy(isLoading = false, exception = e)
             }
             onUserConfirmed()
         }

@@ -30,24 +30,20 @@ class DeletedCallsInteractorImpl @Inject constructor(
                 deletedCall.id = id
                 db.insert(deletedCall)
             }
-        } catch (exception: Exception) {
-            throw exception
+        } catch (e: Exception) {
+            throw e
         }
     }
 
-    override suspend fun fetch(userId: String) =
-        initDeletedCalls(userId)
-
-
-    override suspend fun getAll(userId: String, startDate: Date): Flow<List<DeletedCall>> {
-        if (db.getAllOnce(startDate.time).isEmpty()) {
-            initDeletedCalls(userId)
+    override suspend fun getAll(startDate: Date): Flow<List<DeletedCall>> {
+        if (db.getDBSize() == 0) {
+            init()
         }
-        return db.getAll(startDate.time)
+        return db.getAll()
     }
 
-    private suspend fun initDeletedCalls(userId: String) {
-        val result = repository.getDeletedCalls(userId)
+    override suspend fun init() {
+        val result = repository.getDeletedCalls()
         val deletedCallsList = result.map {
             DeletedCall(
                 id = it.id,
@@ -56,6 +52,7 @@ class DeletedCallsInteractorImpl @Inject constructor(
                 isInDB = true
             )
         }
+        db.clear()
         db.insert(deletedCallsList)
     }
 }

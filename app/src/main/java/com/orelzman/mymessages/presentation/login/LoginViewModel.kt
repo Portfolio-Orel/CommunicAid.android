@@ -13,13 +13,9 @@ import com.orelzman.auth.domain.exception.WrongCredentialsException
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.data.remote.AuthConfigFile
-import com.orelzman.mymessages.domain.interactors.DatabaseInteractor
-import com.orelzman.mymessages.domain.interactors.FolderInteractor
-import com.orelzman.mymessages.domain.interactors.MessageInteractor
-import com.orelzman.mymessages.domain.interactors.SettingsInteractor
+import com.orelzman.mymessages.domain.interactors.GeneralInteractor
 import com.orelzman.mymessages.domain.model.dto.body.create.CreateUserBody
 import com.orelzman.mymessages.domain.repository.Repository
-import com.orelzman.mymessages.util.extension.Log
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -31,10 +27,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val interactor: AuthInteractor,
     private val repository: Repository,
-    private val messageInteractor: MessageInteractor,
-    private val folderInteractor: FolderInteractor,
-    private val settingsInteractor: SettingsInteractor,
-    private val databaseInteractor: DatabaseInteractor,
+    private val generalInteractor: GeneralInteractor,
     @AuthConfigFile private val authConfigFile: Int,
 ) : ViewModel() {
     var state by mutableStateOf(LoginState())
@@ -45,25 +38,25 @@ class LoginViewModel @Inject constructor(
                 interactor.init(authConfigFile)
                 var isAuthorized = false
                 val user = interactor.getUser()
-                Log.v("got user: $user")
+
                 if (user != null) {
                     isAuthorized = true
                 } else {
-                    databaseInteractor.clear()
+                    generalInteractor.clearAllDatabases()
                 }
                 state = state.copy(isAuthorized = isAuthorized, isLoading = false)
                 if (isAuthorized) {
-                    userAuthorizedSuccessfully()
+                    onUserAuthorizedSuccessfully()
                 }
-            } catch (exception: Exception) {
-                when (exception) {
+            } catch (e: Exception) {
+                when (e) {
                     is UserNotAuthenticatedException -> {/*User needs to login again-do it with saved credentials*/
                     }
                     is WrongCredentialsException -> {
 
                     }
                 }
-                exception.log()
+                e.log()
                 state = state.copy(isLoading = false, isAuthorized = false)
             }
         }
@@ -73,7 +66,7 @@ class LoginViewModel @Inject constructor(
         when (event) {
             is LoginEvents.OnLoginCompleted -> {
                 if (event.isAuthorized) {
-                    userAuthorizedSuccessfully(true)
+                    onUserAuthorizedSuccessfully(true)
                 } else {
                     loginFailed(event.exception)
                 }
@@ -112,14 +105,9 @@ class LoginViewModel @Inject constructor(
         state = state.copy(username = value)
     }
 
-    private fun initData(userId: String, clearData: Boolean) {
+    private fun initData() {
         viewModelScope.launch(Dispatchers.Main) {
-            if (clearData) {
-                databaseInteractor.clear()
-            }
-            messageInteractor.initMessagesAndMessagesInFolders(userId = userId)
-            folderInteractor.initFolders(userId = userId)
-            settingsInteractor.initSettings(userId = userId)
+            generalInteractor.initData()
         }
     }
 
@@ -144,7 +132,7 @@ class LoginViewModel @Inject constructor(
         state = state.copy(isLoading = false)
     }
 
-    private fun userAuthorizedSuccessfully(clearData: Boolean = false) {
+    private fun onUserAuthorizedSuccessfully(initData: Boolean = false) {
         viewModelScope.launch(Dispatchers.Main) {
             state = try {
                 val userId = interactor.getUser()?.userId
@@ -153,15 +141,15 @@ class LoginViewModel @Inject constructor(
                 } else {
                     false
                 }
-                if (isAuthorized) {
-                    initData(userId ?: "", clearData)
+                if (isAuthorized && initData) {
+                    initData()
                 }
                 state.copy(
                     isAuthorized = isAuthorized,
                     error = if (!isAuthorized) R.string.error_unknown else R.string.empty_string
                 )
-            } catch (exception: Exception) {
-                exception.log()
+            } catch (e: Exception) {
+                e.log()
                 state.copy(isLoading = false)
             }
         }.invokeOnCompletion {
@@ -178,10 +166,10 @@ class LoginViewModel @Inject constructor(
                 interactor.confirmUser(username, code)
                 val user = interactor.getUser()
                 if (user?.userId != null) {
-                    userAuthorizedSuccessfully()
+                    onUserAuthorizedSuccessfully()
                 }
-            } catch (exception: Exception) {
-                when (exception) {
+            } catch (e: Exception) {
+                when (e) {
                     is CodeMismatchException -> {
 
                     }
@@ -199,7 +187,8 @@ class LoginViewModel @Inject constructor(
                 createUser(userId, email)
             }
             true
-        } catch (exception: Exception) {
+        } catch (e: Exception) {
+            e.log()
             false
         }
     }
@@ -216,8 +205,8 @@ class LoginViewModel @Inject constructor(
                     userId = userId
                 )
             )
-        } catch (exception: Exception) {
-            exception.log()
+        } catch (e: Exception) {
+            e.log()
         }
     }
 

@@ -1,8 +1,6 @@
 package com.orelzman.mymessages.presentation.stats
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -18,7 +16,6 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.BarItem
 import com.orelzman.mymessages.domain.model.DonutItem
-import com.orelzman.mymessages.presentation.components.charts.bar.BarChart
 import com.orelzman.mymessages.presentation.components.charts.donut.DonutChart
 
 @Composable
@@ -38,51 +35,77 @@ fun StatisticsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(30.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .verticalScroll(rememberScrollState())
+                .padding(vertical = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
-            DonutChart(
-                item = DonutItem(
-                    title = {
-                        Text(
-                            text = stringResource(R.string.incoming_calls),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    },
-                    textInside = {
-                        Text(
-                            text = state.incomingCount.toString(),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    },
-                    outerColor = MaterialTheme.colorScheme.secondary,
-                    innerColor = MaterialTheme.colorScheme.background
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(30.dp),
+            ) {
+                DonutChart(
+                    item = DonutItem(
+                        title = {
+                            Text(
+                                text = stringResource(R.string.incoming_calls),
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        },
+                        textInside = {
+                            Text(
+                                text = state.incomingCount.toString(),
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        },
+                        outerColor = MaterialTheme.colorScheme.secondary,
+                        innerColor = MaterialTheme.colorScheme.background
+                    )
                 )
-            )
-            DonutChart(
-                item = DonutItem(
-                    title = {
-                        Text(
-                            text = stringResource(R.string.outgoing_calls),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    },
-                    textInside = {
-                        Text(
-                            text = state.outgoingCount.toString(),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    },
-                    outerColor = MaterialTheme.colorScheme.secondary,
-                    innerColor = MaterialTheme.colorScheme.background
+                DonutChart(
+                    item = DonutItem(
+                        title = {
+                            Text(
+                                text = stringResource(R.string.outgoing_calls),
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        },
+                        textInside = {
+                            Text(
+                                text = state.outgoingCount.toString(),
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        },
+                        outerColor = MaterialTheme.colorScheme.secondary,
+                        innerColor = MaterialTheme.colorScheme.background
+                    )
                 )
-            )
-            BarChart(items = createBarItemList(state.messagesSentCount))
+                DonutChart(
+                    item = DonutItem(
+                        title = {
+                            Text(
+                                text = stringResource(R.string.total),
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        },
+                        textInside = {
+                            Text(
+                                text = state.totalCallsCount.toString(),
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        },
+                        outerColor = MaterialTheme.colorScheme.secondary,
+                        innerColor = MaterialTheme.colorScheme.background
+                    )
+                )
+            }
+//            BarChart(items = createBarItemList(state.messagesSentCount))
         }
     }
 }

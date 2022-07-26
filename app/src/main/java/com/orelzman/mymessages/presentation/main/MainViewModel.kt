@@ -6,16 +6,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orelzman.mymessages.domain.interactors.FolderInteractor
-import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
-import com.orelzman.mymessages.domain.interactors.MessageInteractor
-import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
+import com.orelzman.mymessages.domain.interactors.*
 import com.orelzman.mymessages.domain.model.entities.*
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
-import com.orelzman.mymessages.util.Whatsapp.sendWhatsapp
 import com.orelzman.mymessages.util.extension.copyToClipboard
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
@@ -30,6 +27,7 @@ class MainViewModel @Inject constructor(
     private val phoneCallManagerInteractor: PhoneCallManagerInteractor,
     private val phoneCallsInteractor: PhoneCallsInteractor,
     private val messageInFolderInteractor: MessageInFolderInteractor,
+    private val whatsappInteractor: WhatsappInteractor
 ) : ViewModel() {
 
     var state by mutableStateOf(MainState())
@@ -45,7 +43,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun getMessagesInFolder() {
-        viewModelScope.launch(Dispatchers.Main) {
+        CoroutineScope(Dispatchers.Main).launch {
             messageInFolderInteractor.getMessagesInFolders().collectLatest {
                 state = state.copy(messagesInFolders = it)
             }
@@ -53,18 +51,18 @@ class MainViewModel @Inject constructor(
     }
 
     private fun getMessages() {
-        viewModelScope.launch(Dispatchers.Main) {
+        CoroutineScope(Dispatchers.Main).launch {
             messageInteractor.getMessages().collectLatest {
                 state = state.copy(messages = it)
             }
         }
     }
 
-    private fun getFolders() {
-        viewModelScope.launch(Dispatchers.Main) {
+    private fun getFolders() { // ToDo: Consider removed flow because the viewmodel rebuilds everytime anyway.
+        CoroutineScope(Dispatchers.Main).launch {
             folderInteractor.getFolders().collectLatest {
                 if (state.selectedFolder == null && it.isNotEmpty()) {
-                    state = state.copy(folders = it, selectedFolder = it.first())
+                    state = state.copy(folders = it.sortedByDescending { folder -> folder.timesUsed }, selectedFolder = it.maxByOrNull { folder -> folder.timesUsed }!!)
                 }
             }
         }
@@ -77,7 +75,7 @@ class MainViewModel @Inject constructor(
         return state.messages.filter { messageIds.contains(it.id) }
     }
 
-    fun onMessageClick(message: Message, context: Context) {
+    fun onMessageClick(message: Message) {
         val phoneCall = state.activeCall
         if (phoneCall != null) {
                 val sendMessageJob = viewModelScope.async {
@@ -85,9 +83,9 @@ class MainViewModel @Inject constructor(
                         phoneCall,
                         MessageSent(sentAt = Date().time, messageId = message.id)
                     )
-                    context.sendWhatsapp(
-                        phoneCall.number,
-                        message.body
+                    whatsappInteractor.sendMessage(
+                        number = phoneCall.number,
+                        message = message.body
                     )
                 }
             val updateTimesUsedJob = viewModelScope.async {
@@ -97,8 +95,8 @@ class MainViewModel @Inject constructor(
                 try {
                     sendMessageJob.await()
                     updateTimesUsedJob.await()
-                } catch (exception: Exception) {
-                    exception.log()
+                } catch (e: Exception) {
+                    e.log()
                 }
             }
         } else {
@@ -115,7 +113,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun setSelectedFolder(folder: Folder) {
+    fun onFolderClick(folder: Folder) {
         state = state.copy(selectedFolder = folder)
     }
 
@@ -156,7 +154,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun observeNumberOnTheLine() {
-        viewModelScope.launch(Dispatchers.Main) {
+        CoroutineScope(Dispatchers.Main).launch {
             phoneCallManagerInteractor.callsDataFlow.collectLatest {
                 state = state.copy(callOnTheLine = it.callOnTheLine?.toPhoneCall())
                 setCallOnTheLineActive()
@@ -165,7 +163,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun observeNumberInBackground() {
-        viewModelScope.launch(Dispatchers.Main) {
+        CoroutineScope(Dispatchers.Main).launch{
             phoneCallManagerInteractor.callsDataFlow.collectLatest {
                 state = state.copy(callInBackground = it.callInTheBackground?.toPhoneCall())
             }

@@ -1,5 +1,6 @@
 package com.orelzman.mymessages.presentation.main
 
+import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -9,13 +10,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -23,7 +21,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
-import com.orelzman.mymessages.R
+import com.orelzman.mymessages.domain.model.entities.Folder
+import com.orelzman.mymessages.domain.model.entities.Message
+import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.presentation.components.scrollable_flowrow.ScrollableFlowRow
 import com.orelzman.mymessages.presentation.main.components.FolderView
 import com.orelzman.mymessages.presentation.main.components.MessageView
@@ -39,7 +39,6 @@ fun MainScreen(
     Content(navController = navController, viewModel = viewModel)
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun Content(
     navController: NavController,
@@ -48,12 +47,11 @@ private fun Content(
 ) {
     val state = viewModel.state
     val screen = LocalConfiguration.current
-    val spaceBetweenMessages = 26
-    val boxWidth =
+    val spaceBetweenMessages = 18
+    val messageWidth =
         getMessageWidth(screenWidth = screen.screenWidthDp, spaceBetween = spaceBetweenMessages)
 
-    val boxHeight = (boxWidth * 1.5f)
-    val messagesOffset = remember { mutableStateOf(0f) }
+    val messageHeight = (messageWidth * 1.5f)
 
     LaunchedEffect(key1 = viewModel) {
         viewModel.init()
@@ -75,7 +73,7 @@ private fun Content(
     if (state.isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             CircularProgressIndicator(
                 modifier = Modifier
@@ -89,63 +87,119 @@ private fun Content(
         Column(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(22.dp)
         ) {
-            ActiveCallBar(viewModel = viewModel)
-            LazyRow(
-                userScrollEnabled = true,
-            ) {
-                items(
-                    state.folders
-                        .sortedByDescending { it.timesUsed }
-                ) { folder ->
-                    FolderView(
-                        folder = folder,
-                        isSelected = state.selectedFolder?.id == folder.id,
-                        modifier = Modifier
-                            .height(50.dp)
-                            .width(120.dp),
-                        onClick = { viewModel.setSelectedFolder(it) },
-                        onLongClick = { viewModel.onFolderLongClick(it) }
-                    )
-                }
+            if (state.callInBackground != null) {
+                WaitingCallBar(
+                    activeCall = state.activeCall,
+                    callOnTheLine = state.callOnTheLine,
+                    callInBackground = state.callInBackground,
+                    setCallInBackground = {
+                        viewModel.setBackgroundCallActive()
+                    },
+                    setCallOnTheLine = {
+                        viewModel.setCallOnTheLineActive()
+                    }
+                )
             }
 
-            ScrollableFlowRow(
-                modifier = Modifier
-                    .padding(start = 10.dp, end = 5.dp)
-                    .fillMaxWidth(0.9F)
-                    .fillMaxHeight(0.7F),
-                mainAxisSpacing = spaceBetweenMessages.dp,
-                mainAxisAlignment = MainAxisAlignment.SpaceEvenly,
-                mainAxisSize = SizeMode.Expand
-            ) {
-                viewModel.getFoldersMessages()
-                    .sortedByDescending { it.timesUsed }
-                    .forEach {
-                        MessageView(
-                            message = it,
-                            modifier = Modifier
-                                .width(boxWidth)
-                                .height(boxHeight)
-                                .padding(0.dp),
-                            onClick = { message, context ->
-                                viewModel.onMessageClick(message, context)
-                            },
-                            onLongClick = { message, context ->
-                                viewModel.onMessageLongClick(message, context)
-                            }
-                        )
-                    }
-            }
+            FoldersList(
+                modifier = Modifier.padding(bottom = 32.dp),
+                folders = state.folders,
+                onClick = { viewModel.onFolderClick(it) },
+                onLongClick = { viewModel.onFolderLongClick(it) },
+                isSelected = { state.selectedFolder?.id == it.id }
+            )
+
+            MessagesList(
+                messages = viewModel.getFoldersMessages(),
+                onClick = { viewModel.onMessageClick(it) },
+                onLongClick = { message, context ->
+                    viewModel.onMessageLongClick(
+                        message,
+                        context
+                    )
+                },
+                spaceBetweenMessages = spaceBetweenMessages.dp,
+                height = messageHeight,
+                width = messageWidth
+            )
+
         }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ActiveCallBar(viewModel: MainViewModel) {
-    val state = viewModel.state
+fun FoldersList(
+    folders: List<Folder>,
+    onClick: (Folder) -> Unit,
+    onLongClick: (Folder) -> Unit,
+    isSelected: (Folder) -> Boolean,
+    modifier: Modifier = Modifier
+) {
+    LazyRow(
+        modifier = modifier,
+        userScrollEnabled = true,
+    ) {
+        items(
+            folders
+        ) { folder ->
+            FolderView(
+                folder = folder,
+                isSelected = isSelected(folder),
+                modifier = Modifier
+                    .height(50.dp)
+                    .width(120.dp),
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
+        }
+    }
+}
 
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun MessagesList(
+    messages: List<Message>,
+    onClick: (Message) -> Unit,
+    onLongClick: (Message, Context) -> Unit,
+    spaceBetweenMessages: Dp,
+    height: Dp,
+    width: Dp
+) {
+    ScrollableFlowRow(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth(1F)
+            .fillMaxHeight(0.9F),
+        mainAxisSpacing = spaceBetweenMessages,
+        mainAxisAlignment = MainAxisAlignment.SpaceEvenly,
+        mainAxisSize = SizeMode.Expand
+    ) {
+        messages // ToDo: Problematic?
+            .sortedByDescending { it.timesUsed }
+            .forEach {
+                MessageView(
+                    message = it,
+                    modifier = Modifier
+                        .height(height)
+                        .width(width)
+                        .padding(0.dp),
+                    onClick = onClick,
+                    onLongClick = onLongClick
+                )
+            }
+    }
+}
+
+@Composable
+fun WaitingCallBar(
+    activeCall: PhoneCall?,
+    callOnTheLine: PhoneCall?,
+    callInBackground: PhoneCall,
+    setCallInBackground: () -> Unit,
+    setCallOnTheLine: () -> Unit
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -157,82 +211,75 @@ fun ActiveCallBar(viewModel: MainViewModel) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = if (state.activeCall?.number == "" || state.activeCall == null)
-                        stringResource(R.string.no_active_call)
-                    else
-                        state.activeCall.number,
-                    modifier = Modifier
-                        .padding(8.dp),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                if (state.callInBackground != null) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                    ) {
-                        Button(
-                            modifier = Modifier
-                                .border(
-                                    1.dp,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    shape = RoundedCornerShape(32.dp)
-                                )
-                                .width(150.dp)
-                                .height(36.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor =
-                                if (state.activeCall == state.callOnTheLine) MaterialTheme.colorScheme.primary
-                                else Color.Transparent
-                            ),
-                            onClick = { viewModel.setCallOnTheLineActive() }) {
-                            Text(
-                                state.callOnTheLine?.number ?: "",
-                                style = MaterialTheme.typography.bodySmall,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                color = if (state.activeCall == state.callOnTheLine) MaterialTheme.colorScheme.onPrimary
-                                else MaterialTheme.colorScheme.onBackground
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Button(
+                        modifier = Modifier
+                            .border(
+                                1.dp,
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = RoundedCornerShape(32.dp)
                             )
-                        }
+                            .width(150.dp)
+                            .height(36.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor =
+                            if (activeCall == callOnTheLine) MaterialTheme.colorScheme.primary
+                            else Color.Transparent
+                        ),
+                        onClick = { setCallOnTheLine() }) {
+                        Text(
+                            callOnTheLine?.number ?: "",
+                            style = MaterialTheme.typography.bodySmall,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            color = if (activeCall == callOnTheLine) MaterialTheme.colorScheme.onPrimary
+                            else MaterialTheme.colorScheme.onBackground
+                        )
+                    }
 
-                        Button(
-                            modifier = Modifier
-                                .border(
-                                    1.dp,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    shape = RoundedCornerShape(32.dp)
-                                )
-                                .width(150.dp)
-                                .height(36.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor =
-                                if (state.activeCall == state.callInBackground) MaterialTheme.colorScheme.primary
-                                else Color.Transparent
-                            ),
-                            onClick = { viewModel.setBackgroundCallActive() }) {
-                            Text(
-                                state.callInBackground.number,
-                                style = MaterialTheme.typography.bodySmall,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                color = if (state.activeCall == state.callInBackground) MaterialTheme.colorScheme.onPrimary
-                                else MaterialTheme.colorScheme.onBackground
+                    Button(
+                        modifier = Modifier
+                            .border(
+                                1.dp,
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = RoundedCornerShape(32.dp)
                             )
+                            .width(150.dp)
+                            .height(36.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor =
+                            if (activeCall == callInBackground) MaterialTheme.colorScheme.primary
+                            else Color.Transparent
+                        ),
+                        onClick = { setCallInBackground() }) {
+                        Text(
+                            callInBackground.number,
+                            style = MaterialTheme.typography.bodySmall,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            color = if (activeCall == callInBackground) MaterialTheme.colorScheme.onPrimary
+                            else MaterialTheme.colorScheme.onBackground
+                        )
 
-                        }
                     }
                 }
+                Divider(
+                    modifier = Modifier.padding(8.dp),
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                )
             }
         }
-        Divider(
-            modifier = Modifier.padding(8.dp),
-            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-        )
     }
 }
 
-private fun getMessageWidth(screenWidth: Int, messagesInRow: Int = 4, spaceBetween: Int = 16): Dp {
+private fun getMessageWidth(
+    screenWidth: Int,
+    messagesInRow: Int = 4,
+    spaceBetween: Int = 4
+): Dp {
     val spacesCount = messagesInRow + 1 // Amount of spaces between each message
     val spaceForMessages = screenWidth - spacesCount * spaceBetween
     return (spaceForMessages / messagesInRow).dp

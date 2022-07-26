@@ -22,6 +22,11 @@ data class PhoneCall(
     var type: String = CallType.INCOMING.name,
 ) : Loggable, Uploadable() {
 
+    fun getNameOrNumber(): String {
+        if(name == "") return number
+        return name
+    }
+
     override val data: Map<String, Any>
         get() = mapOf(
             "number" to number,

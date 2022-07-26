@@ -40,25 +40,33 @@ class StatisticsViewModel @Inject constructor(
             statisticsInteractor.getStatistics().collectLatest { statistics ->
                 var incomingCount = 0
                 var outgoingCount = 0
+                var rejectedCount = 0
+                var missedCount = 0
                 val messagesSentCount = ArrayList<Pair<String, Int>>()
                 statistics.forEach {
                     when (it.key) {
-                        StatisticsTypes.IncomingCount -> incomingCount =
+                        StatisticsTypes.IncomingCount -> incomingCount +=
                             it.value.toString().toFloatOrNull()?.toInt() ?: 0
                         StatisticsTypes.OutgoingCount -> outgoingCount =
+                            it.value.toString().toFloatOrNull()?.toInt() ?: 0
+                        StatisticsTypes.RejectedCalls -> rejectedCount +=
+                            it.value.toString().toFloatOrNull()?.toInt() ?: 0
+                        StatisticsTypes.MissedCount -> missedCount +=
                             it.value.toString().toFloatOrNull()?.toInt() ?: 0
                         StatisticsTypes.MessagesCount -> {
                             val value = it.value as? Map<*, *> ?: return@forEach
                             val messageTitle = value["title"].toString()
-                            val timesSent = value["count"].toString().toFloatOrNull()?.toInt() ?: return@forEach
+                            val timesSent =
+                                value["count"].toString().toFloatOrNull()?.toInt() ?: return@forEach
                             messagesSentCount.add(Pair(messageTitle, timesSent))
                         }
                         else -> {}
                     }
                 }
                 state = state.copy(
-                    incomingCount = incomingCount,
+                    incomingCount = incomingCount + missedCount + rejectedCount,
                     outgoingCount = outgoingCount,
+                    totalCallsCount = outgoingCount + incomingCount + missedCount + rejectedCount,
                     messagesSentCount = messagesSentCount
                 )
             }

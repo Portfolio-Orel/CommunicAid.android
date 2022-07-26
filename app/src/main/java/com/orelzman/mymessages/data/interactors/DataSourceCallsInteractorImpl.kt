@@ -56,6 +56,12 @@ class DataSourceCallsInteractorImpl @Inject constructor(
     override fun callsPrefrences(): SharedPreferences =
         context.callsSharedPrefrences
 
+    override suspend fun init() {
+        updateCallOnTheLine(null)
+        updateCallInTheBackground(null)
+        updateState(null)
+    }
+
 
     override suspend fun updateCallOnTheLine(callOnTheLine: PhoneCall?) {
         updateSharedPrefrences(PreferencesKeys.CALL_ON_LINE.name, callOnTheLine?.stringify())
@@ -73,7 +79,9 @@ class DataSourceCallsInteractorImpl @Inject constructor(
         context.callsDataStore.edit { preferences ->
             preferences[PreferencesKeys.CALL_IN_BACKGROUND] = callInTheBackground?.stringify() ?: ""
         }
-        Log.v("Updating call in background: $callInTheBackground")
+        Log.v(
+            "Updating call in background: $callInTheBackground"
+        )
     }
 
     override suspend fun updateState(state: CallState?) {

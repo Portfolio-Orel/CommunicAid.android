@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.domain.interactors.FolderInteractor
+import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
 import com.orelzman.mymessages.domain.interactors.MessageInteractor
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class DetailsMessageViewModel @Inject constructor(
     private val messageInteractor: MessageInteractor,
     private val folderInteractor: FolderInteractor,
+    private val messageInFolderInteractor: MessageInFolderInteractor,
     private val authInteractor: AuthInteractor
 ) : ViewModel() {
     var state by mutableStateOf(DetailsMessageState())
@@ -55,6 +57,10 @@ class DetailsMessageViewModel @Inject constructor(
         messageId?.let { id ->
             viewModelScope.launch(Dispatchers.Main) {
                 val folder = folderInteractor.getFolderWithMessageId(messageId = messageId)
+                if (folder == null) {
+                    state = state.copy(isEdit = false)
+                    return@launch
+                }
                 messageInteractor.getMessage(messageId = id)?.let { message ->
                     setEditValues(message = message, folder = folder)
                 }
@@ -79,42 +85,88 @@ class DetailsMessageViewModel @Inject constructor(
         state = state.copy(selectedFolder = value)
     }
 
+    fun deleteMessage() {
+        if (state.isLoadingDelete) return
+        if (state.isEdit && state.messageId != null) {
+            state = state.copy(isLoadingDelete = true, eventMessage = null)
+            viewModelScope.launch(Dispatchers.IO) {
+                try {
+                    val folderId = messageInFolderInteractor.getMessageFolderId(state.messageId!!)
+                    val message = buildMessage()
+                    messageInteractor.deleteMessage(message = message)
+                    state = state.copy(
+                        isLoadingDelete = false,
+                        eventMessage = EventsMessages.MessageDeleted,
+                        messageDeleted = message,
+                        messageDeletedFolderId = folderId
+                    )
+                } catch (e: Exception) {
+                    e.log()
+                }
+            }
+        }
+    }
+
+    fun undoDelete() {
+        state.messageDeleted?.let {
+            if (state.messageDeletedFolderId == null) return@let
+            viewModelScope.launch(Dispatchers.IO) {
+                state = try {
+                    messageInteractor.createMessage(
+                        message = it, folderId = state.messageDeletedFolderId!!
+                    )
+                    state.copy(
+                        isLoading = false,
+                        messageId = it.id,
+                        eventMessage = EventsMessages.MessageRestored
+                    )
+                } catch (e: Exception) {
+                    e.log(state)
+                    state.copy(isLoading = false, eventMessage = EventsMessages.MessageRestored)
+                }
+            }
+        }
+    }
+
     fun saveMessage() {
         if (state.isLoading) return
         if (state.isReadyForSave) {
             state = state.copy(isLoading = true, eventMessage = null)
-            val message = Message(
-                title = state.title,
-                shortTitle = state.shortTitle,
-                body = state.body,
-                id = state.messageId ?: ""
-            )
-            viewModelScope.launch(Dispatchers.Main) {
+            val message = buildMessage()
+            viewModelScope.launch(Dispatchers.IO) {
                 try {
-                    authInteractor.getUser()?.userId?.let {
-                        if (state.isEdit) {
-                            messageInteractor.updateMessage(
-                                message = message,
-                                newFolderId = state.selectedFolder?.id,
-                                oldFolderId = state.oldFolderId
+                    if (state.isEdit) {
+                        messageInteractor.updateMessage(
+                            message = message,
+                            newFolderId = state.selectedFolder?.id,
+                            oldFolderId = state.oldFolderId
+                        )
+                        state =
+                            state.copy(
+                                isLoading = false,
+                                eventMessage = EventsMessages.MessageUpdated
                             )
-                        } else {
-                            state.selectedFolder?.id?.let { folderId ->
-                                messageInteractor.createMessage(
-                                    userId = it,
-                                    message = message,
-                                    folderId = folderId
+                    } else {
+                        state.selectedFolder?.id?.let { folderId ->
+                            messageInteractor.createMessage(
+                                message = message,
+                                folderId = folderId
+                            )
+                            state =
+                                state.copy(
+                                    isLoading = false,
+                                    eventMessage = EventsMessages.MessageSaved
                                 )
-                            }
                         }
                     }
-                    state =
-                        state.copy(isLoading = false, eventMessage = EventsMessages.MessageSaved)
                     clearValues()
-                } catch (exception: Exception) {
-                    exception.log(state)
+                } catch (e: Exception) {
+                    e.log(state)
                     state =
-                        state.copy(isLoading = false, eventMessage = EventsMessages.MessageSaved)
+                        state.copy(
+                            isLoading = false,
+                            eventMessage = EventsMessages.MessageSaved
+                        )
                 }
             }
         } else {
@@ -126,4 +178,12 @@ class DetailsMessageViewModel @Inject constructor(
             state = state.copy(emptyFields = emptyFields)
         }
     }
+
+    private fun buildMessage(): Message =
+        Message(
+            title = state.title,
+            shortTitle = state.shortTitle,
+            body = state.body,
+            id = state.messageId ?: ""
+        )
 }
