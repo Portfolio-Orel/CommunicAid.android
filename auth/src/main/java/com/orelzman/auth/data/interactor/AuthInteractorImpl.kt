@@ -46,7 +46,7 @@ class AuthInteractorImpl @Inject constructor(
             Log.v(TAG, "AWS configured")
             return
         } catch (exception: AmplifyException) {
-            Log.v(TAG, exception.localizedMessage ?: "")
+            Log.e(TAG, exception.localizedMessage ?: "")
         } finally {
             val user = getUser()
             if (Amplify.Auth.getCurrentUser()?.userId != user?.userId) {
@@ -128,7 +128,6 @@ class AuthInteractorImpl @Inject constructor(
             if (result.isSignInComplete) {
                 userSignInSuccessfully()
                 Log.v(TAG, "Sign in succeeded")
-                Log.v("AuthAWS:::", "Sign in succeeded")
                 (Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession).awsCredentials.error?.localizedMessage?.let {
                     Log.v(
                         "AuthAWS:::",

@@ -35,7 +35,7 @@ class UploadWorker @AssistedInject constructor(
         try {
             uploadCalls()
         } catch (e: Exception) {
-            Log.v(e.message ?: e.localizedMessage)
+            Log.e(e.message ?: e.localizedMessage)
         }
         return Result.success()
     }
@@ -75,7 +75,7 @@ class UploadWorker @AssistedInject constructor(
                 uploadJob.await()
             } catch (e: Exception) {
                 e.log(phoneCalls)
-                Log.v("Worker failed, reason: $e")
+                Log.e("Worker failed, reason: $e")
                 phoneCalls.forEach {
                     phoneCallsInteractor.updateCallUploadState(
                         it,
