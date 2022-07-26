@@ -146,6 +146,13 @@ fun DetailsMessageScreen(
         DeleteButton(isLoading = state.isLoadingDelete) {
             viewModel.deleteMessage()
         }
+
+        Text(
+            modifier = Modifier.padding(16.dp),
+            text = stringResource(id = state.error),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.error,
+        )
     }
 }
 
@@ -239,7 +246,7 @@ fun DeleteButton(
                 .height(16.dp)
                 .width(16.dp),
             strokeWidth = 2.dp,
-            color = MaterialTheme.colorScheme.error,
+            color = MaterialTheme.colorScheme.errorContainer,
         )
     } else {
         Text(
@@ -248,7 +255,7 @@ fun DeleteButton(
             },
             text = stringResource(R.string.delete_message),
             style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.error
+            color = MaterialTheme.colorScheme.errorContainer
         )
     }
 }
