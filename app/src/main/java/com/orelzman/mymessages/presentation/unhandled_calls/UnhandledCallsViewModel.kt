@@ -80,7 +80,7 @@ class UnhandledCallsViewModel @Inject constructor(
                 job.await()
             } catch (e: Exception) {
                 e.log()
-                Log.eCustom(e.message ?: "Failed to get unhandled calls")
+                Log.e(e.message ?: "Failed to get unhandled calls")
             } finally {
                 isRefreshing = false
             }
