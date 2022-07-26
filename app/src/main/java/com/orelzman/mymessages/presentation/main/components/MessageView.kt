@@ -25,7 +25,7 @@ import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 fun MessageView(
     message: Message,
     modifier: Modifier = Modifier,
-    onClick: (Message, Context) -> Unit,
+    onClick: (Message) -> Unit,
     onLongClick: (Message, Context) -> Unit = { _, _ -> }
 ) {
     val context = LocalContext.current
@@ -45,7 +45,7 @@ fun MessageView(
                 )
                 .clip(RoundedCornerShape(12.dp))
                 .combinedClickable(
-                    onClick = { onClick(message, context) },
+                    onClick = { onClick(message) },
                     onLongClick = { onLongClick(message, context) }
                 )
                 .background(MaterialTheme.colorScheme.background),
@@ -85,7 +85,7 @@ fun DefaultPreview() {
                     modifier = Modifier
                         .height(80.dp)
                         .width(70.dp),
-                    onClick = { _, _ -> }
+                    onClick = { _ -> }
                 )
             }
         }

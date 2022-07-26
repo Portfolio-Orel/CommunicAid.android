@@ -68,7 +68,7 @@ class DataSourceCallsInteractorImpl @Inject constructor(
         context.callsDataStore.edit { preferences ->
             preferences[PreferencesKeys.CALL_ON_LINE] = callOnTheLine?.stringify() ?: ""
         }
-        Log.v("Updating call on the line", attributes = mapOf("callOnTheLine" to callOnTheLine))
+        Log.v("Updating call on the line: $callOnTheLine")
     }
 
     override suspend fun updateCallInTheBackground(callInTheBackground: PhoneCall?) {
@@ -80,8 +80,7 @@ class DataSourceCallsInteractorImpl @Inject constructor(
             preferences[PreferencesKeys.CALL_IN_BACKGROUND] = callInTheBackground?.stringify() ?: ""
         }
         Log.v(
-            "Updating call in background",
-            attributes = mapOf("callInTheBackground" to callInTheBackground)
+            "Updating call in background: $callInTheBackground"
         )
     }
 
@@ -90,7 +89,7 @@ class DataSourceCallsInteractorImpl @Inject constructor(
         context.callsDataStore.edit { preferences ->
             preferences[PreferencesKeys.STATE] = state?.value ?: ""
         }
-        Log.v("Updating state", attributes = mapOf("state" to state))
+        Log.v("Updating state: $state")
     }
 
     override fun getState(): CallState? =

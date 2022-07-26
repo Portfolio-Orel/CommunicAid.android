@@ -9,7 +9,6 @@ import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManager
 import com.orelzman.mymessages.domain.workers.UploadWorker
-import com.orelzman.mymessages.util.extension.Log
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -37,7 +36,6 @@ class PhonecallReceiver : BroadcastReceiver() {
     }
 
     private fun startUploadCallsWorker(context: Context) {
-        Log.v("About to start upload worker")
         val uploadWorkRequest: WorkRequest =
             OneTimeWorkRequestBuilder<UploadWorker>()
                 .build()

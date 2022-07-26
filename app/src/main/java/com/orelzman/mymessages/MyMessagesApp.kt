@@ -95,11 +95,11 @@ fun MyMessagesApp(
             NavHost(
                 modifier = Modifier.padding(
                     top = it.calculateTopPadding(),
-                    start = it.calculateStartPadding(LayoutDirection.Rtl),
+                    bottom = it.calculateBottomPadding(),
                     end = it.calculateEndPadding(LayoutDirection.Rtl),
-                    bottom = it.calculateBottomPadding()
+                    start = it.calculateStartPadding(LayoutDirection.Rtl)
                 ),
-                navController = navHostController, startDestination = "main"
+                navController = navHostController, startDestination =  Screen.Main.route
             ) {
                 composable(route = Screen.Main.route) { MainScreen(navController = navHostController) }
                 composable(route = Screen.Login.route) { LoginScreen() }

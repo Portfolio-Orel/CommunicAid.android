@@ -1,5 +1,6 @@
 package com.orelzman.mymessages.presentation.main
 
+import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -20,6 +21,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
+import com.orelzman.mymessages.domain.model.entities.Folder
+import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.presentation.components.scrollable_flowrow.ScrollableFlowRow
 import com.orelzman.mymessages.presentation.main.components.FolderView
@@ -36,7 +39,6 @@ fun MainScreen(
     Content(navController = navController, viewModel = viewModel)
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun Content(
     navController: NavController,
@@ -46,10 +48,10 @@ private fun Content(
     val state = viewModel.state
     val screen = LocalConfiguration.current
     val spaceBetweenMessages = 18
-    val boxWidth =
+    val messageWidth =
         getMessageWidth(screenWidth = screen.screenWidthDp, spaceBetween = spaceBetweenMessages)
 
-    val boxHeight = (boxWidth * 1.5f)
+    val messageHeight = (messageWidth * 1.5f)
 
     LaunchedEffect(key1 = viewModel) {
         viewModel.init()
@@ -100,54 +102,93 @@ private fun Content(
                 )
             }
 
-            LazyRow(
-                modifier = Modifier
-                    .padding(bottom = 8.dp),
-                userScrollEnabled = true,
-            ) {
-                items(
-                    state.folders
-                ) { folder ->
-                    FolderView(
-                        folder = folder,
-                        isSelected = state.selectedFolder?.id == folder.id,
-                        modifier = Modifier
-                            .height(50.dp)
-                            .width(120.dp),
-                        onClick = { viewModel.setSelectedFolder(it) },
-                        onLongClick = { viewModel.onFolderLongClick(it) }
-                    )
-                }
-            }
+            FoldersList(
+                modifier = Modifier.padding(bottom = 32.dp),
+                folders = state.folders,
+                onClick = { viewModel.onFolderClick(it) },
+                onLongClick = { viewModel.onFolderLongClick(it) },
+                isSelected = { state.selectedFolder?.id == it.id }
+            )
 
-            ScrollableFlowRow(
-                modifier = Modifier
-                    .padding(start = 3.dp, end = 2.dp)
-                    .fillMaxWidth(0.95F)
-                    .fillMaxHeight(0.9F),
-                mainAxisSpacing = spaceBetweenMessages.dp,
-                mainAxisAlignment = MainAxisAlignment.SpaceEvenly,
-                mainAxisSize = SizeMode.Expand
-            ) {
-                viewModel.getFoldersMessages() // ToDo: Problematic?
-                    .sortedByDescending { it.timesUsed }
-                    .forEach {
-                        MessageView(
-                            message = it,
-                            modifier = Modifier
-                                .width(boxWidth)
-                                .height(boxHeight)
-                                .padding(0.dp),
-                            onClick = { message, context ->
-                                viewModel.onMessageClick(message, context)
-                            },
-                            onLongClick = { message, context ->
-                                viewModel.onMessageLongClick(message, context)
-                            }
-                        )
-                    }
-            }
+            MessagesList(
+                messages = viewModel.getFoldersMessages(),
+                onClick = { viewModel.onMessageClick(it) },
+                onLongClick = { message, context ->
+                    viewModel.onMessageLongClick(
+                        message,
+                        context
+                    )
+                },
+                spaceBetweenMessages = spaceBetweenMessages.dp,
+                height = messageHeight,
+                width = messageWidth
+            )
+
         }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun FoldersList(
+    folders: List<Folder>,
+    onClick: (Folder) -> Unit,
+    onLongClick: (Folder) -> Unit,
+    isSelected: (Folder) -> Boolean,
+    modifier: Modifier = Modifier
+) {
+    LazyRow(
+        modifier = modifier,
+        userScrollEnabled = true,
+    ) {
+        items(
+            folders
+        ) { folder ->
+            FolderView(
+                folder = folder,
+                isSelected = isSelected(folder),
+                modifier = Modifier
+                    .height(50.dp)
+                    .width(120.dp),
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun MessagesList(
+    messages: List<Message>,
+    onClick: (Message) -> Unit,
+    onLongClick: (Message, Context) -> Unit,
+    spaceBetweenMessages: Dp,
+    height: Dp,
+    width: Dp
+) {
+    ScrollableFlowRow(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth(1F)
+            .fillMaxHeight(0.9F),
+        mainAxisSpacing = spaceBetweenMessages,
+        mainAxisAlignment = MainAxisAlignment.SpaceEvenly,
+        mainAxisSize = SizeMode.Expand
+    ) {
+        messages // ToDo: Problematic?
+            .sortedByDescending { it.timesUsed }
+            .forEach {
+                MessageView(
+                    message = it,
+                    modifier = Modifier
+                        .height(height)
+                        .width(width)
+                        .padding(0.dp),
+                    onClick = onClick,
+                    onLongClick = onLongClick
+                )
+            }
     }
 }
 

@@ -41,7 +41,6 @@ class UploadWorker @AssistedInject constructor(
     }
 
     private fun uploadCalls() {
-        Log.v("Started uploading worker")
         var phoneCalls = emptyList<PhoneCall>()
         val uploadJob = CoroutineScope(Dispatchers.IO).async {
             delay(Constants.TIME_TO_ADD_CALL_TO_CALL_LOG)

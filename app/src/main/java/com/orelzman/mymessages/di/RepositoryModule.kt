@@ -74,4 +74,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideStatisticsInteractor(interactorImpl: StatisticsInteractorImpl): StatisticsInteractor
+
+    @Binds
+    abstract fun provideWhatsappInteractor(interactorImpl: WhatsappInteractorImpl): WhatsappInteractor
 }

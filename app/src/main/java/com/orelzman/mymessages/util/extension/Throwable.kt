@@ -11,7 +11,6 @@ fun Throwable.log(values: Map<String, String> = emptyMap()) {
     }
     crashlytics.log(stackTraceToString())
     Log.e("Crash logged", this, values)
-    throw this
 }
 
 fun Throwable.log(loggable: Loggable) {
@@ -30,5 +29,4 @@ fun Throwable.log(loggableList: List<Loggable> = emptyList(), message: String = 
         }
     }
     crashlytics.log(stackTraceToString())
-
 }
