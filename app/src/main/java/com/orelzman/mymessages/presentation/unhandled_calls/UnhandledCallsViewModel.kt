@@ -99,8 +99,8 @@ class UnhandledCallsViewModel @Inject constructor(
                             number = phoneCall.number
                         )
                     )
-                } catch (exception: Exception) {
-                    exception.log()
+                } catch (e: Exception) {
+                    e.log()
                 }
             }
         }

@@ -48,15 +48,15 @@ class LoginViewModel @Inject constructor(
                 if (isAuthorized) {
                     onUserAuthorizedSuccessfully()
                 }
-            } catch (exception: Exception) {
-                when (exception) {
+            } catch (e: Exception) {
+                when (e) {
                     is UserNotAuthenticatedException -> {/*User needs to login again-do it with saved credentials*/
                     }
                     is WrongCredentialsException -> {
 
                     }
                 }
-                exception.log()
+                e.log()
                 state = state.copy(isLoading = false, isAuthorized = false)
             }
         }
@@ -148,8 +148,8 @@ class LoginViewModel @Inject constructor(
                     isAuthorized = isAuthorized,
                     error = if (!isAuthorized) R.string.error_unknown else R.string.empty_string
                 )
-            } catch (exception: Exception) {
-                exception.log()
+            } catch (e: Exception) {
+                e.log()
                 state.copy(isLoading = false)
             }
         }.invokeOnCompletion {
@@ -168,8 +168,8 @@ class LoginViewModel @Inject constructor(
                 if (user?.userId != null) {
                     onUserAuthorizedSuccessfully()
                 }
-            } catch (exception: Exception) {
-                when (exception) {
+            } catch (e: Exception) {
+                when (e) {
                     is CodeMismatchException -> {
 
                     }
@@ -187,7 +187,8 @@ class LoginViewModel @Inject constructor(
                 createUser(userId, email)
             }
             true
-        } catch (exception: Exception) {
+        } catch (e: Exception) {
+            e.log()
             false
         }
     }
@@ -204,8 +205,8 @@ class LoginViewModel @Inject constructor(
                     userId = userId
                 )
             )
-        } catch (exception: Exception) {
-            exception.log()
+        } catch (e: Exception) {
+            e.log()
         }
     }
 

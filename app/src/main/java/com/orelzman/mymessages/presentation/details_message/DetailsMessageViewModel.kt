@@ -120,8 +120,8 @@ class DetailsMessageViewModel @Inject constructor(
                         messageId = it.id,
                         eventMessage = EventsMessages.MessageRestored
                     )
-                } catch (exception: Exception) {
-                    exception.log(state)
+                } catch (e: Exception) {
+                    e.log(state)
                     state.copy(isLoading = false, eventMessage = EventsMessages.MessageRestored)
                 }
             }
@@ -160,8 +160,8 @@ class DetailsMessageViewModel @Inject constructor(
                         }
                     }
                     clearValues()
-                } catch (exception: Exception) {
-                    exception.log(state)
+                } catch (e: Exception) {
+                    e.log(state)
                     state =
                         state.copy(
                             isLoading = false,

@@ -41,3 +41,4 @@ app/src/main/res/raw/prod_secrets.json
 app/src/main/res/raw/dev_secrets.json
 app/src/main/res/raw/awsconfiguration.json
 app/src/main/res/raw/amplifyconfiguration.json
+datadog_config.json

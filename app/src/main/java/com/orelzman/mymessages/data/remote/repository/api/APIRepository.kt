@@ -31,8 +31,7 @@ class APIRepository @Inject constructor(
         return try {
             val result = api.createFolder(createFolderBody)
             result.body
-        } catch (ex: Exception) {
-            println()
+        } catch (e: Exception) {
             null
         }
     }

@@ -45,8 +45,8 @@ class AuthInteractorImpl @Inject constructor(
             isConfigured = true
             Log.v(TAG, "AWS configured")
             return
-        } catch (exception: AmplifyException) {
-            Log.v(TAG, exception.localizedMessage ?: "")
+        } catch (e: AmplifyException) {
+            Log.v(TAG, e.localizedMessage ?: "")
         } finally {
             val user = getUser()
             if (Amplify.Auth.getCurrentUser()?.userId != user?.userId) {
@@ -74,11 +74,11 @@ class AuthInteractorImpl @Inject constructor(
             .build()
         try {
             Amplify.Auth.signUp(username, password, options)
-        } catch (exception: Exception) {
-            when (exception) {
+        } catch (e: Exception) {
+            when (e) {
                 is AuthException.UserNotConfirmedException -> throw UserNotConfirmedException()
                 is AuthException.UsernameExistsException -> throw UsernameExistsException()
-                else -> throw exception
+                else -> throw e
             }
         }
     }
@@ -94,8 +94,8 @@ class AuthInteractorImpl @Inject constructor(
             } else {
                 Log.i(TAG, "Signup confirmation not yet complete")
             }
-        } catch (error: AuthException) {
-            when (error) {
+        } catch (e: AuthException) {
+            when (e) {
                 is AuthException.CodeMismatchException -> {
                     resendConfirmationCode(username)
                     throw CodeMismatchException()
@@ -103,7 +103,7 @@ class AuthInteractorImpl @Inject constructor(
                 is AuthException.CodeExpiredException -> throw CodeExpiredException()
                 is AuthException.NotAuthorizedException -> throw NotAuthorizedException()
 
-                else -> throw error
+                else -> throw e
             }
         }
     }
@@ -113,8 +113,9 @@ class AuthInteractorImpl @Inject constructor(
             val result = Amplify.Auth.signInWithSocialWebUI(AuthProvider.google(), activity)
             userSignInSuccessfully()
             Log.i(TAG, "Sign in OK: $result")
-        } catch (error: AuthException) {
-            Log.e(TAG, "Sign in failed", error)
+        } catch (e: AuthException) {
+            Log.e(TAG, "Sign in failed", e)
+            throw e
         }
     }
 
@@ -139,16 +140,16 @@ class AuthInteractorImpl @Inject constructor(
                 Log.e(TAG, "Sign in not complete")
                 throw Exception("Login failed")
             }
-        } catch (exception: Exception) {
-            Log.e(TAG, "Sign in not complete with error: ${exception.localizedMessage}")
-            when (exception) {
+        } catch (e: Exception) {
+            Log.e(TAG, "Sign in not complete with error: ${e.localizedMessage}")
+            when (e) {
                 is AuthException.UserNotConfirmedException -> {
                     resendConfirmationCode(username)
                     throw UserNotConfirmedException()
                 }
                 is AuthException.UserNotFoundException -> throw UserNotFoundException()
                 is AuthException.NotAuthorizedException -> throw WrongCredentialsException()
-                else -> throw exception
+                else -> throw e
             }
         }
     }
@@ -199,7 +200,7 @@ class AuthInteractorImpl @Inject constructor(
             val user = User(userId = userId, token = token, email = email)
             userInteractor.save(user)
         } catch (e: Exception) {
-            Log.v(TAG, "error")
+            throw e
         }
     }
 

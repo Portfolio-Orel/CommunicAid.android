@@ -146,6 +146,6 @@ dependencies {
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 
     // Mixpanel
-    implementation 'com.mixpanel.android:mixpanel-android:6.+'
+    implementation 'com.mixpanel.android:mixpanel-android:6.0.0'
 
 }

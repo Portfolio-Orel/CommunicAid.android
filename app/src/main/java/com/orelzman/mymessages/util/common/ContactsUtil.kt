@@ -26,11 +26,11 @@ object ContactsUtil {
                 cursor.close()
             }
             return contactName
-        } catch(exception: IllegalArgumentException) {
-            // Number not found
+        } catch(e: IllegalArgumentException) {
+            e.log()
             return number
-        } catch (exception: Exception) {
-            exception.log()
+        } catch (e: Exception) {
+            e.log()
             return number
         }
     }

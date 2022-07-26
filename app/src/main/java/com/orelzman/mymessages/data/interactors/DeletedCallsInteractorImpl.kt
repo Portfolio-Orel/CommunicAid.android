@@ -30,8 +30,8 @@ class DeletedCallsInteractorImpl @Inject constructor(
                 deletedCall.id = id
                 db.insert(deletedCall)
             }
-        } catch (exception: Exception) {
-            throw exception
+        } catch (e: Exception) {
+            throw e
         }
     }
 

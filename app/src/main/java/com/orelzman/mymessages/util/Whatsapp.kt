@@ -3,6 +3,7 @@ package com.orelzman.mymessages.util
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import com.orelzman.mymessages.util.extension.log
 import java.net.URLEncoder.encode
 
 object Whatsapp {
@@ -23,7 +24,8 @@ object Whatsapp {
             i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_NEW_TASK)
             try {
                 startActivity(i)
-            } catch (exception: Exception) {
+            } catch (e: Exception) {
+                e.log()
                 val intentWebWhatsapp = Intent(Intent.ACTION_VIEW)
                 intentWebWhatsapp.data = Uri.parse(url)
                 intentWebWhatsapp.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_NEW_TASK)

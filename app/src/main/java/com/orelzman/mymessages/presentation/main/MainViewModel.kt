@@ -98,8 +98,8 @@ class MainViewModel @Inject constructor(
                 try {
                     sendMessageJob.await()
                     updateTimesUsedJob.await()
-                } catch (exception: Exception) {
-                    exception.log()
+                } catch (e: Exception) {
+                    e.log()
                 }
             }
         } else {

@@ -2,6 +2,7 @@ package com.orelzman.mymessages.data.interceptor
 
 import com.orelzman.auth.domain.exception.CouldNotRefreshTokenException
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.mymessages.util.extension.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,6 +19,7 @@ class ErrorInterceptor(
                 try {
                     authInteractor.refreshToken()
                 } catch(e: CouldNotRefreshTokenException) {
+                    e.log()
                     authInteractor.signOut()
                 }
             }

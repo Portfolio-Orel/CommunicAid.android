@@ -66,8 +66,8 @@ class CallsService : Service() {
         Log.v("Service onStartCommand: $currentState")
         try {
             analyticsInteractor.track("CallsService", mapOf("status" to currentState.name))
-        } catch (exception: Exception) {
-            exception.log(mapOf("status" to currentState.name))
+        } catch (e: Exception) {
+            e.log(mapOf("status" to currentState.name))
         }
         startService()
         if (currentState == ServiceState.UPLOAD_LOGS) {
@@ -103,7 +103,7 @@ class CallsService : Service() {
             stopForeground(true)
             stopSelf()
         } catch (e: Exception) {
-
+            e.log()
         }
     }
 
