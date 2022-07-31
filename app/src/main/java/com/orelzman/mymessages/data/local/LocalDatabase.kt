@@ -17,7 +17,7 @@ import com.orelzman.mymessages.domain.model.entities.*
         Settings::class,
         Statistics::class,
     ],
-    version = 18
+    version = 19
 )
 @TypeConverters(Converters::class)
 abstract class LocalDatabase : RoomDatabase() {

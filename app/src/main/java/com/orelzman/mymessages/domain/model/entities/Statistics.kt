@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import androidx.room.Entity
 import com.orelzman.mymessages.R
 
-@Entity(primaryKeys = ["key"])
+@Entity(primaryKeys = ["key", "value"])
 data class Statistics(
     val key: StatisticsTypes,
     val value: Any
