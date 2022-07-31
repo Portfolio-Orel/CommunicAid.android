@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.stats
+package com.orelzman.mymessages.presentation.statistics
 
 data class StatisticsState(
     val incomingCount: Int = 0,

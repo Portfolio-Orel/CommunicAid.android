@@ -27,7 +27,7 @@ import com.orelzman.mymessages.presentation.details_folder.DetailsFolderScreen
 import com.orelzman.mymessages.presentation.details_message.DetailsMessageScreen
 import com.orelzman.mymessages.presentation.login.LoginScreen
 import com.orelzman.mymessages.presentation.main.MainScreen
-import com.orelzman.mymessages.presentation.stats.StatisticsScreen
+import com.orelzman.mymessages.presentation.statistics.StatisticsScreen
 import com.orelzman.mymessages.presentation.unhandled_calls.UnhandledCallsScreen
 import com.orelzman.mymessages.util.Screen
 

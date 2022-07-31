@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.stats
+package com.orelzman.mymessages.presentation.statistics
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -16,6 +16,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.BarItem
 import com.orelzman.mymessages.domain.model.DonutItem
+import com.orelzman.mymessages.presentation.components.charts.bar.BarChart
 import com.orelzman.mymessages.presentation.components.charts.donut.DonutChart
 
 @Composable
@@ -105,7 +106,7 @@ fun StatisticsScreen(
                     )
                 )
             }
-//            BarChart(items = createBarItemList(state.messagesSentCount))
+            BarChart(items = createBarItemList(state.messagesSentCount))
         }
     }
 }

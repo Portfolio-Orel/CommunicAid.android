@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.stats
+package com.orelzman.mymessages.presentation.statistics
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
