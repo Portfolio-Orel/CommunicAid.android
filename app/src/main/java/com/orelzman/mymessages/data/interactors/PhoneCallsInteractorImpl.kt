@@ -18,6 +18,7 @@ class PhoneCallsInteractorImpl @Inject constructor(
     private val db = database.phoneCallDao
 
     override suspend fun createPhoneCalls(userId: String, phoneCalls: List<PhoneCall>) {
+        if(phoneCalls.isEmpty()) return
         repository.createPhoneCalls(phoneCalls.createPhoneCallBodyList(userId))
     }
 

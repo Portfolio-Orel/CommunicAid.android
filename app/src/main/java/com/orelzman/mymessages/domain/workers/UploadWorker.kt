@@ -5,7 +5,6 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.mymessages.domain.interactors.AnalyticsInteractor
 import com.orelzman.mymessages.domain.interactors.CallLogInteractor
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
@@ -28,11 +27,11 @@ class UploadWorker @AssistedInject constructor(
     private val phoneCallsInteractor: PhoneCallsInteractor,
     private val settingsInteractor: SettingsInteractor,
     private val callLogInteractor: CallLogInteractor,
-    private val analyticsInteractor: AnalyticsInteractor
 ) : Worker(context, workerParams) {
 
     override fun doWork(): Result {
         try {
+            Log.v("Upload worker called")
             uploadCalls()
         } catch (e: Exception) {
             Log.e(e.message ?: e.localizedMessage)
@@ -57,15 +56,16 @@ class UploadWorker @AssistedInject constructor(
                     )
                     callLogInteractor.update(it)
                 }
-            Log.v("phone calls to upload: $phoneCalls")
-            authInteractor.getUser()?.userId?.let {
-                phoneCallsInteractor.createPhoneCalls(
-                    it,
-                    phoneCalls
-                )
-                phoneCalls.forEach { call ->
-                    phoneCallsInteractor.updateCallUploadState(call, UploadState.Uploaded)
-                    analyticsInteractor.track("Call Deleted", "call" to call.number)
+            if(phoneCalls.isNotEmpty()) {
+                Log.v("phone calls to upload: $phoneCalls")
+                authInteractor.getUser()?.userId?.let {
+                    phoneCallsInteractor.createPhoneCalls(
+                        it,
+                        phoneCalls
+                    )
+                    phoneCalls.forEach { call ->
+                        phoneCallsInteractor.updateCallUploadState(call, UploadState.Uploaded)
+                    }
                 }
             }
         }

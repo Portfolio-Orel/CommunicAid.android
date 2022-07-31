@@ -142,6 +142,7 @@ dependencies {
 
     // Work Manager
     implementation "androidx.work:work-runtime-ktx:$work_version"
+    androidTestImplementation "androidx.work:work-testing:$work_version"
 
     // Data Store
     implementation "androidx.datastore:datastore-preferences:1.0.0"
