@@ -17,9 +17,6 @@ class WorkerManagerImpl @Inject constructor(
         }
     }
 
-    private fun startUploadWorkerOnce(type: WorkerType) =
-        queueOneTimeWorker(buildOneTimeUploadWorker(), type)
-
     private fun startPeriodicUploadWorker() =
         queuePeriodicWorker(worker = buildPeriodicUploadWorker(), type = WorkerType.UploadCalls)
 
