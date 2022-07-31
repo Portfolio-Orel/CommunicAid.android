@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface MessageInteractor {
     fun getMessages(): Flow<List<Message>>
+    fun getMessagesOnce(): List<Message>
     suspend fun initWithMessagesInFolders(): List<Message>
     suspend fun createMessage(message: Message, folderId: String)
     suspend fun getMessage(messageId: String): Message?

@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface FolderInteractor {
     fun getFolders(): Flow<List<Folder>>
+    fun getFoldersOnce(): List<Folder>
     suspend fun deleteFolder(userId: String, folder: Folder)
     suspend fun init()
     suspend fun getFolder(folderId: String): Folder

@@ -3,11 +3,12 @@ package com.orelzman.mymessages.presentation.components.charts.bar
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,7 +16,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.orelzman.mymessages.domain.model.BarItem
-import com.orelzman.mymessages.presentation.components.charts.side_values.SideValues
 
 @Composable
 fun BarChart(
@@ -23,7 +23,6 @@ fun BarChart(
 ) {
     if(items.isEmpty()) return
     val viewModel = BarViewModel(items)
-    var selectedBar by remember { mutableStateOf<BarItem?>(null) }
     val maxValue = remember(items) {
         items.maxOfOrNull { it.value }?.toDouble() ?: 100.0
     }
@@ -34,27 +33,22 @@ fun BarChart(
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.Center
     ) {
-        SideValues(
-            maxValue = maxValue,
-            minValue = 0.0,
-            color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier
-                .height(160.dp)
-                .padding(8.dp)
-        )
+//        SideValues(
+//            maxValue = maxValue,
+//            minValue = 0.0,
+//            color = MaterialTheme.colorScheme.secondary,
+//            modifier = Modifier
+//                .height(160.dp)
+//                .padding(8.dp)
+//        )
         items.sortedBy { it.value }.forEach {
             Bar(
                 Modifier
-                    .clickable {
-                        selectedBar = if (selectedBar == it) null
-                        else it
-                    }
                     .padding(horizontal = 2.dp),
                 barItem = it,
                 normalizedValue = viewModel.getNormalizedValue(it),
                 width = 38f,
-                maxHeight = 100f,
-                isSelected = it == selectedBar
+                maxHeight = 100f
             )
         }
     }
@@ -67,8 +61,7 @@ fun Bar(
     barItem: BarItem,
     normalizedValue: Float,
     width: Float,
-    maxHeight: Float,
-    isSelected: Boolean = false
+    maxHeight: Float
 ) {
     val animatedFloat = remember { Animatable(0f) }
     LaunchedEffect(animatedFloat) {
@@ -83,7 +76,7 @@ fun Bar(
         verticalArrangement = Arrangement.Bottom
     ) {
         Text(
-            text = if (isSelected) barItem.value.toString() else "",
+            text = barItem.value.toString(),
             style = MaterialTheme.typography.labelSmall,
             color = barItem.color
         )

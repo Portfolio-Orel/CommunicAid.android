@@ -21,6 +21,14 @@ interface MessageInFolderDao {
     )
     fun get(): Flow<List<MessageInFolder>>
 
+    @Query(
+        """
+        SELECT *
+        FROM MessageInFolder
+    """
+    )
+    fun getOnce(): List<MessageInFolder>
+
     @Update
     suspend fun update(messageInFolder: MessageInFolder)
 

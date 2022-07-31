@@ -108,11 +108,9 @@ class LoginViewModel @Inject constructor(
         state = state.copy(username = value)
     }
 
-    private fun initData() {
-        viewModelScope.launch(Dispatchers.Main) {
+    private suspend fun initData() =
             generalInteractor.initData()
-        }
-    }
+
 
     private fun loginFailed(exception: Exception?) {
         state = when (exception) {
