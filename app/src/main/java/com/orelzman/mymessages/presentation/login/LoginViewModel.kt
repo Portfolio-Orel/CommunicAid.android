@@ -146,8 +146,7 @@ class LoginViewModel @Inject constructor(
                 }
                 if (isAuthorized) {
                     workerManager.startWorker(
-                        type = WorkerType.UploadCalls,
-                        startImmediately = true
+                        type = WorkerType.UploadCalls
                     )
                     if (initData) {
                         initData()
