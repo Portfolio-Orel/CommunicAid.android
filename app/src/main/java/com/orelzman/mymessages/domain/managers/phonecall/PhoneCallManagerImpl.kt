@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.domain.service.phone_call
+package com.orelzman.mymessages.domain.managers.phonecall
 
 import android.content.Context
 import android.telephony.TelephonyManager
@@ -6,6 +6,8 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.domain.interactors.*
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
+import com.orelzman.mymessages.domain.service.phone_call.CallState
+import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManager
 import com.orelzman.mymessages.domain.service.phone_call.exceptions.WaitingThenRingingException
 import com.orelzman.mymessages.util.common.Constants.TIME_TO_ADD_CALL_TO_CALL_LOG
 import com.orelzman.mymessages.util.extension.Log

@@ -8,10 +8,10 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.orelzman.mymessages.domain.interactors.CallPreferences
 import com.orelzman.mymessages.domain.interactors.DataSourceCallsInteractor
+import com.orelzman.mymessages.domain.managers.phonecall.toState
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.model.entities.toPhoneCall
 import com.orelzman.mymessages.domain.service.phone_call.CallState
-import com.orelzman.mymessages.domain.service.phone_call.toState
 import com.orelzman.mymessages.util.extension.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow

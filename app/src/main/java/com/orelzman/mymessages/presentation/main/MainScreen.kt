@@ -174,7 +174,7 @@ fun MessagesList(
             .fillMaxHeight(0.9F),
         mainAxisSpacing = spaceBetweenMessages,
         mainAxisAlignment = MainAxisAlignment.SpaceEvenly,
-        mainAxisSize = SizeMode.Expand
+        mainAxisSize = SizeMode.Expand,
     ) {
         messages // ToDo: Problematic?
             .sortedByDescending { it.timesUsed }

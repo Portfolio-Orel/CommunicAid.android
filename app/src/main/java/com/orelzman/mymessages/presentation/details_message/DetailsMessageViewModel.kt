@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.interactors.FolderInteractor
 import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
 import com.orelzman.mymessages.domain.interactors.MessageInteractor
@@ -88,20 +89,22 @@ class DetailsMessageViewModel @Inject constructor(
     fun deleteMessage() {
         if (state.isLoadingDelete) return
         if (state.isEdit && state.messageId != null) {
-            state = state.copy(isLoadingDelete = true, eventMessage = null)
+            state = state.copy(isLoadingDelete = true, eventMessage = null, error = R.string.empty_string)
             viewModelScope.launch(Dispatchers.IO) {
-                try {
+                state = try {
                     val folderId = messageInFolderInteractor.getMessageFolderId(state.messageId!!)
                     val message = buildMessage()
                     messageInteractor.deleteMessage(message = message)
-                    state = state.copy(
+                    state.copy(
                         isLoadingDelete = false,
                         eventMessage = EventsMessages.MessageDeleted,
                         messageDeleted = message,
-                        messageDeletedFolderId = folderId
+                        messageDeletedFolderId = folderId,
+                        error = R.string.empty_string
                     )
                 } catch (e: Exception) {
                     e.log()
+                    state.copy(isLoadingDelete = false, error = R.string.error_fail_to_save_message)
                 }
             }
         }

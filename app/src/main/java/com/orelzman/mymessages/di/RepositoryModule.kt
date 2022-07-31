@@ -6,13 +6,15 @@ import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.data.interactors.*
 import com.orelzman.mymessages.data.remote.repository.api.APIRepository
 import com.orelzman.mymessages.domain.interactors.*
-import com.orelzman.mymessages.domain.managers.UnhandledCallsManager
-import com.orelzman.mymessages.domain.managers.UnhandledCallsManagerImpl
+import com.orelzman.mymessages.domain.managers.phonecall.PhoneCallManagerImpl
+import com.orelzman.mymessages.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
+import com.orelzman.mymessages.domain.managers.phonecall.interactor.PhoneCallManagerInteractorImpl
+import com.orelzman.mymessages.domain.managers.unhandled_calls.UnhandledCallsManager
+import com.orelzman.mymessages.domain.managers.unhandled_calls.UnhandledCallsManagerImpl
+import com.orelzman.mymessages.domain.managers.worker.WorkerManager
+import com.orelzman.mymessages.domain.managers.worker.WorkerManagerImpl
 import com.orelzman.mymessages.domain.repository.Repository
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManager
-import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerImpl
-import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
-import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractorImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -77,4 +79,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideWhatsappInteractor(interactorImpl: WhatsappInteractorImpl): WhatsappInteractor
+
+    @Binds
+    abstract fun provideWorkerManager(workerManagerImpl: WorkerManagerImpl): WorkerManager
 }

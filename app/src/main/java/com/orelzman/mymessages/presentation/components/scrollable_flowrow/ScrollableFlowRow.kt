@@ -4,10 +4,8 @@ import androidx.compose.foundation.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.google.accompanist.flowlayout.FlowCrossAxisAlignment
 import com.google.accompanist.flowlayout.FlowMainAxisAlignment
 import com.google.accompanist.flowlayout.FlowRow
@@ -27,13 +25,10 @@ fun ScrollableFlowRow(
     isOverscrollEffect: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val lineHeightPixels = with(LocalDensity.current) { 34.sp.toPx() }
-    val scrollAmount = ((4 / 6) * lineHeightPixels).toInt()
-    val scrollState = ScrollState(scrollAmount)
     val state = rememberScrollState()
-    var scrollModifier = modifier
-    scrollModifier = if (scrollDirection == ScrollDirection.Vertical) {
-        scrollModifier.verticalScroll(
+
+    val scrollModifier = if (scrollDirection == ScrollDirection.Vertical) {
+        modifier.verticalScroll(
             state = state,
             enabled = true,
             flingBehavior = null,
@@ -41,7 +36,7 @@ fun ScrollableFlowRow(
         )
 
     } else {
-        scrollModifier
+        modifier
             .horizontalScroll(
                 state = state,
                 enabled = true,
@@ -67,6 +62,7 @@ fun ScrollableFlowRow(
     }
 }
 
+@Suppress("unused")
 enum class ScrollDirection {
     Vertical,
     Horizontal;

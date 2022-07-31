@@ -1,5 +1,7 @@
 package com.orelzman.mymessages.presentation.details_message
 
+import androidx.annotation.StringRes
+import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Loggable
 import com.orelzman.mymessages.domain.model.entities.Message
@@ -18,7 +20,7 @@ data class DetailsMessageState(
     val messageDeleted: Message? = null,
     val messageDeletedFolderId: String? = null,
 
-    val error: String = "",
+    @StringRes val error: Int = R.string.empty_string,
     val eventMessage: EventsMessages? = null,
     val messageId: String? = null,
     val isEdit: Boolean = false,
