@@ -4,11 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.telephony.TelephonyManager
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.WorkRequest
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManager
-import com.orelzman.mymessages.domain.workers.UploadWorker
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -25,22 +21,11 @@ class PhonecallReceiver : BroadcastReceiver() {
                 @Suppress("DEPRECATION") val number =
                     intent.extras?.getString(TelephonyManager.EXTRA_INCOMING_NUMBER)
                         ?: return
-                if (stateStr == TelephonyManager.EXTRA_STATE_IDLE) {
-                    startUploadCallsWorker(context)
-                }
                 stateStr?.let {
                     phoneCallManager.onStateChanged(it, number, context)
                 }
             }
         }
-    }
-
-    private fun startUploadCallsWorker(context: Context) {
-        val uploadWorkRequest: WorkRequest =
-            OneTimeWorkRequestBuilder<UploadWorker>()
-                .build()
-        WorkManager.getInstance(context)
-            .enqueue(uploadWorkRequest)
     }
 
     companion object {

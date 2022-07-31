@@ -5,12 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.mymessages.domain.interactors.CallLogInteractor
-import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.interactors.StatisticsInteractor
 import com.orelzman.mymessages.domain.model.entities.StatisticsTypes
-import com.orelzman.mymessages.domain.model.entities.toPhoneCalls
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -21,9 +17,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StatisticsViewModel @Inject constructor(
-    private val phoneCallsInteractor: PhoneCallsInteractor,
-    private val authInteractor: AuthInteractor,
-    private val callLogInteractor: CallLogInteractor,
     private val statisticsInteractor: StatisticsInteractor
 ) : ViewModel() {
     var state by mutableStateOf(StatisticsState())
@@ -31,7 +24,7 @@ class StatisticsViewModel @Inject constructor(
     var isRefreshing by mutableStateOf(false)
 
     init {
-        getData()
+        initData()
         observeStatistics()
     }
 
@@ -73,31 +66,16 @@ class StatisticsViewModel @Inject constructor(
         }
     }
 
-    fun sendCallLogs() {
-        state = state.copy(isLoadingCallLogSend = true)
-        val callLogs = callLogInteractor.getTodaysCallLog()
-        viewModelScope.launch(Dispatchers.IO) {
-            authInteractor.getUser()?.let {
-                val phoneCalls = callLogs.toPhoneCalls().map { call ->
-                    call.type = "CALL_LOG_${call.type}"
-                    call
-                }
-                phoneCallsInteractor.createPhoneCalls(it.userId, phoneCalls)
-            }
-        }.invokeOnCompletion {
-            state = state.copy(isLoadingCallLogSend = false)
-        }
-    }
-
     fun refreshData() {
         isRefreshing = true
-        getData()
+        initData()
     }
 
-    private fun getData() {
+    private fun initData() {
+        state = state.copy(isLoading = true)
         val job = viewModelScope.async {
-            statisticsInteractor.getCallsCountByType()
-            statisticsInteractor.getMessagesSentCount()
+                statisticsInteractor.getCallsCountByType()
+                statisticsInteractor.getMessagesSentCount()
         }
         viewModelScope.launch(Dispatchers.Main) {
             try {

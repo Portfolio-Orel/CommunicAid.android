@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.mymessages.domain.interactors.*
 import com.orelzman.mymessages.domain.model.entities.*
-import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManagerInteractor
+import com.orelzman.mymessages.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
 import com.orelzman.mymessages.util.extension.copyToClipboard
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
