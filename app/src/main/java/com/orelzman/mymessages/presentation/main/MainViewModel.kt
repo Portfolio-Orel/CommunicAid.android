@@ -44,16 +44,33 @@ class MainViewModel @Inject constructor(
 
     private fun getMessagesInFolder() {
         state = state.copy(messagesInFolders = messageInFolderInteractor.getMessagesInFoldersOnce())
+        CoroutineScope(Dispatchers.Main).launch {
+            messageInFolderInteractor.getMessagesInFolders().collectLatest {
+                state = state.copy(messagesInFolders = it)
+            }
+        }
     }
 
     private fun getMessages() {
         state = state.copy(messages = messageInteractor.getMessagesOnce().sortedBy { it.timesUsed })
+        CoroutineScope(Dispatchers.Main).launch {
+            messageInteractor.getMessages().collectLatest {
+                state = state.copy(messages = it)
+            }
+        }
     }
 
     private fun getFolders() {
         val folders = folderInteractor.getFoldersOnce()
         state = state.copy(selectedFolder = folders.maxByOrNull { it.timesUsed })
         state = state.copy(folders = folderInteractor.getFoldersOnce().sortedBy { it.timesUsed })
+        CoroutineScope(Dispatchers.Main).launch {
+            folderInteractor.getFolders().collectLatest {
+                if (state.selectedFolder == null && it.isNotEmpty()) {
+                    state = state.copy(folders = it.sortedByDescending { folder -> folder.timesUsed }, selectedFolder = it.maxByOrNull { folder -> folder.timesUsed }!!)
+                }
+            }
+        }
     }
 
     fun getFoldersMessages(): List<Message> {
@@ -66,16 +83,16 @@ class MainViewModel @Inject constructor(
     fun onMessageClick(message: Message) {
         val phoneCall = state.activeCall
         if (phoneCall != null) {
-            val sendMessageJob = viewModelScope.async {
-                phoneCallsInteractor.addMessageSent(
-                    phoneCall,
-                    MessageSent(sentAt = Date().time, messageId = message.id)
-                )
-                whatsappInteractor.sendMessage(
-                    number = phoneCall.number,
-                    message = message.body
-                )
-            }
+                val sendMessageJob = viewModelScope.async {
+                    phoneCallsInteractor.addMessageSent(
+                        phoneCall,
+                        MessageSent(sentAt = Date().time, messageId = message.id)
+                    )
+                    whatsappInteractor.sendMessage(
+                        number = phoneCall.number,
+                        message = message.body
+                    )
+                }
             val updateTimesUsedJob = viewModelScope.async {
                 messageInteractor.increaseTimesUsed(message.id)
             }
@@ -151,7 +168,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun observeNumberInBackground() {
-        CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.Main).launch{
             phoneCallManagerInteractor.callsDataFlow.collectLatest {
                 state = state.copy(callInBackground = it.callInTheBackground?.toPhoneCall())
             }
