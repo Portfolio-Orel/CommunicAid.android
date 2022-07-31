@@ -15,12 +15,11 @@ class DeletedCallsInteractorImpl @Inject constructor(
 ) : DeletedCallsInteractor {
     val db = database.deletedCallsDao
 
-    override suspend fun create(userId: String, deletedCall: DeletedCall) {
+    override suspend fun create(deletedCall: DeletedCall) {
         try {
             db.insert(deletedCalls = deletedCall)
             val createDeletedCallBody = CreateDeletedCallBody(
                 number = deletedCall.number,
-                userId = userId,
                 deleteDate = deletedCall.deleteDate.time
             )
             val id: String? = repository.createDeletedCall(createDeletedCallBody)

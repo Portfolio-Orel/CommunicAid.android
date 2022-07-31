@@ -56,16 +56,13 @@ class UploadWorker @AssistedInject constructor(
                     )
                     callLogInteractor.update(it)
                 }
-            if(phoneCalls.isNotEmpty()) {
+            if (phoneCalls.isNotEmpty()) {
                 Log.v("phone calls to upload: $phoneCalls")
-                authInteractor.getUser()?.userId?.let {
-                    phoneCallsInteractor.createPhoneCalls(
-                        it,
-                        phoneCalls
-                    )
-                    phoneCalls.forEach { call ->
-                        phoneCallsInteractor.updateCallUploadState(call, UploadState.Uploaded)
-                    }
+                phoneCallsInteractor.createPhoneCalls(
+                    phoneCalls
+                )
+                phoneCalls.forEach { call ->
+                    phoneCallsInteractor.updateCallUploadState(call, UploadState.Uploaded)
                 }
             }
         }
@@ -107,13 +104,10 @@ class UploadWorker @AssistedInject constructor(
     }
 
     private suspend fun updateCallsUpdateTime() {
-        authInteractor.getUser()?.let {
-            settingsInteractor.createSettings(
-                Settings(
-                    key = SettingsKeys.CallsUpdateAt, value = Date().time.toString()
-                ),
-                userId = it.userId
+        settingsInteractor.createSettings(
+            Settings(
+                key = SettingsKeys.CallsUpdateAt, value = Date().time.toString()
             )
-        }
+        )
     }
 }

@@ -13,7 +13,6 @@ import com.orelzman.auth.domain.exception.WrongCredentialsException
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.data.remote.AuthConfigFile
-import com.orelzman.mymessages.domain.interactors.GeneralInteractor
 import com.orelzman.mymessages.domain.managers.worker.WorkerManager
 import com.orelzman.mymessages.domain.managers.worker.WorkerType
 import com.orelzman.mymessages.domain.model.dto.body.create.CreateUserBody
@@ -29,7 +28,6 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val interactor: AuthInteractor,
     private val repository: Repository,
-    private val generalInteractor: GeneralInteractor,
     private val workerManager: WorkerManager,
     @AuthConfigFile private val authConfigFile: Int,
 ) : ViewModel() {
@@ -44,16 +42,16 @@ class LoginViewModel @Inject constructor(
 
                 if (user != null) {
                     isAuthorized = true
-                } else {
-                    generalInteractor.clearAllDatabases()
                 }
-                state = state.copy(isAuthorized = isAuthorized, isLoading = false)
                 if (isAuthorized) {
                     onUserAuthorizedSuccessfully()
+                } else {
+                    state = state.copy(isAuthorized = false, isLoading = false)
                 }
             } catch (e: Exception) {
                 when (e) {
                     is UserNotAuthenticatedException -> {/*User needs to login again-do it with saved credentials*/
+
                     }
                     is WrongCredentialsException -> {
 
@@ -69,7 +67,7 @@ class LoginViewModel @Inject constructor(
         when (event) {
             is LoginEvents.OnLoginCompleted -> {
                 if (event.isAuthorized) {
-                    onUserAuthorizedSuccessfully(true)
+                    onUserAuthorizedSuccessfully()
                 } else {
                     loginFailed(event.exception)
                 }
@@ -108,10 +106,6 @@ class LoginViewModel @Inject constructor(
         state = state.copy(username = value)
     }
 
-    private suspend fun initData() =
-            generalInteractor.initData()
-
-
     private fun loginFailed(exception: Exception?) {
         state = when (exception) {
             is InvalidParameterException -> {
@@ -127,13 +121,14 @@ class LoginViewModel @Inject constructor(
                 state.copy(error = R.string.error_wrong_credentials_inserted)
             }
             else -> {
-                state.copy(error = R.string.error_unknown)
+                if (exception != null) state.copy(error = R.string.error_unknown)
+                else state.copy(error = null)
             }
         }
         state = state.copy(isLoading = false)
     }
 
-    private fun onUserAuthorizedSuccessfully(initData: Boolean = false) {
+    private fun onUserAuthorizedSuccessfully() {
         viewModelScope.launch(Dispatchers.Main) {
             state = try {
                 val userId = interactor.getUser()?.userId
@@ -146,9 +141,6 @@ class LoginViewModel @Inject constructor(
                     workerManager.startWorker(
                         type = WorkerType.UploadCalls
                     )
-                    if (initData) {
-                        initData()
-                    }
                 }
                 state.copy(
                     isAuthorized = isAuthorized,
@@ -188,7 +180,7 @@ class LoginViewModel @Inject constructor(
 
     private suspend fun confirmUserCreated(userId: String, email: String = ""): Boolean {
         return try {
-            val user = repository.getUser(userId)
+            val user = repository.getUser()
             if (user?.userId == null) {
                 createUser(userId, email)
             }

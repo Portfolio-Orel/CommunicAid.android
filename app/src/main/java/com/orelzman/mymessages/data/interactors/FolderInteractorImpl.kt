@@ -36,7 +36,7 @@ class FolderInteractorImpl @Inject constructor(
 
     override fun getFoldersOnce(): List<Folder> = db.getFoldersOnce()
 
-    override suspend fun deleteFolder(userId: String, folder: Folder) {
+    override suspend fun deleteFolder(folder: Folder) {
         repository.deleteFolder(folder)
         messageInFolderInteractor.deleteMessagesFromFolder(folder.id)
         db.delete(folder)
@@ -45,14 +45,13 @@ class FolderInteractorImpl @Inject constructor(
     override suspend fun getFolder(folderId: String): Folder =
         db.get(folderId = folderId)
 
-    override suspend fun createFolder(userId: String, folder: Folder): String? {
+    override suspend fun createFolder(folder: Folder): String? {
         val tempFolder = Folder(folder, UUID.randomUUID().toString())
         tempFolder.setUploadState(UploadState.BeingUploaded)
         db.insert(tempFolder)
         val folderId = repository.createFolder(
             CreateFolderBody(
                 title = folder.title,
-                userId = userId,
                 position = null
             )
         ) ?: return null
@@ -66,13 +65,6 @@ class FolderInteractorImpl @Inject constructor(
     override suspend fun updateFolder(folder: Folder) {
         repository.updateFolder(folder)
         db.update(folder)
-    }
-
-
-    override suspend fun deleteFolder(folder: Folder) {
-        repository.deleteFolder(folder)
-        messageInFolderInteractor.deleteMessagesFromFolder(folder.id)
-        db.delete(folder)
     }
 
     override suspend fun getFolderWithMessageId(messageId: String): Folder? {

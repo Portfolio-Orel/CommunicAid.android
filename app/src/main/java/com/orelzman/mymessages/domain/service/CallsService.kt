@@ -167,15 +167,12 @@ class CallsService : Service() {
                     )
                     callLogInteractor.update(it)
                 }
-            authInteractor.getUser()?.userId?.let {
-                phoneCallsInteractor.createPhoneCalls(
-                    it,
-                    phoneCalls
-                )
-                phoneCalls.forEach { call ->
-                    phoneCallsInteractor.updateCallUploadState(call, UploadState.Uploaded)
-                    analyticsInteractor.track("Call Deleted", "call" to call.number)
-                }
+            phoneCallsInteractor.createPhoneCalls(
+                phoneCalls
+            )
+            phoneCalls.forEach { call ->
+                phoneCallsInteractor.updateCallUploadState(call, UploadState.Uploaded)
+                analyticsInteractor.track("Call Deleted", "call" to call.number)
             }
         }
         try {
@@ -211,14 +208,11 @@ class CallsService : Service() {
             }
         }
         phoneCallsInteractor.cachePhoneCalls(phoneCalls)
-        authInteractor.getUser()?.let {
-            settingsInteractor.createSettings(
-                Settings(
-                    key = SettingsKeys.CallsUpdateAt, value = Date().time.toString()
-                ),
-                userId = it.userId
+        settingsInteractor.createSettings(
+            Settings(
+                key = SettingsKeys.CallsUpdateAt, value = Date().time.toString()
             )
-        }
+        )
         return phoneCalls
     }
 }

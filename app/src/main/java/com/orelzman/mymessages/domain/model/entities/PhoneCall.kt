@@ -72,7 +72,7 @@ data class PhoneCall(
     }
 }
 
-fun List<PhoneCall>.createPhoneCallBodyList(userId: String): List<CreatePhoneCallBody> {
+fun List<PhoneCall>.createPhoneCallBodyList(): List<CreatePhoneCallBody> {
     val array = ArrayList<CreatePhoneCallBody>()
     forEach { it ->
         with(it) {
@@ -84,8 +84,7 @@ fun List<PhoneCall>.createPhoneCallBodyList(userId: String): List<CreatePhoneCal
                     endDate = endDate.time,
                     isAnswered = isAnswered,
                     type = type,
-                    messagesSent = messagesSent.map { messageSent -> messageSent.createMessageSentBody },
-                    userId = userId
+                    messagesSent = messagesSent.map { messageSent -> messageSent.createMessageSentBody }
                 )
             )
         }

@@ -12,8 +12,8 @@ interface API {
     @POST("/users")
     suspend fun createUser(@Body userBody: CreateUserBody)
 
-    @GET("/users/{user_id}")
-    suspend fun getUser(@Path("user_id") userId: String): Response<GetUserResponse>?
+    @GET("/users")
+    suspend fun getUser(): Response<GetUserResponse>?
 
     // Messages
     @GET("/messages")

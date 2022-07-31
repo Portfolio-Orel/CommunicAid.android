@@ -12,7 +12,6 @@ import com.orelzman.mymessages.domain.model.entities.*
 import com.orelzman.mymessages.util.extension.copyToClipboard
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
@@ -44,16 +43,36 @@ class MainViewModel @Inject constructor(
 
     private fun getMessagesInFolder() {
         state = state.copy(messagesInFolders = messageInFolderInteractor.getMessagesInFoldersOnce())
+        viewModelScope.launch {
+            messageInFolderInteractor.getMessagesInFolders().collectLatest {
+                state = state.copy(messagesInFolders = it)
+            }
+        }
     }
 
     private fun getMessages() {
         state = state.copy(messages = messageInteractor.getMessagesOnce().sortedBy { it.timesUsed })
+        viewModelScope.launch {
+            messageInteractor.getMessages().collectLatest {
+                state = state.copy(messages = it)
+            }
+        }
     }
 
     private fun getFolders() {
         val folders = folderInteractor.getFoldersOnce()
         state = state.copy(selectedFolder = folders.maxByOrNull { it.timesUsed })
         state = state.copy(folders = folderInteractor.getFoldersOnce().sortedBy { it.timesUsed })
+        viewModelScope.launch {
+            folderInteractor.getFolders().collectLatest {
+                if (state.selectedFolder == null && it.isNotEmpty()) {
+                    state =
+                        state.copy(folders = it.sortedByDescending { folder -> folder.timesUsed },
+                            selectedFolder = it.maxByOrNull { folder -> folder.timesUsed }!!
+                        )
+                }
+            }
+        }
     }
 
     fun getFoldersMessages(): List<Message> {
@@ -142,7 +161,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun observeNumberOnTheLine() {
-        CoroutineScope(Dispatchers.Main).launch {
+        viewModelScope.launch {
             phoneCallManagerInteractor.callsDataFlow.collectLatest {
                 state = state.copy(callOnTheLine = it.callOnTheLine?.toPhoneCall())
                 setCallOnTheLineActive()
@@ -151,7 +170,8 @@ class MainViewModel @Inject constructor(
     }
 
     private fun observeNumberInBackground() {
-        CoroutineScope(Dispatchers.Main).launch {
+        viewModelScope
+            .launch {
             phoneCallManagerInteractor.callsDataFlow.collectLatest {
                 state = state.copy(callInBackground = it.callInTheBackground?.toPhoneCall())
             }

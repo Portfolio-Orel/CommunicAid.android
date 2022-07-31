@@ -86,8 +86,8 @@ class APIRepository @Inject constructor(
     override suspend fun createUser(createUserBody: CreateUserBody) =
         api.createUser(createUserBody)
 
-    override suspend fun getUser(userId: String): GetUserResponse? {
-        val response = api.getUser(userId)
+    override suspend fun getUser(): GetUserResponse? {
+        val response = api.getUser()
         return response?.body
     }
 
