@@ -8,4 +8,5 @@ data class CreateUserBody(
     @SerializedName("gender") val gender: String,
     @SerializedName("email") val email: String,
     @SerializedName("number") val number: String,
+    @SerializedName("user_id") val userId: String,
 )

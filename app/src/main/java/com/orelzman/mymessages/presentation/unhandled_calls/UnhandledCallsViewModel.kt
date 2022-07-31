@@ -12,7 +12,6 @@ import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.domain.interactors.CallLogInteractor
 import com.orelzman.mymessages.domain.interactors.DeletedCallsInteractor
 import com.orelzman.mymessages.domain.managers.unhandled_calls.UnhandledCallsManager
@@ -34,7 +33,6 @@ class UnhandledCallsViewModel @Inject constructor(
     private val deletedCallsInteractor: DeletedCallsInteractor,
     private val unhandledCallsManager: UnhandledCallsManager,
     private val callLogInteractor: CallLogInteractor,
-    private val authInteractor: AuthInteractor,
 ) : AndroidViewModel(application) {
 
     var state by mutableStateOf(UnhandledCallsState())
@@ -88,16 +86,14 @@ class UnhandledCallsViewModel @Inject constructor(
      */
     fun onDelete(phoneCall: PhoneCall) {
         viewModelScope.launch(Dispatchers.IO) {
-            authInteractor.getUser()?.userId?.let {
-                try {
-                    deletedCallsInteractor.create(
-                        userId = it, deletedCall = DeletedCall(
-                            number = phoneCall.number
-                        )
+            try {
+                deletedCallsInteractor.create(
+                    deletedCall = DeletedCall(
+                        number = phoneCall.number
                     )
-                } catch (e: Exception) {
-                    e.log()
-                }
+                )
+            } catch (e: Exception) {
+                e.log()
             }
         }
     }

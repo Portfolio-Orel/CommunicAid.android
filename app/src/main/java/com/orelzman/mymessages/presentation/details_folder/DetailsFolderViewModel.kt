@@ -50,7 +50,7 @@ class DetailsFolderViewModel @Inject constructor(
     }
 
     fun onSaveClick() {
-        if(state.isLoading) return
+        if (state.isLoading) return
         if (state.isEdit) {
             state.folder?.let {
                 with(it) {
@@ -75,15 +75,12 @@ class DetailsFolderViewModel @Inject constructor(
             try {
                 state = state.copy(isLoading = true)
                 viewModelScope.launch(Dispatchers.IO) {
-                    authInteractor.getUser()?.userId?.let {
-                        if (state.isEdit) {
-                            folderInteractor.updateFolder(folder = folder)
-                        } else {
-                            folderInteractor.createFolder(
-                                userId = it,
-                                folder = Folder(title = state.title)
-                            )
-                        }
+                    if (state.isEdit) {
+                        folderInteractor.updateFolder(folder = folder)
+                    } else {
+                        folderInteractor.createFolder(
+                            folder = Folder(title = state.title)
+                        )
                     }
                 }.invokeOnCompletion {
                     state = state.copy(isLoading = false, isFolderAdded = it == null)

@@ -31,7 +31,7 @@ interface Repository {
     suspend fun createPhoneCalls(createPhoneCallBody: List<CreatePhoneCallBody>): List<String>
 
     suspend fun createUser(createUserBody: CreateUserBody)
-    suspend fun getUser(userId: String): GetUserResponse?
+    suspend fun getUser(): GetUserResponse?
 
     suspend fun createOrUpdateSettings(createOrUpdateSettingsBody: CreateOrUpdateSettingsBody)
     suspend fun getSettings(key: String = ""): List<SettingsResponse>

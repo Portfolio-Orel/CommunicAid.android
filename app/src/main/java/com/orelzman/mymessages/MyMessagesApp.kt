@@ -1,15 +1,17 @@
 package com.orelzman.mymessages
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -40,103 +42,118 @@ fun MyMessagesApp(
 ) {
     val navHostController = rememberNavController()
     val navController = navHostController as NavController
-
-    if (!viewModel.isAuthorized) {
-        LoginScreen()
-    } else {
-        CustomScaffold(
-            navController = navHostController,
-            topBar = { TopAppBar() },
-            bottomBar = {
-                BottomBar(navController = it)
-            },
-            floatingActionButton = {
-                MultiFab(
-                    fabs = listOf(
-                        MiniFloatingAction(
-                            action = { viewModel.signOut() },
-                            icon = painterResource(id = R.drawable.ic_login),
-                            description = stringResource(R.string.sign_out)
-                        ),
-                        MiniFloatingAction(
-                            action = {
-                                navController.navigate(
-                                    Screen.DetailsFolder.route
-                                ) {
-                                    popUpTo(navHostController.graph.findStartDestination().id) {
-                                        inclusive = false
-                                    }
-                                    launchSingleTop = true
-                                }
-                            },
-                            icon = painterResource(id = R.drawable.ic_new_folder),
-                            description = ""
-                        ),
-                        MiniFloatingAction(
-                            action = {
-                                navController.navigate(
-                                    Screen.DetailsMessage.route
-                                ) {
-                                    popUpTo(navHostController.graph.findStartDestination().id) {
-                                        inclusive = false
-                                    }
-                                    launchSingleTop = true
-                                }
-                            },
-                            icon = painterResource(id = R.drawable.ic_new_message),
-                            description = ""
-                        ),
-                    ),
-                    iconCollapsed = painterResource(R.drawable.ic_arrow_left),
-                    iconExpanded = painterResource(R.drawable.ic_close),
-                )
-            },
+    if(viewModel.isLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-            NavHost(
-                modifier = Modifier.padding(
-                    top = it.calculateTopPadding(),
-                    bottom = it.calculateBottomPadding(),
-                    end = it.calculateEndPadding(LayoutDirection.Rtl),
-                    start = it.calculateStartPadding(LayoutDirection.Rtl)
-                ),
-                navController = navHostController, startDestination =  Screen.Main.route
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .height(48.dp)
+                    .width(48.dp),
+                strokeWidth = 2.dp,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
+    } else {
+        if (!viewModel.isAuthorized) {
+            LoginScreen()
+        } else {
+            CustomScaffold(
+                navController = navHostController,
+                topBar = { TopAppBar() },
+                bottomBar = {
+                    BottomBar(navController = it)
+                },
+                floatingActionButton = {
+                    MultiFab(
+                        fabs = listOf(
+                            MiniFloatingAction(
+                                action = { viewModel.signOut() },
+                                icon = painterResource(id = R.drawable.ic_login),
+                                description = stringResource(R.string.sign_out)
+                            ),
+                            MiniFloatingAction(
+                                action = {
+                                    navController.navigate(
+                                        Screen.DetailsFolder.route
+                                    ) {
+                                        popUpTo(navHostController.graph.findStartDestination().id) {
+                                            inclusive = false
+                                        }
+                                        launchSingleTop = true
+                                    }
+                                },
+                                icon = painterResource(id = R.drawable.ic_new_folder),
+                                description = ""
+                            ),
+                            MiniFloatingAction(
+                                action = {
+                                    navController.navigate(
+                                        Screen.DetailsMessage.route
+                                    ) {
+                                        popUpTo(navHostController.graph.findStartDestination().id) {
+                                            inclusive = false
+                                        }
+                                        launchSingleTop = true
+                                    }
+                                },
+                                icon = painterResource(id = R.drawable.ic_new_message),
+                                description = ""
+                            ),
+                        ),
+                        iconCollapsed = painterResource(R.drawable.ic_arrow_left),
+                        iconExpanded = painterResource(R.drawable.ic_close),
+                    )
+                },
             ) {
-                composable(route = Screen.Main.route) { MainScreen(navController = navHostController) }
-                composable(route = Screen.Login.route) { LoginScreen() }
-                composable(route = Screen.UnhandledCalls.route) { UnhandledCallsScreen() }
-                composable(route = Screen.Statistics.route) { StatisticsScreen() }
-                composable(route = Screen.DetailsMessage.route) {
-                    DetailsMessageScreen(navController = navHostController)
-                }
-                composable(
-                    route = Screen.DetailsMessage.route + "/{messageId}",
-                    arguments = listOf(
-                        navArgument("messageId") {
-                            type = NavType.StringType
-                            defaultValue = ""
-                        }
-                    )
-                ) { navBackStack ->
-                DetailsMessageScreen(
-                        navController = navHostController,
-                        messageId = navBackStack.arguments?.getString("messageId")
-                    )
-                }
-                composable(route = Screen.DetailsFolder.route) {
-                    DetailsFolderScreen(navController = navHostController)
-                }
-                composable(
-                    route = Screen.DetailsFolder.route + "/{folderId}",
-                    arguments = listOf(
-                        navArgument("folderId") {
-                            type = NavType.StringType
-                            defaultValue = ""
-                        }
-                    )) { navBackStack ->
-                    DetailsFolderScreen(
-                        navController = navHostController,
-                        folderId = navBackStack.arguments?.getString("folderId")
-                    )
+                NavHost(
+                    modifier = Modifier.padding(
+                        top = it.calculateTopPadding(),
+                        bottom = it.calculateBottomPadding(),
+                        end = it.calculateEndPadding(LayoutDirection.Rtl),
+                        start = it.calculateStartPadding(LayoutDirection.Rtl)
+                    ),
+                    navController = navHostController, startDestination = Screen.Main.route
+                ) {
+                    composable(route = Screen.Main.route) { MainScreen(navController = navHostController) }
+                    composable(route = Screen.Login.route) { LoginScreen() }
+                    composable(route = Screen.UnhandledCalls.route) { UnhandledCallsScreen() }
+                    composable(route = Screen.Statistics.route) { StatisticsScreen() }
+                    composable(route = Screen.DetailsMessage.route) {
+                        DetailsMessageScreen(navController = navHostController)
+                    }
+                    composable(
+                        route = Screen.DetailsMessage.route + "/{messageId}",
+                        arguments = listOf(
+                            navArgument("messageId") {
+                                type = NavType.StringType
+                                defaultValue = ""
+                            }
+                        )
+                    ) { navBackStack ->
+                        DetailsMessageScreen(
+                            navController = navHostController,
+                            messageId = navBackStack.arguments?.getString("messageId")
+                        )
+                    }
+                    composable(route = Screen.DetailsFolder.route) {
+                        DetailsFolderScreen(navController = navHostController)
+                    }
+                    composable(
+                        route = Screen.DetailsFolder.route + "/{folderId}",
+                        arguments = listOf(
+                            navArgument("folderId") {
+                                type = NavType.StringType
+                                defaultValue = ""
+                            }
+                        )) { navBackStack ->
+                        DetailsFolderScreen(
+                            navController = navHostController,
+                            folderId = navBackStack.arguments?.getString("folderId")
+                        )
+                    }
                 }
             }
         }

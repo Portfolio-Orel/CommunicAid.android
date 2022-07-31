@@ -6,7 +6,7 @@ import com.orelzman.mymessages.domain.model.entities.UploadState
 import java.util.*
 
 interface PhoneCallsInteractor {
-    suspend fun createPhoneCalls(userId: String, phoneCalls: List<PhoneCall>)
+    suspend fun createPhoneCalls(phoneCalls: List<PhoneCall>)
     fun cachePhoneCall(phoneCall: PhoneCall)
     fun cachePhoneCalls(phoneCalls: List<PhoneCall>)
     fun addMessageSent(phoneCall: PhoneCall, messageSent: MessageSent)
