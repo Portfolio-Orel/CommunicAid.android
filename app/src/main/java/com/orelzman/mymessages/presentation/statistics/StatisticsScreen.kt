@@ -114,8 +114,10 @@ fun StatisticsScreen(
 @Composable
 private fun createBarItemList(list: List<Pair<String, Int>>, maxItems: Int = 5): List<BarItem> {
     val barItems = ArrayList<BarItem>()
-    list.forEachIndexed { index, it ->
-        if (index == maxItems) return@forEachIndexed
+    list
+        .sortedByDescending { it.second }
+        .forEachIndexed { index, it ->
+        if (index >= maxItems) return@forEachIndexed
         barItems.add(
             BarItem(
                 title = it.first,

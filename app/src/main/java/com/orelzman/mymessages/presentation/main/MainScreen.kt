@@ -2,13 +2,13 @@ package com.orelzman.mymessages.presentation.main
 
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +24,7 @@ import com.google.accompanist.flowlayout.SizeMode
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
+import com.orelzman.mymessages.presentation.components.scrollable_flowrow.ScrollDirection
 import com.orelzman.mymessages.presentation.components.scrollable_flowrow.ScrollableFlowRow
 import com.orelzman.mymessages.presentation.main.components.FolderView
 import com.orelzman.mymessages.presentation.main.components.MessageView
@@ -137,22 +138,26 @@ fun FoldersList(
     isSelected: (Folder) -> Boolean,
     modifier: Modifier = Modifier
 ) {
-    LazyRow(
-        modifier = modifier,
-        userScrollEnabled = true,
+    CompositionLocalProvider(
+        LocalOverscrollConfiguration provides
+                null
     ) {
-        items(
+        ScrollableFlowRow(
+            modifier = modifier,
+            scrollDirection = ScrollDirection.Horizontal
+        ) {
             folders
-        ) { folder ->
-            FolderView(
-                folder = folder,
-                isSelected = isSelected(folder),
-                modifier = Modifier
-                    .height(50.dp)
-                    .width(120.dp),
-                onClick = onClick,
-                onLongClick = onLongClick
-            )
+                .forEach { folder ->
+                    FolderView(
+                        folder = folder,
+                        isSelected = isSelected(folder),
+                        modifier = Modifier
+                            .height(50.dp)
+                            .width(120.dp),
+                        onClick = onClick,
+                        onLongClick = onLongClick
+                    )
+                }
         }
     }
 }

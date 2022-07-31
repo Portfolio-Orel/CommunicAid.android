@@ -21,6 +21,14 @@ interface FolderDao {
     fun getFolders(isActive: Boolean = true): Flow<List<Folder>>
 
     @Query("""
+        SELECT *
+        FROM Folder
+        Where isActive = :isActive
+    """)
+    fun getFoldersOnce(isActive: Boolean = true): List<Folder>
+
+
+    @Query("""
         SELECT Count(*)
         FROM Folder
     """)

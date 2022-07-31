@@ -7,8 +7,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.mymessages.domain.interactors.*
-import com.orelzman.mymessages.domain.model.entities.*
 import com.orelzman.mymessages.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
+import com.orelzman.mymessages.domain.model.entities.*
 import com.orelzman.mymessages.util.extension.copyToClipboard
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,29 +43,17 @@ class MainViewModel @Inject constructor(
     }
 
     private fun getMessagesInFolder() {
-        CoroutineScope(Dispatchers.Main).launch {
-            messageInFolderInteractor.getMessagesInFolders().collectLatest {
-                state = state.copy(messagesInFolders = it)
-            }
-        }
+        state = state.copy(messagesInFolders = messageInFolderInteractor.getMessagesInFoldersOnce())
     }
 
     private fun getMessages() {
-        CoroutineScope(Dispatchers.Main).launch {
-            messageInteractor.getMessages().collectLatest {
-                state = state.copy(messages = it)
-            }
-        }
+        state = state.copy(messages = messageInteractor.getMessagesOnce().sortedBy { it.timesUsed })
     }
 
-    private fun getFolders() { // ToDo: Consider removed flow because the viewmodel rebuilds everytime anyway.
-        CoroutineScope(Dispatchers.Main).launch {
-            folderInteractor.getFolders().collectLatest {
-                if (state.selectedFolder == null && it.isNotEmpty()) {
-                    state = state.copy(folders = it.sortedByDescending { folder -> folder.timesUsed }, selectedFolder = it.maxByOrNull { folder -> folder.timesUsed }!!)
-                }
-            }
-        }
+    private fun getFolders() {
+        val folders = folderInteractor.getFoldersOnce()
+        state = state.copy(selectedFolder = folders.maxByOrNull { it.timesUsed })
+        state = state.copy(folders = folderInteractor.getFoldersOnce().sortedBy { it.timesUsed })
     }
 
     fun getFoldersMessages(): List<Message> {
@@ -78,16 +66,16 @@ class MainViewModel @Inject constructor(
     fun onMessageClick(message: Message) {
         val phoneCall = state.activeCall
         if (phoneCall != null) {
-                val sendMessageJob = viewModelScope.async {
-                    phoneCallsInteractor.addMessageSent(
-                        phoneCall,
-                        MessageSent(sentAt = Date().time, messageId = message.id)
-                    )
-                    whatsappInteractor.sendMessage(
-                        number = phoneCall.number,
-                        message = message.body
-                    )
-                }
+            val sendMessageJob = viewModelScope.async {
+                phoneCallsInteractor.addMessageSent(
+                    phoneCall,
+                    MessageSent(sentAt = Date().time, messageId = message.id)
+                )
+                whatsappInteractor.sendMessage(
+                    number = phoneCall.number,
+                    message = message.body
+                )
+            }
             val updateTimesUsedJob = viewModelScope.async {
                 messageInteractor.increaseTimesUsed(message.id)
             }
@@ -163,7 +151,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun observeNumberInBackground() {
-        CoroutineScope(Dispatchers.Main).launch{
+        CoroutineScope(Dispatchers.Main).launch {
             phoneCallManagerInteractor.callsDataFlow.collectLatest {
                 state = state.copy(callInBackground = it.callInTheBackground?.toPhoneCall())
             }

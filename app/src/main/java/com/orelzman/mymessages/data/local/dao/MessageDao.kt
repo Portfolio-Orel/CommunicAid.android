@@ -16,7 +16,13 @@ interface MessageDao {
         SELECT *
         FROM Message
     """)
+
     fun getMessages(): Flow<List<Message>>
+    @Query("""
+        SELECT *
+        FROM Message
+    """)
+    fun getMessagesOnce(): List<Message>
 
     @Query("""
         SELECT Count(*)
