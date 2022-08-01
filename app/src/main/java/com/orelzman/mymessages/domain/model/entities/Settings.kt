@@ -11,6 +11,7 @@ data class Settings(
 
 enum class SettingsKeys(val keyInServer: String) {
     CallsUpdateAt("calls_update_at"),
+    IsDataInit("is_data_init"),
     LoginLimitExceeded("login_limit_exceeded");
 
     companion object {
@@ -20,6 +21,5 @@ enum class SettingsKeys(val keyInServer: String) {
             } else {
                 null
             }
-
     }
 }

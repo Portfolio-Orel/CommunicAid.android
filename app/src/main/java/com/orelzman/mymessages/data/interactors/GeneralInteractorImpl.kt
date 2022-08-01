@@ -2,6 +2,8 @@ package com.orelzman.mymessages.data.interactors
 
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.domain.interactors.*
+import com.orelzman.mymessages.domain.model.entities.Settings
+import com.orelzman.mymessages.domain.model.entities.SettingsKeys
 import javax.inject.Inject
 
 class GeneralInteractorImpl @Inject constructor(
@@ -26,6 +28,7 @@ class GeneralInteractorImpl @Inject constructor(
         deletedCallsInteractor.init()
         DataSourceCallsInteractor.init()
         settingsInteractor.init()
+        settingsInteractor.saveSettings(Settings(SettingsKeys.IsDataInit, true.toString()))
     }
 
 }
