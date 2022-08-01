@@ -59,7 +59,7 @@ class AuthInteractorImpl @Inject constructor(
     }
 
     override fun getUser(): User? = userInteractor.get()
-    override fun getUserFlow(): Flow<User?> = userInteractor.getFlow()
+    override fun isUserAuthenticated(): Flow<User?> = userInteractor.getFlow()
 
 
     @Throws

@@ -13,6 +13,9 @@ interface SettingsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(settings: Settings)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(settings: List<Settings>)
+
     @Query("""
         SELECT *
         FROM Settings
@@ -25,7 +28,4 @@ interface SettingsDao {
         FROM Settings
     """)
     fun getAll(): List<Settings>
-
-    @Insert
-    fun insert(settings: List<Settings>)
 }
