@@ -29,6 +29,7 @@ import com.orelzman.mymessages.presentation.details_folder.DetailsFolderScreen
 import com.orelzman.mymessages.presentation.details_message.DetailsMessageScreen
 import com.orelzman.mymessages.presentation.login.LoginScreen
 import com.orelzman.mymessages.presentation.main.MainScreen
+import com.orelzman.mymessages.presentation.my_messages.MyMessagesViewModel
 import com.orelzman.mymessages.presentation.statistics.StatisticsScreen
 import com.orelzman.mymessages.presentation.unhandled_calls.UnhandledCallsScreen
 import com.orelzman.mymessages.util.Screen
@@ -40,9 +41,12 @@ import com.orelzman.mymessages.util.Screen
 fun MyMessagesApp(
     viewModel: MyMessagesViewModel = hiltViewModel()
 ) {
+
+    val state = viewModel.state
     val navHostController = rememberNavController()
     val navController = navHostController as NavController
-    if(viewModel.isLoading) {
+
+    if(state.isLoading) {
         Box(
             modifier = Modifier
                 .fillMaxSize(),
@@ -57,7 +61,7 @@ fun MyMessagesApp(
             )
         }
     } else {
-        if (!viewModel.isAuthorized) {
+        if (!state.isAuthorized) {
             LoginScreen()
         } else {
             CustomScaffold(
