@@ -42,13 +42,8 @@ class MessageInFolderInteractorImpl @Inject constructor(
         db.getWithMessageId(messageId)
 
     override suspend fun update(messageId: String, oldFolderId: String, newFolderId: String) {
-        db.get(messageId, oldFolderId)
-        db.update(
-            MessageInFolder(
-                messageId = messageId,
-                folderId = newFolderId
-            )
-        )
+        db.delete(MessageInFolder(messageId = messageId, folderId = oldFolderId))
+        db.insert(MessageInFolder(messageId = messageId, folderId = newFolderId))
     }
 
 

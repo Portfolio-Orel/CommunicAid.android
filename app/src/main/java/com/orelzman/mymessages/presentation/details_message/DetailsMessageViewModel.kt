@@ -89,7 +89,11 @@ class DetailsMessageViewModel @Inject constructor(
     fun deleteMessage() {
         if (state.isLoadingDelete) return
         if (state.isEdit && state.messageId != null) {
-            state = state.copy(isLoadingDelete = true, eventMessage = null, error = R.string.empty_string)
+            state = state.copy(
+                isLoadingDelete = true,
+                eventMessage = null,
+                error = R.string.empty_string
+            )
             viewModelScope.launch(Dispatchers.IO) {
                 state = try {
                     val folderId = messageInFolderInteractor.getMessageFolderId(state.messageId!!)
@@ -149,7 +153,7 @@ class DetailsMessageViewModel @Inject constructor(
                                 isLoading = false,
                                 eventMessage = EventsMessages.MessageUpdated
                             )
-                    } else {
+                    } else { // Save message
                         state.selectedFolder?.id?.let { folderId ->
                             messageInteractor.createMessage(
                                 message = message,
@@ -160,9 +164,9 @@ class DetailsMessageViewModel @Inject constructor(
                                     isLoading = false,
                                     eventMessage = EventsMessages.MessageSaved
                                 )
+                            clearValues()
                         }
                     }
-                    clearValues()
                 } catch (e: Exception) {
                     e.log(state)
                     state =
