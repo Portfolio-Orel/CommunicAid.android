@@ -24,8 +24,8 @@ class GeneralInteractorImpl @Inject constructor(
     override suspend fun initData() {
         clearAllDatabases()
         messageInteractor.initWithMessagesInFolders()
-        folderInteractor.init()
         deletedCallsInteractor.init()
+        folderInteractor.init()
         DataSourceCallsInteractor.init()
         settingsInteractor.init()
         settingsInteractor.saveSettings(Settings(SettingsKeys.IsDataInit, true.toString()))

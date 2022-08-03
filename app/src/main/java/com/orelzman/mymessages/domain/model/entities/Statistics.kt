@@ -4,7 +4,8 @@ import androidx.annotation.StringRes
 import androidx.room.Entity
 import com.orelzman.mymessages.R
 
-@Entity(primaryKeys = ["key", "value"])
+// It is only key because otherwise the data is stacked and we get 5 rows with key = 'IncomingCount' etc.
+@Entity(primaryKeys = ["key"])
 data class Statistics(
     val key: StatisticsTypes,
     val value: Any
