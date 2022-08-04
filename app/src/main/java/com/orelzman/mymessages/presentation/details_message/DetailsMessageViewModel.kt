@@ -155,7 +155,7 @@ class DetailsMessageViewModel @Inject constructor(
                                 isLoading = false,
                                 eventMessage = EventsMessages.MessageUpdated
                             )
-                    } else {
+                    } else { // Save message
                         state.selectedFolder?.id?.let { folderId ->
                             messageInteractor.createMessage(
                                 message = message,
@@ -166,9 +166,9 @@ class DetailsMessageViewModel @Inject constructor(
                                     isLoading = false,
                                     eventMessage = EventsMessages.MessageSaved
                                 )
+                            clearValues()
                         }
                     }
-                    clearValues()
                 } catch (e: Exception) {
                     e.log(state)
                     state =
