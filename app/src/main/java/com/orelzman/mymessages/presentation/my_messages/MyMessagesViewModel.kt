@@ -28,10 +28,10 @@ class MyMessagesViewModel @Inject constructor(
     init {
 
         viewModelScope.launch {
-            authInteractor.isUserAuthenticated().safeCollectLatest({ loadingData = false }) {
+            authInteractor.isUserAuthenticated().safeCollectLatest({ loadingData = false }) { user ->
                 // will not kill the collectLatest
                 supervisorScope {
-                    val isAuthorized = if (it == null || it.token == "" || it.userId == "") {
+                    val isAuthorized = if (!authInteractor.isAuthorized(user)) {
                         generalInteractor.clearAllDatabases()
                         false
                     } else {

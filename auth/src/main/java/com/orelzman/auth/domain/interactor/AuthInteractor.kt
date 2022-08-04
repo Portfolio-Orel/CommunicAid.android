@@ -35,7 +35,7 @@ interface AuthInteractor {
 
     fun getUser(): User?
     fun isUserAuthenticated(): Flow<User?>
-
+    fun isAuthorized(user: User?): Boolean
     /**
      * Checks if the credentials entered are valid
      * according to the policy. TODO
