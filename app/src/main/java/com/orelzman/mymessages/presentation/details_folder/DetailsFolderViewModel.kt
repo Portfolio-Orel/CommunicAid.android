@@ -11,6 +11,7 @@ import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,14 +38,58 @@ class DetailsFolderViewModel @Inject constructor(
     fun deleteFolder() {
         state.folder?.let {
             with(it) {
-                val folder = Folder(
-                    title = title,
-                    isActive = false,
-                    timesUsed = timesUsed,
-                    position = position,
-                    id = id
-                )
-                saveFolder(folder = folder)
+                val deleteFolderJob = viewModelScope.async {
+                    state = state.copy(isLoadingDelete = true)
+                    val folder = Folder(
+                        title = title,
+                        isActive = false,
+                        timesUsed = timesUsed,
+                        position = position,
+                        id = id
+                    )
+                    folderInteractor.deleteFolder(folder)
+                    state = state.copy(
+                        isLoadingDelete = false,
+                        eventFolder = EventsFolder.FolderDeleted
+                    )
+                }
+                viewModelScope.launch(Dispatchers.Main) {
+                    try {
+                        deleteFolderJob.await()
+                    } catch (e: Exception) {
+                        e.log()
+                        state = state.copy(
+                            isLoadingDelete = false,
+                            eventFolder = EventsFolder.Error
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun undoDelete() {
+        state.folder?.let {
+            with(it) {
+                val undoDeleteJob = viewModelScope.async {
+                    state = state.copy(isLoadingDelete = true)
+                    val folder = Folder(
+                        title = title,
+                        isActive = true,
+                        timesUsed = timesUsed,
+                        position = position,
+                        id = id
+                    )
+                    folderInteractor.updateFolder(folder)
+                    state = state.copy(eventFolder = EventsFolder.FolderRestored)
+                }
+                viewModelScope.launch(Dispatchers.Main) {
+                    try {
+                        undoDeleteJob.await()
+                    } catch (e: Exception) {
+                        e.log()
+                    }
+                }
             }
         }
     }
@@ -83,12 +128,18 @@ class DetailsFolderViewModel @Inject constructor(
                         )
                     }
                 }.invokeOnCompletion {
-                    state = state.copy(isLoading = false, isFolderAdded = it == null)
-                    it?.log()
+                    if (it != null) {
+                        state = state.copy(
+                            isLoading = false,
+                            eventFolder = if (state.isEdit) EventsFolder.FolderUpdated else EventsFolder.FolderSaved
+                        )
+                    } else {
+                        it?.log()
+                    }
                 }
             } catch (e: Exception) {
                 e.log(state)
-                state = state.copy(isLoading = false, isFolderAdded = false)
+                state = state.copy(isLoading = false, eventFolder = EventsFolder.Error)
             }
         } else {
             val emptyFields = ArrayList<FolderFields>()

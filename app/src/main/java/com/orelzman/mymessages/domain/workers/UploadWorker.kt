@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.domain.interactors.CallLogInteractor
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
@@ -23,7 +22,6 @@ import java.util.*
 class UploadWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val authInteractor: AuthInteractor,
     private val phoneCallsInteractor: PhoneCallsInteractor,
     private val settingsInteractor: SettingsInteractor,
     private val callLogInteractor: CallLogInteractor,
@@ -39,6 +37,9 @@ class UploadWorker @AssistedInject constructor(
         return Result.success()
     }
 
+    /**
+     * Uploads calls that were registered and ones that were not but are in the call log
+     */
     private fun uploadCalls() {
         var phoneCalls = emptyList<PhoneCall>()
         val uploadJob = CoroutineScope(Dispatchers.IO).async {
@@ -46,7 +47,10 @@ class UploadWorker @AssistedInject constructor(
             phoneCalls = phoneCallsInteractor
                 .getAll()
                 .distinctBy { it.startDate }
-                .filter { it.uploadState == UploadState.NotUploaded }
+                .filter {
+                    it.uploadState == UploadState.NotUploaded
+                            || it.uploadState == UploadState.BeingUploaded
+                }
                 .appendAll(checkCallsNotRecorded())
                 .mapNotNull {
                     it.setUploadState(UploadState.BeingUploaded)
@@ -66,9 +70,10 @@ class UploadWorker @AssistedInject constructor(
                 }
             }
         }
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(SupervisorJob()).launch {
             try {
                 uploadJob.await()
+                Log.v("Upload Worker done.")
             } catch (e: Exception) {
                 e.log(phoneCalls)
                 Log.e("Worker failed, reason: $e")
@@ -78,7 +83,6 @@ class UploadWorker @AssistedInject constructor(
                         uploadState = UploadState.NotUploaded
                     )
                 }
-                Log.v("Upload Worker done.")
             }
         }
     }

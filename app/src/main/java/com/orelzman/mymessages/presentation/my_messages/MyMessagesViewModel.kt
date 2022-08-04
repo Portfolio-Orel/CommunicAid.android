@@ -10,10 +10,9 @@ import com.orelzman.mymessages.domain.interactors.GeneralInteractor
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.model.entities.SettingsKeys
 import com.orelzman.mymessages.util.extension.log
+import com.orelzman.mymessages.util.extension.safeCollectLatest
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,31 +26,38 @@ class MyMessagesViewModel @Inject constructor(
     private var loadingData: Boolean = false
 
     init {
-        viewModelScope.launch(Dispatchers.Main) {
-            authInteractor.isUserAuthenticated().collectLatest {
-                val isAuthorized = if (it == null || it.token == "" || it.userId == "") {
-                    generalInteractor.clearAllDatabases()
-                    false
-                } else {
-                    try {
-                        if(loadingData) { // The data is being loaded and will return true once it's done
+
+        viewModelScope.launch {
+            authInteractor.isUserAuthenticated().safeCollectLatest({ loadingData = false }) {
+                // will not kill the collectLatest
+                supervisorScope {
+                    val isAuthorized = if (it == null || it.token == "" || it.userId == "") {
+                        generalInteractor.clearAllDatabases()
+                        false
+                    } else {
+                        if (loadingData) { // The data is being loaded and will return true once it's done
                             false
                         } else {
                             if (!isDataInit()) {
                                 loadingData = true
                                 state = state.copy(isLoading = true)
-                                generalInteractor.initData()
-                                loadingData = false
+                                withContext(NonCancellable) {
+                                    try {
+                                        generalInteractor.initData()
+                                        loadingData = false
+                                    } catch (ex: Exception) {
+                                        ex.log()
+                                        authInteractor.signOut()
+                                        loadingData = false
+                                        false
+                                    }
+                                }
                             }
                             true
                         }
-                    } catch (ex: Exception) {
-                        ex.log()
-                        authInteractor.signOut()
-                        false
                     }
+                    state = state.copy(isLoading = false, isAuthorized = isAuthorized)
                 }
-                state = state.copy(isLoading = false, isAuthorized = isAuthorized)
             }
         }
     }
@@ -59,7 +65,6 @@ class MyMessagesViewModel @Inject constructor(
     private fun isDataInit(): Boolean =
         settingsInteractor.getSettings(SettingsKeys.IsDataInit)?.value?.toBooleanStrictOrNull()
             ?: false
-
 
     fun signOut() = viewModelScope.launch(Dispatchers.Main) {
         try {

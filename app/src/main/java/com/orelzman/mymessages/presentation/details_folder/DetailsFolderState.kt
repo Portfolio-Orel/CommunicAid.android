@@ -6,7 +6,10 @@ import com.orelzman.mymessages.domain.model.entities.Loggable
 data class DetailsFolderState(
     val title: String = "",
     val isLoading: Boolean = false,
-    val isFolderAdded: Boolean = false,
+    val isLoadingDelete: Boolean = false,
+
+    val eventFolder: EventsFolder? = null,
+
     val folder: Folder? = null,
     val isEdit: Boolean = false,
     val emptyFields: List<FolderFields> = emptyList(),
@@ -18,7 +21,7 @@ data class DetailsFolderState(
         get() = mapOf(
             "title" to title,
             "is_loading" to isLoading,
-            "is_folder_added" to isFolderAdded,
+            "event_folder" to (eventFolder?.name ?: "event_folder"),
             "folder" to (folder?.data ?: emptyMap()),
             "is_edit" to isEdit,
             "is_ready_for_save" to isReadyForSave,
@@ -28,4 +31,12 @@ data class DetailsFolderState(
 
 enum class FolderFields {
     Title
+}
+
+enum class EventsFolder {
+        FolderSaved,
+        FolderUpdated,
+        FolderDeleted,
+        FolderRestored,
+        Error;
 }

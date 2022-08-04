@@ -21,6 +21,7 @@ import androidx.navigation.NavController
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.presentation.components.util.SnackbarController
+import com.orelzman.mymessages.presentation.delete_button.DeleteButton
 import com.orelzman.mymessages.presentation.main.components.ActionButton
 
 @Composable
@@ -61,7 +62,6 @@ fun DetailsMessageScreen(
                 } else {
                     navController.navigateUp()
                 }
-
             }
             EventsMessages.MessageRestored -> {
                 Toast.makeText(
@@ -143,7 +143,7 @@ fun DetailsMessageScreen(
             selected = state.selectedFolder ?: Folder()
         )
 
-        DeleteButton(isLoading = state.isLoadingDelete) {
+        DeleteButton(isLoading = state.isLoadingDelete, deleteText = R.string.delete_message) {
             viewModel.deleteMessage()
         }
 
@@ -232,30 +232,5 @@ fun Dropdown(
                     expanded = false
                 })
         }
-    }
-}
-
-@Composable
-fun DeleteButton(
-    isLoading: Boolean,
-    onDelete: () -> Unit
-) {
-    if (isLoading) {
-        CircularProgressIndicator(
-            modifier = Modifier
-                .height(16.dp)
-                .width(16.dp),
-            strokeWidth = 2.dp,
-            color = MaterialTheme.colorScheme.errorContainer,
-        )
-    } else {
-        Text(
-            modifier = Modifier.clickable {
-                onDelete()
-            },
-            text = stringResource(R.string.delete_message),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.errorContainer
-        )
     }
 }

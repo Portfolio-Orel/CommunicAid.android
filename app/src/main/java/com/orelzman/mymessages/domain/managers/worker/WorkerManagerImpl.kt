@@ -14,11 +14,15 @@ class WorkerManagerImpl @Inject constructor(
     override fun startWorker(type: WorkerType) {
         when (type) {
             WorkerType.UploadCalls -> startPeriodicUploadWorker()
+            WorkerType.UploadCallsOnce -> startOnetimeUploadWorker()
         }
     }
 
     private fun startPeriodicUploadWorker() =
         queuePeriodicWorker(worker = buildPeriodicUploadWorker(), type = WorkerType.UploadCalls)
+
+    private fun startOnetimeUploadWorker() =
+        queueOneTimeWorker(worker = buildOneTimeUploadWorker(), type = WorkerType.UploadCallsOnce)
 
 
     private fun queuePeriodicWorker(

@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StatisticsViewModel @Inject constructor(
-    private val statisticsInteractor: StatisticsInteractor
+    private val statisticsInteractor: StatisticsInteractor,
 ) : ViewModel() {
     var state by mutableStateOf(StatisticsState())
 
