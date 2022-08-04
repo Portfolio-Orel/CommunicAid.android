@@ -60,6 +60,7 @@ class AuthInteractorImpl @Inject constructor(
 
     override fun getUser(): User? = userInteractor.get()
     override fun isUserAuthenticated(): Flow<User?> = userInteractor.getFlow()
+    override fun isAuthorized(user: User?): Boolean = user != null && user.token != "" && user.userId != ""
 
 
     @Throws
@@ -154,7 +155,8 @@ class AuthInteractorImpl @Inject constructor(
         }
     }
 
-    override suspend fun refreshToken() {
+    override suspend fun refreshToken(@RawRes configFileResourceId: Int?) {
+        init(configFileResourceId)
         val session = Amplify.Auth.fetchAuthSession()
         userInteractor.get()?.let {
             val user = User(

@@ -1,9 +1,7 @@
 package com.orelzman.mymessages.presentation.details_message
 
 import android.widget.Toast
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -100,49 +98,56 @@ fun DetailsMessageScreen(
                 onClick = { navController.navigateUp() },
             )
         }
-
-        OutlinedTextField(
-            value = state.title,
-            onValueChange = { viewModel.setTitle(it) },
+        Column(
             modifier = Modifier
-                .fillMaxWidth(),
-            placeholder = {
-                Text(text = stringResource(R.string.title))
-            },
-            isError = state.emptyFields.contains(MessageFields.Body)
-        )
-
-        Column {
+                .fillMaxHeight(0.9f)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(18.dp)
+        ) {
             OutlinedTextField(
-                value = state.shortTitle,
-                onValueChange = { viewModel.setShortTitle(it) },
+                value = state.title,
+                onValueChange = { viewModel.setTitle(it) },
                 modifier = Modifier
                     .fillMaxWidth(),
                 placeholder = {
-                    Text(text = stringResource(R.string.message_symbol))
+                    Text(text = stringResource(R.string.title))
                 },
                 isError = state.emptyFields.contains(MessageFields.Body)
             )
+
+            Column {
+                OutlinedTextField(
+                    value = state.shortTitle,
+                    onValueChange = { viewModel.setShortTitle(it) },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    placeholder = {
+                        Text(text = stringResource(R.string.message_symbol))
+                    },
+                    isError = state.emptyFields.contains(MessageFields.Body)
+                )
+            }
+
+
+            Dropdown(
+                folders = state.folders, onSelected = { viewModel.setSelectedFolder(it) },
+                isError = state.emptyFields.contains(MessageFields.Folder),
+                selected = state.selectedFolder ?: Folder()
+            )
+
+            OutlinedTextField(
+                value = state.body,
+                onValueChange = { viewModel.setBody(it) },
+                modifier = Modifier
+                    .fillMaxWidth(),
+                placeholder = {
+                    Text(text = stringResource(R.string.message))
+                },
+                maxLines = 7,
+                isError = state.emptyFields.contains(MessageFields.Body)
+            )
         }
-
-        OutlinedTextField(
-            value = state.body,
-            onValueChange = { viewModel.setBody(it) },
-            modifier = Modifier
-                .fillMaxWidth(),
-            placeholder = {
-                Text(text = stringResource(R.string.message))
-            },
-            maxLines = 7,
-            isError = state.emptyFields.contains(MessageFields.Body)
-        )
-
-        Dropdown(
-            folders = state.folders, onSelected = { viewModel.setSelectedFolder(it) },
-            isError = state.emptyFields.contains(MessageFields.Folder),
-            selected = state.selectedFolder ?: Folder()
-        )
-
+        Spacer(modifier = Modifier.weight(1f))
         DeleteButton(isLoading = state.isLoadingDelete, deleteText = R.string.delete_message) {
             viewModel.deleteMessage()
         }

@@ -64,10 +64,10 @@ object AppModule {
     }
 
     @Provides
-    fun provideOkHttpClient(authIneractor: AuthInteractor): OkHttpClient =
+    fun provideOkHttpClient(authIneractor: AuthInteractor, @AuthConfigFile configFileResourceId: Int?): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor(authIneractor))
-            .addInterceptor(ErrorInterceptor(authIneractor))
+            .addInterceptor(ErrorInterceptor(authIneractor, configFileResourceId))
             .addInterceptor(LogInterceptor())
             .connectTimeout(30L, TimeUnit.SECONDS)
             .readTimeout(30L, TimeUnit.SECONDS)

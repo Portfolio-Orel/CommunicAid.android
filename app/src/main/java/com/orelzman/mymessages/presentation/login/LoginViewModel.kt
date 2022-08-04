@@ -40,7 +40,7 @@ class LoginViewModel @Inject constructor(
                 var isAuthorized = false
                 val user = interactor.getUser()
 
-                if (user != null) {
+                if (interactor.isAuthorized(user)) {
                     isAuthorized = true
                 }
                 if (isAuthorized) {
