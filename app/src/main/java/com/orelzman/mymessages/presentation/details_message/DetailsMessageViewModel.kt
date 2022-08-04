@@ -119,8 +119,10 @@ class DetailsMessageViewModel @Inject constructor(
             if (state.messageDeletedFolderId == null) return@let
             viewModelScope.launch(Dispatchers.IO) {
                 state = try {
-                    messageInteractor.createMessage(
-                        message = it, folderId = state.messageDeletedFolderId!!
+                    messageInteractor.updateMessage(
+                        message = it,
+                        oldFolderId = state.messageDeletedFolderId,
+                        newFolderId = state.messageDeletedFolderId
                     )
                     state.copy(
                         isLoading = false,

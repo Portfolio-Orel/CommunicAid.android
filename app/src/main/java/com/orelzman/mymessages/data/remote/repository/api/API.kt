@@ -60,8 +60,8 @@ interface API {
         @Path("key") key: String,
     ): Response<List<SettingsResponse>>
 
-    @PATCH("/messagesInFolders")
-    suspend fun deleteMessagesInFolder(@Field("folder_id") folderId: String)
+    @DELETE("/messagesInFolders/{folder_id}")
+    suspend fun deleteMessagesInFolder(@Path("folder_id") folderId: String)
 
 
     // Statistics

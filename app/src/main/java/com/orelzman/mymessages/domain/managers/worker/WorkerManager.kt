@@ -5,5 +5,6 @@ interface WorkerManager {
 }
 
 enum class WorkerType {
-    UploadCalls;
+    UploadCalls,
+    UploadCallsOnce;
 }

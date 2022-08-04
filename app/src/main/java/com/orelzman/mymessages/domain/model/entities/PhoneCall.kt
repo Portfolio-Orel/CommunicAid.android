@@ -74,7 +74,7 @@ data class PhoneCall(
 
 fun List<PhoneCall>.createPhoneCallBodyList(): List<CreatePhoneCallBody> {
     val array = ArrayList<CreatePhoneCallBody>()
-    forEach { it ->
+    forEach {
         with(it) {
             array.add(
                 CreatePhoneCallBody(

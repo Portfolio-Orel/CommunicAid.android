@@ -3,6 +3,8 @@ package com.orelzman.mymessages.presentation.details_folder
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -13,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.orelzman.mymessages.R
+import com.orelzman.mymessages.presentation.components.util.SnackbarController
+import com.orelzman.mymessages.presentation.delete_button.DeleteButton
 import com.orelzman.mymessages.presentation.main.components.ActionButton
 
 @Composable
@@ -23,17 +27,48 @@ fun DetailsFolderScreen(
 ) {
     val state = viewModel.state
     val context = LocalContext.current
+    val snackbarController = SnackbarController.getInstance()
 
     LaunchedEffect(key1 = folderId) {
         viewModel.setEdit(folderId)
     }
-    LaunchedEffect(key1 = state.isFolderAdded) {
-        if (state.isFolderAdded) {
-            Toast.makeText(
+    LaunchedEffect(key1 = state.eventFolder) {
+        when(state.eventFolder) {
+            EventsFolder.FolderSaved -> {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.folder_saved_successfully),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+            EventsFolder.FolderUpdated -> Toast.makeText(
                 context,
-                context.getString(R.string.folder_saved_successfully),
+                context.getString(R.string.folder_updated_successfully),
                 Toast.LENGTH_LONG
             ).show()
+            EventsFolder.FolderDeleted -> {
+                val result = snackbarController.showSnackbar(
+                    message = context.getString(R.string.folder_deleted_successfully),
+                    actionLabel = context.getString(R.string.cancel),
+                    withDismissAction = true,
+                    duration = SnackbarDuration.Short
+                )
+                if (result == SnackbarResult.ActionPerformed) {
+                    viewModel.undoDelete()
+                } else {
+                    navController.navigateUp()
+                }
+            }
+            EventsFolder.FolderRestored -> {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.folder_restored_successfully),
+                    Toast.LENGTH_LONG
+                ).show()
+                navController.navigateUp()
+            }
+            else -> {}
         }
     }
     Column(
@@ -71,5 +106,8 @@ fun DetailsFolderScreen(
             },
             isError = state.emptyFields.contains(FolderFields.Title)
         )
+        DeleteButton(isLoading = state.isLoadingDelete, deleteText = R.string.delete_folder) {
+            viewModel.deleteFolder()
+        }
     }
 }

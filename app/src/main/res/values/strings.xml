@@ -67,4 +67,8 @@
     <string name="total">סה״כ</string>
     <string name="copied_to_clipboard">ההודעה הועתקה ללוח</string>
     <string name="error_fail_to_save_message">מחיקת ההודעה נכשלה.. אנחנו בודקים את זה</string>
+    <string name="delete_folder">מחק תיקייה</string>
+    <string name="folder_deleted_successfully">התיקייה נמחקה בהצלחה!</string>
+    <string name="folder_updated_successfully">התיקייה עודכנה בהצלחה!</string>
+    <string name="folder_restored_successfully">התיקייה שוחזרה בהצלחה</string>
 </resources>
