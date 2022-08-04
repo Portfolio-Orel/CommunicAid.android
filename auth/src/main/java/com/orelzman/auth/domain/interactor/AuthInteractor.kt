@@ -21,7 +21,7 @@ interface AuthInteractor {
         isSaveCredentials: Boolean = false
     )
 
-    suspend fun refreshToken()
+    suspend fun refreshToken(@RawRes configFileResourceId: Int? = null)
 
     /**
      * Used after sign up.

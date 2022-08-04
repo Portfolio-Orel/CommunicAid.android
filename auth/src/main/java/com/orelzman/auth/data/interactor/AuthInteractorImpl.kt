@@ -154,7 +154,8 @@ class AuthInteractorImpl @Inject constructor(
         }
     }
 
-    override suspend fun refreshToken() {
+    override suspend fun refreshToken(@RawRes configFileResourceId: Int?) {
+        init(configFileResourceId)
         val session = Amplify.Auth.fetchAuthSession()
         userInteractor.get()?.let {
             val user = User(
