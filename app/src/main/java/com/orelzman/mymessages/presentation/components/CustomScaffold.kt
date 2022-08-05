@@ -6,6 +6,7 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.navigation.NavHostController
 import com.orelzman.mymessages.presentation.components.util.SnackbarController
 
@@ -19,9 +20,13 @@ fun CustomScaffold(
     floatingActionButtonPosition: FabPosition = FabPosition.End,
     content: @Composable (PaddingValues) -> Unit,
 ) {
+    val configuration = LocalConfiguration.current
 
+    val screenHeight = configuration.screenHeightDp
+
+    if(screenHeight > 300) {
     Scaffold(
-        topBar = topBar,
+        topBar = topBar ,
         bottomBar = { bottomBar(navController) },
         content = content,
         floatingActionButton = floatingActionButton,
@@ -30,4 +35,9 @@ fun CustomScaffold(
             SnackbarHost(hostState = SnackbarController.getInstance().snackbarHostState.value)
         }   
     )
+    } else {
+        Scaffold(
+            content = content,
+        )
+    }
 }
