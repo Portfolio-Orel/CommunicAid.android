@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+
 package com.orelzman.auth.data.interactor
 
 import android.app.Activity
@@ -5,6 +7,7 @@ import android.content.Context
 import android.util.Log
 import androidx.annotation.RawRes
 import com.amplifyframework.AmplifyException
+import com.amplifyframework.auth.AuthChannelEventName
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.AuthProvider
 import com.amplifyframework.auth.AuthUserAttributeKey
@@ -12,13 +15,17 @@ import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
 import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.AmplifyConfiguration
+import com.amplifyframework.core.InitializationStatus
+import com.amplifyframework.hub.HubChannel
 import com.amplifyframework.kotlin.core.Amplify
 import com.orelzman.auth.domain.exception.*
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.auth.domain.interactor.UserInteractor
 import com.orelzman.auth.domain.model.User
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 
@@ -43,6 +50,7 @@ class AuthInteractorImpl @Inject constructor(
                 Amplify.configure(context)
             }
             isConfigured = true
+            collectState()
             Log.v(TAG, "AWS configured")
             return
         } catch (e: AmplifyException) {
@@ -79,6 +87,7 @@ class AuthInteractorImpl @Inject constructor(
             when (e) {
                 is AuthException.UserNotConfirmedException -> throw UserNotConfirmedException()
                 is AuthException.UsernameExistsException -> throw UsernameExistsException()
+                is AuthException.InvalidPasswordException -> throw InvalidPasswordException()
                 else -> throw e
             }
         }
@@ -86,14 +95,16 @@ class AuthInteractorImpl @Inject constructor(
 
 
     @Throws
-    override suspend fun confirmUser(username: String, code: String) {
+    override suspend fun confirmUser(username: String, password: String, code: String) {
         try {
             val result = Amplify.Auth.confirmSignUp(username, code)
+            Amplify.Auth.signIn(username = username, password = password)
             if (result.isSignUpComplete) {
                 userSignInSuccessfully()
                 Log.i(TAG, "Signup confirmed")
             } else {
                 Log.i(TAG, "Signup confirmation not yet complete")
+                throw UnknownRegisterException()
             }
         } catch (e: AuthException) {
             when (e) {
@@ -103,7 +114,6 @@ class AuthInteractorImpl @Inject constructor(
                 }
                 is AuthException.CodeExpiredException -> throw CodeExpiredException()
                 is AuthException.NotAuthorizedException -> throw NotAuthorizedException()
-
                 else -> throw e
             }
         }
@@ -182,6 +192,28 @@ class AuthInteractorImpl @Inject constructor(
             throw LimitExceededException()
         }
 
+    private suspend fun collectState() {
+        CoroutineScope(SupervisorJob()).launch {
+            Amplify.Hub.subscribe(HubChannel.AUTH).collectLatest {
+                when (it.name) {
+                    InitializationStatus.SUCCEEDED.toString() ->
+                        Log.i(TAG, "Auth successfully initialized")
+                    InitializationStatus.FAILED.toString() ->
+                        Log.i(TAG, "Auth failed to succeed")
+                    else -> when (AuthChannelEventName.valueOf(it.name)) {
+                        AuthChannelEventName.SIGNED_IN ->
+                            Log.i(TAG, "Auth just became signed in.")
+                        AuthChannelEventName.SIGNED_OUT ->
+                            Log.i(TAG, "Auth just became signed out.")
+                        AuthChannelEventName.SESSION_EXPIRED ->
+                            Log.i(TAG, "Auth session just expired.")
+                        AuthChannelEventName.USER_DELETED ->
+                            Log.i(TAG, "User has been deleted.")
+                    }
+                }
+            }
+        }
+    }
 
     private suspend fun userSignInSuccessfully() {
         setUser()

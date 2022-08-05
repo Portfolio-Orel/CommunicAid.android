@@ -61,7 +61,7 @@ fun MyMessagesApp(
                         .height(48.dp)
                         .width(48.dp),
                     strokeWidth = 2.dp,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         } else {

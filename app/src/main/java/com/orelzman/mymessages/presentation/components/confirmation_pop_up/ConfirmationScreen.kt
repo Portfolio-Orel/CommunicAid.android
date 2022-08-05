@@ -21,6 +21,7 @@ import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 @Composable
 fun ConfirmationScreen(
     username: String,
+    password: String,
     onDismiss: () -> Unit,
     onUserConfirmed: () -> Unit,
     modifier: Modifier = Modifier,
@@ -38,28 +39,36 @@ fun ConfirmationScreen(
         Card(
             modifier = Modifier
                 .padding(16.dp)
-                .height(220.dp)
+                .heightIn(min = 220.dp, max = 300.dp)
                 .width(300.dp)
                 .zIndex(2f),
         ) {
-            Icon(
-                modifier = Modifier
-                    .clickable {
-                        onDismiss()
-                    }
-                    .height(60.dp)
-                    .width(60.dp)
-                    .padding(16.dp),
-                imageVector = Icons.Filled.Close,
-                contentDescription = "Close window",
-                tint = MaterialTheme.colorScheme.onBackground
-            )
-            Text(
-                stringResource(R.string.insert_email_code),
-                modifier = Modifier.padding(16.dp),
-                style = MaterialTheme.typography.bodyMedium
-            )
             if (!state.isLoading) {
+                Icon(
+                    modifier = Modifier
+                        .clickable {
+                            onDismiss()
+                        }
+                        .height(60.dp)
+                        .width(60.dp)
+                        .padding(16.dp),
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Close window",
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+                Text(
+                    stringResource(R.string.insert_email_code),
+                    modifier = Modifier.padding(16.dp),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                if (state.error != null) {
+                    Text(
+                        stringResource(state.error),
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
                 Input(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     title = "",
@@ -67,22 +76,35 @@ fun ConfirmationScreen(
                     initialText = "",
                     isPassword = false,
                     onTextChange = {
-                        if (it.length == 6) {
-                            viewModel.onCodeChange(
-                                value = it,
-                                username = username,
-                                onUserConfirmed = onUserConfirmed
-                            )
-                        }
+                        viewModel.onCodeChange(
+                            value = it,
+                            username = username,
+                            password = password,
+                            onUserConfirmed = onUserConfirmed
+                        )
                     })
             } else {
-                CircularProgressIndicator(
+                Column(
                     modifier = Modifier
-                        .height(16.dp)
-                        .width(16.dp),
-                    strokeWidth = 2.dp,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
+                        .fillMaxWidth()
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .height(36.dp)
+                            .width(36.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Text(
+                        text = stringResource(R.string.confirming_code),
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
             }
         }
     }
@@ -96,6 +118,7 @@ fun LoginScreenPreview() {
         Box(modifier = Modifier.fillMaxSize()) {
             ConfirmationScreen(
                 username = "",
+                password = "",
                 onDismiss = {},
                 onUserConfirmed = {},
             )

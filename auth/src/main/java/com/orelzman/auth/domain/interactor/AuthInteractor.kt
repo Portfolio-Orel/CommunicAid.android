@@ -28,6 +28,7 @@ interface AuthInteractor {
      */
     suspend fun confirmUser(
         username: String,
+        password: String,
         code: String
     )
 

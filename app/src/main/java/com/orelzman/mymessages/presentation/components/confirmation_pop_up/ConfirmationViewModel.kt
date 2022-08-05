@@ -1,11 +1,16 @@
 package com.orelzman.mymessages.presentation.components.confirmation_pop_up
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.orelzman.auth.domain.exception.CodeExpiredException
+import com.orelzman.auth.domain.exception.CodeMismatchException
+import com.orelzman.auth.domain.exception.NotAuthorizedException
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.mymessages.R
 import com.orelzman.mymessages.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -23,29 +28,40 @@ class ConfirmationViewModel @Inject constructor(
     fun onCodeChange(
         value: String,
         username: String,
+        password: String,
         onUserConfirmed: () -> Unit = {}
     ) {
-        state = state.copy(code = value, username = username, exception = null)
+        state = state.copy(code = value, username = username, error = null)
         if (value.length == 6) {
             state = state.copy(isLoading = true)
-            confirmCode(code = value, username = username, onUserConfirmed = onUserConfirmed)
+            confirmCode(code = value, username = username, password = password, onUserConfirmed = onUserConfirmed)
         }
     }
 
     private fun confirmCode(
-        username: String, code: String,
+        username: String,
+        password: String,
+        code: String,
         onUserConfirmed: () -> Unit = {}
     ) {
         val job = viewModelScope.async {
-            authInteractor.confirmUser(username = username, code = code)
+            authInteractor.confirmUser(username = username, password = password, code = code)
             onUserConfirmed()
+            state = state.copy(isLoading = false, code = "", error = null)
         }
         viewModelScope.launch(Dispatchers.Main) {
             try {
                 job.await()
             } catch (e: Exception) {
+                @StringRes val error: Int =
+                    when (e) {
+                        is CodeMismatchException -> R.string.error_code_mismatch
+                        is CodeExpiredException -> R.string.error_code_expired
+                        is NotAuthorizedException -> R.string.error_unknown
+                        else -> R.string.error_unknown
+                    }
                 e.log()
-                state = state.copy(isLoading = false, exception = e)
+                state = state.copy(isLoading = false, error = error)
             }
             onUserConfirmed()
         }

@@ -112,7 +112,8 @@ class LoginViewModel @Inject constructor(
                 state.copy(error = R.string.error_wrong_credentials_inserted)
             }
             is UserNotConfirmedException -> {
-                state.copy(error = R.string.error_user_not_confirmed)
+                state.copy(showCodeConfirmation = true)
+//                state.copy(error = R.string.error_user_not_confirmed)
             }
             is UserNotFoundException -> {
                 state.copy(error = R.string.error_user_not_signed_in)
@@ -161,11 +162,12 @@ class LoginViewModel @Inject constructor(
         }
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                interactor.confirmUser(username, code)
+                interactor.confirmUser(username, state.password, code)
                 val user = interactor.getUser()
                 if (user?.userId != null) {
                     onUserAuthorizedSuccessfully()
                 }
+                state = state.copy(showCodeConfirmation = false)
             } catch (e: Exception) {
                 when (e) {
                     is CodeMismatchException -> {

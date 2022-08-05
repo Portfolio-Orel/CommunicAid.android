@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.domain.interactors.GeneralInteractor
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
+import com.orelzman.mymessages.domain.managers.worker.WorkerManager
 import com.orelzman.mymessages.domain.model.entities.SettingsKeys
 import com.orelzman.mymessages.util.extension.log
 import com.orelzman.mymessages.util.extension.safeCollectLatest
@@ -20,6 +21,7 @@ class MyMessagesViewModel @Inject constructor(
     private val authInteractor: AuthInteractor,
     private val generalInteractor: GeneralInteractor,
     private val settingsInteractor: SettingsInteractor,
+    private val workerManager: WorkerManager
 
     ) : ViewModel() {
     var state by mutableStateOf(MyMessagesState())
@@ -28,11 +30,12 @@ class MyMessagesViewModel @Inject constructor(
     init {
 
         viewModelScope.launch {
-            authInteractor.isUserAuthenticated().safeCollectLatest({ loadingData = false }) { user ->
-                // will not kill the collectLatest
+            authInteractor.isUserAuthenticated().safeCollectLatest({ loadingData = false }) {
+                // will not kill the collectLatest if an error is thrown
                 supervisorScope {
-                    val isAuthorized = if (!authInteractor.isAuthorized(user)) {
+                    val isAuthorized = if(!authInteractor.isAuthorized(it)) {
                         generalInteractor.clearAllDatabases()
+                        workerManager.clearAll()
                         false
                     } else {
                         if (loadingData) { // The data is being loaded and will return true once it's done
