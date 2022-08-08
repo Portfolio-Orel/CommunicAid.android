@@ -12,12 +12,12 @@ import com.orelzman.auth.domain.exception.UserNotFoundException
 import com.orelzman.auth.domain.exception.WrongCredentialsException
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.R
-import com.orelzman.mymessages.data.remote.AuthConfigFile
+import com.orelzman.mymessages.domain.AuthConfigFile
 import com.orelzman.mymessages.domain.managers.worker.WorkerManager
 import com.orelzman.mymessages.domain.managers.worker.WorkerType
 import com.orelzman.mymessages.domain.model.dto.body.create.CreateUserBody
 import com.orelzman.mymessages.domain.repository.Repository
-import com.orelzman.mymessages.util.extension.log
+import com.orelzman.mymessages.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

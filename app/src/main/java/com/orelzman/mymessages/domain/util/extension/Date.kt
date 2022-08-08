@@ -1,8 +1,8 @@
-package com.orelzman.mymessages.util.extension
+package com.orelzman.mymessages.domain.util.extension
 
 import android.content.Context
 import com.orelzman.mymessages.R
-import com.orelzman.mymessages.util.common.DateUtils
+import com.orelzman.mymessages.domain.util.common.DateUtils
 import java.util.*
 
 fun Date.compareToBallPark(date: Date): Boolean = time.inSeconds > date.time.inSeconds - 10

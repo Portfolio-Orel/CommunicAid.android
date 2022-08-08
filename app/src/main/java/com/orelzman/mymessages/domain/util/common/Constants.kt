@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.util.common
+package com.orelzman.mymessages.domain.util.common
 
 object Constants {
     /* The time it takes the system to register the last call in the call log. */

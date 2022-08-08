@@ -10,11 +10,11 @@ import com.orelzman.mymessages.data.interceptor.ErrorInterceptor
 import com.orelzman.mymessages.data.interceptor.LogInterceptor
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.type_converters.Converters
-import com.orelzman.mymessages.data.remote.AuthConfigFile
-import com.orelzman.mymessages.data.remote.BaseProjectUrl
 import com.orelzman.mymessages.data.remote.EnvironmentRepository
 import com.orelzman.mymessages.data.remote.Environments.*
 import com.orelzman.mymessages.data.remote.repository.api.API
+import com.orelzman.mymessages.domain.AuthConfigFile
+import com.orelzman.mymessages.domain.BaseProjectUrl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

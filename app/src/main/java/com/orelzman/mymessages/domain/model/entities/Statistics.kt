@@ -4,11 +4,15 @@ import androidx.annotation.StringRes
 import androidx.room.Entity
 import com.orelzman.mymessages.R
 
-// It is only key because otherwise the data is stacked and we get 5 rows with key = 'IncomingCount' etc.
-@Entity(primaryKeys = ["key"])
+/**
+ * @param extraIdentifier is used to further distinguish different statistic types
+ * that have the same name but the value is different.
+ */
+@Entity(primaryKeys = ["key", "extraIdentifier"])
 data class Statistics(
     val key: StatisticsTypes,
-    val value: Any
+    val value: Any,
+    val extraIdentifier: String = ""
 )
 
 enum class StatisticsTypes(val value: String, @StringRes val label: Int) {

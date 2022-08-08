@@ -46,7 +46,8 @@ class StatisticsInteractorImpl @Inject constructor(
             statisticsList.add(
                 Statistics(
                     StatisticsTypes.MessagesCount,
-                    mapOf("title" to it.title, "count" to it.count)
+                    mapOf("title" to it.title, "count" to it.count),
+                    extraIdentifier = it.title
                 )
             )
         }

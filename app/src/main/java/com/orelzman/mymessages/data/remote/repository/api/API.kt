@@ -60,6 +60,9 @@ interface API {
         @Path("key") key: String,
     ): Response<List<SettingsResponse>>
 
+    @GET("/settings")
+    suspend fun getAllSettings(): Response<List<SettingsResponse>>
+
     @DELETE("/messagesInFolders/{folder_id}")
     suspend fun deleteMessagesInFolder(@Path("folder_id") folderId: String)
 

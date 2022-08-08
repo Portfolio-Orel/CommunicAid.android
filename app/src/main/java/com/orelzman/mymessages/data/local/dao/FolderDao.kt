@@ -37,7 +37,7 @@ interface FolderDao {
     @Update
     suspend fun update(folder: Folder)
 
-    @Delete()
+    @Delete
     suspend fun delete(folder: Folder)
 
     @Query("""

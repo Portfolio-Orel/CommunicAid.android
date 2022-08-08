@@ -8,11 +8,11 @@ import com.orelzman.mymessages.domain.interactors.CallLogInteractor
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.model.entities.*
-import com.orelzman.mymessages.util.common.Constants
-import com.orelzman.mymessages.util.extension.Log
-import com.orelzman.mymessages.util.extension.appendAll
-import com.orelzman.mymessages.util.extension.compareToBallPark
-import com.orelzman.mymessages.util.extension.log
+import com.orelzman.mymessages.domain.util.common.Constants
+import com.orelzman.mymessages.domain.util.extension.Log
+import com.orelzman.mymessages.domain.util.extension.appendAll
+import com.orelzman.mymessages.domain.util.extension.compareToBallPark
+import com.orelzman.mymessages.domain.util.extension.log
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.*
@@ -89,7 +89,7 @@ class UploadWorker @AssistedInject constructor(
 
     private suspend fun checkCallsNotRecorded(): List<PhoneCall> {
         val phoneCalls = ArrayList<PhoneCall>()
-        val lastUpdateAt = settingsInteractor.getSettings(SettingsKeys.CallsUpdateAt)?.value
+        val lastUpdateAt = settingsInteractor.getSettings(SettingsKey.CallsUpdateAt)?.value
         val date = Date(lastUpdateAt?.toLongOrNull() ?: Date().time)
         val potentiallyMissedPhoneCalls =
             callLogInteractor.getCallLogsByDate(startDate = date).toPhoneCalls()
@@ -108,9 +108,9 @@ class UploadWorker @AssistedInject constructor(
     }
 
     private suspend fun updateCallsUpdateTime() {
-        settingsInteractor.createSettings(
+        settingsInteractor.createOrUpdate(
             Settings(
-                key = SettingsKeys.CallsUpdateAt, value = Date().time.toString()
+                key = SettingsKey.CallsUpdateAt, value = Date().time.toString()
             )
         )
     }

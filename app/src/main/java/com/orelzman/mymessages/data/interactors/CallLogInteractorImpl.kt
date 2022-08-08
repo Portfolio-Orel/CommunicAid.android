@@ -6,10 +6,10 @@ import com.orelzman.mymessages.domain.interactors.CallLogInteractor
 import com.orelzman.mymessages.domain.interactors.CallType
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
-import com.orelzman.mymessages.util.common.DateUtils
-import com.orelzman.mymessages.util.extension.compareToBallPark
-import com.orelzman.mymessages.util.extension.inSeconds
-import com.orelzman.mymessages.util.extension.toDate
+import com.orelzman.mymessages.domain.util.common.DateUtils
+import com.orelzman.mymessages.domain.util.extension.compareToBallPark
+import com.orelzman.mymessages.domain.util.extension.inSeconds
+import com.orelzman.mymessages.domain.util.extension.toDate
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import java.util.*

@@ -22,6 +22,7 @@ import com.orelzman.auth.domain.exception.*
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.auth.domain.interactor.UserInteractor
 import com.orelzman.auth.domain.model.User
+import com.orelzman.auth.domain.model.UserState
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
@@ -50,7 +51,7 @@ class AuthInteractorImpl @Inject constructor(
                 Amplify.configure(context)
             }
             isConfigured = true
-            collectState()
+            collectState(configFileResourceId)
             Log.v(TAG, "AWS configured")
             return
         } catch (e: AmplifyException) {
@@ -68,7 +69,12 @@ class AuthInteractorImpl @Inject constructor(
 
     override fun getUser(): User? = userInteractor.get()
     override fun isUserAuthenticated(): Flow<User?> = userInteractor.getFlow()
-    override fun isAuthorized(user: User?): Boolean = user != null && user.token != "" && user.userId != ""
+
+    override suspend fun isAuthorized(user: User?): Boolean {
+        val isLocallyAuthorized = user != null && user.token != "" && user.userId != ""
+        val isRemotelyAuthorized = Amplify.Auth.fetchAuthSession().isSignedIn
+        return isLocallyAuthorized && isRemotelyAuthorized && user?.state == UserState.Authorized
+    }
 
 
     @Throws
@@ -140,10 +146,9 @@ class AuthInteractorImpl @Inject constructor(
             if (result.isSignInComplete) {
                 userSignInSuccessfully()
                 Log.v(TAG, "Sign in succeeded")
-                Log.v("AuthAWS:::", "Sign in succeeded")
                 (Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession).awsCredentials.error?.localizedMessage?.let {
                     Log.v(
-                        "AuthAWS:::",
+                        TAG,
                         it
                     )
                 }
@@ -192,7 +197,7 @@ class AuthInteractorImpl @Inject constructor(
             throw LimitExceededException()
         }
 
-    private suspend fun collectState() {
+    private suspend fun collectState(@RawRes configFileResourceId: Int?) {
         CoroutineScope(SupervisorJob()).launch {
             Amplify.Hub.subscribe(HubChannel.AUTH).collectLatest {
                 when (it.name) {
@@ -206,9 +211,13 @@ class AuthInteractorImpl @Inject constructor(
                         AuthChannelEventName.SIGNED_OUT ->
                             Log.i(TAG, "Auth just became signed out.")
                         AuthChannelEventName.SESSION_EXPIRED ->
-                            Log.i(TAG, "Auth session just expired.")
+                            try {
+                                refreshToken(configFileResourceId)
+                            } catch(e: Exception) {
+                                signOut()
+                            }
                         AuthChannelEventName.USER_DELETED ->
-                            Log.i(TAG, "User has been deleted.")
+                            signOut()
                     }
                 }
             }
@@ -231,10 +240,13 @@ class AuthInteractorImpl @Inject constructor(
                     email = it.value
                 }
             }
-            val user = User(userId = userId, token = token, email = email)
+            val user = User(userId = userId, token = token, email = email, state = UserState.Authorized)
             userInteractor.save(user)
         } catch (e: Exception) {
-            throw e
+            when (e) {
+                is AuthException.NotAuthorizedException -> userInteractor.save(User.blocked())
+                else -> userInteractor.save(User.notAuthorized())
+            }
         }
     }
 

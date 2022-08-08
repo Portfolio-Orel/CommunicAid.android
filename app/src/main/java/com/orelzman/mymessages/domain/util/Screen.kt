@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.util
+package com.orelzman.mymessages.domain.util
 
 import androidx.annotation.StringRes
 import com.orelzman.mymessages.R
@@ -10,6 +10,7 @@ sealed class Screen(val route: String, @StringRes val resourceId: Int) {
     object Statistics : Screen("statistics", R.string.statistics)
     object DetailsMessage : Screen("details_message", R.string.details_message)
     object DetailsFolder : Screen("details_folder", R.string.details_folder)
+    object Settings : Screen("settings", R.string.settings)
 
     fun withArgs(vararg args: String?): String =
         buildString {

@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.util.extension
+package com.orelzman.mymessages.domain.util.extension
 
 fun <T> ArrayList<T>.addUnique(element: T) {
     if (!contains(element)) {

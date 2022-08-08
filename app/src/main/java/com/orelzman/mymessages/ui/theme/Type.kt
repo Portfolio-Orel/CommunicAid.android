@@ -35,6 +35,11 @@ val Typography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 32.sp
     ),
+    titleLarge = TextStyle(
+        fontFamily = fontsVarelaround,
+        fontWeight = FontWeight.Normal,
+        fontSize = 38.sp
+    ),
     labelSmall = TextStyle(
         fontFamily = fontsVarelaround,
         fontWeight = FontWeight.Normal,

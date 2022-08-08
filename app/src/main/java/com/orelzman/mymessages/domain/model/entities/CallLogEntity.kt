@@ -1,9 +1,9 @@
 package com.orelzman.mymessages.domain.model.entities
 
 import com.orelzman.mymessages.domain.interactors.CallType
-import com.orelzman.mymessages.util.extension.inMilliseconds
-import com.orelzman.mymessages.util.extension.inSeconds
-import com.orelzman.mymessages.util.extension.toDate
+import com.orelzman.mymessages.domain.util.extension.inMilliseconds
+import com.orelzman.mymessages.domain.util.extension.inSeconds
+import com.orelzman.mymessages.domain.util.extension.toDate
 import java.util.*
 
 class CallLogEntity(
