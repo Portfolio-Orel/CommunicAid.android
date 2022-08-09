@@ -18,9 +18,9 @@ import com.orelzman.mymessages.domain.managers.unhandled_calls.UnhandledCallsMan
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.DeletedCall
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
-import com.orelzman.mymessages.util.common.DateUtils.getStartOfDay
-import com.orelzman.mymessages.util.extension.Log
-import com.orelzman.mymessages.util.extension.log
+import com.orelzman.mymessages.domain.util.common.DateUtils.getStartOfDay
+import com.orelzman.mymessages.domain.util.extension.Log
+import com.orelzman.mymessages.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

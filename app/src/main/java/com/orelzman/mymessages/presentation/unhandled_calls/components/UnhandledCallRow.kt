@@ -19,8 +19,8 @@ import androidx.compose.ui.unit.dp
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
-import com.orelzman.mymessages.util.extension.getDayFormatted
-import com.orelzman.mymessages.util.extension.getHourHHMM
+import com.orelzman.mymessages.domain.util.extension.getDayFormatted
+import com.orelzman.mymessages.domain.util.extension.getHourHHMM
 import java.util.*
 
 @Composable

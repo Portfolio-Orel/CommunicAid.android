@@ -101,6 +101,11 @@ class APIRepository @Inject constructor(
         return result.body
     }
 
+    override suspend fun getAllSettings(): List<SettingsResponse> {
+        val result = api.getAllSettings()
+        return result.body
+    }
+
     override suspend fun deleteMessagesFromFolder(folderId: String) {
         api.deleteMessagesInFolder(folderId = folderId)
     }
@@ -110,12 +115,16 @@ class APIRepository @Inject constructor(
         return result.body
     }
 
-    override suspend fun getMessagesSentCount(): List<GetMessagesSentCountResponse>? {
+    override suspend fun getMessagesSentCount(): List<GetMessagesSentCountResponse> {
         val result = api.getMessagesSentCount()
         return result.body
     }
 
-    override suspend fun updateMessage(message: Message, oldFolderId: String?, newFolderId: String?) =
+    override suspend fun updateMessage(
+        message: Message,
+        oldFolderId: String?,
+        newFolderId: String?
+    ) =
         api.updateMessage(
             UpdateMessageBody(
                 messageId = message.id,
@@ -141,7 +150,6 @@ class APIRepository @Inject constructor(
                 position = folder.position
             )
         )
-
 
 
 }

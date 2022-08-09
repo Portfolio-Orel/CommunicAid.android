@@ -9,10 +9,12 @@ import androidx.lifecycle.viewModelScope
 import com.orelzman.mymessages.domain.interactors.*
 import com.orelzman.mymessages.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
 import com.orelzman.mymessages.domain.model.entities.*
-import com.orelzman.mymessages.util.extension.copyToClipboard
-import com.orelzman.mymessages.util.extension.log
+import com.orelzman.mymessages.domain.util.extension.Log
+import com.orelzman.mymessages.domain.util.extension.copyToClipboard
+import com.orelzman.mymessages.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -67,7 +69,8 @@ class MainViewModel @Inject constructor(
             folderInteractor.getFolders().collectLatest {
                 if (state.selectedFolder == null && it.isNotEmpty()) {
                     state =
-                        state.copy(folders = it.sortedByDescending { folder -> folder.timesUsed },
+                        state.copy(
+                            folders = it.sortedByDescending { folder -> folder.timesUsed },
                             selectedFolder = it.maxByOrNull { folder -> folder.timesUsed }!!
                         )
                 }
@@ -79,7 +82,10 @@ class MainViewModel @Inject constructor(
         val messageIds = state.messagesInFolders
             .filter { it.folderId == state.selectedFolder?.id }
             .map { it.messageId }
-        return state.messages.filter { messageIds.contains(it.id) }
+
+        return state.messages
+            .filter { messageIds.contains(it.id) }
+            .sortedByDescending { it.timesUsed }
     }
 
     fun onMessageClick(message: Message) {
@@ -125,16 +131,16 @@ class MainViewModel @Inject constructor(
     }
 
     fun onFolderLongClick(folder: Folder) = goToEditFolder(folder)
+//
+//    fun setBackgroundCallActive() {
+//        if (state.callInBackground != null) {
+//            selectActiveCall(state.callInBackground)
+//        } else {
+//            selectActiveCall(state.callOnTheLine)
+//        }
+//    }
 
-    fun setBackgroundCallActive() {
-        if (state.callInBackground != null) {
-            selectActiveCall(state.callInBackground)
-        } else {
-            selectActiveCall(state.callOnTheLine)
-        }
-    }
-
-    fun setCallOnTheLineActive() {
+    private fun setCallOnTheLineActive() {
         selectActiveCall(state.callOnTheLine)
     }
 
@@ -161,20 +167,39 @@ class MainViewModel @Inject constructor(
     }
 
     private fun observeNumberOnTheLine() {
-        viewModelScope.launch {
-            phoneCallManagerInteractor.callsDataFlow.collectLatest {
-                state = state.copy(callOnTheLine = it.callOnTheLine?.toPhoneCall())
-                setCallOnTheLineActive()
+        val callOnTheLine = phoneCallManagerInteractor.callsData.callOnTheLine?.toPhoneCall()
+        state = state.copy(callOnTheLine = callOnTheLine)
+        viewModelScope.launch(SupervisorJob()) {
+            try {
+                phoneCallManagerInteractor.callsDataFlow.collectLatest {
+                    val call = it.callOnTheLine?.toPhoneCall()
+                    state = state.copy(callOnTheLine = call)
+                    setCallOnTheLineActive()
+                    Log.i("observed number on the line: $call")
+                }
+            } catch (e: Exception) {
+                e.log()
+                Log.e("observeNumberOnTheLine stopped")
             }
         }
     }
 
     private fun observeNumberInBackground() {
+        val callInTheBackground =
+            phoneCallManagerInteractor.callsData.callInTheBackground?.toPhoneCall()
+        state = state.copy(callOnTheLine = callInTheBackground)
         viewModelScope
-            .launch {
-            phoneCallManagerInteractor.callsDataFlow.collectLatest {
-                state = state.copy(callInBackground = it.callInTheBackground?.toPhoneCall())
+            .launch(SupervisorJob()) {
+                try {
+                    phoneCallManagerInteractor.callsDataFlow.collectLatest {
+                        val call = it.callOnTheLine?.toPhoneCall()
+                        state = state.copy(callInBackground = call)
+                        Log.i("observed call in the background: $call")
+                    }
+                } catch (e: Exception) {
+                    e.log()
+                    Log.e("observeNumberInBackground stopped")
+                }
             }
-        }
     }
 }

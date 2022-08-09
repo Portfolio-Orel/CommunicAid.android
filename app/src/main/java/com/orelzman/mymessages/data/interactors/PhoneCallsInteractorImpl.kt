@@ -7,7 +7,7 @@ import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.model.entities.UploadState
 import com.orelzman.mymessages.domain.model.entities.createPhoneCallBodyList
 import com.orelzman.mymessages.domain.repository.Repository
-import com.orelzman.mymessages.util.extension.addUniqueWithPredicate
+import com.orelzman.mymessages.domain.util.extension.addUniqueWithPredicate
 import java.util.*
 import javax.inject.Inject
 

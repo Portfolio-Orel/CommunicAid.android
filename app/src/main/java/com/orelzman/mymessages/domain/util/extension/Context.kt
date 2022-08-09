@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.util.extension
+package com.orelzman.mymessages.domain.util.extension
 
 import android.content.ClipData
 import android.content.ClipboardManager

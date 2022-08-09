@@ -11,7 +11,7 @@ import com.orelzman.auth.domain.exception.CodeMismatchException
 import com.orelzman.auth.domain.exception.NotAuthorizedException
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.R
-import com.orelzman.mymessages.util.extension.log
+import com.orelzman.mymessages.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

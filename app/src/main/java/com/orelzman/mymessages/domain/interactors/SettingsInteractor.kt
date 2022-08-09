@@ -1,14 +1,23 @@
 package com.orelzman.mymessages.domain.interactors
 
 import com.orelzman.mymessages.domain.model.entities.Settings
-import com.orelzman.mymessages.domain.model.entities.SettingsKeys
+import com.orelzman.mymessages.domain.model.entities.SettingsKey
+import kotlinx.coroutines.flow.Flow
 
 interface SettingsInteractor {
     /**
      * Fetches settings by [key] from the cache.
      * @author Orel Zilberman
      */
-    fun getSettings(key: SettingsKeys): Settings?
+    fun getSettings(key: SettingsKey): Settings?
+
+    /**
+     * Returns all the settings from the as Flow.
+     * @author Orel Zilberman
+     */
+    suspend fun getAllSettingsFlow(): Flow<List<Settings>>
+
+    fun getAllSettings(): List<Settings>
 
     /**
      * Saves [settings] in the cache only.
@@ -26,5 +35,5 @@ interface SettingsInteractor {
      * Creates new [settings] in the backend and caches it.
      * @author Orel Zilberman
      */
-    suspend fun createSettings(settings: Settings)
+    suspend fun createOrUpdate(settings: Settings)
 }

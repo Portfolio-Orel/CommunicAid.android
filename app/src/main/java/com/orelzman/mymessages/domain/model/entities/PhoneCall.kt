@@ -6,8 +6,9 @@ import androidx.room.PrimaryKey
 import com.google.gson.Gson
 import com.orelzman.mymessages.domain.interactors.CallType
 import com.orelzman.mymessages.domain.model.dto.body.create.CreatePhoneCallBody
-import com.orelzman.mymessages.util.common.ContactsUtil
-import com.orelzman.mymessages.util.extension.inSeconds
+import com.orelzman.mymessages.domain.util.common.ContactsUtil
+import com.orelzman.mymessages.domain.util.extension.inSeconds
+import com.orelzman.mymessages.domain.util.extension.log
 import java.util.*
 
 @Entity
@@ -23,7 +24,7 @@ data class PhoneCall(
 ) : Loggable, Uploadable() {
 
     fun getNameOrNumber(): String {
-        if(name == "") return number
+        if (name == "") return number
         return name
     }
 
@@ -62,13 +63,31 @@ data class PhoneCall(
 
     companion object {
         fun waiting(number: String) =
-            PhoneCall(number = number, isWaiting = true, type = CallType.INCOMING.name, startDate = Date(), endDate = Date())
+            PhoneCall(
+                number = number,
+                isWaiting = true,
+                type = CallType.INCOMING.name,
+                startDate = Date(),
+                endDate = Date()
+            )
 
         fun incoming(number: String) =
-            PhoneCall(number = number, isWaiting = false, type = CallType.INCOMING.name, startDate = Date(), endDate = Date())
+            PhoneCall(
+                number = number,
+                isWaiting = false,
+                type = CallType.INCOMING.name,
+                startDate = Date(),
+                endDate = Date()
+            )
 
         fun outgoing(number: String) =
-            PhoneCall(number = number, isWaiting = false, type = CallType.OUTGOING.name, startDate = Date(), endDate = Date())
+            PhoneCall(
+                number = number,
+                isWaiting = false,
+                type = CallType.OUTGOING.name,
+                startDate = Date(),
+                endDate = Date()
+            )
     }
 }
 
@@ -92,5 +111,11 @@ fun List<PhoneCall>.createPhoneCallBodyList(): List<CreatePhoneCallBody> {
     return array
 }
 
-fun String.toPhoneCall(): PhoneCall? =
-    Gson().fromJson(this, PhoneCall::class.java)
+fun String.toPhoneCall(): PhoneCall? {
+    return try {
+        Gson().fromJson(this, PhoneCall::class.java)
+    } catch (e: Exception) {
+        e.log()
+        null
+    }
+}

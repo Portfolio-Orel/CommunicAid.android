@@ -127,8 +127,6 @@ fun DetailsMessageScreen(
                     isError = state.emptyFields.contains(MessageFields.Body)
                 )
             }
-
-
             Dropdown(
                 folders = state.folders, onSelected = { viewModel.setSelectedFolder(it) },
                 isError = state.emptyFields.contains(MessageFields.Folder),

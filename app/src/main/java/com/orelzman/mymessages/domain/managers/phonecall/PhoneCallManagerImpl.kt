@@ -9,10 +9,10 @@ import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.service.phone_call.CallState
 import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManager
 import com.orelzman.mymessages.domain.service.phone_call.exceptions.WaitingThenRingingException
-import com.orelzman.mymessages.util.common.Constants.TIME_TO_ADD_CALL_TO_CALL_LOG
-import com.orelzman.mymessages.util.extension.Log
-import com.orelzman.mymessages.util.extension.inSeconds
-import com.orelzman.mymessages.util.extension.log
+import com.orelzman.mymessages.domain.util.common.Constants.TIME_TO_ADD_CALL_TO_CALL_LOG
+import com.orelzman.mymessages.domain.util.extension.Log
+import com.orelzman.mymessages.domain.util.extension.inSeconds
+import com.orelzman.mymessages.domain.util.extension.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

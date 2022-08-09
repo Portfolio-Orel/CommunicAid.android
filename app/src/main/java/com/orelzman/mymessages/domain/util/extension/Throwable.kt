@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.util.extension
+package com.orelzman.mymessages.domain.util.extension
 
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase

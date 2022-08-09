@@ -1,6 +1,6 @@
 package com.orelzman.mymessages.data.interceptor
 
-import com.orelzman.mymessages.util.extension.Log
+import com.orelzman.mymessages.domain.util.extension.Log
 import okhttp3.Interceptor
 import okhttp3.Response
 

@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.domain.interactors.FolderInteractor
 import com.orelzman.mymessages.domain.model.entities.Folder
-import com.orelzman.mymessages.util.extension.log
+import com.orelzman.mymessages.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

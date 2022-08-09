@@ -6,7 +6,7 @@ import com.orelzman.mymessages.domain.managers.unhandled_calls.UnhandledCallsMan
 import com.orelzman.mymessages.domain.managers.unhandled_calls.UnhandledCallsManagerImpl
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.DeletedCall
-import com.orelzman.mymessages.util.common.DateUtils
+import com.orelzman.mymessages.domain.util.common.DateUtils
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
