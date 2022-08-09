@@ -44,8 +44,9 @@ fun SettingsScreen(
                     SettingsType.Toggle -> ToggleSettings(
                         settings = settings,
                         onChecked = viewModel::settingsChecked,
-                        checked = settings.value.toBooleanStrictOrNull() ?: false
+                        checked = settings.getRealValue() ?: false
                     )
+                    else -> {}
                 }
             }
         }

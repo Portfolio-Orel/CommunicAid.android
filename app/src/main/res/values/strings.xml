@@ -76,6 +76,6 @@
     <string name="confirming_code">בודקים את הקוד..</string>
     <string name="settings">הגדרות</string>
     <string name="last_calls_update">עדכון שיחות אחרון</string>
-    <string name="show_app_on_call">הצג בעת שיחה</string>
+    <string name="show_app_on_call">הצג אפליקציה בעת שיחה</string>
     <string name="ignore_list">רשימת התעלמות</string>
 </resources>

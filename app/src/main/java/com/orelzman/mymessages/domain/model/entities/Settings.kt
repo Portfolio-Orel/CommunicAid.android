@@ -3,48 +3,71 @@ package com.orelzman.mymessages.domain.model.entities
 import androidx.annotation.StringRes
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.google.gson.reflect.TypeToken
+import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.orelzman.mymessages.R
-import java.lang.reflect.Type
+import com.orelzman.mymessages.domain.util.extension.log
 import java.util.*
+import kotlin.reflect.KClass
 
 @Entity
 data class Settings(
     @PrimaryKey val key: SettingsKey,
     val value: String = key.defaultValue
-)
+) {
+
+    /**
+     * Casts value to it's actual value type.
+     * @return value of type [T] or the default value of the casting fails.
+     */
+    @Suppress("UNCHECKED_CAST")
+    fun <T> getRealValue(): T? {
+        return try {
+            val realValue = Gson().fromJson(value, key.valueType.java)
+            return when (key) {
+                SettingsKey.CallsUpdateAt -> realValue as? T
+                SettingsKey.IsDataInit -> realValue as? T
+                SettingsKey.ShowAppOnCall -> realValue as? T
+                SettingsKey.IgnoredList -> realValue as? T
+            }
+        } catch (e: JsonSyntaxException) {
+            e.log()
+            key.defaultValue as? T
+        }
+    }
+}
 
 enum class SettingsKey(
     val keyInServer: String,
     val type: SettingsType,
-    val valueType: Type,
+    val valueType: KClass<*>,
     val defaultValue: String,
     @StringRes val title: Int? = null
 ) {
     CallsUpdateAt(
         "calls_update_at",
         SettingsType.Data,
-        Long::class.java,
+        Long::class,
         Date().time.toString(),
         R.string.last_calls_update
     ),
     IsDataInit(
         "is_data_init",
         SettingsType.NotVisibleToUser,
-        Boolean::class.java,
+        Boolean::class,
         false.toString()
     ),
     ShowAppOnCall(
         "show_app_on_call",
         SettingsType.Toggle,
-        Boolean::class.java,
+        Boolean::class,
         false.toString(),
         R.string.show_app_on_call
     ),
     IgnoredList(
         "ignored_list",
         SettingsType.PopUp,
-        object : TypeToken<List<String>>() {}.type,
+        Array<String>::class,
         emptyList<String>().toString(),
         R.string.ignore_list
     );

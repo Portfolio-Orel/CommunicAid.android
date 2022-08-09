@@ -45,31 +45,31 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-        private fun observeSettings() {
-            viewModelScope.launch(SupervisorJob()) {
-                settingsInteractor.getAllSettingsFlow().collectLatest { settingsList ->
-                    state = state.copy(settingsList = settingsList)
-                    confirmAllSettingsAreInDB(settingsList = settingsList)
-                }
+    private fun observeSettings() {
+        viewModelScope.launch(SupervisorJob()) {
+            settingsInteractor.getAllSettingsFlow().collectLatest { settingsList ->
+                state = state.copy(settingsList = settingsList)
+                confirmAllSettingsAreInDB(settingsList = settingsList)
             }
         }
-
-        private suspend fun confirmAllSettingsAreInDB(settingsList: List<Settings>) {
-            val settingsListKeys = settingsList.map { it.key }
-            SettingsKey.values().forEach { settingsKey ->
-                if (!settingsListKeys.contains(settingsKey)) {
-                    settingsInteractor.createOrUpdate(
-                        Settings(key = settingsKey)
-                    )
-                }
-            }
-        }
-
-        fun settingsChecked(settings: Settings) {
-            val prevChecked = settings.value.toBooleanStrictOrNull() ?: true
-            settingsInteractor.saveSettings(
-                Settings(settings.key, (!prevChecked).toString())
-            )
-        }
-
     }
+
+    private suspend fun confirmAllSettingsAreInDB(settingsList: List<Settings>) {
+        val settingsListKeys = settingsList.map { it.key }
+        SettingsKey.values().forEach { settingsKey ->
+            if (!settingsListKeys.contains(settingsKey)) {
+                settingsInteractor.createOrUpdate(
+                    Settings(key = settingsKey)
+                )
+            }
+        }
+    }
+
+    fun settingsChecked(settings: Settings) {
+        val prevChecked: Boolean = settings.getRealValue() ?: true
+        settingsInteractor.saveSettings(
+            Settings(settings.key, (!prevChecked).toString())
+        )
+    }
+
+}
