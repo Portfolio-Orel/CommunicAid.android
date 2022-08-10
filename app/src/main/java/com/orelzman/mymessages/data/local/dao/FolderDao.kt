@@ -2,6 +2,7 @@ package com.orelzman.mymessages.data.local.dao
 
 import androidx.room.*
 import com.orelzman.mymessages.domain.model.entities.Folder
+import com.orelzman.mymessages.domain.model.entities.UploadState
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -37,8 +38,12 @@ interface FolderDao {
     @Update
     suspend fun update(folder: Folder)
 
-    @Delete
-    suspend fun delete(folder: Folder)
+        @Query("""
+            UPDATE Folder
+            SET isActive = 0 AND uploadState = uploadState
+            WHERE id = :id
+        """)
+    suspend fun delete(id: String, uploadState: UploadState = UploadState.NotUploaded)
 
     @Query("""
         SELECT *

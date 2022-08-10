@@ -154,4 +154,8 @@ dependencies {
     // Datadog
     implementation "com.datadoghq:dd-sdk-android:1.13.0"
 
+    // Reactivex
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.0'
+
 }
