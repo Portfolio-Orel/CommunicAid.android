@@ -132,9 +132,9 @@ class LoginViewModel @Inject constructor(
     private fun onUserAuthorizedSuccessfully() {
         viewModelScope.launch(Dispatchers.Main) {
             state = try {
-                val userId = interactor.getUser()?.userId
-                val isAuthorized = if (userId != null && userId != "") {
-                    confirmUserCreated(userId, state.email)
+                val user = interactor.getUser()
+                val isAuthorized = if(user != null && interactor.isAuthorized(user)) {
+                    confirmUserCreated(user.userId, user.email)
                 } else {
                     false
                 }
@@ -180,7 +180,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private suspend fun confirmUserCreated(userId: String, email: String = ""): Boolean {
+    private suspend fun confirmUserCreated(userId: String, email: String): Boolean {
         return try {
             val user = repository.getUser()
             if (user?.userId == null) {
