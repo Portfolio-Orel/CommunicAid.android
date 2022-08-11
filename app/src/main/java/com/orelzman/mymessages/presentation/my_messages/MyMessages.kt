@@ -77,7 +77,14 @@ fun MyMessagesApp(
                         Fab(
                             navController = navController,
                             navHostController = navHostController,
-                            signOut = viewModel::signOut
+                            signOut = {
+                                viewModel.signOut()
+                               navController.navigate(Screen.Main.route) {
+                                   popUpTo(navHostController.graph.findStartDestination().id) {
+                                       inclusive = true
+                                   }
+                               }
+                            }
                         )
                     },
                 ) {

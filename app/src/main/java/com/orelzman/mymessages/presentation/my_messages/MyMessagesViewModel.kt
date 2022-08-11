@@ -74,6 +74,7 @@ class MyMessagesViewModel @Inject constructor(
     fun signOut() = viewModelScope.launch(Dispatchers.Main) {
         try {
             authInteractor.signOut()
+            generalInteractor.clearAllDatabases()
         } catch (e: Exception) {
             e.log()
         }
