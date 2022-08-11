@@ -1,14 +1,10 @@
 package com.orelzman.mymessages.presentation.settings
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +22,7 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -65,7 +62,52 @@ fun SettingsScreen(
                     else -> {}
                 }
             }
+            Spacer(Modifier.weight(1f))
+            SaveButton(
+                modifier = Modifier
+                    .width(90.dp)
+                    .height(40.dp),
+                isLoading = state.isLoading,
+                onClick = viewModel::saveSettings
+            )
         }
+    }
+}
+
+@Composable
+fun SaveButton(
+    onClick: () -> Unit,
+    isLoading: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center,
+    ) {
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .height(16.dp)
+                    .width(16.dp),
+                strokeWidth = 2.dp,
+                color = MaterialTheme.colorScheme.primary,
+            )
+        } else {
+            Button(
+                modifier = Modifier.fillMaxSize(),
+                onClick = onClick,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    contentColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text(
+                    text = stringResource(id = R.string.save),
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
+        }
+
     }
 }
 

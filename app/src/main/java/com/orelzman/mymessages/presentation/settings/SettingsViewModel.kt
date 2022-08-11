@@ -29,23 +29,6 @@ class SettingsViewModel @Inject constructor(
         observeSettings()
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        viewModelScope.launch(Dispatchers.IO) {
-            supervisorScope {
-                settingsInteractor.getAllSettings().forEach { settings ->
-                    try {
-                        settingsInteractor.createOrUpdate(
-                            settings = settings
-                        )
-                    } catch (e: Exception) {
-                        e.log()
-                    }
-                }
-            }
-        }
-    }
-
     private fun initData() {
         val settingsList = settingsInteractor.getAllSettings()
         setSettings(settingsList)
@@ -74,6 +57,25 @@ class SettingsViewModel @Inject constructor(
                 settingsInteractor.createOrUpdate(
                     Settings(key = settingsKey)
                 )
+            }
+        }
+    }
+
+    fun saveSettings() {
+        state = state.copy(isLoading = true)
+        viewModelScope.launch(Dispatchers.IO) {
+            supervisorScope {
+                settingsInteractor.getAllSettings().forEach { settings ->
+                    try {
+                        settingsInteractor.createOrUpdate(
+                            settings = settings
+                        )
+                    } catch (e: Exception) {
+                        e.log()
+                    } finally {
+                        state = state.copy(isLoading = false)
+                    }
+                }
             }
         }
     }

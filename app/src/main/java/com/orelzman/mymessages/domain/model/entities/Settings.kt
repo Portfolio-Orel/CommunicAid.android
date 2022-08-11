@@ -29,9 +29,7 @@ data class Settings(
                 SettingsKey.CallsUpdateAt -> Date(
                     realValue as? Long ?: Date().time
                 ).formatDayAndHours() as T
-                SettingsKey.IsDataInit -> realValue as? T
-                SettingsKey.ShowAppOnCall -> realValue as? T
-                SettingsKey.IgnoredList -> realValue as? T
+                else -> realValue as? T
             }
         } catch (e: JsonSyntaxException) {
             e.log()
@@ -48,31 +46,38 @@ enum class SettingsKey(
     @StringRes val title: Int? = null
 ) {
     CallsUpdateAt(
-        "calls_update_at",
-        SettingsType.Data,
-        Long::class,
-        Date().time.toString(),
-        R.string.last_calls_update
+        keyInServer = "calls_update_at",
+        type = SettingsType.Data,
+        valueType = Long::class,
+        defaultValue = Date().time.toString(),
+        title = R.string.last_calls_update
     ),
     IsDataInit(
-        "is_data_init",
-        SettingsType.NotVisibleToUser,
-        Boolean::class,
-        false.toString()
+        keyInServer = "is_data_init",
+        type = SettingsType.NotVisibleToUser,
+        valueType = Boolean::class,
+        defaultValue = false.toString()
     ),
     ShowAppOnCall(
-        "show_app_on_call",
-        SettingsType.Toggle,
-        Boolean::class,
-        false.toString(),
-        R.string.show_app_on_call
+        keyInServer = "show_app_on_call",
+        type = SettingsType.Toggle,
+        valueType = Boolean::class,
+        defaultValue = false.toString(),
+        title = R.string.show_app_on_call
     ),
     IgnoredList(
-        "ignored_list",
-        SettingsType.PopUp,
-        Array<String>::class,
-        emptyList<String>().toString(),
-        R.string.ignore_list
+        keyInServer = "ignored_list",
+        type = SettingsType.PopUp,
+        valueType = Array<String>::class,
+        defaultValue = emptyList<String>().toString(),
+        title = R.string.ignore_list
+    ),
+    SendSMSToBackgroundCall(
+        keyInServer = "send_sms_to_background_call",
+        type = SettingsType.Toggle,
+        valueType = Boolean::class,
+        defaultValue = false.toString(),
+        title = R.string.send_sms_to_background_call
     );
 
     companion object {
