@@ -35,6 +35,7 @@ interface Repository {
 
     suspend fun createOrUpdateSettings(createOrUpdateSettingsBody: CreateOrUpdateSettingsBody)
     suspend fun getSettings(key: String = ""): List<SettingsResponse>
+    suspend fun getAllSettings(): List<SettingsResponse>
 
     suspend fun deleteMessagesFromFolder(folderId: String)
 

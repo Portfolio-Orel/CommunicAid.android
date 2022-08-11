@@ -18,6 +18,11 @@ class WorkerManagerImpl @Inject constructor(
         }
     }
 
+    override fun clearAll(): Operation =
+        WorkManager.getInstance(context).cancelAllWorkByTag(Tag)
+
+
+
     private fun startPeriodicUploadWorker() =
         queuePeriodicWorker(worker = buildPeriodicUploadWorker(), type = WorkerType.UploadCalls)
 

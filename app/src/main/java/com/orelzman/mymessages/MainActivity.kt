@@ -17,6 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.orelzman.mymessages.presentation.my_messages.MyMessagesApp
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 import dagger.hilt.android.AndroidEntryPoint
 

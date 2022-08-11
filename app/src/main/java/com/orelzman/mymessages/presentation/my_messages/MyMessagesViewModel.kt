@@ -6,11 +6,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.mymessages.domain.AuthConfigFile
 import com.orelzman.mymessages.domain.interactors.GeneralInteractor
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
-import com.orelzman.mymessages.domain.model.entities.SettingsKeys
-import com.orelzman.mymessages.util.extension.log
-import com.orelzman.mymessages.util.extension.safeCollectLatest
+import com.orelzman.mymessages.domain.managers.worker.WorkerManager
+import com.orelzman.mymessages.domain.model.entities.SettingsKey
+import com.orelzman.mymessages.domain.util.extension.log
+import com.orelzman.mymessages.domain.util.extension.safeCollectLatest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import javax.inject.Inject
@@ -20,42 +22,45 @@ class MyMessagesViewModel @Inject constructor(
     private val authInteractor: AuthInteractor,
     private val generalInteractor: GeneralInteractor,
     private val settingsInteractor: SettingsInteractor,
-
-    ) : ViewModel() {
+    private val workerManager: WorkerManager,
+    @AuthConfigFile private val authConfigFile: Int,
+) : ViewModel() {
     var state by mutableStateOf(MyMessagesState())
     private var loadingData: Boolean = false
 
     init {
-
         viewModelScope.launch {
-            authInteractor.isUserAuthenticated().safeCollectLatest({ loadingData = false }) { user ->
-                // will not kill the collectLatest
+            authInteractor.init(authConfigFile)
+            authInteractor.isUserAuthenticated().safeCollectLatest({ loadingData = false }) {
+                // will not kill the collectLatest if an error is thrown
                 supervisorScope {
-                    val isAuthorized = if (!authInteractor.isAuthorized(user)) {
-                        generalInteractor.clearAllDatabases()
-                        false
-                    } else {
-                        if (loadingData) { // The data is being loaded and will return true once it's done
+                    val isAuthorized =
+                        if (!authInteractor.isAuthorized(it)) {
+                            generalInteractor.clearAllDatabases()
+                            workerManager.clearAll()
                             false
                         } else {
-                            if (!isDataInit()) {
-                                loadingData = true
-                                state = state.copy(isLoading = true)
-                                withContext(NonCancellable) {
-                                    try {
-                                        generalInteractor.initData()
-                                        loadingData = false
-                                    } catch (ex: Exception) {
-                                        ex.log()
-                                        authInteractor.signOut()
-                                        loadingData = false
-                                        false
+                            if (loadingData) { // The data is being loaded and will return true once it's done
+                                false
+                            } else {
+                                if (!isDataInit()) {
+                                    loadingData = true
+                                    state = state.copy(isLoading = true)
+                                    withContext(NonCancellable) {
+                                        try {
+                                            generalInteractor.initData()
+                                            loadingData = false
+                                        } catch (ex: Exception) {
+                                            ex.log()
+                                            authInteractor.signOut()
+                                            loadingData = false
+                                            false
+                                        }
                                     }
                                 }
+                                true
                             }
-                            true
                         }
-                    }
                     state = state.copy(isLoading = false, isAuthorized = isAuthorized)
                 }
             }
@@ -63,7 +68,7 @@ class MyMessagesViewModel @Inject constructor(
     }
 
     private fun isDataInit(): Boolean =
-        settingsInteractor.getSettings(SettingsKeys.IsDataInit)?.value?.toBooleanStrictOrNull()
+        settingsInteractor.getSettings(SettingsKey.IsDataInit)?.value?.toBooleanStrictOrNull()
             ?: false
 
     fun signOut() = viewModelScope.launch(Dispatchers.Main) {

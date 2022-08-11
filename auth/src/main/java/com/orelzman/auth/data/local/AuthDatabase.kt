@@ -9,7 +9,7 @@ import com.orelzman.auth.domain.model.User
     entities = [
         User::class
     ],
-    version = 1
+    version = 2
 )
 
 abstract class AuthDatabase : RoomDatabase() {

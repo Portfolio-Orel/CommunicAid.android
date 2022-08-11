@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.util.common
+package com.orelzman.mymessages.domain.util.common
 
 import android.content.Context
 import com.orelzman.mymessages.R
@@ -25,6 +25,4 @@ object DateUtils {
             7 -> context.getString(R.string.saturday)
             else -> null
         }
-
-
 }

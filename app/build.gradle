@@ -68,8 +68,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.0'
-    implementation 'androidx.activity:activity-compose:1.5.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.0' // May cause 1.5 - 1.7 exceptions
+    implementation 'androidx.activity:activity-compose:1.5.0' // May cause 1.5 - 1.7 exceptions
     implementation 'androidx.test:monitor:1.5.0'
     implementation 'androidx.hilt:hilt-work:1.0.0'
     testImplementation 'junit:junit:4.13.2'
@@ -98,19 +98,19 @@ dependencies {
 
 
     //Dagger - Hilt
-    implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
-    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
-    kaptTest "com.google.dagger:hilt-android-compiler:$hilt_version"
-    androidTestImplementation "com.google.dagger:hilt-android-testing:$dagger_version"
-    testImplementation "com.google.dagger:hilt-android-testing:$dagger_version"
-    implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
     kapt "androidx.hilt:hilt-compiler:1.0.0"
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
     implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
+    testImplementation "com.google.dagger:hilt-android-testing:$dagger_version"
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$dagger_version"
+    kaptTest "com.google.dagger:hilt-android-compiler:$hilt_version"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
 
     // Room
-    implementation "androidx.room:room-runtime:2.4.2"
     kapt "androidx.room:room-compiler:2.4.2"
+    implementation "androidx.room:room-runtime:2.4.2"
     implementation "androidx.room:room-ktx:2.4.2"
 
     // Gson
@@ -153,5 +153,9 @@ dependencies {
 
     // Datadog
     implementation "com.datadoghq:dd-sdk-android:1.13.0"
+
+    // Reactivex
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.0'
 
 }

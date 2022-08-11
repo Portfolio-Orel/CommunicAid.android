@@ -1,4 +1,4 @@
-package com.orelzman.mymessages
+package com.orelzman.mymessages.presentation.my_messages
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
@@ -17,11 +17,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.orelzman.mymessages.R
+import com.orelzman.mymessages.domain.util.Screen
 import com.orelzman.mymessages.presentation.components.CustomScaffold
 import com.orelzman.mymessages.presentation.components.bottom_bar.BottomBar
 import com.orelzman.mymessages.presentation.components.multi_fab.MiniFloatingAction
@@ -31,10 +34,9 @@ import com.orelzman.mymessages.presentation.details_folder.DetailsFolderScreen
 import com.orelzman.mymessages.presentation.details_message.DetailsMessageScreen
 import com.orelzman.mymessages.presentation.login.LoginScreen
 import com.orelzman.mymessages.presentation.main.MainScreen
-import com.orelzman.mymessages.presentation.my_messages.MyMessagesViewModel
+import com.orelzman.mymessages.presentation.settings.SettingsScreen
 import com.orelzman.mymessages.presentation.statistics.StatisticsScreen
 import com.orelzman.mymessages.presentation.unhandled_calls.UnhandledCallsScreen
-import com.orelzman.mymessages.util.Screen
 
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class
@@ -43,7 +45,6 @@ import com.orelzman.mymessages.util.Screen
 fun MyMessagesApp(
     viewModel: MyMessagesViewModel = hiltViewModel()
 ) {
-
     val state = viewModel.state
     val navHostController = rememberNavController()
     val navController = navHostController as NavController
@@ -61,7 +62,7 @@ fun MyMessagesApp(
                         .height(48.dp)
                         .width(48.dp),
                     strokeWidth = 2.dp,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         } else {
@@ -70,49 +71,13 @@ fun MyMessagesApp(
             } else {
                 CustomScaffold(
                     navController = navHostController,
-                    topBar = { TopAppBar() },
-                    bottomBar = {
-                        BottomBar(navController = it)
-                    },
+                    topBar = { TopAppBar(navController = navController) },
+                    bottomBar = { BottomBar(navController = it) },
                     floatingActionButton = {
-                        MultiFab(
-                            fabs = listOf(
-                                MiniFloatingAction(
-                                    action = { viewModel.signOut() },
-                                    icon = painterResource(id = R.drawable.ic_login),
-                                    description = stringResource(R.string.sign_out)
-                                ),
-                                MiniFloatingAction(
-                                    action = {
-                                        navController.navigate(
-                                            Screen.DetailsFolder.route
-                                        ) {
-                                            popUpTo(navHostController.graph.findStartDestination().id) {
-                                                inclusive = false
-                                            }
-                                            launchSingleTop = true
-                                        }
-                                    },
-                                    icon = painterResource(id = R.drawable.ic_new_folder),
-                                    description = ""
-                                ),
-                                MiniFloatingAction(
-                                    action = {
-                                        navController.navigate(
-                                            Screen.DetailsMessage.route
-                                        ) {
-                                            popUpTo(navHostController.graph.findStartDestination().id) {
-                                                inclusive = false
-                                            }
-                                            launchSingleTop = true
-                                        }
-                                    },
-                                    icon = painterResource(id = R.drawable.ic_new_message),
-                                    description = ""
-                                ),
-                            ),
-                            iconCollapsed = painterResource(R.drawable.ic_arrow_left),
-                            iconExpanded = painterResource(R.drawable.ic_close),
+                        Fab(
+                            navController = navController,
+                            navHostController = navHostController,
+                            signOut = viewModel::signOut
                         )
                     },
                 ) {
@@ -129,8 +94,11 @@ fun MyMessagesApp(
                         composable(route = Screen.Login.route) { LoginScreen() }
                         composable(route = Screen.UnhandledCalls.route) { UnhandledCallsScreen() }
                         composable(route = Screen.Statistics.route) { StatisticsScreen() }
+                        composable(route = Screen.Settings.route) { SettingsScreen() }
                         composable(route = Screen.DetailsMessage.route) {
-                            DetailsMessageScreen(navController = navHostController)
+                            DetailsMessageScreen(
+                                navController = navHostController
+                            )
                         }
                         composable(
                             route = Screen.DetailsMessage.route + "/{messageId}",
@@ -167,4 +135,51 @@ fun MyMessagesApp(
             }
         }
     }
+}
+
+@Composable
+fun Fab(
+    navController: NavController,
+    navHostController: NavHostController,
+    signOut: () -> Unit
+) {
+    MultiFab(
+        fabs = listOf(
+            MiniFloatingAction(
+                action = { signOut() },
+                icon = painterResource(id = R.drawable.ic_login),
+                description = stringResource(R.string.sign_out)
+            ),
+            MiniFloatingAction(
+                action = {
+                    navController.navigate(
+                        Screen.DetailsFolder.route
+                    ) {
+                        popUpTo(navHostController.graph.findStartDestination().id) {
+                            inclusive = false
+                        }
+                        launchSingleTop = true
+                    }
+                },
+                icon = painterResource(id = R.drawable.ic_new_folder),
+                description = ""
+            ),
+            MiniFloatingAction(
+                action = {
+                    navController.navigate(
+                        Screen.DetailsMessage.route
+                    ) {
+                        popUpTo(navHostController.graph.findStartDestination().id) {
+                            inclusive = false
+                        }
+                        launchSingleTop = true
+                    }
+                },
+                icon = painterResource(id = R.drawable.ic_new_message),
+                description = ""
+            ),
+        ),
+        iconCollapsed = painterResource(R.drawable.ic_arrow_left),
+        iconExpanded = painterResource(R.drawable.ic_close),
+    )
 }

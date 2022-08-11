@@ -5,7 +5,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.orelzman.mymessages.domain.model.entities.Settings
-import com.orelzman.mymessages.domain.model.entities.SettingsKeys
+import com.orelzman.mymessages.domain.model.entities.SettingsKey
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SettingsDao {
@@ -21,11 +22,17 @@ interface SettingsDao {
         FROM Settings
         WHERE `key` = :key
     """)
-    fun get(key: SettingsKeys): Settings?
+    fun get(key: SettingsKey): Settings?
 
     @Query("""
         SELECT *
         FROM Settings
     """)
     fun getAll(): List<Settings>
+
+    @Query("""
+        SELECT *
+        FROM Settings
+    """)
+    fun getAllFlow(): Flow<List<Settings>>
 }

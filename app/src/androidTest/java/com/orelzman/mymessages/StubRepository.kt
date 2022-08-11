@@ -7,18 +7,22 @@ import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.repository.Repository
 
 class StubRepository : Repository {
-    override suspend fun getMessages(userId: String): List<GetMessagesResponse> =
-        emptyList()
 
-    override suspend fun getFolders(userId: String): List<GetFoldersResponse> =
-        emptyList()
 
     override suspend fun createMessage(createMessageBody: CreateMessageBody): List<String>? = null
+    override suspend fun getMessages(): List<GetMessagesResponse> =
+        emptyList()
+
 
     override suspend fun createFolder(createFolderBody: CreateFolderBody): String? = null
-
+    override suspend fun getFolders(): List<GetFoldersResponse> = emptyList()
 
     override suspend fun deleteMessage(message: Message, folderId: String) = Unit
+    override suspend fun updateMessage(
+        message: Message,
+        oldFolderId: String?,
+        newFolderId: String?
+    ) = Unit
 
     override suspend fun deleteFolder(folder: Folder) = Unit
 
@@ -31,25 +35,18 @@ class StubRepository : Repository {
     override suspend fun createDeletedCall(createDeletedCallBody: CreateDeletedCallBody): String? =
         null
 
-    override suspend fun getDeletedCalls(userId: String): List<GetDeletedCallsResponse> =
-        emptyList()
+    override suspend fun getDeletedCalls(): List<GetDeletedCallsResponse> = emptyList()
 
     override suspend fun createUser(createUserBody: CreateUserBody) = Unit
-
-    override suspend fun getUser(userId: String): GetUserResponse? = null
+    override suspend fun getUser(): GetUserResponse? = null
     override suspend fun createOrUpdateSettings(createOrUpdateSettingsBody: CreateOrUpdateSettingsBody) =
         Unit
 
-    override suspend fun getSettings(userId: String, key: String): List<SettingsResponse> =
-        emptyList()
+    override suspend fun getSettings(key: String): List<SettingsResponse> = emptyList()
 
+    override suspend fun getAllSettings(): List<SettingsResponse> = emptyList()
     override suspend fun deleteMessagesFromFolder(folderId: String) = Unit
     override suspend fun getCallsCountByType(): GetCallsCountResponse = GetCallsCountResponse()
-
     override suspend fun getMessagesSentCount(): List<GetMessagesSentCountResponse> = emptyList()
-
-    override suspend fun updateMessage(message: Message, oldFolderId: String, newFolderId: String) =
-        Unit
-
     override suspend fun updateFolder(folder: Folder) = Unit
 }

@@ -39,7 +39,7 @@ fun LoginScreen(
                     .height(48.dp)
                     .width(48.dp),
                 strokeWidth = 2.dp,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.inversePrimary
             )
         }
     } else {
@@ -61,6 +61,7 @@ private fun ContentView(viewModel: LoginViewModel) {
         ) {
             ConfirmationScreen(
                 username = state.username,
+                password = state.password,
                 onDismiss = {
                     viewModel.hideRegistrationConfirmation()
                 }, onUserConfirmed = {

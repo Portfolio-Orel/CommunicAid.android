@@ -7,5 +7,20 @@ import androidx.room.PrimaryKey
 data class User(
     @PrimaryKey val userId: String = "",
     val token: String = "",
-    val email: String = ""
-)
+    val email: String = "",
+    var state: UserState = UserState.NotAuthorized
+) {
+    companion object {
+        fun blocked(): User =
+            User(state = UserState.Blocked)
+
+        fun notAuthorized(): User =
+            User(state = UserState.NotAuthorized)
+    }
+}
+
+enum class UserState {
+    NotAuthorized,
+    Authorized,
+    Blocked;
+}

@@ -28,6 +28,7 @@ interface AuthInteractor {
      */
     suspend fun confirmUser(
         username: String,
+        password: String,
         code: String
     )
 
@@ -35,7 +36,7 @@ interface AuthInteractor {
 
     fun getUser(): User?
     fun isUserAuthenticated(): Flow<User?>
-    fun isAuthorized(user: User?): Boolean
+    suspend fun isAuthorized(user: User?): Boolean
     /**
      * Checks if the credentials entered are valid
      * according to the policy. TODO

@@ -5,7 +5,7 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.orelzman.mymessages.domain.model.entities.MessageSent
-import com.orelzman.mymessages.domain.model.entities.SettingsKeys
+import com.orelzman.mymessages.domain.model.entities.SettingsKey
 import com.orelzman.mymessages.domain.model.entities.StatisticsTypes
 import com.orelzman.mymessages.domain.model.entities.UploadState
 import java.util.*
@@ -33,11 +33,11 @@ class Converters {
         Date(long)
 
     @TypeConverter
-    fun stringToSettingsKey(string: String): SettingsKeys =
-        Gson().fromJson(string, SettingsKeys::class.java)
+    fun stringToSettingsKey(string: String): SettingsKey =
+        Gson().fromJson(string, SettingsKey::class.java)
 
     @TypeConverter
-    fun settingsKeysToString(settingsKeys: SettingsKeys): String =
+    fun settingsKeysToString(settingsKeys: SettingsKey): String =
         Gson().toJson(settingsKeys)
 
     @TypeConverter

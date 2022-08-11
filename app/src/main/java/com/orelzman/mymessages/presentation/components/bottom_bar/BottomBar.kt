@@ -14,7 +14,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.orelzman.mymessages.R
-import com.orelzman.mymessages.util.Screen
+import com.orelzman.mymessages.domain.util.Screen
 
 private val Screen.icon: ImageVector?
     get() =

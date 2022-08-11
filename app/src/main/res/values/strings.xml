@@ -71,4 +71,11 @@
     <string name="folder_deleted_successfully">התיקייה נמחקה בהצלחה!</string>
     <string name="folder_updated_successfully">התיקייה עודכנה בהצלחה!</string>
     <string name="folder_restored_successfully">התיקייה שוחזרה בהצלחה</string>
+    <string name="error_code_mismatch">הקוד לא מתאים.. שלחנו לך חדש</string>
+    <string name="error_code_expired">הקוד כבר לא תקף.. שלחנו לך חדש</string>
+    <string name="confirming_code">בודקים את הקוד..</string>
+    <string name="settings">הגדרות</string>
+    <string name="last_calls_update">עדכון שיחות אחרון</string>
+    <string name="show_app_on_call">הצג אפליקציה בעת שיחה</string>
+    <string name="ignore_list">רשימת התעלמות</string>
 </resources>

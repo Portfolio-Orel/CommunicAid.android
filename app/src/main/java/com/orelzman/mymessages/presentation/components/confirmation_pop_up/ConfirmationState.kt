@@ -1,10 +1,12 @@
 package com.orelzman.mymessages.presentation.components.confirmation_pop_up
 
+import androidx.annotation.StringRes
+
 
 data class ConfirmationState(
     val isLoading: Boolean = false,
     val isDismiss: Boolean = false,
     val code: String = "",
     val username: String = "",
-    val exception: Exception? = null
+    @StringRes val error: Int? = null
 )

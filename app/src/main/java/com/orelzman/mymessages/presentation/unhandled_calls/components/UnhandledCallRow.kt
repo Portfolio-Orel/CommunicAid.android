@@ -1,6 +1,5 @@
 package com.orelzman.mymessages.presentation.unhandled_calls.components
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,9 +17,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
+import com.orelzman.mymessages.domain.util.extension.formatDayAndHours
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
-import com.orelzman.mymessages.util.extension.getDayFormatted
-import com.orelzman.mymessages.util.extension.getHourHHMM
 import java.util.*
 
 @Composable
@@ -56,7 +54,7 @@ fun UnhandledCallRow(
                 style = MaterialTheme.typography.titleSmall
             )
             Text(
-                phoneCall.startDate.format(context),
+                phoneCall.startDate.formatDayAndHours(context),
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f),
                 style = MaterialTheme.typography.bodyMedium
             )
@@ -76,10 +74,6 @@ fun UnhandledCallRow(
 
 private fun Modifier.localPadding(): Modifier = this.padding(horizontal = 12.dp)
 private fun Modifier.localIconSize(): Modifier = this.size(34.dp)
-
-private fun Date.format(context: Context): String =
-    "${getDayFormatted(context)} • ${getHourHHMM()}"
-
 
 @Preview(showBackground = true)
 @Composable

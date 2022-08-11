@@ -12,7 +12,7 @@ import com.orelzman.mymessages.domain.managers.phonecall.toState
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.model.entities.toPhoneCall
 import com.orelzman.mymessages.domain.service.phone_call.CallState
-import com.orelzman.mymessages.util.extension.Log
+import com.orelzman.mymessages.domain.util.extension.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

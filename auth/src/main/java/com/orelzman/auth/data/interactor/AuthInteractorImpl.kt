@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+
 package com.orelzman.auth.data.interactor
 
 import android.app.Activity
@@ -5,6 +7,7 @@ import android.content.Context
 import android.util.Log
 import androidx.annotation.RawRes
 import com.amplifyframework.AmplifyException
+import com.amplifyframework.auth.AuthChannelEventName
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.AuthProvider
 import com.amplifyframework.auth.AuthUserAttributeKey
@@ -12,13 +15,18 @@ import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
 import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.AmplifyConfiguration
+import com.amplifyframework.core.InitializationStatus
+import com.amplifyframework.hub.HubChannel
 import com.amplifyframework.kotlin.core.Amplify
 import com.orelzman.auth.domain.exception.*
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.auth.domain.interactor.UserInteractor
 import com.orelzman.auth.domain.model.User
+import com.orelzman.auth.domain.model.UserState
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 
@@ -43,6 +51,7 @@ class AuthInteractorImpl @Inject constructor(
                 Amplify.configure(context)
             }
             isConfigured = true
+            collectState(configFileResourceId)
             Log.v(TAG, "AWS configured")
             return
         } catch (e: AmplifyException) {
@@ -60,7 +69,12 @@ class AuthInteractorImpl @Inject constructor(
 
     override fun getUser(): User? = userInteractor.get()
     override fun isUserAuthenticated(): Flow<User?> = userInteractor.getFlow()
-    override fun isAuthorized(user: User?): Boolean = user != null && user.token != "" && user.userId != ""
+
+    override suspend fun isAuthorized(user: User?): Boolean {
+        val isLocallyAuthorized = user != null && user.token != "" && user.userId != ""
+        val isRemotelyAuthorized = Amplify.Auth.fetchAuthSession().isSignedIn
+        return isLocallyAuthorized && isRemotelyAuthorized && user?.state == UserState.Authorized
+    }
 
 
     @Throws
@@ -79,6 +93,7 @@ class AuthInteractorImpl @Inject constructor(
             when (e) {
                 is AuthException.UserNotConfirmedException -> throw UserNotConfirmedException()
                 is AuthException.UsernameExistsException -> throw UsernameExistsException()
+                is AuthException.InvalidPasswordException -> throw InvalidPasswordException()
                 else -> throw e
             }
         }
@@ -86,14 +101,16 @@ class AuthInteractorImpl @Inject constructor(
 
 
     @Throws
-    override suspend fun confirmUser(username: String, code: String) {
+    override suspend fun confirmUser(username: String, password: String, code: String) {
         try {
             val result = Amplify.Auth.confirmSignUp(username, code)
+            Amplify.Auth.signIn(username = username, password = password)
             if (result.isSignUpComplete) {
                 userSignInSuccessfully()
                 Log.i(TAG, "Signup confirmed")
             } else {
                 Log.i(TAG, "Signup confirmation not yet complete")
+                throw UnknownRegisterException()
             }
         } catch (e: AuthException) {
             when (e) {
@@ -103,7 +120,6 @@ class AuthInteractorImpl @Inject constructor(
                 }
                 is AuthException.CodeExpiredException -> throw CodeExpiredException()
                 is AuthException.NotAuthorizedException -> throw NotAuthorizedException()
-
                 else -> throw e
             }
         }
@@ -130,10 +146,9 @@ class AuthInteractorImpl @Inject constructor(
             if (result.isSignInComplete) {
                 userSignInSuccessfully()
                 Log.v(TAG, "Sign in succeeded")
-                Log.v("AuthAWS:::", "Sign in succeeded")
                 (Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession).awsCredentials.error?.localizedMessage?.let {
                     Log.v(
-                        "AuthAWS:::",
+                        TAG,
                         it
                     )
                 }
@@ -182,6 +197,32 @@ class AuthInteractorImpl @Inject constructor(
             throw LimitExceededException()
         }
 
+    private suspend fun collectState(@RawRes configFileResourceId: Int?) {
+        CoroutineScope(SupervisorJob()).launch {
+            Amplify.Hub.subscribe(HubChannel.AUTH).collectLatest {
+                when (it.name) {
+                    InitializationStatus.SUCCEEDED.toString() ->
+                        Log.i(TAG, "Auth successfully initialized")
+                    InitializationStatus.FAILED.toString() ->
+                        Log.i(TAG, "Auth failed to succeed")
+                    else -> when (AuthChannelEventName.valueOf(it.name)) {
+                        AuthChannelEventName.SIGNED_IN ->
+                            Log.i(TAG, "Auth just became signed in.")
+                        AuthChannelEventName.SIGNED_OUT ->
+                            Log.i(TAG, "Auth just became signed out.")
+                        AuthChannelEventName.SESSION_EXPIRED ->
+                            try {
+                                refreshToken(configFileResourceId)
+                            } catch(e: Exception) {
+                                signOut()
+                            }
+                        AuthChannelEventName.USER_DELETED ->
+                            signOut()
+                    }
+                }
+            }
+        }
+    }
 
     private suspend fun userSignInSuccessfully() {
         setUser()
@@ -199,10 +240,13 @@ class AuthInteractorImpl @Inject constructor(
                     email = it.value
                 }
             }
-            val user = User(userId = userId, token = token, email = email)
+            val user = User(userId = userId, token = token, email = email, state = UserState.Authorized)
             userInteractor.save(user)
         } catch (e: Exception) {
-            throw e
+            when (e) {
+                is AuthException.NotAuthorizedException -> userInteractor.save(User.blocked())
+                else -> userInteractor.save(User.notAuthorized())
+            }
         }
     }
 

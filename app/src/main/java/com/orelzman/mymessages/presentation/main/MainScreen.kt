@@ -24,11 +24,11 @@ import com.google.accompanist.flowlayout.SizeMode
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
+import com.orelzman.mymessages.domain.util.Screen
 import com.orelzman.mymessages.presentation.components.scrollable_flowrow.ScrollDirection
 import com.orelzman.mymessages.presentation.components.scrollable_flowrow.ScrollableFlowRow
 import com.orelzman.mymessages.presentation.main.components.FolderView
 import com.orelzman.mymessages.presentation.main.components.MessageView
-import com.orelzman.mymessages.util.Screen
 
 
 @ExperimentalFoundationApi
@@ -89,20 +89,6 @@ private fun Content(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            if (state.callInBackground != null) {
-                WaitingCallBar(
-                    activeCall = state.activeCall,
-                    callOnTheLine = state.callOnTheLine,
-                    callInBackground = state.callInBackground,
-                    setCallInBackground = {
-                        viewModel.setBackgroundCallActive()
-                    },
-                    setCallOnTheLine = {
-                        viewModel.setCallOnTheLineActive()
-                    }
-                )
-            }
-
             FoldersList(
                 modifier = Modifier.padding(bottom = 32.dp),
                 folders = state.folders,
@@ -181,8 +167,7 @@ fun MessagesList(
         mainAxisAlignment = MainAxisAlignment.SpaceEvenly,
         mainAxisSize = SizeMode.Expand,
     ) {
-        messages // ToDo: Problematic?
-            .sortedByDescending { it.timesUsed }
+        messages
             .forEach {
                 MessageView(
                     message = it,
@@ -285,6 +270,7 @@ private fun getMessageWidth(
     messagesInRow: Int = 4,
     spaceBetween: Int = 4
 ): Dp {
+    if(messagesInRow == 0) return 0.dp
     val spacesCount = messagesInRow + 1 // Amount of spaces between each message
     val spaceForMessages = screenWidth - spacesCount * spaceBetween
     return (spaceForMessages / messagesInRow).dp
