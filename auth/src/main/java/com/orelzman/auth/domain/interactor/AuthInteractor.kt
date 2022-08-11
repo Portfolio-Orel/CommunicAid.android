@@ -35,7 +35,11 @@ interface AuthInteractor {
     suspend fun googleAuth(activity: Activity)
 
     fun getUser(): User?
-    fun isUserAuthenticated(): Flow<User?>
+    fun getUserFlow(): Flow<User?>
+
+    /**
+     * Checks if the user is authorized against the user pool.
+     */
     suspend fun isAuthorized(user: User?): Boolean
     /**
      * Checks if the credentials entered are valid
