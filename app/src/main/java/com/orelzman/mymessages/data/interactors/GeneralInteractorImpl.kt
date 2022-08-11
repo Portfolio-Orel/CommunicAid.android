@@ -11,6 +11,7 @@ class GeneralInteractorImpl @Inject constructor(
     private val messageInteractor: MessageInteractor,
     private val folderInteractor: FolderInteractor,
     private val deletedCallsInteractor: DeletedCallsInteractor,
+    private val statisticsInteractor: StatisticsInteractor,
     private val DataSourceCallsInteractor: DataSourceCallsInteractor,
     private val settingsInteractor: SettingsInteractor
 ) : GeneralInteractor {
@@ -28,6 +29,7 @@ class GeneralInteractorImpl @Inject constructor(
         folderInteractor.init()
         DataSourceCallsInteractor.init()
         settingsInteractor.init()
+        statisticsInteractor.init()
          settingsInteractor.saveSettings(Settings(SettingsKey.IsDataInit, true.toString()))
     }
 
