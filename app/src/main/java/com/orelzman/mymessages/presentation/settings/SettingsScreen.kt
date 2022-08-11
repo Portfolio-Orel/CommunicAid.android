@@ -59,6 +59,9 @@ fun SettingsScreen(
                             modifier = Modifier.padding(horizontal = 8.dp)
                         )
                     }
+                    SettingsType.PopUp -> {
+
+                    }
                     else -> {}
                 }
             }
