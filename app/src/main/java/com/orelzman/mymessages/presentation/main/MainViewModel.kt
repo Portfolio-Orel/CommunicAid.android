@@ -146,14 +146,6 @@ class MainViewModel @Inject constructor(
     }
 
     fun onFolderLongClick(folder: Folder) = goToEditFolder(folder)
-//
-//    fun setBackgroundCallActive() {
-//        if (state.callInBackground != null) {
-//            selectActiveCall(state.callInBackground)
-//        } else {
-//            selectActiveCall(state.callOnTheLine)
-//        }
-//    }
 
     private fun setCallOnTheLineActive() {
         selectActiveCall(state.callOnTheLine)
@@ -190,11 +182,9 @@ class MainViewModel @Inject constructor(
                     val call = it.callOnTheLine?.toPhoneCall()
                     state = state.copy(callOnTheLine = call)
                     setCallOnTheLineActive()
-                    Log.i("observed number on the line: $call")
                 }
             } catch (e: Exception) {
                 e.log()
-                Log.e("observeNumberOnTheLine stopped")
             }
         }
     }
@@ -209,7 +199,6 @@ class MainViewModel @Inject constructor(
                     phoneCallManagerInteractor.callsDataFlow.collectLatest {
                         val call = it.callOnTheLine?.toPhoneCall()
                         state = state.copy(callInBackground = call)
-                        Log.i("observed call in the background: $call")
                     }
                 } catch (e: Exception) {
                     e.log()
