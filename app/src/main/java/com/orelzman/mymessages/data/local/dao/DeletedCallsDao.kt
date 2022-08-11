@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.Flow
 interface DeletedCallsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(deletedCalls: DeletedCall)
+    fun insert(deletedCalls: DeletedCall)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(deletedCalls: List<DeletedCall>)
+    fun insert(deletedCalls: List<DeletedCall>)
 
     @Query(
         """
@@ -38,6 +38,16 @@ interface DeletedCallsDao {
 
     @Delete
     fun delete(deletedCall: DeletedCall)
+
+    @Update
+    fun update(deletedCall: DeletedCall)
+
+    @Query("""
+        UPDATE DeletedCall
+        SET id = :newId
+        WHERE deleteDate = :deletedDate
+    """)
+    fun updateId(deletedDate: Long, newId: String)
 
     @Query("""
         DELETE

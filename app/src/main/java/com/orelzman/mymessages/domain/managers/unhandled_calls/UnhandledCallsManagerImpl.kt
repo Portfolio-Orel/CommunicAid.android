@@ -58,7 +58,7 @@ class UnhandledCallsManagerImpl @Inject constructor(): UnhandledCallsManager {
                     callToHandle.number == deletedCall.number
                 }.maxByOrNull { it.phoneCall.endDate }
                 return@filter (lastCallToHandle?.time
-                    ?: 0) < deletedCall.deleteDate.time
+                    ?: 0) < deletedCall.deleteDate
             }
     }
 

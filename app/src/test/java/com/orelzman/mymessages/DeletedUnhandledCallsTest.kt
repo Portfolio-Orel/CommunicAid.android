@@ -164,7 +164,7 @@ class DeletedUnhandledCallsTest {
             DeletedCall(
                 id = "1$number",
                 number = number.value,
-                deleteDate = Date()
+                deleteDate = Date().time
             )
         )
         Thread.sleep(10)
