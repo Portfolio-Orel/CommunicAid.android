@@ -1,12 +1,12 @@
 package com.orelzman.mymessages.presentation.components.login_button
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.mymessages.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,9 +25,9 @@ class LoginButtonViewModel @Inject constructor(
                 authInteractor.signIn(username = username, password = password)
                 onLoginComplete(true, null)
                 state.copy(isLoading = false)
-            } catch(exception: Exception) {
-                Log.e("AWSAuth", exception.message ?: "")
-                onLoginComplete(false, exception)
+            } catch(e: Exception) {
+                e.log()
+                onLoginComplete(false, e)
                 state.copy(isLoading = false)
             }
         }

@@ -25,6 +25,4 @@ object DateUtils {
             7 -> context.getString(R.string.saturday)
             else -> null
         }
-
-
 }

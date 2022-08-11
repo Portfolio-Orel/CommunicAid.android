@@ -25,6 +25,7 @@ class SettingsViewModel @Inject constructor(
     var state by mutableStateOf(SettingsState())
 
     init {
+        initData()
         observeSettings()
     }
 
@@ -45,13 +46,25 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    private fun initData() {
+        val settingsList = settingsInteractor.getAllSettings()
+        setSettings(settingsList)
+    }
+
     private fun observeSettings() {
         viewModelScope.launch(SupervisorJob()) {
             settingsInteractor.getAllSettingsFlow().collectLatest { settingsList ->
-                state = state.copy(settingsList = settingsList)
+                setSettings(settingsList)
                 confirmAllSettingsAreInDB(settingsList = settingsList)
             }
         }
+    }
+
+    private fun setSettings(settingsList: List<Settings>) {
+        state = state.copy(
+            settingsList = settingsList
+                .sortedWith(compareBy({ it.key }, { it.key.name }))
+        )
     }
 
     private suspend fun confirmAllSettingsAreInDB(settingsList: List<Settings>) {
