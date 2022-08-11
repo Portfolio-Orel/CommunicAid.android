@@ -11,8 +11,7 @@ import java.util.*
 data class DeletedCall(
     @PrimaryKey var id: String = UUID.randomUUID().toString(),
     val number: String = "",
-    val deleteDate: Date = Date(),
-    var isInDB: Boolean = false,
+    val deleteDate: Long = Date().time,
 ) : Loggable, Uploadable() {
 
     override val data: Map<String, Any>

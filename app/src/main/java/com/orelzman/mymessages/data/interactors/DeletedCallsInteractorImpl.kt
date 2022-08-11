@@ -4,6 +4,7 @@ import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.domain.interactors.DeletedCallsInteractor
 import com.orelzman.mymessages.domain.model.dto.body.create.CreateDeletedCallBody
 import com.orelzman.mymessages.domain.model.entities.DeletedCall
+import com.orelzman.mymessages.domain.model.entities.UploadState
 import com.orelzman.mymessages.domain.repository.Repository
 import kotlinx.coroutines.flow.Flow
 import java.util.*
@@ -16,22 +17,19 @@ class DeletedCallsInteractorImpl @Inject constructor(
     val db = database.deletedCallsDao
 
     override suspend fun create(deletedCall: DeletedCall) {
-        try {
+            deletedCall.setUploadState(UploadState.NotUploaded)
             db.insert(deletedCalls = deletedCall)
             val createDeletedCallBody = CreateDeletedCallBody(
                 number = deletedCall.number,
-                deleteDate = deletedCall.deleteDate.time
+                deleteDate = deletedCall.deleteDate
             )
             val id: String? = repository.createDeletedCall(createDeletedCallBody)
             if(id != null) {
-                db.delete(deletedCall)
-                deletedCall.isInDB = true
+                db.updateId(deletedCall.deleteDate, id)
+                deletedCall.setUploadState(UploadState.Uploaded)
                 deletedCall.id = id
-                db.insert(deletedCall)
+                db.update(deletedCall)
             }
-        } catch (e: Exception) {
-            throw e
-        }
     }
 
     override suspend fun getAll(startDate: Date): Flow<List<DeletedCall>> {
@@ -47,14 +45,19 @@ class DeletedCallsInteractorImpl @Inject constructor(
     override suspend fun init() {
         val result = repository.getDeletedCalls()
         val deletedCallsList = result.map {
-            DeletedCall(
+            val deletedCall = DeletedCall(
                 id = it.id,
                 number = it.number,
-                deleteDate = it.deleteDate,
-                isInDB = true
+                deleteDate = it.deleteDate.time
             )
+            deletedCall.setUploadState(UploadState.Uploaded)
+            deletedCall
         }
         db.clear()
-        db.insert(deletedCallsList)
+        if(deletedCallsList.isEmpty()) {
+            db.insert(arrayListOf(DeletedCall())) // Force collectLatest collection
+        } else {
+            db.insert(deletedCallsList)
+        }
     }
 }
