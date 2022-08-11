@@ -37,8 +37,12 @@ interface FolderDao {
     @Update
     suspend fun update(folder: Folder)
 
-    @Delete
-    suspend fun delete(folder: Folder)
+        @Query("""
+            UPDATE Folder
+            SET isActive = 0
+            WHERE id = :id
+        """)
+    suspend fun delete(id: String)
 
     @Query("""
         SELECT *

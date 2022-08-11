@@ -89,20 +89,6 @@ private fun Content(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-//            if (state.callInBackground != null) {
-//                WaitingCallBar(
-//                    activeCall = state.activeCall,
-//                    callOnTheLine = state.callOnTheLine,
-//                    callInBackground = state.callInBackground,
-//                    setCallInBackground = {
-//                        viewModel.setBackgroundCallActive()
-//                    },
-//                    setCallOnTheLine = {
-//                        viewModel.setCallOnTheLineActive()
-//                    }
-//                )
-//            }
-
             FoldersList(
                 modifier = Modifier.padding(bottom = 32.dp),
                 folders = state.folders,

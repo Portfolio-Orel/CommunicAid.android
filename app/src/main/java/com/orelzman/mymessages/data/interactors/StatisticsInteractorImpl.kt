@@ -18,12 +18,18 @@ class StatisticsInteractorImpl @Inject constructor(
     override suspend fun getStatistics(): Flow<List<Statistics>> =
         db.getAllFlow()
 
+    override fun getStatisticsOnce(): List<Statistics> = db.getAll()
 
     override suspend fun getCallsCountByType() {
         initCallsCountByType()
     }
 
     override suspend fun getMessagesSentCount() {
+        initMessagesSentCount()
+    }
+
+    override suspend fun init() {
+        initCallsCountByType()
         initMessagesSentCount()
     }
 

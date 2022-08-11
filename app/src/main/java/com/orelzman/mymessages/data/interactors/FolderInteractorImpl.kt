@@ -39,7 +39,7 @@ class FolderInteractorImpl @Inject constructor(
     override suspend fun deleteFolder(folder: Folder) {
         repository.deleteFolder(folder)
         messageInFolderInteractor.deleteMessagesFromFolder(folder.id)
-        db.delete(folder)
+        db.delete(folder.id)
     }
 
     override suspend fun getFolder(folderId: String): Folder =
@@ -57,7 +57,7 @@ class FolderInteractorImpl @Inject constructor(
         ) ?: return null
         val newFolder = Folder(folder, folderId)
         newFolder.setUploadState(UploadState.Uploaded)
-        db.delete(tempFolder)
+        db.delete(tempFolder.id)
         db.insert(newFolder)
         return folderId
     }

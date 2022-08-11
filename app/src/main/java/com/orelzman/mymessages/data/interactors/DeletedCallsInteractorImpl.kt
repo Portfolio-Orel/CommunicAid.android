@@ -41,6 +41,9 @@ class DeletedCallsInteractorImpl @Inject constructor(
         return db.getAll()
     }
 
+    override fun getAllOnce(startDate: Date): List<DeletedCall> =
+        db.getAllOnce(startDate = startDate.time)
+
     override suspend fun init() {
         val result = repository.getDeletedCalls()
         val deletedCallsList = result.map {

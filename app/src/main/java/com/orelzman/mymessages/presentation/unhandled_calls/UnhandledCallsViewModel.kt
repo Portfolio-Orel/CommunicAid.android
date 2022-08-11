@@ -40,6 +40,7 @@ class UnhandledCallsViewModel @Inject constructor(
     var isRefreshing by mutableStateOf(false)
 
     init {
+        initData()
         observeCalls()
     }
 
@@ -48,8 +49,16 @@ class UnhandledCallsViewModel @Inject constructor(
         fetchDeletedCalls()
     }
 
-    private fun observeCalls() {
+    private fun initData() {
         state = state.copy(isLoading = true)
+        val callsToHandle = unhandledCallsManager.filterUnhandledCalls(
+            deletedCalls = deletedCallsInteractor.getAllOnce(getStartOfDay()),
+            callLogs = getCallsFromCallLog()
+        )
+        state = state.copy(callsToHandle = callsToHandle, isLoading = false)
+    }
+
+    private fun observeCalls() {
         viewModelScope.launch(Dispatchers.IO) {
             deletedCallsInteractor.getAll(getStartOfDay())
                 .collect {
