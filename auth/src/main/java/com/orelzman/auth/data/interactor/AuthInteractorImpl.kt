@@ -68,12 +68,19 @@ class AuthInteractorImpl @Inject constructor(
     }
 
     override fun getUser(): User? = userInteractor.get()
-    override fun isUserAuthenticated(): Flow<User?> = userInteractor.getFlow()
+    override fun getUserFlow(): Flow<User?> = userInteractor.getFlow()
 
     override suspend fun isAuthorized(user: User?): Boolean {
         val isLocallyAuthorized = user != null && user.token != "" && user.userId != ""
-        val isRemotelyAuthorized = Amplify.Auth.fetchAuthSession().isSignedIn
-        return isLocallyAuthorized && isRemotelyAuthorized && user?.state == UserState.Authorized
+        val authorizedAgainstServerJob = CoroutineScope(Dispatchers.IO).async {
+            val isRemotelyAuthorized = Amplify.Auth.fetchAuthSession().isSignedIn
+            return@async isLocallyAuthorized && isRemotelyAuthorized && user?.state == UserState.Authorized
+        }
+        try {
+            return authorizedAgainstServerJob.await()
+        } catch (e: Exception) {
+            throw e
+        }
     }
 
 

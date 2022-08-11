@@ -10,9 +10,9 @@ interface AuthInteractor {
     suspend fun init(@RawRes configFileResourceId: Int? = null)
     suspend fun signOut()
     suspend fun signUp(
-        email: String = "",
-        username: String = "",
-        password: String = "",
+        email: String,
+        username: String,
+        password: String,
         isSaveCredentials: Boolean = false
     )
     suspend fun signIn(
@@ -35,7 +35,11 @@ interface AuthInteractor {
     suspend fun googleAuth(activity: Activity)
 
     fun getUser(): User?
-    fun isUserAuthenticated(): Flow<User?>
+    fun getUserFlow(): Flow<User?>
+
+    /**
+     * Checks if the user is authorized against the user pool.
+     */
     suspend fun isAuthorized(user: User?): Boolean
     /**
      * Checks if the credentials entered are valid

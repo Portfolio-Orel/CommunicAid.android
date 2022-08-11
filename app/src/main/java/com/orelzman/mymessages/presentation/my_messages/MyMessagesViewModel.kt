@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.auth.domain.model.UserState
 import com.orelzman.mymessages.domain.AuthConfigFile
 import com.orelzman.mymessages.domain.interactors.GeneralInteractor
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
@@ -30,8 +31,13 @@ class MyMessagesViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            state = if(authInteractor.getUser()?.state == UserState.Authorized) {
+                state.copy(isLoading = false, isAuthorized = true)
+            } else {
+                state.copy(isLoading = false, isAuthorized = false)
+            }
             authInteractor.init(authConfigFile)
-            authInteractor.isUserAuthenticated().safeCollectLatest({ loadingData = false }) {
+            authInteractor.getUserFlow().safeCollectLatest({ loadingData = false }) {
                 // will not kill the collectLatest if an error is thrown
                 supervisorScope {
                     val isAuthorized =
@@ -50,9 +56,8 @@ class MyMessagesViewModel @Inject constructor(
                                         try {
                                             generalInteractor.initData()
                                             loadingData = false
-                                        } catch (ex: Exception) {
-                                            ex.log()
-                                            authInteractor.signOut()
+                                        } catch (e: Exception) {
+                                            e.log()
                                             loadingData = false
                                             false
                                         }
@@ -67,15 +72,16 @@ class MyMessagesViewModel @Inject constructor(
         }
     }
 
-    private fun isDataInit(): Boolean =
-        settingsInteractor.getSettings(SettingsKey.IsDataInit)?.value?.toBooleanStrictOrNull()
-            ?: false
-
     fun signOut() = viewModelScope.launch(Dispatchers.Main) {
         try {
             authInteractor.signOut()
+            generalInteractor.clearAllDatabases()
         } catch (e: Exception) {
             e.log()
         }
     }
+
+    private fun isDataInit(): Boolean =
+        settingsInteractor.getSettings(SettingsKey.IsDataInit)?.value?.toBooleanStrictOrNull()
+            ?: false
 }
