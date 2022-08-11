@@ -32,5 +32,4 @@ class GeneralInteractorImpl @Inject constructor(
         statisticsInteractor.init()
          settingsInteractor.saveSettings(Settings(SettingsKey.IsDataInit, true.toString()))
     }
-
 }

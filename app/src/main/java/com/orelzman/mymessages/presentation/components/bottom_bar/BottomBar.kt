@@ -64,7 +64,7 @@ fun BottomBar(
                         popUpTo(navController.graph.findStartDestination().id) {
                             inclusive = false
                         }
-//                        launchSingleTop = true
+                        launchSingleTop = true
                     }
                 },
             )
