@@ -3,13 +3,12 @@ package com.orelzman.mymessages.presentation.unhandled_calls
 import android.app.Application
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
 import android.os.Bundle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.content.ContextCompat.startActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.mymessages.domain.interactors.CallLogInteractor
@@ -49,6 +48,37 @@ class UnhandledCallsViewModel @Inject constructor(
         fetchDeletedCalls()
     }
 
+
+    /**
+     * Deletes [phoneCall] as marks it as deletedUnhandled
+     */
+    fun onDelete(phoneCall: PhoneCall) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                deletedCallsInteractor.create(
+                    deletedCall = DeletedCall(
+                        number = phoneCall.number
+                    )
+                )
+            } catch (e: Exception) {
+                e.log()
+            }
+        }
+    }
+
+    /**
+     * Start a phone call to [phoneCall]
+     */
+    fun onCall(phoneCall: PhoneCall, context: Context? = null) {
+        val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:${phoneCall.number}"))
+        if (context != null) {
+            context.startActivity(intent)
+        } else {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            ContextCompat.startActivity(getApplicationContext(), intent, Bundle())
+        }
+    }
+
     private fun initData() {
         state = state.copy(isLoading = true)
         val callsToHandle = unhandledCallsManager.filterUnhandledCalls(
@@ -59,7 +89,7 @@ class UnhandledCallsViewModel @Inject constructor(
     }
 
     private fun observeCalls() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             deletedCallsInteractor.getAll(getStartOfDay())
                 .collect {
                     val callsToHandle = unhandledCallsManager.filterUnhandledCalls(
@@ -90,39 +120,8 @@ class UnhandledCallsViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Deletes [phoneCall] as marks it as deletedUnhandled
-     */
-    fun onDelete(phoneCall: PhoneCall) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                deletedCallsInteractor.create(
-                    deletedCall = DeletedCall(
-                        number = phoneCall.number
-                    )
-                )
-            } catch (e: Exception) {
-                e.log()
-            }
-        }
-    }
-
-    /**
-     * Start a phone call to [phoneCall]
-     */
-    fun onCall(phoneCall: PhoneCall, context: Context? = null) {
-        val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:${phoneCall.number}"))
-        if (context != null) {
-            context.startActivity(intent)
-        } else {
-            intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
-            startActivity(getApplicationContext(), intent, Bundle())
-        }
-    }
-
     private fun getApplicationContext(): Context =
         getApplication<Application>().applicationContext
-
 
     private fun getCallsFromCallLog(): ArrayList<CallLogEntity> =
         callLogInteractor.getTodaysCallLog()

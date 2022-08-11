@@ -67,10 +67,6 @@ class MyMessagesViewModel @Inject constructor(
         }
     }
 
-    private fun isDataInit(): Boolean =
-        settingsInteractor.getSettings(SettingsKey.IsDataInit)?.value?.toBooleanStrictOrNull()
-            ?: false
-
     fun signOut() = viewModelScope.launch(Dispatchers.Main) {
         try {
             authInteractor.signOut()
@@ -78,4 +74,8 @@ class MyMessagesViewModel @Inject constructor(
             e.log()
         }
     }
+
+    private fun isDataInit(): Boolean =
+        settingsInteractor.getSettings(SettingsKey.IsDataInit)?.value?.toBooleanStrictOrNull()
+            ?: false
 }

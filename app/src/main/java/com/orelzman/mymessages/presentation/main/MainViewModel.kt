@@ -42,57 +42,6 @@ class MainViewModel @Inject constructor(
         observeNumberInBackground()
     }
 
-    /**
-     * Init messages and folders to avoid first long loading.
-     */
-    private fun initData() {
-        state = state.copy(isLoading = true)
-        val messages = messageInteractor.getMessagesOnce()
-        val folders = folderInteractor.getFoldersOnce()
-        val messagesInFolders = messageInFolderInteractor.getMessagesInFoldersOnce()
-        state = state.copy(
-            isLoading = false,
-            messages = messages,
-            folders = folders,
-            messagesInFolders = messagesInFolders
-        )
-    }
-
-    private fun getMessagesInFolder() {
-        state = state.copy(messagesInFolders = messageInFolderInteractor.getMessagesInFoldersOnce())
-        viewModelScope.launch {
-            messageInFolderInteractor.getMessagesInFolders().collectLatest {
-                state = state.copy(messagesInFolders = it)
-            }
-        }
-    }
-
-    private fun getMessages() {
-        state = state.copy(messages = messageInteractor.getMessagesOnce().sortedBy { it.timesUsed })
-        viewModelScope.launch {
-            messageInteractor.getMessages().collectLatest {
-                state = state.copy(messages = it)
-            }
-        }
-    }
-
-    private fun getFolders() {
-        val folders = folderInteractor.getFoldersOnce()
-        state = state.copy(selectedFolder = folders.maxByOrNull { it.timesUsed })
-        state = state.copy(folders = folderInteractor.getFoldersOnce().sortedBy { it.timesUsed })
-        viewModelScope.launch {
-            folderInteractor.getFolders().collectLatest {
-                if (state.selectedFolder == null && it.isNotEmpty()) {
-                    state =
-                        state.copy(
-                            folders = it.sortedByDescending { folder -> folder.timesUsed },
-                            selectedFolder = it.maxByOrNull { folder -> folder.timesUsed }!!
-                        )
-                }
-            }
-        }
-    }
-
     fun getFoldersMessages(): List<Message> {
         val messageIds = state.messagesInFolders
             .filter { it.folderId == state.selectedFolder?.id }
@@ -147,16 +96,67 @@ class MainViewModel @Inject constructor(
 
     fun onFolderLongClick(folder: Folder) = goToEditFolder(folder)
 
+    fun navigated() {
+        state = state.copy(screenToShow = MainScreens.Default)
+    }
+
+    /**
+     * Init messages and folders to avoid first long loading.
+     */
+    private fun initData() {
+        state = state.copy(isLoading = true)
+        val messages = messageInteractor.getMessagesOnce()
+        val folders = folderInteractor.getFoldersOnce()
+        val messagesInFolders = messageInFolderInteractor.getMessagesInFoldersOnce()
+        state = state.copy(
+            isLoading = false,
+            messages = messages,
+            folders = folders,
+            messagesInFolders = messagesInFolders
+        )
+    }
+
+    private fun getMessagesInFolder() {
+        state = state.copy(messagesInFolders = messageInFolderInteractor.getMessagesInFoldersOnce())
+        viewModelScope.launch {
+            messageInFolderInteractor.getMessagesInFolders().collectLatest {
+                state = state.copy(messagesInFolders = it)
+            }
+        }
+    }
+
+    private fun getMessages() {
+        state = state.copy(messages = messageInteractor.getMessagesOnce().sortedBy { it.timesUsed })
+        viewModelScope.launch {
+            messageInteractor.getMessages().collectLatest {
+                state = state.copy(messages = it)
+            }
+        }
+    }
+
+    private fun getFolders() {
+        val folders = folderInteractor.getFoldersOnce()
+        state = state.copy(selectedFolder = folders.maxByOrNull { it.timesUsed })
+        state = state.copy(folders = folderInteractor.getFoldersOnce().sortedBy { it.timesUsed })
+        viewModelScope.launch {
+            folderInteractor.getFolders().collectLatest {
+                if (state.selectedFolder == null && it.isNotEmpty()) {
+                    state =
+                        state.copy(
+                            folders = it.sortedByDescending { folder -> folder.timesUsed },
+                            selectedFolder = it.maxByOrNull { folder -> folder.timesUsed }!!
+                        )
+                }
+            }
+        }
+    }
+
     private fun setCallOnTheLineActive() {
         selectActiveCall(state.callOnTheLine)
     }
 
     private fun navigateTo(screen: MainScreens) {
         state = state.copy(screenToShow = screen)
-    }
-
-    fun navigated() {
-        state = state.copy(screenToShow = MainScreens.Default)
     }
 
     private fun selectActiveCall(phoneCall: PhoneCall?) {

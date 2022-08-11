@@ -10,9 +10,9 @@ interface AuthInteractor {
     suspend fun init(@RawRes configFileResourceId: Int? = null)
     suspend fun signOut()
     suspend fun signUp(
-        email: String = "",
-        username: String = "",
-        password: String = "",
+        email: String,
+        username: String,
+        password: String,
         isSaveCredentials: Boolean = false
     )
     suspend fun signIn(
