@@ -7,4 +7,5 @@ interface StatisticsInteractor {
     suspend fun getCallsCountByType()
     suspend fun getMessagesSentCount()
     suspend fun getStatistics(): Flow<List<Statistics>>
+    fun getStatisticsOnce(): List<Statistics>
 }

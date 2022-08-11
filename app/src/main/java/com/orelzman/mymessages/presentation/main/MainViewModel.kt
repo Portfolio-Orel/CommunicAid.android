@@ -34,13 +34,28 @@ class MainViewModel @Inject constructor(
     var state by mutableStateOf(MainState())
 
     fun init() {
-        state = state.copy(isLoading = true)
+        initData()
         getMessages()
         getFolders()
         getMessagesInFolder()
         observeNumberOnTheLine()
         observeNumberInBackground()
-        state = state.copy(isLoading = false)
+    }
+
+    /**
+     * Init messages and folders to avoid first long loading.
+     */
+    private fun initData() {
+        state = state.copy(isLoading = true)
+        val messages = messageInteractor.getMessagesOnce()
+        val folders = folderInteractor.getFoldersOnce()
+        val messagesInFolders = messageInFolderInteractor.getMessagesInFoldersOnce()
+        state = state.copy(
+            isLoading = false,
+            messages = messages,
+            folders = folders,
+            messagesInFolders = messagesInFolders
+        )
     }
 
     private fun getMessagesInFolder() {

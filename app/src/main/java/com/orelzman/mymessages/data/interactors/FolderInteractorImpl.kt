@@ -37,10 +37,9 @@ class FolderInteractorImpl @Inject constructor(
     override fun getFoldersOnce(): List<Folder> = db.getFoldersOnce()
 
     override suspend fun deleteFolder(folder: Folder) {
-        folder.setUploadState(UploadState.NotUploaded)
-        db.delete(folder.id)
         repository.deleteFolder(folder)
         messageInFolderInteractor.deleteMessagesFromFolder(folder.id)
+        db.delete(folder.id)
     }
 
     override suspend fun getFolder(folderId: String): Folder =

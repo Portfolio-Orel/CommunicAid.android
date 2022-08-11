@@ -8,4 +8,5 @@ interface DeletedCallsInteractor {
     suspend fun init()
     suspend fun create(deletedCall: DeletedCall)
     suspend fun getAll(startDate: Date): Flow<List<DeletedCall>>
+    fun getAllOnce(startDate: Date): List<DeletedCall>
 }
