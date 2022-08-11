@@ -24,10 +24,28 @@ android {
         }
     }
 
+//    flavorDimensions "paid"
+//    productFlavors {
+//        free {
+//            dimension "paid"
+//            applicationIdSuffix ".free"
+//        }
+//        paid {
+//            dimension "paid"
+//            applicationIdSuffix ".paid"
+//        }
+//    }
+
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        beta {
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
