@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.orelzman.mymessages.R
+import com.orelzman.mymessages.domain.util.extension.formatDayAndHours
 import com.orelzman.mymessages.domain.util.extension.log
 import java.util.*
 import kotlin.reflect.KClass
@@ -21,11 +22,13 @@ data class Settings(
      * @return value of type [T] or the default value of the casting fails.
      */
     @Suppress("UNCHECKED_CAST")
-    fun <T> getRealValue(): T? {
+    fun <T : Any> getRealValue(): T? {
         return try {
             val realValue = Gson().fromJson(value, key.valueType.java)
             return when (key) {
-                SettingsKey.CallsUpdateAt -> realValue as? T
+                SettingsKey.CallsUpdateAt -> Date(
+                    realValue as? Long ?: Date().time
+                ).formatDayAndHours() as T
                 SettingsKey.IsDataInit -> realValue as? T
                 SettingsKey.ShowAppOnCall -> realValue as? T
                 SettingsKey.IgnoredList -> realValue as? T

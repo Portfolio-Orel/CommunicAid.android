@@ -50,7 +50,7 @@ fun Date.getHourHHMM(): String {
  * If [this] is a day in this week -> day of the week string
  * else DD/MM/YYYY
  */
-fun Date.getDayFormatted(context: Context): String {
+fun Date.getDayFormatted(context: Context? = null): String {
     val todayCal = Calendar.getInstance()
     val cal = Calendar.getInstance()
     val dateString: String
@@ -61,7 +61,8 @@ fun Date.getDayFormatted(context: Context): String {
     val month = cal.get(Calendar.MONTH)
     val year = cal.get(Calendar.YEAR)
 
-    dateString = "${dayOfMonth}/${month + 1}/$year"
+    dateString = "$dayOfMonth/${month + 1}/$year"
+    if(context == null) return dateString
 
     if (year == todayCal.get(Calendar.YEAR)) { // Same year
         if (month == todayCal.get(Calendar.MONTH)) { // Same month
@@ -80,3 +81,9 @@ fun Date.getDayFormatted(context: Context): String {
     }
     return dateString
 }
+
+/**
+ * Returns date(today, yesterday, tomorrow or date) • HH:MM
+ */
+fun Date.formatDayAndHours(context: Context? = null): String =
+    "${getDayFormatted(context)} • ${getHourHHMM()}"

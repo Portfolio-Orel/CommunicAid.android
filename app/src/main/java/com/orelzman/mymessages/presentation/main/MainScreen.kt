@@ -270,6 +270,7 @@ private fun getMessageWidth(
     messagesInRow: Int = 4,
     spaceBetween: Int = 4
 ): Dp {
+    if(messagesInRow == 0) return 0.dp
     val spacesCount = messagesInRow + 1 // Amount of spaces between each message
     val spaceForMessages = screenWidth - spacesCount * spaceBetween
     return (spaceForMessages / messagesInRow).dp

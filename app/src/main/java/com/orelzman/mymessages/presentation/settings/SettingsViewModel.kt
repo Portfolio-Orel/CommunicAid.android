@@ -48,7 +48,10 @@ class SettingsViewModel @Inject constructor(
     private fun observeSettings() {
         viewModelScope.launch(SupervisorJob()) {
             settingsInteractor.getAllSettingsFlow().collectLatest { settingsList ->
-                state = state.copy(settingsList = settingsList)
+                state = state.copy(
+                    settingsList = settingsList
+                        .sortedWith(compareBy({ it.key }, { it.key.name }))
+                )
                 confirmAllSettingsAreInDB(settingsList = settingsList)
             }
         }

@@ -32,7 +32,6 @@ fun ToggleSettings(
         modifier = modifier
             .height(48.dp)
             .fillMaxWidth()
-            .padding(horizontal = 8.dp)
             .noRippleClickable {
                 checkedState.value = !checkedState.value
                 onChecked(settings)
