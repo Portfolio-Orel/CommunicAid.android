@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.model.entities.Settings
 import com.orelzman.mymessages.domain.model.entities.SettingsKey
+import com.orelzman.mymessages.domain.model.entities.SettingsType
 import com.orelzman.mymessages.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -37,16 +38,17 @@ class SettingsViewModel @Inject constructor(
     private fun observeSettings() {
         viewModelScope.launch(SupervisorJob()) {
             settingsInteractor.getAllSettingsFlow().collectLatest { settingsList ->
-                setSettings(settingsList)
+                setSettings(settingsList = settingsList)
                 confirmAllSettingsAreInDB(settingsList = settingsList)
             }
         }
     }
 
     private fun setSettings(settingsList: List<Settings>) {
+        val sortedSettingsList = settingsList
+            .sortedWith(compareBy({ it.key }, { it.key.name }))
         state = state.copy(
-            settingsList = settingsList
-                .sortedWith(compareBy({ it.key }, { it.key.name }))
+            settingsList = sortedSettingsList,
         )
     }
 
@@ -62,21 +64,33 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun saveSettings() {
-        state = state.copy(isLoading = true)
-        viewModelScope.launch(Dispatchers.IO) {
-            supervisorScope {
-                settingsInteractor.getAllSettings().forEach { settings ->
-                    try {
-                        settingsInteractor.createOrUpdate(
-                            settings = settings
-                        )
-                    } catch (e: Exception) {
-                        e.log()
-                    } finally {
-                        state = state.copy(isLoading = false)
+        state = state.copy(isLoading = true, eventSettings = null)
+        if (!state.isUpdated) {
+            state = state.copy(isLoading = false, eventSettings = EventsSettings.Unchanged)
+            return
+        }
+            viewModelScope.launch(Dispatchers.IO) {
+                supervisorScope {
+                    settingsInteractor.getAllSettings().forEach { settings ->
+                        state = try {
+                            settingsInteractor.createOrUpdate(
+                                settings = settings
+                            )
+                            state.copy(isLoading = false, eventSettings = EventsSettings.Saved, isUpdated = false)
+                        } catch (e: Exception) {
+                            e.log()
+                            state.copy(isLoading = false, eventSettings = EventsSettings.Error)
+                        }
                     }
                 }
             }
+    }
+
+    fun settingsChanged(settings: Settings) {
+        state = state.copy(isUpdated = true)
+        when(settings.key.type) {
+            SettingsType.Toggle -> settingsChecked(settings)
+            else -> {}
         }
     }
 
