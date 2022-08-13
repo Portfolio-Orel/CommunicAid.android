@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,8 +33,10 @@ class StatisticsViewModel @Inject constructor(
     fun refreshData() {
         isRefreshing = true
         val job = viewModelScope.async {
-            statisticsInteractor.getCallsCountByType()
-            statisticsInteractor.getMessagesSentCount()
+            statisticsInteractor.init(
+                startDate = state.startDate,
+                endDate = state.endDate
+            )
         }
         viewModelScope.launch(Dispatchers.Main) {
             try {
@@ -43,6 +46,22 @@ class StatisticsViewModel @Inject constructor(
                 e.log()
             } finally {
                 isRefreshing = false
+                state = state.copy(isLoading = false)
+            }
+        }
+    }
+
+    fun setDates(startDate: Date, endDate: Date) {
+        state = state.copy(isLoading = true, startDate = startDate, endDate = endDate)
+        val getStatisticsJob = viewModelScope.async {
+            statisticsInteractor.init(startDate = startDate, endDate = endDate)
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                getStatisticsJob.await()
+            } catch (e: Exception) {
+                e.log()
+            } finally {
                 state = state.copy(isLoading = false)
             }
         }

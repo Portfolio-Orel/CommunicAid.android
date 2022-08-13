@@ -1,13 +1,9 @@
 package com.orelzman.mymessages.presentation.components.bottom_bar
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material.icons.rounded.Phone
-import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -16,12 +12,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.util.Screen
 
-private val Screen.icon: ImageVector?
+private val Screen.icon: Int?
     get() =
         when (this) {
-            Screen.UnhandledCalls -> Icons.Rounded.Phone
-            Screen.Main -> Icons.Rounded.Home
-            Screen.Statistics -> Icons.Rounded.Star
+            Screen.UnhandledCalls -> R.drawable.ic_missed_call
+            Screen.Main -> R.drawable.ic_home
+            Screen.Statistics -> R.drawable.ic_statistics
             else -> null
         }
 
@@ -49,7 +45,7 @@ fun BottomBar(
                 icon = {
                     screen.icon?.let {
                         Icon(
-                            imageVector = it,
+                            painter = painterResource(it),
                             contentDescription = stringResource(screen.label)
                         )
                     }

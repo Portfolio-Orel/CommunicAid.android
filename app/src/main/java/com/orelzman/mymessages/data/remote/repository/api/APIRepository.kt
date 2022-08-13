@@ -7,6 +7,7 @@ import com.orelzman.mymessages.domain.model.dto.response.*
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.repository.Repository
+import java.util.*
 import javax.inject.Inject
 
 class APIRepository @Inject constructor(
@@ -110,13 +111,13 @@ class APIRepository @Inject constructor(
         api.deleteMessagesInFolder(folderId = folderId)
     }
 
-    override suspend fun getCallsCountByType(): GetCallsCountResponse {
-        val result = api.getCallsCountByType()
+    override suspend fun getCallsCountByType(startDate: Date?, endDate: Date?): GetCallsCountResponse {
+        val result = api.getCallsCountByType(startDate = startDate?.time, endDate = endDate?.time)
         return result.body
     }
 
-    override suspend fun getMessagesSentCount(): List<GetMessagesSentCountResponse> {
-        val result = api.getMessagesSentCount()
+    override suspend fun getMessagesSentCount(startDate: Date?, endDate: Date?): List<GetMessagesSentCountResponse> {
+        val result = api.getMessagesSentCount(startDate = startDate?.time, endDate = endDate?.time)
         return result.body
     }
 

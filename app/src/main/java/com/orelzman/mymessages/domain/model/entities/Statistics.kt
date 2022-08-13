@@ -13,7 +13,15 @@ data class Statistics(
     val key: StatisticsTypes,
     val value: Any,
     val extraIdentifier: String = ""
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        return if(other is Statistics) {
+            key.value == other.key.value && extraIdentifier == other.extraIdentifier
+        } else {
+            false
+        }
+    }
+}
 
 enum class StatisticsTypes(val value: String, @StringRes val label: Int) {
     IncomingCount("IncomingCount", R.string.incoming_calls),

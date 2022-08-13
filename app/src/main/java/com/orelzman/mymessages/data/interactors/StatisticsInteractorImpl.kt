@@ -2,10 +2,13 @@ package com.orelzman.mymessages.data.interactors
 
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.domain.interactors.StatisticsInteractor
+import com.orelzman.mymessages.domain.model.dto.response.GetCallsCountResponse
+import com.orelzman.mymessages.domain.model.dto.response.GetMessagesSentCountResponse
 import com.orelzman.mymessages.domain.model.entities.Statistics
 import com.orelzman.mymessages.domain.model.entities.StatisticsTypes
 import com.orelzman.mymessages.domain.repository.Repository
 import kotlinx.coroutines.flow.Flow
+import java.util.*
 import javax.inject.Inject
 
 class StatisticsInteractorImpl @Inject constructor(
@@ -20,35 +23,30 @@ class StatisticsInteractorImpl @Inject constructor(
 
     override fun getStatisticsOnce(): List<Statistics> = db.getAll()
 
-    override suspend fun getCallsCountByType() {
-        initCallsCountByType()
+    override suspend fun init(startDate: Date?, endDate: Date?) {
+        val callsCountResponse =
+            repository.getCallsCountByType(startDate = startDate, endDate = endDate)
+        val messagesSentCountResponse =
+            repository.getMessagesSentCount(startDate = startDate, endDate = endDate)
+        db.clear()
+        initCallsCountByType(callsCountResponse = callsCountResponse)
+        initMessagesSentCount(messagesSentCountResponse = messagesSentCountResponse)
     }
 
-    override suspend fun getMessagesSentCount() {
-        initMessagesSentCount()
-    }
-
-    override suspend fun init() {
-        initCallsCountByType()
-        initMessagesSentCount()
-    }
-
-    private suspend fun initCallsCountByType() {
-        val result = repository.getCallsCountByType()
+    private fun initCallsCountByType(callsCountResponse: GetCallsCountResponse) {
         db.insert(
             listOf(
-                Statistics(StatisticsTypes.IncomingCount, result.incomingCount),
-                Statistics(StatisticsTypes.OutgoingCount, result.outgoingCount),
-                Statistics(StatisticsTypes.MissedCount, result.missedCount),
-                Statistics(StatisticsTypes.RejectedCalls, result.rejectedCount)
+                Statistics(StatisticsTypes.IncomingCount, callsCountResponse.incomingCount),
+                Statistics(StatisticsTypes.OutgoingCount, callsCountResponse.outgoingCount),
+                Statistics(StatisticsTypes.MissedCount, callsCountResponse.missedCount),
+                Statistics(StatisticsTypes.RejectedCalls, callsCountResponse.rejectedCount)
             )
         )
     }
 
-    private suspend fun initMessagesSentCount() {
-        val result = repository.getMessagesSentCount()
+    private fun initMessagesSentCount(messagesSentCountResponse: List<GetMessagesSentCountResponse>?) {
         val statisticsList = ArrayList<Statistics>()
-        result?.forEach {
+        messagesSentCountResponse?.forEach {
             statisticsList.add(
                 Statistics(
                     StatisticsTypes.MessagesCount,
@@ -57,6 +55,7 @@ class StatisticsInteractorImpl @Inject constructor(
                 )
             )
         }
+
         db.insert(statisticsList)
     }
 }
