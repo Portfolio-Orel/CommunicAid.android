@@ -17,6 +17,14 @@ data class Settings(
     val value: String = key.defaultValue
 ) {
 
+    override fun equals(other: Any?): Boolean {
+        if (other is Settings) {
+            return (other.key.keyInServer == key.keyInServer)
+                    && (other.value == value)
+        }
+        return false
+    }
+
     /**
      * Casts value to it's actual value type.
      * @return value of type [T] or the default value of the casting fails.
@@ -96,4 +104,13 @@ enum class SettingsType {
     Data,
     NotVisibleToUser,
     PopUp;
+}
+
+fun List<Settings>.isEqualTo(list: List<Settings>): Boolean {
+    forEach { settings1 ->
+        if (list.none { settings2 -> settings1 == settings2 }) {
+            return false
+        }
+    }
+    return true
 }

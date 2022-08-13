@@ -34,7 +34,7 @@ fun DetailsFolderScreen(
     }
     LaunchedEffect(key1 = state.eventFolder) {
         when(state.eventFolder) {
-            EventsFolder.FolderSaved -> {
+            EventsFolder.Saved -> {
                 Toast.makeText(
                     context,
                     context.getString(R.string.folder_saved_successfully),
@@ -42,12 +42,12 @@ fun DetailsFolderScreen(
                 ).show()
             }
 
-            EventsFolder.FolderUpdated -> Toast.makeText(
+            EventsFolder.Updated -> Toast.makeText(
                 context,
                 context.getString(R.string.folder_updated_successfully),
                 Toast.LENGTH_LONG
             ).show()
-            EventsFolder.FolderDeleted -> {
+            EventsFolder.Deleted -> {
                 val result = snackbarController.showSnackbar(
                     message = context.getString(R.string.folder_deleted_successfully),
                     actionLabel = context.getString(R.string.cancel),
@@ -60,7 +60,7 @@ fun DetailsFolderScreen(
                     navController.navigateUp()
                 }
             }
-            EventsFolder.FolderRestored -> {
+            EventsFolder.Restored -> {
                 Toast.makeText(
                     context,
                     context.getString(R.string.folder_restored_successfully),

@@ -38,17 +38,17 @@ fun DetailsMessageScreen(
     }
     LaunchedEffect(key1 = viewModel.state.eventMessage) {
         when (state.eventMessage) {
-            EventsMessages.MessageSaved -> Toast.makeText(
+            EventsMessages.Saved -> Toast.makeText(
                 context,
                 context.getString(R.string.message_saved_successfully),
                 Toast.LENGTH_LONG
             ).show()
-            EventsMessages.MessageUpdated -> Toast.makeText(
+            EventsMessages.Updated -> Toast.makeText(
                 context,
                 context.getString(R.string.message_updated_successfully),
                 Toast.LENGTH_LONG
             ).show()
-            EventsMessages.MessageDeleted -> {
+            EventsMessages.Deleted -> {
                 val result = snackbarController.showSnackbar(
                     message = context.getString(R.string.message_deleted_successfully),
                     actionLabel = context.getString(R.string.cancel),
@@ -61,7 +61,7 @@ fun DetailsMessageScreen(
                     navController.navigateUp()
                 }
             }
-            EventsMessages.MessageRestored -> {
+            EventsMessages.Restored -> {
                 Toast.makeText(
                     context,
                     context.getString(R.string.messages_restored_successfully),

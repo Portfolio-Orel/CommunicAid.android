@@ -1,13 +1,16 @@
 package com.orelzman.mymessages.presentation.settings
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,6 +25,27 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = state.eventSettings) {
+        when (state.eventSettings) {
+            EventsSettings.Saved -> {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.settings_saved_successfully),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            EventsSettings.Unchanged -> {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.settings_unchanged),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            else -> {}
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -45,7 +69,7 @@ fun SettingsScreen(
                 when (settings.key.type) {
                     SettingsType.Toggle -> ToggleSettings(
                         settings = settings,
-                        onChecked = viewModel::settingsChecked,
+                        onChecked = viewModel::settingsChanged,
                         modifier = Modifier.padding(horizontal = 8.dp),
                         checked = settings.getRealValue() ?: false
                     )

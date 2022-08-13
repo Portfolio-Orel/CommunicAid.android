@@ -79,4 +79,6 @@
     <string name="show_app_on_call">הצג אפליקציה בעת שיחה</string>
     <string name="ignore_list">רשימת התעלמות</string>
     <string name="send_sms_to_background_call">שליחת הודעה לשיחה ממתינה</string>
+    <string name="settings_saved_successfully">ההגדרות נשמרו בהצלחה</string>
+    <string name="settings_unchanged">לא שינית את ההגדרות</string>
 </resources>

@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.domain.interactors.FolderInteractor
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.util.extension.log
@@ -17,8 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailsFolderViewModel @Inject constructor(
-    private val folderInteractor: FolderInteractor,
-    private val authInteractor: AuthInteractor
+    private val folderInteractor: FolderInteractor
 ) : ViewModel() {
     var state by mutableStateOf(DetailsFolderState())
 
@@ -39,7 +37,7 @@ class DetailsFolderViewModel @Inject constructor(
         state.folder?.let {
             with(it) {
                 val deleteFolderJob = viewModelScope.async {
-                    state = state.copy(isLoadingDelete = true)
+                    state = state.copy(isLoadingDelete = true, eventFolder = null)
                     val folder = Folder(
                         title = title,
                         isActive = false,
@@ -50,7 +48,7 @@ class DetailsFolderViewModel @Inject constructor(
                     folderInteractor.deleteFolder(folder)
                     state = state.copy(
                         isLoadingDelete = false,
-                        eventFolder = EventsFolder.FolderDeleted
+                        eventFolder = EventsFolder.Deleted
                     )
                 }
                 viewModelScope.launch(Dispatchers.Main) {
@@ -72,7 +70,7 @@ class DetailsFolderViewModel @Inject constructor(
         state.folder?.let {
             with(it) {
                 val undoDeleteJob = viewModelScope.async {
-                    state = state.copy(isLoadingDelete = true)
+                    state = state.copy(isLoadingDelete = true, eventFolder = null)
                     val folder = Folder(
                         title = title,
                         isActive = true,
@@ -81,7 +79,7 @@ class DetailsFolderViewModel @Inject constructor(
                         id = id
                     )
                     folderInteractor.updateFolder(folder)
-                    state = state.copy(eventFolder = EventsFolder.FolderRestored)
+                    state = state.copy(eventFolder = EventsFolder.Restored)
                 }
                 viewModelScope.launch(Dispatchers.Main) {
                     try {
@@ -131,7 +129,7 @@ class DetailsFolderViewModel @Inject constructor(
                     if (it != null) {
                         state = state.copy(
                             isLoading = false,
-                            eventFolder = if (state.isEdit) EventsFolder.FolderUpdated else EventsFolder.FolderSaved
+                            eventFolder = if (state.isEdit) EventsFolder.Updated else EventsFolder.Saved
                         )
                     } else {
                         it?.log()
