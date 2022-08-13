@@ -16,6 +16,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.BarItem
 import com.orelzman.mymessages.domain.model.DonutItem
+import com.orelzman.mymessages.domain.util.extension.toFormattedNumber
 import com.orelzman.mymessages.presentation.components.charts.bar.BarChart
 import com.orelzman.mymessages.presentation.components.charts.donut.DonutChart
 
@@ -56,7 +57,7 @@ fun StatisticsScreen(
                         },
                         textInside = {
                             Text(
-                                text = state.incomingCount.toString(),
+                                text = state.incomingCount.toFormattedNumber(),
                                 style = MaterialTheme.typography.titleSmall,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
@@ -76,7 +77,7 @@ fun StatisticsScreen(
                         },
                         textInside = {
                             Text(
-                                text = state.outgoingCount.toString(),
+                                text = state.outgoingCount.toFormattedNumber(),
                                 style = MaterialTheme.typography.titleSmall,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
@@ -96,7 +97,7 @@ fun StatisticsScreen(
                         },
                         textInside = {
                             Text(
-                                text = state.totalCallsCount.toString(),
+                                text = state.totalCallsCount.toFormattedNumber(),
                                 style = MaterialTheme.typography.titleSmall,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
