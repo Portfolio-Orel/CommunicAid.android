@@ -68,7 +68,7 @@ fun Date.getHourHHMM(): String {
  * If [this] is a day in this week -> day of the week string
  * else DD/MM/YYYY
  */
-fun Date.getDayFormatted(context: Context? = null): String {
+fun Date.getDayFormatted(context: Context? = null, withYear: Boolean = true): String {
     val todayCal = Calendar.getInstance()
     val cal = Calendar.getInstance()
     val dateString: String
@@ -79,8 +79,8 @@ fun Date.getDayFormatted(context: Context? = null): String {
     val month = cal.get(Calendar.MONTH)
     val year = cal.get(Calendar.YEAR)
 
-    dateString = "$dayOfMonth/${month + 1}/$year"
-    if(context == null) return dateString
+    dateString = "$dayOfMonth/${month + 1}${if (withYear) "/$year" else ""}"
+    if (context == null) return dateString
 
     if (year == todayCal.get(Calendar.YEAR)) { // Same year
         if (month == todayCal.get(Calendar.MONTH)) { // Same month
@@ -141,7 +141,6 @@ fun getLastDayOfMonth(date: Date = Date()): Date {
 
     return calendar.toDate()
 }
-
 
 
 fun Calendar.toDate(): Date = Date(timeInMillis)

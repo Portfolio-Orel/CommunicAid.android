@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -16,8 +17,11 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.BarItem
 import com.orelzman.mymessages.domain.model.DonutItem
+import com.orelzman.mymessages.domain.util.extension.getDayFormatted
+import com.orelzman.mymessages.presentation.components.LtrView
 import com.orelzman.mymessages.presentation.components.charts.bar.BarChart
 import com.orelzman.mymessages.presentation.components.charts.donut.DonutChart
+import java.util.*
 
 @Composable
 fun StatisticsScreen(
@@ -27,9 +31,12 @@ fun StatisticsScreen(
     val state = viewModel.state
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
     ) {
 //        Tabs(onClick = {}, modifier =, tabs = listOf())
+        Dates(state.startDate, state.endDate)
         SwipeRefresh(
             modifier = Modifier.fillMaxSize(),
             state = rememberSwipeRefreshState(isRefreshing),
@@ -42,8 +49,6 @@ fun StatisticsScreen(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
                     .padding(vertical = 12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -110,14 +115,22 @@ fun StatisticsScreen(
                         )
                     )
                 }
-                BarChart(items = createBarItemList(state.messagesSentCount))
+                BarChart(
+                    items = createBarItemList(
+                        color = MaterialTheme.colorScheme.primary,
+                        state.messagesSentCount
+                    )
+                )
             }
         }
     }
 }
 
-@Composable
-private fun createBarItemList(list: List<Pair<String, Int>>, maxItems: Int = 5): List<BarItem> {
+private fun createBarItemList(
+    color: Color,
+    list: List<Pair<String, Int>>,
+    maxItems: Int = 5,
+): List<BarItem> {
     val barItems = ArrayList<BarItem>()
     list
         .sortedByDescending { it.second }
@@ -127,10 +140,36 @@ private fun createBarItemList(list: List<Pair<String, Int>>, maxItems: Int = 5):
                 BarItem(
                     title = it.first,
                     value = it.second.toFloat(),
-                    color = if (index % 2 == 0) MaterialTheme.colorScheme.secondary.copy(alpha = 0.8f)
-                    else MaterialTheme.colorScheme.secondary
+                    color = color
                 )
             )
         }
     return barItems
+}
+
+@Composable
+private fun Dates(startDate: Date, endDate: Date) {
+    val spacer = "-"
+    LtrView {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = startDate.getDayFormatted(withYear = false),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Text(
+                text = spacer,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Text(
+                text = endDate.getDayFormatted(withYear = false),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
+    }
 }
