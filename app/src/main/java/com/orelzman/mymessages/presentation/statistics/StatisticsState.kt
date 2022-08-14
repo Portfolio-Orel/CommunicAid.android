@@ -15,4 +15,4 @@ data class StatisticsState(
 
     val isLoading: Boolean = false,
     val isLoadingCallLogSend: Boolean = false
-    )
+)

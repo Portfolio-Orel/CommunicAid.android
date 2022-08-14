@@ -51,7 +51,11 @@ class StatisticsViewModel @Inject constructor(
         }
     }
 
-    fun setDates(startDate: Date, endDate: Date) {
+    fun tabSelected(startDate: Date, endDate: Date) {
+        setDates(startDate = startDate, endDate = endDate)
+    }
+
+    private fun setDates(startDate: Date, endDate: Date) {
         state = state.copy(isLoading = true, startDate = startDate, endDate = endDate)
         val getStatisticsJob = viewModelScope.async {
             statisticsInteractor.init(startDate = startDate, endDate = endDate)

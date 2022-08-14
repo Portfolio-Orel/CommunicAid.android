@@ -3,6 +3,7 @@ package com.orelzman.mymessages.presentation.statistics
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -10,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -21,6 +23,7 @@ import com.orelzman.mymessages.domain.util.extension.getDayFormatted
 import com.orelzman.mymessages.presentation.components.LtrView
 import com.orelzman.mymessages.presentation.components.charts.bar.BarChart
 import com.orelzman.mymessages.presentation.components.charts.donut.DonutChart
+import com.orelzman.mymessages.presentation.components.tabs.StatisticsTabs
 import java.util.*
 
 @Composable
@@ -29,13 +32,19 @@ fun StatisticsScreen(
 ) {
     val isRefreshing = viewModel.isRefreshing
     val state = viewModel.state
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-//        Tabs(onClick = {}, modifier =, tabs = listOf())
+        StatisticsTabs(
+            onClick = viewModel::tabSelected,
+            modifier = Modifier
+                .height(40.dp)
+                .fillMaxWidth()
+        )
         Dates(state.startDate, state.endDate)
         SwipeRefresh(
             modifier = Modifier.fillMaxSize(),
@@ -64,10 +73,9 @@ fun StatisticsScreen(
                                 )
                             },
                             textInside = {
-                                Text(
+                                DonutText(
                                     text = state.incomingCount.toString(),
-                                    style = MaterialTheme.typography.titleSmall,
-                                    color = MaterialTheme.colorScheme.onBackground
+                                    isLoading = state.isLoading
                                 )
                             },
                             outerColor = MaterialTheme.colorScheme.secondary,
@@ -84,10 +92,9 @@ fun StatisticsScreen(
                                 )
                             },
                             textInside = {
-                                Text(
+                                DonutText(
                                     text = state.outgoingCount.toString(),
-                                    style = MaterialTheme.typography.titleSmall,
-                                    color = MaterialTheme.colorScheme.onBackground
+                                    isLoading = state.isLoading
                                 )
                             },
                             outerColor = MaterialTheme.colorScheme.secondary,
@@ -104,10 +111,9 @@ fun StatisticsScreen(
                                 )
                             },
                             textInside = {
-                                Text(
+                                DonutText(
                                     text = state.totalCallsCount.toString(),
-                                    style = MaterialTheme.typography.titleSmall,
-                                    color = MaterialTheme.colorScheme.onBackground
+                                    isLoading = state.isLoading
                                 )
                             },
                             outerColor = MaterialTheme.colorScheme.secondary,
@@ -115,12 +121,16 @@ fun StatisticsScreen(
                         )
                     )
                 }
-                BarChart(
-                    items = createBarItemList(
-                        color = MaterialTheme.colorScheme.primary,
-                        state.messagesSentCount
+                if (state.isLoading) {
+                    Loading()
+                } else {
+                    BarChart(
+                        items = createBarItemList(
+                            color = MaterialTheme.colorScheme.primary,
+                            state.messagesSentCount
+                        )
                     )
-                )
+                }
             }
         }
     }
@@ -171,5 +181,36 @@ private fun Dates(startDate: Date, endDate: Date) {
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
+    }
+}
+
+@Composable
+fun Loading(
+    size: Dp = 48.dp
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier
+                .height(size)
+                .width(size),
+            strokeWidth = 2.dp,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+    }
+}
+
+@Composable
+fun DonutText(text: String, isLoading: Boolean = false) {
+    if (isLoading) {
+        Loading(size = 24.dp)
+    } else {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
+        )
     }
 }

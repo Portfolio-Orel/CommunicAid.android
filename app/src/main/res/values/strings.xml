@@ -83,4 +83,6 @@
     <string name="settings_unchanged">לא שינית את ההגדרות</string>
     <string name="all">הכל</string>
     <string name="months">חודשים</string>
+    <string name="week">שבוע</string>
+    <string name="month">חודש</string>
 </resources>
