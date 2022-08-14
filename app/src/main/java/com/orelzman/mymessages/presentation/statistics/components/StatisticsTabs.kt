@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.components.tabs
+package com.orelzman.mymessages.presentation.statistics.components
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -34,7 +34,7 @@ fun StatisticsTabs(
             .padding(vertical = 8.dp)
             .fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
     ) {
         tabs.forEach { tab ->
             Box(

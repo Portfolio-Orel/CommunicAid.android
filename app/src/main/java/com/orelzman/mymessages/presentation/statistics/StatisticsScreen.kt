@@ -23,7 +23,7 @@ import com.orelzman.mymessages.domain.util.extension.getDayFormatted
 import com.orelzman.mymessages.presentation.components.LtrView
 import com.orelzman.mymessages.presentation.components.charts.bar.BarChart
 import com.orelzman.mymessages.presentation.components.charts.donut.DonutChart
-import com.orelzman.mymessages.presentation.components.tabs.StatisticsTabs
+import com.orelzman.mymessages.presentation.statistics.components.StatisticsTabs
 import java.util.*
 
 @Composable
@@ -36,8 +36,6 @@ fun StatisticsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
     ) {
         StatisticsTabs(
             onClick = viewModel::tabSelected,
@@ -58,6 +56,8 @@ fun StatisticsScreen(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
                     .padding(vertical = 12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
