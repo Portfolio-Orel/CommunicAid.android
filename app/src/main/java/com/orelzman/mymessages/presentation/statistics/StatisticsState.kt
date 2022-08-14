@@ -10,8 +10,8 @@ data class StatisticsState(
     val totalCallsCount: Int = incomingCount + outgoingCount,
     val messagesSentCount: List<Pair<String, Int>> = emptyList(),
 
-    val startDate: Date = getFirstDayOfWeek(),
-    val endDate: Date = getLastDayOfWeek(),
+    val startDate: Date? = getFirstDayOfWeek(),
+    val endDate: Date? = getLastDayOfWeek(),
 
     val isLoading: Boolean = false,
     val isLoadingCallLogSend: Boolean = false
