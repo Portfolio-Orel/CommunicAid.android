@@ -21,7 +21,7 @@ import java.util.*
 
 @Composable
 fun StatisticsTabs(
-    onClick: (Date, Date) -> Unit,
+    onClick: (Date?, Date?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val configuration = LocalConfiguration.current
@@ -46,7 +46,7 @@ fun StatisticsTabs(
                     .fillMaxHeight()
                     .shadow(elevation = 3.dp, shape = RoundedCornerShape(4.dp), clip = true)
                     .background(
-                        if (selected == tab) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary
+                        if (selected == tab) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background
                     )
                     .clickable {
                         selected = tab
@@ -57,7 +57,7 @@ fun StatisticsTabs(
                 Text(
                     text = stringResource(tab.title),
                     style = MaterialTheme.typography.labelMedium,
-                    color = if (selected == tab) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
+                    color = if (selected == tab) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground
                 )
             }
         }
@@ -65,7 +65,7 @@ fun StatisticsTabs(
     }
 }
 
-enum class StatisticsTabs(@StringRes val title: Int, val startDate: Date, val endDate: Date) {
+enum class StatisticsTabs(@StringRes val title: Int, val startDate: Date?, val endDate: Date?) {
     Week(
         title = R.string.week,
         startDate = DateUtils.getFirstDayOfWeek(),
@@ -78,7 +78,7 @@ enum class StatisticsTabs(@StringRes val title: Int, val startDate: Date, val en
     ),
     All(
         title = R.string.all,
-        startDate = DateUtils.getFirstDayOfSystem(),
-        endDate = DateUtils.getLastDayOfSystem()
+        startDate = null,
+        endDate = null
     );
 }

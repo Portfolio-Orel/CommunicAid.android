@@ -47,7 +47,7 @@ object DateUtils {
     fun getLastDayOfWeek(date: Date = Date()): Date {
         val calendar = Calendar.getInstance()
         calendar.time = date
-        calendar.set(Calendar.DAY_OF_WEEK, 7)
+        calendar.add(Calendar.DAY_OF_WEEK, 7 - calendar.get(Calendar.DAY_OF_WEEK))
         calendar.maxTime()
         return calendar.toDate()
     }
@@ -72,24 +72,6 @@ object DateUtils {
         calendar.add(Calendar.MONTH, 1)
         calendar.set(Calendar.DAY_OF_MONTH, -1)
         calendar.maxTime()
-        return calendar.toDate()
-    }
-
-    fun getFirstDayOfSystem(): Date {
-        val calendar = Calendar.getInstance()
-        calendar.time = Date()
-        calendar.resetTime()
-        calendar.set(Calendar.YEAR, 2020)
-        calendar.set(Calendar.DAY_OF_YEAR, 1)
-        return calendar.toDate()
-    }
-
-    fun getLastDayOfSystem(): Date {
-        val calendar = Calendar.getInstance()
-        calendar.time = Date()
-        calendar.resetTime()
-        calendar.set(Calendar.YEAR, 2060)
-        calendar.set(Calendar.DAY_OF_YEAR, 1)
         return calendar.toDate()
     }
 

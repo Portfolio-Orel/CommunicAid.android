@@ -36,6 +36,8 @@ fun StatisticsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
     ) {
         StatisticsTabs(
             onClick = viewModel::tabSelected,
@@ -158,15 +160,20 @@ private fun createBarItemList(
 }
 
 @Composable
-private fun Dates(startDate: Date, endDate: Date) {
-    val spacer = "-"
+private fun Dates(startDate: Date?, endDate: Date?) {
+    val spacer = if (startDate == null || endDate == null) {
+        ""
+    } else {
+        "-"
+    }
+
     LtrView {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = startDate.getDayFormatted(withYear = false),
+                text = startDate?.getDayFormatted(withYear = false) ?: "",
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -176,7 +183,7 @@ private fun Dates(startDate: Date, endDate: Date) {
                 color = MaterialTheme.colorScheme.onBackground
             )
             Text(
-                text = endDate.getDayFormatted(withYear = false),
+                text = endDate?.getDayFormatted(withYear = false) ?: "",
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
