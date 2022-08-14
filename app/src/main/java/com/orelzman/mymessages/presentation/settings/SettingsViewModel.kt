@@ -94,7 +94,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun settingsChecked(settings: Settings) {
+    private fun settingsChecked(settings: Settings) {
         val prevChecked: Boolean = settings.getRealValue() ?: true
         settingsInteractor.saveSettings(
             Settings(settings.key, (!prevChecked).toString())

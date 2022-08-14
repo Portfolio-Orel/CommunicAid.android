@@ -100,54 +100,22 @@ fun Date.getDayFormatted(context: Context? = null, withYear: Boolean = true): St
     return dateString
 }
 
-/**
- * Returns the date of the first day of [date]'s week.
- */
-fun getFirstDayOfWeek(date: Date = Date()): Date {
-    val calendar = Calendar.getInstance()
-    calendar.time = date
-    calendar.set(Calendar.DAY_OF_WEEK, 1)
-    return calendar.toDate()
-}
-
-/**
- * Returns the date of the last day of [date]'s week.
- */
-fun getLastDayOfWeek(date: Date = Date()): Date {
-    val calendar = Calendar.getInstance()
-    calendar.time = date
-    calendar.set(Calendar.DAY_OF_WEEK, 7)
-    return calendar.toDate()
-}
-
-/**
- * Returns the date of the first day of [date]'s month.
- */
-fun getFirstDayOfMonth(date: Date = Date()): Date {
-    val calendar = Calendar.getInstance()
-    calendar.time = date
-    calendar.set(Calendar.DAY_OF_MONTH, 1)
-    return calendar.toDate()
-}
-
-/**
- * Returns the date of the last day of [date]'s month.
- */
-fun getLastDayOfMonth(date: Date = Date()): Date {
-    val calendar = Calendar.getInstance()
-    calendar.time = date
-    calendar.set(Calendar.DAY_OF_MONTH, -1)
-
-
-    return calendar.toDate()
-}
-
-
 fun Calendar.toDate(): Date = Date(timeInMillis)
-
 
 /**
  * Returns date(today, yesterday, tomorrow or date) • HH:MM
  */
 fun Date.formatDayAndHours(context: Context? = null): String =
     "${getDayFormatted(context)} • ${getHourHHMM()}"
+
+fun Calendar.resetTime() {
+    set(Calendar.HOUR_OF_DAY, 0)
+    set(Calendar.MINUTE, 0)
+    set(Calendar.SECOND, 0)
+}
+
+fun Calendar.maxTime() {
+    set(Calendar.HOUR_OF_DAY, 23)
+    set(Calendar.MINUTE, 59)
+    set(Calendar.SECOND, 59)
+}

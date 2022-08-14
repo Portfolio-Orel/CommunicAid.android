@@ -2,6 +2,9 @@ package com.orelzman.mymessages.domain.util.common
 
 import android.content.Context
 import com.orelzman.mymessages.R
+import com.orelzman.mymessages.domain.util.extension.maxTime
+import com.orelzman.mymessages.domain.util.extension.resetTime
+import com.orelzman.mymessages.domain.util.extension.toDate
 import java.util.*
 
 object DateUtils {
@@ -25,4 +28,50 @@ object DateUtils {
             7 -> context.getString(R.string.saturday)
             else -> null
         }
+
+
+    /**
+     * Returns the date of the first day of [date]'s week.
+     */
+    fun getFirstDayOfWeek(date: Date = Date()): Date {
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        calendar.set(Calendar.DAY_OF_WEEK, 1)
+        calendar.resetTime()
+        return calendar.toDate()
+    }
+
+    /**
+     * Returns the date of the last day of [date]'s week.
+     */
+    fun getLastDayOfWeek(date: Date = Date()): Date {
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        calendar.set(Calendar.DAY_OF_WEEK, 7)
+        calendar.maxTime()
+        return calendar.toDate()
+    }
+
+    /**
+     * Returns the date of the first day of [date]'s month.
+     */
+    fun getFirstDayOfMonth(date: Date = Date()): Date {
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+        calendar.resetTime()
+        return calendar.toDate()
+    }
+
+    /**
+     * Returns the date of the last day of [date]'s month.
+     */
+    fun getLastDayOfMonth(date: Date = Date()): Date {
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        calendar.set(Calendar.DAY_OF_MONTH, -1)
+        calendar.maxTime()
+        return calendar.toDate()
+    }
+
 }

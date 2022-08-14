@@ -88,20 +88,23 @@ class StatisticsViewModel @Inject constructor(
         val messagesSentCount = ArrayList<Pair<String, Int>>()
         statistics.forEach {
             when (it.key) {
-                StatisticsTypes.IncomingCount -> incomingCount +=
-                    it.value.toString().toFloatOrNull()?.toInt() ?: 0
-                StatisticsTypes.OutgoingCount -> outgoingCount =
-                    it.value.toString().toFloatOrNull()?.toInt() ?: 0
-                StatisticsTypes.RejectedCalls -> rejectedCount +=
-                    it.value.toString().toFloatOrNull()?.toInt() ?: 0
-                StatisticsTypes.MissedCount -> missedCount +=
-                    it.value.toString().toFloatOrNull()?.toInt() ?: 0
+                StatisticsTypes.IncomingCount -> incomingCount += it.getRealValue() ?: 0
+                StatisticsTypes.OutgoingCount -> outgoingCount = it.getRealValue() ?: 0
+                StatisticsTypes.RejectedCalls -> rejectedCount += it.getRealValue() ?: 0
+                StatisticsTypes.MissedCount -> missedCount += it.getRealValue() ?: 0
                 StatisticsTypes.MessagesCount -> {
-                    val value = it.value as? Map<*, *> ?: return@forEach
-                    val messageTitle = value["title"].toString()
-                    val timesSent =
-                        value["count"].toString().toFloatOrNull()?.toInt() ?: return@forEach
-                    messagesSentCount.add(Pair(messageTitle, timesSent))
+                    try {
+                        val messageTitleToTimesSent: Map<String, Any> =
+                            it.getRealValue() ?: return@forEach
+
+                        val messageTitle = messageTitleToTimesSent["title"].toString()
+                        val timesSent =
+                            messageTitleToTimesSent["count"]?.toString()?.toFloatOrNull()?.toInt()
+                                ?: return@forEach
+                        messagesSentCount.add(Pair(messageTitle, timesSent))
+                    } catch (e: Exception) {
+                        e.log()
+                    }
                 }
                 else -> {}
             }
