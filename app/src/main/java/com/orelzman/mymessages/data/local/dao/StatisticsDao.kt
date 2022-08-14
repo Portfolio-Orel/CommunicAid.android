@@ -27,4 +27,10 @@ interface StatisticsDao {
 
     @Update
     fun update(statistics: Statistics)
+
+    @Query("""
+        DELETE
+        FROM Statistics
+    """)
+    fun clear()
 }

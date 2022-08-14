@@ -68,10 +68,16 @@ interface API {
 
 
     // Statistics
-    @GET("/statistics/callsCount")
-    suspend fun getCallsCountByType(): Response<GetCallsCountResponse>
+    @GET("/statistics/callsCount?")
+    suspend fun getCallsCountByType(
+        @Query("start_date") startDate: Long? = null,
+        @Query("end_date") endDate: Long? = null
+    ): Response<GetCallsCountResponse>
 
     @GET("/statistics/messagesSentCount")
-    suspend fun getMessagesSentCount(): Response<List<GetMessagesSentCountResponse>>
+    suspend fun getMessagesSentCount(
+        @Query("start_date") startDate: Long? = null,
+        @Query("end_date") endDate: Long? = null
+    ): Response<List<GetMessagesSentCountResponse>>
 
 }

@@ -3,7 +3,7 @@ package com.orelzman.mymessages.domain.model.entities
 import androidx.annotation.StringRes
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.util.extension.formatDayAndHours
@@ -32,7 +32,11 @@ data class Settings(
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> getRealValue(): T? {
         return try {
-            val realValue = Gson().fromJson(value, key.valueType.java)
+            val gson = GsonBuilder()
+                .setLenient()
+                .create()
+            val json = gson.toJson(value)
+            val realValue = gson.fromJson(json, key.valueType.java)
             return when (key) {
                 SettingsKey.CallsUpdateAt -> Date(
                     realValue as? Long ?: Date().time
@@ -43,6 +47,12 @@ data class Settings(
             e.log()
             key.defaultValue as? T
         }
+    }
+
+    override fun hashCode(): Int {
+        var result = key.hashCode()
+        result = 31 * result + value.hashCode()
+        return result
     }
 }
 
