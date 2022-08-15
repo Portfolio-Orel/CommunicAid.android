@@ -36,11 +36,12 @@ object DateUtils {
     fun getFirstDayOfWeek(date: Date = Date()): Date {
         val calendar = Calendar.getInstance()
         calendar.time = date
-        calendar.set(Calendar.DAY_OF_WEEK, 1)
+        val daysAfterStartOfWeek = 1 - calendar.get(Calendar.DAY_OF_WEEK)
+        calendar.add(Calendar.DAY_OF_WEEK, daysAfterStartOfWeek)
         calendar.resetTime()
         return calendar.toDate()
     }
-
+// 3   2 , 6  5
     /**
      * Returns the date of the last day of [date]'s week.
      */
