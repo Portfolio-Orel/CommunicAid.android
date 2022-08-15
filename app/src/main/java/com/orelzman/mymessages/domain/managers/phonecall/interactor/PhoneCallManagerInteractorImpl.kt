@@ -1,7 +1,7 @@
 package com.orelzman.mymessages.domain.managers.phonecall.interactor
 
 import com.orelzman.mymessages.domain.interactors.CallPreferences
-import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManager
+import com.orelzman.mymessages.domain.managers.phonecall.PhoneCallManager
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

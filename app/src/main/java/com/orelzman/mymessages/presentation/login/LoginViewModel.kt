@@ -13,8 +13,6 @@ import com.orelzman.auth.domain.exception.WrongCredentialsException
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.AuthConfigFile
-import com.orelzman.mymessages.domain.managers.worker.WorkerManager
-import com.orelzman.mymessages.domain.managers.worker.WorkerType
 import com.orelzman.mymessages.domain.model.dto.body.create.CreateUserBody
 import com.orelzman.mymessages.domain.repository.Repository
 import com.orelzman.mymessages.domain.util.extension.log
@@ -28,7 +26,6 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val interactor: AuthInteractor,
     private val repository: Repository,
-    private val workerManager: WorkerManager,
     @AuthConfigFile private val authConfigFile: Int,
 ) : ViewModel() {
     var state by mutableStateOf(LoginState())
@@ -137,11 +134,6 @@ class LoginViewModel @Inject constructor(
                     confirmUserCreated(user.userId, user.email)
                 } else {
                     false
-                }
-                if (isAuthorized) {
-                    workerManager.startWorker(
-                        type = WorkerType.UploadCalls
-                    )
                 }
                 state.copy(
                     isAuthorized = isAuthorized,

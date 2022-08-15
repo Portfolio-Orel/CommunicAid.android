@@ -15,8 +15,8 @@ import com.orelzman.mymessages.domain.interactors.CallType
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.managers.phonecall.PhoneCallManagerImpl
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
-import com.orelzman.mymessages.domain.service.phone_call.CallState
-import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManager
+import com.orelzman.mymessages.domain.managers.phonecall.CallState
+import com.orelzman.mymessages.domain.managers.phonecall.PhoneCallManager
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
