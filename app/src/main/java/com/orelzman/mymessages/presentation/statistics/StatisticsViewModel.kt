@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,8 +33,10 @@ class StatisticsViewModel @Inject constructor(
     fun refreshData() {
         isRefreshing = true
         val job = viewModelScope.async {
-            statisticsInteractor.getCallsCountByType()
-            statisticsInteractor.getMessagesSentCount()
+            statisticsInteractor.init(
+                startDate = state.startDate,
+                endDate = state.endDate
+            )
         }
         viewModelScope.launch(Dispatchers.Main) {
             try {
@@ -43,6 +46,26 @@ class StatisticsViewModel @Inject constructor(
                 e.log()
             } finally {
                 isRefreshing = false
+                state = state.copy(isLoading = false)
+            }
+        }
+    }
+
+    fun tabSelected(startDate: Date?, endDate: Date?) {
+        setDates(startDate = startDate, endDate = endDate)
+    }
+
+    private fun setDates(startDate: Date?, endDate: Date?) {
+        state = state.copy(isLoading = true, startDate = startDate, endDate = endDate)
+        val getStatisticsJob = viewModelScope.async {
+            statisticsInteractor.init(startDate = startDate, endDate = endDate)
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                getStatisticsJob.await()
+            } catch (e: Exception) {
+                e.log()
+            } finally {
                 state = state.copy(isLoading = false)
             }
         }
@@ -69,20 +92,23 @@ class StatisticsViewModel @Inject constructor(
         val messagesSentCount = ArrayList<Pair<String, Int>>()
         statistics.forEach {
             when (it.key) {
-                StatisticsTypes.IncomingCount -> incomingCount +=
-                    it.value.toString().toFloatOrNull()?.toInt() ?: 0
-                StatisticsTypes.OutgoingCount -> outgoingCount =
-                    it.value.toString().toFloatOrNull()?.toInt() ?: 0
-                StatisticsTypes.RejectedCalls -> rejectedCount +=
-                    it.value.toString().toFloatOrNull()?.toInt() ?: 0
-                StatisticsTypes.MissedCount -> missedCount +=
-                    it.value.toString().toFloatOrNull()?.toInt() ?: 0
+                StatisticsTypes.IncomingCount -> incomingCount += it.getRealValue() ?: 0
+                StatisticsTypes.OutgoingCount -> outgoingCount = it.getRealValue() ?: 0
+                StatisticsTypes.RejectedCalls -> rejectedCount += it.getRealValue() ?: 0
+                StatisticsTypes.MissedCount -> missedCount += it.getRealValue() ?: 0
                 StatisticsTypes.MessagesCount -> {
-                    val value = it.value as? Map<*, *> ?: return@forEach
-                    val messageTitle = value["title"].toString()
-                    val timesSent =
-                        value["count"].toString().toFloatOrNull()?.toInt() ?: return@forEach
-                    messagesSentCount.add(Pair(messageTitle, timesSent))
+                    try {
+                        val messageTitleToTimesSent: Map<String, Any> =
+                            it.getRealValue() ?: return@forEach
+
+                        val messageTitle = messageTitleToTimesSent["title"].toString()
+                        val timesSent =
+                            messageTitleToTimesSent["count"]?.toString()?.toFloatOrNull()?.toInt()
+                                ?: return@forEach
+                        messagesSentCount.add(Pair(messageTitle, timesSent))
+                    } catch (e: Exception) {
+                        e.log()
+                    }
                 }
                 else -> {}
             }

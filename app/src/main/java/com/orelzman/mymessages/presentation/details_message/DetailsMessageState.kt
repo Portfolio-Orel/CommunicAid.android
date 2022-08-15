@@ -54,9 +54,9 @@ enum class MessageFields {
 }
 
 enum class EventsMessages {
-    MessageSaved,
-    MessageUpdated,
-    MessageDeleted,
-    MessageRestored,
+    Saved,
+    Updated,
+    Deleted,
+    Restored,
     Error;
 }

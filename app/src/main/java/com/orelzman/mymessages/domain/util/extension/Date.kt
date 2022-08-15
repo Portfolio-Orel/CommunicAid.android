@@ -26,6 +26,24 @@ fun Date.hours(): Int {
     return cal.get(Calendar.HOUR_OF_DAY)
 }
 
+fun Date.dayOfMonth(): Int {
+    val cal = Calendar.getInstance()
+    cal.time = this
+    return cal.get(Calendar.DAY_OF_MONTH)
+}
+
+fun Date.month(): Int {
+    val cal = Calendar.getInstance()
+    cal.time = this
+    return cal.get(Calendar.MONTH)
+}
+
+fun Date.year(): Int {
+    val cal = Calendar.getInstance()
+    cal.time = this
+    return cal.get(Calendar.YEAR)
+}
+
 
 /**
  * Returns the hour of [this] in the format of: HH:MM
@@ -50,7 +68,7 @@ fun Date.getHourHHMM(): String {
  * If [this] is a day in this week -> day of the week string
  * else DD/MM/YYYY
  */
-fun Date.getDayFormatted(context: Context? = null): String {
+fun Date.getDayFormatted(context: Context? = null, withYear: Boolean = true): String {
     val todayCal = Calendar.getInstance()
     val cal = Calendar.getInstance()
     val dateString: String
@@ -61,8 +79,8 @@ fun Date.getDayFormatted(context: Context? = null): String {
     val month = cal.get(Calendar.MONTH)
     val year = cal.get(Calendar.YEAR)
 
-    dateString = "$dayOfMonth/${month + 1}/$year"
-    if(context == null) return dateString
+    dateString = "$dayOfMonth/${month + 1}${if (withYear) "/$year" else ""}"
+    if (context == null) return dateString
 
     if (year == todayCal.get(Calendar.YEAR)) { // Same year
         if (month == todayCal.get(Calendar.MONTH)) { // Same month
@@ -82,8 +100,22 @@ fun Date.getDayFormatted(context: Context? = null): String {
     return dateString
 }
 
+fun Calendar.toDate(): Date = Date(timeInMillis)
+
 /**
  * Returns date(today, yesterday, tomorrow or date) • HH:MM
  */
 fun Date.formatDayAndHours(context: Context? = null): String =
     "${getDayFormatted(context)} • ${getHourHHMM()}"
+
+fun Calendar.resetTime() {
+    set(Calendar.HOUR_OF_DAY, 0)
+    set(Calendar.MINUTE, 0)
+    set(Calendar.SECOND, 0)
+}
+
+fun Calendar.maxTime() {
+    set(Calendar.HOUR_OF_DAY, 23)
+    set(Calendar.MINUTE, 59)
+    set(Calendar.SECOND, 59)
+}

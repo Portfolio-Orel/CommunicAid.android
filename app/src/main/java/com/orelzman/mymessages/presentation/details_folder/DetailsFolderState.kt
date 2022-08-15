@@ -34,9 +34,9 @@ enum class FolderFields {
 }
 
 enum class EventsFolder {
-        FolderSaved,
-        FolderUpdated,
-        FolderDeleted,
-        FolderRestored,
+        Saved,
+        Updated,
+        Deleted,
+        Restored,
         Error;
 }

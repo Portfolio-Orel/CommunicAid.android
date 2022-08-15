@@ -1,19 +1,25 @@
 package com.orelzman.mymessages.presentation.settings
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.entities.SettingsType
+import com.orelzman.mymessages.domain.util.extension.noRippleClickable
 import com.orelzman.mymessages.presentation.settings.components.DataSettings
 import com.orelzman.mymessages.presentation.settings.components.ToggleSettings
 
@@ -22,6 +28,27 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = state.eventSettings) {
+        when (state.eventSettings) {
+            EventsSettings.Saved -> {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.settings_saved_successfully),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            EventsSettings.Unchanged -> {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.settings_unchanged),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            else -> {}
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -45,7 +72,7 @@ fun SettingsScreen(
                 when (settings.key.type) {
                     SettingsType.Toggle -> ToggleSettings(
                         settings = settings,
-                        onChecked = viewModel::settingsChecked,
+                        onChecked = viewModel::settingsChanged,
                         modifier = Modifier.padding(horizontal = 8.dp),
                         checked = settings.getRealValue() ?: false
                     )
@@ -65,8 +92,8 @@ fun SettingsScreen(
             Spacer(Modifier.weight(1f))
             SaveButton(
                 modifier = Modifier
-                    .width(90.dp)
-                    .height(40.dp),
+                    .width(120.dp)
+                    .height(50.dp),
                 isLoading = state.isLoading,
                 onClick = viewModel::saveSettings
             )
@@ -81,8 +108,9 @@ fun SaveButton(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .padding(8.dp),
+        contentAlignment = Alignment.CenterStart,
     ) {
         if (isLoading) {
             CircularProgressIndicator(
@@ -93,19 +121,16 @@ fun SaveButton(
                 color = MaterialTheme.colorScheme.primary,
             )
         } else {
-            Button(
-                modifier = Modifier.fillMaxSize(),
-                onClick = onClick,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    contentColor = MaterialTheme.colorScheme.primary
-                )
-            ) {
-                Text(
-                    text = stringResource(id = R.string.save),
-                    style = MaterialTheme.typography.labelLarge
-                )
-            }
+            Text(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .noRippleClickable {
+                        onClick()
+                    },
+                text = stringResource(id = R.string.save),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
 
     }

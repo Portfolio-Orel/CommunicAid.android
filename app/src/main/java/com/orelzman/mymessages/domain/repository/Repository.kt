@@ -4,6 +4,7 @@ import com.orelzman.mymessages.domain.model.dto.body.create.*
 import com.orelzman.mymessages.domain.model.dto.response.*
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
+import java.util.*
 
 
 /**
@@ -39,6 +40,6 @@ interface Repository {
 
     suspend fun deleteMessagesFromFolder(folderId: String)
 
-    suspend fun getCallsCountByType(): GetCallsCountResponse
-    suspend fun getMessagesSentCount(): List<GetMessagesSentCountResponse>?
+    suspend fun getCallsCountByType(startDate: Date? = null, endDate: Date? = null): GetCallsCountResponse
+    suspend fun getMessagesSentCount(startDate: Date? = null, endDate: Date? = null): List<GetMessagesSentCountResponse>?
 }

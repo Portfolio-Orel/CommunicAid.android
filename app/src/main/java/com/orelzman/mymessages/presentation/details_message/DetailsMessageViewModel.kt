@@ -101,7 +101,7 @@ class DetailsMessageViewModel @Inject constructor(
                     messageInteractor.deleteMessage(message = message)
                     state.copy(
                         isLoadingDelete = false,
-                        eventMessage = EventsMessages.MessageDeleted,
+                        eventMessage = EventsMessages.Deleted,
                         messageDeleted = message,
                         messageDeletedFolderId = folderId,
                         error = R.string.empty_string
@@ -127,11 +127,11 @@ class DetailsMessageViewModel @Inject constructor(
                     state.copy(
                         isLoading = false,
                         messageId = it.id,
-                        eventMessage = EventsMessages.MessageRestored
+                        eventMessage = EventsMessages.Restored
                     )
                 } catch (e: Exception) {
                     e.log(state)
-                    state.copy(isLoading = false, eventMessage = EventsMessages.MessageRestored)
+                    state.copy(isLoading = false, eventMessage = EventsMessages.Restored)
                 }
             }
         }
@@ -153,7 +153,7 @@ class DetailsMessageViewModel @Inject constructor(
                         state =
                             state.copy(
                                 isLoading = false,
-                                eventMessage = EventsMessages.MessageUpdated
+                                eventMessage = EventsMessages.Updated
                             )
                     } else { // Save message
                         state.selectedFolder?.id?.let { folderId ->
@@ -164,7 +164,7 @@ class DetailsMessageViewModel @Inject constructor(
                             state =
                                 state.copy(
                                     isLoading = false,
-                                    eventMessage = EventsMessages.MessageSaved
+                                    eventMessage = EventsMessages.Saved
                                 )
                             clearValues()
                         }
@@ -174,7 +174,7 @@ class DetailsMessageViewModel @Inject constructor(
                     state =
                         state.copy(
                             isLoading = false,
-                            eventMessage = EventsMessages.MessageSaved
+                            eventMessage = EventsMessages.Saved
                         )
                 }
             }
