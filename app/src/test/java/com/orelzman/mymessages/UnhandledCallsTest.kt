@@ -37,34 +37,34 @@ class DeletedUnhandledCallsTest {
 
     @Test
     fun `test incoming call unhandled`() {
-        incomingCall(Numbers.OREL)
+        incomingCall(Numbers.Orel)
         val calls = filterCalls()
         assertTrue(calls.isEmpty())
     }
 
     @Test
     fun `test outgoing call unhandled`() {
-        outgoingCall(Numbers.OREL)
+        outgoingCall(Numbers.Orel)
         val calls = filterCalls()
         assertTrue(calls.isEmpty())
     }
 
     @Test
     fun `test a bunch of calls no removed`() {
-        incomingCall(Numbers.OREL)
-        missedCall(Numbers.SARA)
-        missedCall(Numbers.OREL)
-        incomingCall(Numbers.MOM)
-        outgoingCall(Numbers.DAD)
-        rejectedCall(Numbers.DAD)
+        incomingCall(Numbers.Orel)
+        missedCall(Numbers.Sara)
+        missedCall(Numbers.Orel)
+        incomingCall(Numbers.Mom)
+        outgoingCall(Numbers.Dad)
+        rejectedCall(Numbers.Dad)
         val calls = filterCalls().map { it.number }
         assertTrue(calls.size == 3)
         assertTrue(
             calls.containsAll(
                 listOf(
-                    Numbers.OREL.value,
-                    Numbers.DAD.value,
-                    Numbers.SARA.value
+                    Numbers.OrelNoPrefix.value,
+                    Numbers.DadNoPrefix.value,
+                    Numbers.SaraNoPrefix.value
                 )
             )
         )
@@ -72,67 +72,67 @@ class DeletedUnhandledCallsTest {
 
     @Test
     fun `test a bunch of calls with removed`() {
-        incomingCall(Numbers.OREL)
-        missedCall(Numbers.SARA)
-        deleteNumber(Numbers.SARA)
-        missedCall(Numbers.OREL)
-        deleteNumber(Numbers.OREL)
-        missedCall(Numbers.OREL)
-        incomingCall(Numbers.MOM)
-        outgoingCall(Numbers.DAD)
-        missedCall(Numbers.DAD)
-        missedCall(Numbers.DAD)
-        missedCall(Numbers.DAD, date = DateUtils.getStartOfDay())
-        deleteNumber(Numbers.DAD)
+        incomingCall(Numbers.Orel)
+        missedCall(Numbers.Sara)
+        deleteNumber(Numbers.SaraNoPrefix)
+        missedCall(Numbers.Orel)
+        deleteNumber(Numbers.OrelNoPrefix)
+        missedCall(Numbers.Orel)
+        incomingCall(Numbers.Mom)
+        outgoingCall(Numbers.Dad)
+        missedCall(Numbers.Dad)
+        missedCall(Numbers.Dad)
+        missedCall(Numbers.Dad, date = DateUtils.getStartOfDay())
+        deleteNumber(Numbers.Dad)
         val calls = filterCalls().map { it.number }
         assertTrue(calls.size == 1)
-        assertTrue(calls.containsAll(listOf(Numbers.OREL.value)))
+        assertTrue(calls.containsAll(listOf(Numbers.OrelNoPrefix.value)))
     }
 
     @Test
     fun `missed-outgoing missed-incoming`() {
-        missedCall(Numbers.OREL)
-        incomingCall(Numbers.OREL)
-        missedCall(Numbers.DAD)
-        outgoingCall(Numbers.DAD)
+        missedCall(Numbers.Orel)
+        incomingCall(Numbers.OrelNoPrefix)
+        missedCall(Numbers.Dad)
+        outgoingCall(Numbers.DadNoPrefix)
         val calls = filterCalls().map { it.number }
         assertTrue(calls.isEmpty())
     }
 
     @Test
     fun `missed-deleted missed-outgoing missed-incoming`() {
-        missedCall(Numbers.SARA)
-        deleteNumber(Numbers.SARA)
-        missedCall(Numbers.OREL)
-        incomingCall(Numbers.OREL)
-        missedCall(Numbers.DAD)
-        outgoingCall(Numbers.DAD)
+        missedCall(Numbers.Sara)
+        deleteNumber(Numbers.Sara)
+        missedCall(Numbers.Orel)
+        incomingCall(Numbers.Orel)
+        missedCall(Numbers.Dad)
+        outgoingCall(Numbers.Dad)
         val calls = filterCalls().map { it.number }
         assertTrue(calls.isEmpty())
     }
 
     @Test
     fun `missed-deleted missed-outgoing missed-incoming missed`() {
-        missedCall(Numbers.SARA)
-        deleteNumber(Numbers.SARA)
-        missedCall(Numbers.OREL)
-        incomingCall(Numbers.OREL)
-        missedCall(Numbers.DAD)
-        outgoingCall(Numbers.DAD)
-        missedCall(Numbers.OREL)
+        missedCall(Numbers.Sara)
+        deleteNumber(Numbers.Sara)
+        missedCall(Numbers.Orel)
+        incomingCall(Numbers.Orel)
+        missedCall(Numbers.Dad)
+        outgoingCall(Numbers.Dad)
+        missedCall(Numbers.Orel)
         val calls = filterCalls().map { it.number }
         assertTrue(calls.size == 1)
-        assertTrue(calls.contains(Numbers.OREL.value))
+        assertTrue(calls.contains(Numbers.OrelNoPrefix.value))
     }
 
     @Test
     fun `test calls with multiple missed and 1 remove`() {
-        missedCall(Numbers.DAD)
-        missedCall(Numbers.DAD)
-        missedCall(Numbers.DAD)
-        missedCall(Numbers.DAD)
-        missedCall(Numbers.DAD)
-        deleteNumber(Numbers.DAD)
+        missedCall(Numbers.Dad)
+        missedCall(Numbers.Dad)
+        missedCall(Numbers.Dad)
+        missedCall(Numbers.Dad)
+        missedCall(Numbers.Dad)
+        deleteNumber(Numbers.Dad)
         val calls = filterCalls().map { it.number }
         assertTrue(calls.isEmpty())
     }
@@ -184,8 +184,12 @@ class DeletedUnhandledCallsTest {
 }
 
 enum class Numbers(val value: String) {
-    OREL("0543056286"),
-    SARA("0528112646"),
-    MOM("0543050285"),
-    DAD("0542444505"),
+    Orel("+972543056286"),
+    OrelNoPrefix("0543056286"),
+    Sara("+972528112646"),
+    SaraNoPrefix("0528112646"),
+    Mom("+972543050285"),
+    MomNoPrefix("0543050285"),
+    Dad("+972542444505"),
+    DadNoPrefix("0542444505"),
 }

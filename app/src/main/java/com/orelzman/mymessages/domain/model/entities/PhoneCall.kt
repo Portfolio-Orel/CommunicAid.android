@@ -9,12 +9,13 @@ import com.orelzman.mymessages.domain.model.dto.body.create.CreatePhoneCallBody
 import com.orelzman.mymessages.domain.util.common.ContactsUtil
 import com.orelzman.mymessages.domain.util.extension.inSeconds
 import com.orelzman.mymessages.domain.util.extension.log
+import com.orelzman.mymessages.domain.util.extension.withoutPrefix
 import java.util.*
 
 @Entity
 data class PhoneCall(
     @PrimaryKey var id: String = UUID.randomUUID().toString(),
-    val number: String = "",
+    var number: String = "",
     var startDate: Date,
     var endDate: Date,
     var name: String = "",
@@ -22,6 +23,10 @@ data class PhoneCall(
     var messagesSent: List<MessageSent> = emptyList(),
     var type: String = CallType.INCOMING.name,
 ) : Loggable, Uploadable() {
+
+    init {
+        number = number.withoutPrefix()
+    }
 
     fun getNameOrNumber(): String {
         if (name == "") return number
@@ -115,7 +120,6 @@ fun String.toPhoneCall(): PhoneCall? {
     return try {
         Gson().fromJson(this, PhoneCall::class.java)
     } catch (e: Exception) {
-        e.log()
         null
     }
 }

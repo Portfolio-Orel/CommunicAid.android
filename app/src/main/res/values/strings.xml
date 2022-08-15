@@ -5,7 +5,7 @@
     <string name="local_db_name">mymessagesdb.db</string>
     <string name="add_message">הוסף הודעה</string>
     <string name="add_folder">הוסף תיקייה</string>
-    <string name="unhandled_calls">שיחות שלא טופלו</string>
+    <string name="unhandled_calls">שיחות</string>
     <string name="password_icon">אייקון של סיסמא</string>
     <string name="show_password">הצג סיסמא</string>
     <string name="hide_password">הסתר סיסמא</string>
