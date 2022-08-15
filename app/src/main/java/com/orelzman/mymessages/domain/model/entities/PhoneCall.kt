@@ -8,7 +8,6 @@ import com.orelzman.mymessages.domain.interactors.CallType
 import com.orelzman.mymessages.domain.model.dto.body.create.CreatePhoneCallBody
 import com.orelzman.mymessages.domain.util.common.ContactsUtil
 import com.orelzman.mymessages.domain.util.extension.inSeconds
-import com.orelzman.mymessages.domain.util.extension.log
 import java.util.*
 
 @Entity
@@ -115,7 +114,6 @@ fun String.toPhoneCall(): PhoneCall? {
     return try {
         Gson().fromJson(this, PhoneCall::class.java)
     } catch (e: Exception) {
-        e.log()
         null
     }
 }
