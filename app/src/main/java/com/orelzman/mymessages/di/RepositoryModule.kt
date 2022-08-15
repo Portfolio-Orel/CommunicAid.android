@@ -14,7 +14,7 @@ import com.orelzman.mymessages.domain.managers.unhandled_calls.UnhandledCallsMan
 import com.orelzman.mymessages.domain.managers.worker.WorkerManager
 import com.orelzman.mymessages.domain.managers.worker.WorkerManagerImpl
 import com.orelzman.mymessages.domain.repository.Repository
-import com.orelzman.mymessages.domain.service.phone_call.PhoneCallManager
+import com.orelzman.mymessages.domain.managers.phonecall.PhoneCallManager
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
