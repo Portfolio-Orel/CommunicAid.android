@@ -2,6 +2,7 @@ package com.orelzman.mymessages.domain.model.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.orelzman.mymessages.domain.util.extension.withoutPrefix
 import java.util.*
 
 /**
@@ -10,9 +11,13 @@ import java.util.*
 @Entity
 data class DeletedCall(
     @PrimaryKey var id: String = UUID.randomUUID().toString(),
-    val number: String = "",
+    var number: String = "",
     val deleteDate: Long = Date().time,
 ) : Loggable, Uploadable() {
+
+    init {
+        number = number.withoutPrefix()
+    }
 
     override val data: Map<String, Any>
         get() = mapOf(

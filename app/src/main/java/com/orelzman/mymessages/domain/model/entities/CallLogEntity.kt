@@ -4,15 +4,20 @@ import com.orelzman.mymessages.domain.interactors.CallType
 import com.orelzman.mymessages.domain.util.extension.inMilliseconds
 import com.orelzman.mymessages.domain.util.extension.inSeconds
 import com.orelzman.mymessages.domain.util.extension.toDate
+import com.orelzman.mymessages.domain.util.extension.withoutPrefix
 import java.util.*
 
 class CallLogEntity(
-    val number: String = "",
+    var number: String = "",
     val duration: Long = 0,
     val name: String = "",
     var time: Long = 0,
     val callLogType: CallType? = null
 ) {
+
+    init {
+        number = number.withoutPrefix()
+    }
 
     fun isUnhandled(): Boolean =
         callLogType == CallType.REJECTED || callLogType == CallType.MISSED
