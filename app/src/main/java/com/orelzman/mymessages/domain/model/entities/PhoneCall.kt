@@ -120,7 +120,6 @@ fun String.toPhoneCall(): PhoneCall? {
     return try {
         Gson().fromJson(this, PhoneCall::class.java)
     } catch (e: Exception) {
-        e.log()
         null
     }
 }
