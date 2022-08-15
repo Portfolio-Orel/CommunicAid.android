@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.domain.service.phone_call
+package com.orelzman.mymessages.domain.managers.phonecall
 
 import android.content.Context
 import com.orelzman.mymessages.domain.interactors.CallPreferences
@@ -21,7 +21,7 @@ enum class CallState(val value: String) {
     Idle("Idle");
 
     companion object {
-        fun fromString(value: String): CallState? {
+        fun fromString(value: String?): CallState? {
             values().forEach {
                 if (it.value == value) return it
             }
@@ -29,3 +29,6 @@ enum class CallState(val value: String) {
         }
     }
 }
+
+fun String?.isCallStateIdle(): Boolean =
+    CallState.fromString(this) == CallState.Idle
