@@ -48,6 +48,9 @@ class UnhandledCallsViewModel @Inject constructor(
         fetchDeletedCalls()
     }
 
+    fun onResume() {
+        initData()
+    }
 
     /**
      * Deletes [phoneCall] as marks it as deletedUnhandled

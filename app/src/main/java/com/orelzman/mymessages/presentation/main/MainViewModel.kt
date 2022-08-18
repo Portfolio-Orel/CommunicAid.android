@@ -39,10 +39,8 @@ class MainViewModel @Inject constructor(
         observeNumberInBackground()
     }
 
-    fun clear() {
-//        Log.v("MainViewModel cleared")
-//        callOnTheLineJob?.cancel()
-//        callInTheBackgroundJob?.cancel()
+    fun onResume() {
+        init()
     }
 
     fun getFoldersMessages(): List<Message> {

@@ -25,7 +25,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
@@ -44,18 +43,10 @@ fun MainScreen(
     navController: NavController,
     viewModel: MainViewModel = hiltViewModel(),
 ) {
-    OnLifecycleEvent { _, event ->
-        when (event) {
-            Lifecycle.Event.ON_RESUME -> {
-                viewModel.init()
-            }
-            Lifecycle.Event.ON_PAUSE -> {
-                viewModel.clear()
-            }
-            else -> {}
-        }
+    OnLifecycleEvent(
+        onResume = viewModel::onResume,
+    )
 
-    }
     val timeToBuildContent = measureTimeMillis {
         Content(navController = navController, viewModel = viewModel)
     }

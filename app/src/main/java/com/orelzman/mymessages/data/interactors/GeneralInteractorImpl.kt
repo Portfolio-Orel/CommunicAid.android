@@ -29,7 +29,7 @@ class GeneralInteractorImpl @Inject constructor(
         folderInteractor.init()
         DataSourceCallsInteractor.init()
         settingsInteractor.init()
-        statisticsInteractor.init()
-         settingsInteractor.saveSettings(Settings(SettingsKey.IsDataInit, true.toString()))
+//        statisticsInteractor.init()
+        settingsInteractor.saveSettings(Settings(SettingsKey.IsDataInit, true.toString()))
     }
 }
