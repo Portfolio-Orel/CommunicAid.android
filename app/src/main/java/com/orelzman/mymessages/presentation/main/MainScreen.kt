@@ -4,7 +4,14 @@ import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -18,17 +25,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
-import com.google.accompanist.flowlayout.MainAxisAlignment
-import com.google.accompanist.flowlayout.SizeMode
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.util.Screen
-import com.orelzman.mymessages.presentation.components.scrollable_flowrow.ScrollDirection
-import com.orelzman.mymessages.presentation.components.scrollable_flowrow.ScrollableFlowRow
+import com.orelzman.mymessages.domain.util.extension.Log
+import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
 import com.orelzman.mymessages.presentation.main.components.FolderView
 import com.orelzman.mymessages.presentation.main.components.MessageView
+import kotlin.system.measureTimeMillis
 
 
 @ExperimentalFoundationApi
@@ -37,7 +44,22 @@ fun MainScreen(
     navController: NavController,
     viewModel: MainViewModel = hiltViewModel(),
 ) {
-    Content(navController = navController, viewModel = viewModel)
+    OnLifecycleEvent { _, event ->
+        when (event) {
+            Lifecycle.Event.ON_RESUME -> {
+                viewModel.init()
+            }
+            Lifecycle.Event.ON_PAUSE -> {
+                viewModel.clear()
+            }
+            else -> {}
+        }
+
+    }
+    val timeToBuildContent = measureTimeMillis {
+        Content(navController = navController, viewModel = viewModel)
+    }
+    Log.v("Time to build Main content: ${timeToBuildContent}ms")
 }
 
 @Composable
@@ -124,26 +146,27 @@ fun FoldersList(
     isSelected: (Folder) -> Boolean,
     modifier: Modifier = Modifier
 ) {
+    val state = rememberScrollState()
+
     CompositionLocalProvider(
         LocalOverscrollConfiguration provides
                 null
     ) {
-        ScrollableFlowRow(
-            modifier = modifier,
-            scrollDirection = ScrollDirection.Horizontal
+        LazyRow(
+            modifier = modifier
+                .scrollable(state = state, Orientation.Horizontal)
+                .fillMaxWidth(),
         ) {
-            folders
-                .forEach { folder ->
-                    FolderView(
-                        folder = folder,
-                        isSelected = isSelected(folder),
-                        modifier = Modifier
-                            .height(50.dp)
-                            .width(120.dp),
-                        onClick = onClick,
-                        onLongClick = onLongClick
-                    )
-                }
+            items(folders) { folder ->
+                FolderView(
+                    modifier = Modifier
+                        .height(50.dp)
+                        .width(120.dp),
+                    folder = folder,
+                    isSelected = isSelected(folder),
+                    onClick = onClick
+                )
+            }
         }
     }
 }
@@ -158,27 +181,32 @@ fun MessagesList(
     height: Dp,
     width: Dp
 ) {
-    ScrollableFlowRow(
+    LazyVerticalGrid(
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .fillMaxWidth(1F)
             .fillMaxHeight(0.9F),
-        mainAxisSpacing = spaceBetweenMessages,
-        mainAxisAlignment = MainAxisAlignment.SpaceEvenly,
-        mainAxisSize = SizeMode.Expand,
+        columns = GridCells.Fixed(4),
+        horizontalArrangement = Arrangement.spacedBy(spaceBetweenMessages),
+        verticalArrangement = Arrangement.spacedBy(spaceBetweenMessages)
     ) {
-        messages
-            .forEach {
-                MessageView(
-                    message = it,
-                    modifier = Modifier
-                        .height(height)
-                        .width(width)
-                        .padding(0.dp),
-                    onClick = onClick,
-                    onLongClick = onLongClick
-                )
+        items(
+            count = messages.size,
+            key = { index ->
+                // Return a stable + unique key for the item
+                index
             }
+        ) { index ->
+            MessageView(
+                message = messages[index],
+                modifier = Modifier
+                    .height(height)
+                    .width(width)
+                    .padding(0.dp),
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
+        }
     }
 }
 
@@ -270,7 +298,7 @@ private fun getMessageWidth(
     messagesInRow: Int = 4,
     spaceBetween: Int = 4
 ): Dp {
-    if(messagesInRow == 0) return 0.dp
+    if (messagesInRow == 0) return 0.dp
     val spacesCount = messagesInRow + 1 // Amount of spaces between each message
     val spaceForMessages = screenWidth - spacesCount * spaceBetween
     return (spaceForMessages / messagesInRow).dp
