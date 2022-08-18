@@ -25,9 +25,13 @@ class StatisticsViewModel @Inject constructor(
 
     var isRefreshing by mutableStateOf(false)
 
-    init {
+    fun init() {
         initData()
         observeData()
+    }
+
+    fun onResume() {
+        init()
     }
 
     fun refreshData() {
@@ -73,7 +77,11 @@ class StatisticsViewModel @Inject constructor(
 
     private fun initData() {
         val statistics = statisticsInteractor.getStatisticsOnce()
-        setStatisticsData(statistics)
+        if(statistics.isEmpty()) {
+            init()
+        } else {
+            setStatisticsData(statistics)
+        }
     }
 
     private fun observeData() {

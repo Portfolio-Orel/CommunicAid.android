@@ -21,6 +21,7 @@ import com.orelzman.mymessages.domain.model.BarItem
 import com.orelzman.mymessages.domain.model.DonutItem
 import com.orelzman.mymessages.domain.util.extension.getDayFormatted
 import com.orelzman.mymessages.presentation.components.LtrView
+import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
 import com.orelzman.mymessages.presentation.components.charts.bar.BarChart
 import com.orelzman.mymessages.presentation.components.charts.donut.DonutChart
 import com.orelzman.mymessages.presentation.statistics.components.StatisticsTabs
@@ -32,6 +33,8 @@ fun StatisticsScreen(
 ) {
     val isRefreshing = viewModel.isRefreshing
     val state = viewModel.state
+
+    OnLifecycleEvent(onResume = viewModel::onResume)
 
     Column(
         modifier = Modifier
