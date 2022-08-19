@@ -41,7 +41,7 @@ class MessageInteractorImpl @Inject constructor(
 
     override fun getMessages(): Flow<List<Message>> = db.getMessages()
 
-    override fun getMessagesOnce(): List<Message> = db.getMessagesOnce()
+    override fun getAllOnce(): List<Message> = db.getMessagesOnce()
 
     override suspend fun createMessage(
         message: Message,

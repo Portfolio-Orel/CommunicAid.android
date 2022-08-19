@@ -9,7 +9,7 @@ import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.model.entities.*
 import com.orelzman.mymessages.domain.util.common.Constants
-import com.orelzman.mymessages.domain.util.extension.Log
+import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.domain.util.extension.appendAll
 import com.orelzman.mymessages.domain.util.extension.compareToBallPark
 import com.orelzman.mymessages.domain.util.extension.log
@@ -19,7 +19,7 @@ import kotlinx.coroutines.*
 import java.util.*
 
 @HiltWorker
-class UploadWorker @AssistedInject constructor(
+class UploadPhoneCallsWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted workerParams: WorkerParameters,
     private val phoneCallsInteractor: PhoneCallsInteractor,
@@ -29,10 +29,11 @@ class UploadWorker @AssistedInject constructor(
 
     override fun doWork(): Result {
         try {
-            Log.v("Upload worker called")
+            Logger.v("Upload phone calls worker called")
             uploadCalls()
         } catch (e: Exception) {
-            Log.e(e.message ?: e.localizedMessage)
+            Logger.e("Upload phone calls worker failed with an error: ${e.message ?: e.localizedMessage}")
+            Result.failure()
         }
         return Result.success()
     }
@@ -61,7 +62,7 @@ class UploadWorker @AssistedInject constructor(
                     callLogInteractor.update(it)
                 }
             if (phoneCalls.isNotEmpty()) {
-                Log.v("phone calls to upload: $phoneCalls")
+                Logger.v("phone calls to upload: $phoneCalls")
                 phoneCallsInteractor.createPhoneCalls(
                     phoneCalls
                 )
@@ -73,10 +74,10 @@ class UploadWorker @AssistedInject constructor(
         CoroutineScope(SupervisorJob()).launch {
             try {
                 uploadJob.await()
-                Log.v("Upload Worker done.")
+                Logger.v("Upload phone calls worker done.")
             } catch (e: Exception) {
                 e.log(phoneCalls)
-                Log.e("Worker failed, reason: $e")
+                Logger.e("Worker failed, reason: $e")
                 phoneCalls.forEach {
                     phoneCallsInteractor.updateCallUploadState(
                         it,

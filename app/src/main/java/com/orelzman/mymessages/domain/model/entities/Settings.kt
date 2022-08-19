@@ -15,7 +15,7 @@ import kotlin.reflect.KClass
 data class Settings(
     @PrimaryKey val key: SettingsKey,
     val value: String = key.defaultValue
-) {
+): Uploadable() {
 
     override fun equals(other: Any?): Boolean {
         if (other is Settings) {

@@ -30,7 +30,7 @@ import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.util.Screen
-import com.orelzman.mymessages.domain.util.extension.Log
+import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
 import com.orelzman.mymessages.presentation.main.components.FolderView
 import com.orelzman.mymessages.presentation.main.components.MessageView
@@ -50,7 +50,7 @@ fun MainScreen(
     val timeToBuildContent = measureTimeMillis {
         Content(navController = navController, viewModel = viewModel)
     }
-    Log.v("Time to build Main content: ${timeToBuildContent}ms")
+    Logger.v("Time to build Main content: ${timeToBuildContent}ms")
 }
 
 @Composable

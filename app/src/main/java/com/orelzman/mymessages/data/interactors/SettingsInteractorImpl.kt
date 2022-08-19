@@ -6,6 +6,7 @@ import com.orelzman.mymessages.domain.model.dto.body.create.CreateOrUpdateSettin
 import com.orelzman.mymessages.domain.model.dto.response.toSettings
 import com.orelzman.mymessages.domain.model.entities.Settings
 import com.orelzman.mymessages.domain.model.entities.SettingsKey
+import com.orelzman.mymessages.domain.model.entities.UploadState
 import com.orelzman.mymessages.domain.repository.Repository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -25,7 +26,7 @@ class SettingsInteractorImpl @Inject constructor(
         return db.getAllFlow()
     }
 
-    override fun getAllSettings(): List<Settings> = db.getAll()
+    override fun getAll(): List<Settings> = db.getAll()
 
     override fun saveSettings(settings: Settings) =
         db.insert(settings)
@@ -37,11 +38,13 @@ class SettingsInteractorImpl @Inject constructor(
     }
 
     override suspend fun createOrUpdate(settings: Settings) {
+        settings.setUploadState(UploadState.BeingUploaded)
         db.insert(settings)
         val createOrUpdateSettingsBody = CreateOrUpdateSettingsBody(
             key = settings.key.keyInServer,
             value = settings.value
         )
         repository.createOrUpdateSettings(createOrUpdateSettingsBody)
+        settings.setUploadState(UploadState.Uploaded)
     }
 }

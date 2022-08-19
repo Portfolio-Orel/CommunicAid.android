@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.mymessages.domain.util.extension.Log
+import com.orelzman.mymessages.domain.util.extension.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +43,7 @@ class RegisterButtonViewModel @Inject constructor(
             try {
                 signUpJob.await()
             } catch (e: Exception) {
-                Log.e(e.localizedMessage ?: "Error signing up")
+                Logger.e(e.localizedMessage ?: "Error signing up")
                 state =
                     state.copy(isLoading = false)
             }

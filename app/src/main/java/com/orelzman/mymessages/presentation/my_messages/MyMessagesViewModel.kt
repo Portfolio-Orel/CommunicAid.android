@@ -17,7 +17,9 @@ import com.orelzman.mymessages.domain.managers.phonecall.isCallStateIdle
 import com.orelzman.mymessages.domain.managers.worker.WorkerManager
 import com.orelzman.mymessages.domain.managers.worker.WorkerType
 import com.orelzman.mymessages.domain.model.entities.SettingsKey
-import com.orelzman.mymessages.domain.service.PhonecallReceiver
+import com.orelzman.mymessages.domain.system.connectivity.ConnectivityObserver
+import com.orelzman.mymessages.domain.system.connectivity.NetworkState
+import com.orelzman.mymessages.domain.system.phone_call.PhonecallReceiver
 import com.orelzman.mymessages.domain.util.extension.log
 import com.orelzman.mymessages.domain.util.extension.safeCollectLatest
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,6 +35,7 @@ class MyMessagesViewModel @Inject constructor(
     private val settingsInteractor: SettingsInteractor,
     private val phoneCallManager: PhoneCallManager,
     private val workerManager: WorkerManager,
+    private val connectivityObserver: ConnectivityObserver,
     @AuthConfigFile private val authConfigFile: Int,
 ) : AndroidViewModel(application) {
     var state by mutableStateOf(MyMessagesState())
@@ -67,8 +70,10 @@ class MyMessagesViewModel @Inject constructor(
 
     private fun observeUser() {
         viewModelScope.launch(SupervisorJob()) {
-            authInteractor.getUserFlow().safeCollectLatest({ loadingData = false }) {
-                authInteractor.init(authConfigFile)
+            authInteractor.init(authConfigFile)
+            authInteractor.getUserFlow().safeCollectLatest({
+                loadingData = false
+            }) {
                 val isAuthenticated =
                     if (!authInteractor.isAuthorized(it)) {
                         false
@@ -113,9 +118,21 @@ class MyMessagesViewModel @Inject constructor(
         }
     }
 
+    private fun observeInternetConnectivity() {
+        viewModelScope.launch(SupervisorJob()) {
+            connectivityObserver.observe().collectLatest { value: NetworkState ->
+                when (value) {
+                    NetworkState.Available -> workerManager.startWorker(WorkerType.UploadNotUploadedObjectsOnce)
+                    else -> {}
+                }
+            }
+        }
+    }
+
     private fun userAuthenticated(isAuthenticated: Boolean = false) {
         if (isAuthenticated) {
             observeCallState()
+            observeInternetConnectivity()
             PhonecallReceiver.enable(context = getApplicationContext())
         } else {
             generalInteractor.clearAllDatabases()

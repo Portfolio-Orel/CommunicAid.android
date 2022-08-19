@@ -3,7 +3,7 @@ package com.orelzman.mymessages.domain.util.extension
 import android.util.Log
 import com.datadog.android.log.Logger
 
-class Log {
+class Logger {
     companion object {
         private const val TAG = ":::MyMessages:::"
         private val logger = Logger.Builder()

@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.orelzman.mymessages.domain.interactors.*
 import com.orelzman.mymessages.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
 import com.orelzman.mymessages.domain.model.entities.*
-import com.orelzman.mymessages.domain.util.extension.Log
+import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.domain.util.extension.copyToClipboard
 import com.orelzman.mymessages.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -106,8 +106,8 @@ class MainViewModel @Inject constructor(
      */
     private fun initData() {
         state = state.copy(isLoading = true)
-        val messages = messageInteractor.getMessagesOnce().sortedByDescending { it.timesUsed }
-        val folders = folderInteractor.getFoldersOnce().sortedByDescending { it.timesUsed }
+        val messages = messageInteractor.getAllOnce().sortedByDescending { it.timesUsed }
+        val folders = folderInteractor.getAllOnce().sortedByDescending { it.timesUsed }
         val messagesInFolders = messageInFolderInteractor.getMessagesInFoldersOnce()
         state = state.copy(
             isLoading = false,
@@ -174,12 +174,12 @@ class MainViewModel @Inject constructor(
                     }
                 } catch (e: Exception) {
                     e.log()
-                    Log.e("observeNumberInBackground stopped")
+                    Logger.e("observeNumberInBackground stopped")
                 }
             }
         viewModelScope.launch(SupervisorJob()) {
             try {
-                Log.v("Im an observer")
+                Logger.v("Im an observer")
                 callInTheBackgroundJob?.await()
             } catch (e: CancellationException) {
 
