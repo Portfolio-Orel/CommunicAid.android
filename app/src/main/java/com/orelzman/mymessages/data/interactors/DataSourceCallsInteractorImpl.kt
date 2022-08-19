@@ -12,7 +12,7 @@ import com.orelzman.mymessages.domain.managers.phonecall.toState
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.model.entities.toPhoneCall
 import com.orelzman.mymessages.domain.managers.phonecall.CallState
-import com.orelzman.mymessages.domain.util.extension.Log
+import com.orelzman.mymessages.domain.util.extension.Logger
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -68,7 +68,7 @@ class DataSourceCallsInteractorImpl @Inject constructor(
         context.callsDataStore.edit { preferences ->
             preferences[PreferencesKeys.CALL_ON_LINE] = callOnTheLine?.stringify() ?: ""
         }
-        Log.v("Updating call on the line: $callOnTheLine")
+        Logger.v("Updating call on the line: $callOnTheLine")
     }
 
     override suspend fun updateCallInTheBackground(callInTheBackground: PhoneCall?) {
@@ -79,7 +79,7 @@ class DataSourceCallsInteractorImpl @Inject constructor(
         context.callsDataStore.edit { preferences ->
             preferences[PreferencesKeys.CALL_IN_BACKGROUND] = callInTheBackground?.stringify() ?: ""
         }
-        Log.v(
+        Logger.v(
             "Updating call in background: $callInTheBackground"
         )
     }
@@ -89,7 +89,7 @@ class DataSourceCallsInteractorImpl @Inject constructor(
         context.callsDataStore.edit { preferences ->
             preferences[PreferencesKeys.STATE] = state?.value ?: ""
         }
-        Log.v("Updating state: $state")
+        Logger.v("Updating state: $state")
     }
 
     override fun getState(): CallState? =

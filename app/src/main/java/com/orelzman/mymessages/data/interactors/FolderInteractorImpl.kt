@@ -34,7 +34,7 @@ class FolderInteractorImpl @Inject constructor(
 
     override fun getFolders(): Flow<List<Folder>> = db.getFolders()
 
-    override fun getFoldersOnce(): List<Folder> = db.getFoldersOnce()
+    override fun getAllOnce(): List<Folder> = db.getFoldersOnce()
 
     override suspend fun deleteFolder(folder: Folder) {
         repository.deleteFolder(folder)

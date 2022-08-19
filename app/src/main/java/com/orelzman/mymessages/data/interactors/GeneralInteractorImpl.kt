@@ -11,7 +11,6 @@ class GeneralInteractorImpl @Inject constructor(
     private val messageInteractor: MessageInteractor,
     private val folderInteractor: FolderInteractor,
     private val deletedCallsInteractor: DeletedCallsInteractor,
-    private val statisticsInteractor: StatisticsInteractor,
     private val DataSourceCallsInteractor: DataSourceCallsInteractor,
     private val settingsInteractor: SettingsInteractor
 ) : GeneralInteractor {

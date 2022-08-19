@@ -9,5 +9,6 @@ interface WorkerManager {
 
 enum class WorkerType {
     UploadCalls,
-    UploadCallsOnce;
+    UploadCallsOnce,
+    UploadNotUploadedObjectsOnce;
 }

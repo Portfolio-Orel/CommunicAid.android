@@ -31,7 +31,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun initData() {
-        val settingsList = settingsInteractor.getAllSettings()
+        val settingsList = settingsInteractor.getAll()
         setSettings(settingsList)
     }
 
@@ -71,7 +71,7 @@ class SettingsViewModel @Inject constructor(
         }
             viewModelScope.launch(Dispatchers.IO) {
                 supervisorScope {
-                    settingsInteractor.getAllSettings().forEach { settings ->
+                    settingsInteractor.getAll().forEach { settings ->
                         state = try {
                             settingsInteractor.createOrUpdate(
                                 settings = settings

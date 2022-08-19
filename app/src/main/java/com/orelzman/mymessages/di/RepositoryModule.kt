@@ -6,6 +6,7 @@ import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.data.interactors.*
 import com.orelzman.mymessages.data.remote.repository.api.APIRepository
 import com.orelzman.mymessages.domain.interactors.*
+import com.orelzman.mymessages.domain.managers.phonecall.PhoneCallManager
 import com.orelzman.mymessages.domain.managers.phonecall.PhoneCallManagerImpl
 import com.orelzman.mymessages.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
 import com.orelzman.mymessages.domain.managers.phonecall.interactor.PhoneCallManagerInteractorImpl
@@ -14,7 +15,8 @@ import com.orelzman.mymessages.domain.managers.unhandled_calls.UnhandledCallsMan
 import com.orelzman.mymessages.domain.managers.worker.WorkerManager
 import com.orelzman.mymessages.domain.managers.worker.WorkerManagerImpl
 import com.orelzman.mymessages.domain.repository.Repository
-import com.orelzman.mymessages.domain.managers.phonecall.PhoneCallManager
+import com.orelzman.mymessages.domain.system.connectivity.ConnectivityObserver
+import com.orelzman.mymessages.domain.system.connectivity.ConnectivityObserverObserverImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -29,6 +31,9 @@ abstract class RepositoryModule {
     abstract fun bindAuthInteractor(
         authInteractorImpl: AuthInteractorImpl
     ): AuthInteractor
+
+    @Binds
+    abstract fun provideConnectivityObserver(connectivityObserver: ConnectivityObserverObserverImpl): ConnectivityObserver
 
     @Binds
     abstract fun provideRepository(repository: APIRepository): Repository
