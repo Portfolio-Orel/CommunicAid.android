@@ -66,7 +66,7 @@ fun MyMessagesApp(
                 )
             }
         } else {
-            if (!state.isAuthorized) {
+            if (!state.isAuthenticated) {
                 LoginScreen()
             } else {
                 CustomScaffold(
