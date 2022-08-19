@@ -25,6 +25,7 @@ import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 fun MessageView(
     message: Message,
     modifier: Modifier = Modifier,
+    borderColor: Color = MaterialTheme.colorScheme.onBackground,
     onClick: (Message) -> Unit,
     onLongClick: (Message, Context) -> Unit = { _, _ -> }
 ) {
@@ -40,7 +41,7 @@ fun MessageView(
                 .fillMaxWidth()
                 .border(
                     width = 1.dp,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = borderColor,
                     shape = RoundedCornerShape(12.dp)
                 )
                 .clip(RoundedCornerShape(12.dp))

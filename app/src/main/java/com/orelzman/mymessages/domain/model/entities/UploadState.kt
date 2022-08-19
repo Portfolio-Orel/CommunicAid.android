@@ -2,10 +2,6 @@ package com.orelzman.mymessages.domain.model.entities
 
 import java.util.*
 
-//interface Uploadable<T> {
-//    var uploadState: UploadState
-//    fun setState(uploadState: UploadState): T
-//}
 abstract class Uploadable {
     var uploadState: UploadState = UploadState.NotUploaded
         private set

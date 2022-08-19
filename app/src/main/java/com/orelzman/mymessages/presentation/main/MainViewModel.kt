@@ -33,7 +33,6 @@ class MainViewModel @Inject constructor(
     private var callInTheBackgroundJob: Deferred<Unit>? = null
 
     fun init() {
-//        Log.v("MainViewModel init")
         initData()
         observeNumberOnTheLine()
         observeNumberInBackground()

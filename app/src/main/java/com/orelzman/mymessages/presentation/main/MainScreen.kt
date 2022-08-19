@@ -2,37 +2,30 @@ package com.orelzman.mymessages.presentation.main
 
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.LocalOverscrollConfiguration
-import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
-import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.util.Screen
 import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
-import com.orelzman.mymessages.presentation.main.components.FolderView
+import com.orelzman.mymessages.presentation.components.dropdown.Dropdown
+import com.orelzman.mymessages.presentation.components.dropdown.DropdownDecoratorStyle
 import com.orelzman.mymessages.presentation.main.components.MessageView
 import kotlin.system.measureTimeMillis
 
@@ -107,7 +100,8 @@ private fun Content(
                 folders = state.folders,
                 onClick = { viewModel.onFolderClick(it) },
                 onLongClick = { viewModel.onFolderLongClick(it) },
-                isSelected = { state.selectedFolder?.id == it.id }
+                selected = state.folders.firstOrNull(),
+                color = MaterialTheme.colorScheme.primary
             )
 
             MessagesList(
@@ -121,46 +115,35 @@ private fun Content(
                 },
                 spaceBetweenMessages = spaceBetweenMessages.dp,
                 height = messageHeight,
-                width = messageWidth
+                width = messageWidth,
+                borderColor = MaterialTheme.colorScheme.primary
             )
 
         }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FoldersList(
     folders: List<Folder>,
     onClick: (Folder) -> Unit,
     onLongClick: (Folder) -> Unit,
-    isSelected: (Folder) -> Boolean,
-    modifier: Modifier = Modifier
+    selected: Folder?,
+    color: Color,
+    modifier: Modifier = Modifier,
 ) {
-    val state = rememberScrollState()
+    Dropdown(
+        items = folders,
+        onSelected = onClick,
+        modifier = modifier,
+        secondaryAction = onLongClick,
+        secondaryIcon = Icons.Rounded.Edit,
+        defaultTitle = 0,
+        selected = selected,
+        color = color,
+        dropdownDecoratorStyle = DropdownDecoratorStyle.Text
 
-    CompositionLocalProvider(
-        LocalOverscrollConfiguration provides
-                null
-    ) {
-        LazyRow(
-            modifier = modifier
-                .scrollable(state = state, Orientation.Horizontal)
-                .fillMaxWidth(),
-        ) {
-            items(folders) { folder ->
-                FolderView(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .width(120.dp),
-                    folder = folder,
-                    isSelected = isSelected(folder),
-                    onClick = onClick,
-                    onLongClick = onLongClick
-                )
-            }
-        }
-    }
+    )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -170,6 +153,7 @@ fun MessagesList(
     onClick: (Message) -> Unit,
     onLongClick: (Message, Context) -> Unit,
     spaceBetweenMessages: Dp,
+    borderColor: Color,
     height: Dp,
     width: Dp
 ) {
@@ -195,92 +179,10 @@ fun MessagesList(
                     .height(height)
                     .width(width)
                     .padding(0.dp),
+                borderColor = borderColor,
                 onClick = onClick,
                 onLongClick = onLongClick
             )
-        }
-    }
-}
-
-@Composable
-fun WaitingCallBar(
-    activeCall: PhoneCall?,
-    callOnTheLine: PhoneCall?,
-    callInBackground: PhoneCall,
-    setCallInBackground: () -> Unit,
-    setCallOnTheLine: () -> Unit
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    Button(
-                        modifier = Modifier
-                            .border(
-                                1.dp,
-                                color = MaterialTheme.colorScheme.primary,
-                                shape = RoundedCornerShape(32.dp)
-                            )
-                            .width(150.dp)
-                            .height(36.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor =
-                            if (activeCall == callOnTheLine) MaterialTheme.colorScheme.primary
-                            else Color.Transparent
-                        ),
-                        onClick = { setCallOnTheLine() }) {
-                        Text(
-                            callOnTheLine?.number ?: "",
-                            style = MaterialTheme.typography.bodySmall,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            color = if (activeCall == callOnTheLine) MaterialTheme.colorScheme.onPrimary
-                            else MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-
-                    Button(
-                        modifier = Modifier
-                            .border(
-                                1.dp,
-                                color = MaterialTheme.colorScheme.primary,
-                                shape = RoundedCornerShape(32.dp)
-                            )
-                            .width(150.dp)
-                            .height(36.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor =
-                            if (activeCall == callInBackground) MaterialTheme.colorScheme.primary
-                            else Color.Transparent
-                        ),
-                        onClick = { setCallInBackground() }) {
-                        Text(
-                            callInBackground.number,
-                            style = MaterialTheme.typography.bodySmall,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            color = if (activeCall == callInBackground) MaterialTheme.colorScheme.onPrimary
-                            else MaterialTheme.colorScheme.onBackground
-                        )
-
-                    }
-                }
-                Divider(
-                    modifier = Modifier.padding(8.dp),
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                )
-            }
         }
     }
 }
