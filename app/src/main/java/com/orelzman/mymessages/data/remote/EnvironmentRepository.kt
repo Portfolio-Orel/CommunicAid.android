@@ -4,7 +4,8 @@ import com.orelzman.mymessages.BuildConfig
 import javax.inject.Inject
 
 class EnvironmentRepository @Inject constructor() {
-    val currentEnvironment: Environments = if (BuildConfig.DEBUG) Environments.LocalEmulator else Environments.Prod
+    val currentEnvironment: Environments =
+        if (BuildConfig.DEBUG) Environments.LocalEmulator else Environments.Prod
 }
 
 enum class Environments {
