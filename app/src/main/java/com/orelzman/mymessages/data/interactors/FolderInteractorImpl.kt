@@ -63,7 +63,10 @@ class FolderInteractorImpl @Inject constructor(
     }
 
     override suspend fun updateFolder(folder: Folder) {
+        folder.setUploadState(uploadState = UploadState.BeingUploaded)
+        db.update(folder)
         repository.updateFolder(folder)
+        folder.setUploadState(uploadState = UploadState.Uploaded)
         db.update(folder)
     }
 

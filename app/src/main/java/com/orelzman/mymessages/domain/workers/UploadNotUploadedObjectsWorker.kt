@@ -34,9 +34,9 @@ class UploadNotUploadedObjectsWorker @AssistedInject constructor(
             Logger.v("Upload not uploaded worker called")
             CoroutineScope(SupervisorJob()).launch {
                 checkDeletedCalls()
-                checkFolders()
-                checkMessages()
-                checkPhoneCalls()
+                // TODO("Think of a way to store data of update/create/delete action")
+//                checkFolders()
+//                checkMessages()
                 checkSettings()
                 Logger.v("Upload not uploaded done")
             }
@@ -51,6 +51,7 @@ class UploadNotUploadedObjectsWorker @AssistedInject constructor(
         val deletedCalls = deletedCallsInteractor.getAllOnce(DateUtils.getFirstDayOfMonth())
             .filter { it.shouldBeUploaded() }
         if (deletedCalls.isNotEmpty()) {
+            Logger.v("Deleted calls not uploaded: $deletedCalls")
             deletedCalls.forEach {
                 deletedCallsInteractor.create(it)
             }
@@ -60,6 +61,7 @@ class UploadNotUploadedObjectsWorker @AssistedInject constructor(
     private suspend fun checkFolders() {
         val folders = folderInteractor.getAllOnce().filter { it.shouldBeUploaded() }
         if (folders.isNotEmpty()) {
+            Logger.v("Folders not uploaded: $folders")
             folders.forEach {
                 folderInteractor.createFolder(folder = it)
             }
@@ -69,20 +71,22 @@ class UploadNotUploadedObjectsWorker @AssistedInject constructor(
     private suspend fun checkMessages() {
         val messages = messageInteractor.getAllOnce().filter { it.shouldBeUploaded() }
         if (messages.isNotEmpty()) {
-            messages.forEach {
-                messageInFolderInteractor.getMessageFolderId(it.id)?.let { folderId ->
-                    messageInteractor.createMessage(
-                        message = it,
-                        folderId = folderId
-                    )
-                }
-            }
+//            Logger.v("Messages not uploaded: $messages")
+//            messages.forEach {
+//                messageInFolderInteractor.getMessageFolderId(it.id)?.let { folderId ->
+//                    messageInteractor.createMessage(
+//                        message = it,
+//                        folderId = folderId
+//                    )
+//                }
+//            }
         }
     }
 
     private suspend fun checkPhoneCalls() {
         val phoneCalls = phoneCallsInteractor.getAll().filter { it.shouldBeUploaded() }
         if (phoneCalls.isNotEmpty()) {
+            Logger.v("phone calls not uploaded: $phoneCalls")
             phoneCallsInteractor.createPhoneCalls(phoneCalls = phoneCalls)
         }
     }
@@ -90,6 +94,7 @@ class UploadNotUploadedObjectsWorker @AssistedInject constructor(
     private suspend fun checkSettings() {
         val settings = settingsInteractor.getAll().filter { it.shouldBeUploaded() }
         if (settings.isNotEmpty()) {
+            Logger.v("settings not uploaded")
             settings.forEach {
                 settingsInteractor.createOrUpdate(it)
             }

@@ -52,6 +52,7 @@ class MessageInteractorImpl @Inject constructor(
         val tempMessageInFolder = MessageInFolder(tempId, folderId)
 
         tempMessageInFolder.setUploadState(UploadState.BeingUploaded)
+        tempMessage.setUploadState(UploadState.BeingUploaded)
 
         db.insert(tempMessage)
         messageInFolderInteractor.insert(tempMessageInFolder)
@@ -60,13 +61,14 @@ class MessageInteractorImpl @Inject constructor(
             repository.createMessage(CreateMessageBody.fromMessage(message, folderId))
         messageIds?.forEach { messageId ->
             val messageWithId = Message(message, messageId)
-            messageWithId.setUploadState(UploadState.Uploaded)
 
             db.delete(tempMessage)
             messageInFolderInteractor.delete(tempMessageInFolder)
 
             val messageInFolder = MessageInFolder(messageId = messageId, folderId = folderId)
             messageInFolder.setUploadState(UploadState.Uploaded)
+            messageWithId.setUploadState(UploadState.Uploaded)
+
             db.insert(messageWithId)
             messageInFolderInteractor.insert(messageInFolder)
         }
@@ -80,13 +82,16 @@ class MessageInteractorImpl @Inject constructor(
         oldFolderId: String?,
         newFolderId: String?
     ) {
+        message.setUploadState(uploadState = UploadState.BeingUploaded)
         db.update(message)
         repository.updateMessage(
             message = message,
             oldFolderId = oldFolderId,
             newFolderId = newFolderId
         )
-        if(oldFolderId != null && newFolderId != null) {
+        message.setUploadState(uploadState = UploadState.Uploaded)
+        db.update(message)
+        if (oldFolderId != null && newFolderId != null) {
             messageInFolderInteractor.update(
                 messageId = message.id,
                 oldFolderId = oldFolderId,
@@ -96,7 +101,8 @@ class MessageInteractorImpl @Inject constructor(
     }
 
     override suspend fun deleteMessage(message: Message) {
-        val folderId = messageInFolderInteractor.getMessageFolderId(message.id) ?: throw MessageNotFoundException()
+        val folderId = messageInFolderInteractor.getMessageFolderId(message.id)
+            ?: throw MessageNotFoundException()
         repository.deleteMessage(message, folderId)
         db.delete(message)
         messageInFolderInteractor.delete(
