@@ -43,9 +43,17 @@ class UnhandledCallsViewModel @Inject constructor(
         observeDeletedCalls()
     }
 
-    fun refresh() {
-        isRefreshing = true
-        fetchDeletedCalls()
+    fun refresh(isPullToRefresh: Boolean = false) {
+        isRefreshing = isPullToRefresh
+        if(isPullToRefresh) {
+            fetchDeletedCalls()
+        } else {
+            val callsToHandle = unhandledCallsManager.filterUnhandledCalls(
+                deletedCalls = deletedCallsInteractor.getAllOnce(getStartOfDay()),
+                callLogs = getCallsFromCallLog()
+            )
+            state = state.copy(callsToHandle = callsToHandle, isLoading = false)
+        }
     }
 
     fun onResume() {

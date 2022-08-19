@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.orelzman.mymessages.R
@@ -32,7 +33,7 @@ fun UnhandledCallsScreen(
     )
 
     val state = viewModel.state
-    if(state.isLoading){
+    if (state.isLoading) {
         Box(
             modifier = Modifier
                 .fillMaxSize(),
@@ -52,7 +53,7 @@ fun UnhandledCallsScreen(
             SwipeRefresh(
                 modifier = Modifier.fillMaxSize(),
                 state = rememberSwipeRefreshState(isRefreshing),
-                onRefresh = { viewModel.refresh() },
+                onRefresh = { viewModel.refresh(isPullToRefresh = true) },
             ) {
                 Column(
                     modifier = Modifier
