@@ -144,7 +144,7 @@ fun StatisticsScreen(
 private fun createBarItemList(
     color: Color,
     list: List<Pair<String, Int>>,
-    maxItems: Int = 5,
+    maxItems: Int = 8,
 ): List<BarItem> {
     val barItems = ArrayList<BarItem>()
     list

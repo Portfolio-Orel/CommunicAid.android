@@ -155,7 +155,8 @@ fun FoldersList(
                         .width(120.dp),
                     folder = folder,
                     isSelected = isSelected(folder),
-                    onClick = onClick
+                    onClick = onClick,
+                    onLongClick = onLongClick
                 )
             }
         }
