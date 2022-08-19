@@ -20,6 +20,7 @@ import com.orelzman.mymessages.domain.model.entities.SettingsKey
 import com.orelzman.mymessages.domain.system.connectivity.ConnectivityObserver
 import com.orelzman.mymessages.domain.system.connectivity.NetworkState
 import com.orelzman.mymessages.domain.system.phone_call.PhonecallReceiver
+import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.domain.util.extension.log
 import com.orelzman.mymessages.domain.util.extension.safeCollectLatest
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -136,6 +137,7 @@ class MyMessagesViewModel @Inject constructor(
             PhonecallReceiver.enable(context = getApplicationContext())
         } else {
             generalInteractor.clearAllDatabases()
+            Logger.v("Database was cleared.")
             workerManager.clearAll()
             PhonecallReceiver.disable(context = getApplicationContext())
         }
