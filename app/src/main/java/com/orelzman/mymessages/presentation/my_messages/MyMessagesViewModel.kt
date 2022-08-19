@@ -17,7 +17,7 @@ import com.orelzman.mymessages.domain.managers.phonecall.isCallStateIdle
 import com.orelzman.mymessages.domain.managers.worker.WorkerManager
 import com.orelzman.mymessages.domain.managers.worker.WorkerType
 import com.orelzman.mymessages.domain.model.entities.SettingsKey
-import com.orelzman.mymessages.domain.service.PhonecallReceiver
+import com.orelzman.mymessages.domain.system.phone_call.PhonecallReceiver
 import com.orelzman.mymessages.domain.util.extension.log
 import com.orelzman.mymessages.domain.util.extension.safeCollectLatest
 import dagger.hilt.android.lifecycle.HiltViewModel

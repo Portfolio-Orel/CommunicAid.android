@@ -53,7 +53,7 @@
         </activity>
 
         <receiver
-            android:name=".domain.service.PhonecallReceiver"
+            android:name=".domain.system.phone_call.PhonecallReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
