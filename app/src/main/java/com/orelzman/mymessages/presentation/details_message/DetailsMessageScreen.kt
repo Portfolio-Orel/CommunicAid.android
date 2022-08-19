@@ -36,7 +36,7 @@ fun DetailsMessageScreen(
     LaunchedEffect(key1 = messageId) {
         viewModel.setEdit(messageId = messageId)
     }
-    LaunchedEffect(key1 = viewModel.state.eventMessage) {
+    LaunchedEffect(key1 = state.eventMessage) {
         when (state.eventMessage) {
             EventsMessages.Saved -> Toast.makeText(
                 context,
@@ -137,7 +137,8 @@ fun DetailsMessageScreen(
                 value = state.body,
                 onValueChange = { viewModel.setBody(it) },
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .height(120.dp),
                 placeholder = {
                     Text(text = stringResource(R.string.message))
                 },
@@ -197,7 +198,7 @@ fun Dropdown(
             if (selectedFolder.title == "") stringResource(R.string.folder) else selectedFolder.title,
             modifier = Modifier
                 .padding(horizontal = 18.dp),
-            style = MaterialTheme.typography.labelLarge,
+            style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onPrimaryContainer
         )
         Spacer(Modifier.weight(1f))

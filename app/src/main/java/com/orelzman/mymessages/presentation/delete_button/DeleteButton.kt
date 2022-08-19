@@ -32,7 +32,7 @@ fun DeleteButton(
                 onDelete()
             },
             text = stringResource(deleteText),
-            style = MaterialTheme.typography.labelLarge,
+            style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.errorContainer
         )
     }
