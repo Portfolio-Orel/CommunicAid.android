@@ -18,7 +18,7 @@ class GeneralInteractorImpl @Inject constructor(
 
     val db = database
 
-    override suspend fun clearAllDatabases() {
+    override fun clearAllDatabases() {
         db.clearAllTables()
     }
 
@@ -29,7 +29,6 @@ class GeneralInteractorImpl @Inject constructor(
         folderInteractor.init()
         DataSourceCallsInteractor.init()
         settingsInteractor.init()
-//        statisticsInteractor.init()
         settingsInteractor.saveSettings(Settings(SettingsKey.IsDataInit, true.toString()))
     }
 }
