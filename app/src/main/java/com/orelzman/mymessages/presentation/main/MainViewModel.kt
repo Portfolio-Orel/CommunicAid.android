@@ -179,7 +179,6 @@ class MainViewModel @Inject constructor(
             }
         viewModelScope.launch(SupervisorJob()) {
             try {
-                Logger.v("Im an observer")
                 callInTheBackgroundJob?.await()
             } catch (e: CancellationException) {
 

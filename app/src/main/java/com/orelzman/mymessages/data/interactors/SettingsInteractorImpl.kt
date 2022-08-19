@@ -46,5 +46,6 @@ class SettingsInteractorImpl @Inject constructor(
         )
         repository.createOrUpdateSettings(createOrUpdateSettingsBody)
         settings.setUploadState(UploadState.Uploaded)
+        db.insert(settings)
     }
 }
