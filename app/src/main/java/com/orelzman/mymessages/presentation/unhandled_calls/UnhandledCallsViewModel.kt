@@ -18,7 +18,7 @@ import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.DeletedCall
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.util.common.DateUtils.getStartOfDay
-import com.orelzman.mymessages.domain.util.extension.Log
+import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -54,6 +54,10 @@ class UnhandledCallsViewModel @Inject constructor(
             )
             state = state.copy(callsToHandle = callsToHandle, isLoading = false)
         }
+    }
+
+    fun onResume() {
+        initData()
     }
 
     /**
@@ -120,7 +124,7 @@ class UnhandledCallsViewModel @Inject constructor(
                 job.await()
             } catch (e: Exception) {
                 e.log()
-                Log.e(e.message ?: "Failed to get unhandled calls")
+                Logger.e(e.message ?: "Failed to get unhandled calls")
             } finally {
                 isRefreshing = false
             }

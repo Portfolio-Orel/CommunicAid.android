@@ -25,13 +25,25 @@ class StatisticsViewModel @Inject constructor(
 
     var isRefreshing by mutableStateOf(false)
 
-    init {
+    fun init() {
         initData()
         observeData()
     }
 
+    fun onResume() {
+        init()
+    }
+
     fun refreshData() {
         isRefreshing = true
+        fetchData()
+    }
+
+    fun tabSelected(startDate: Date?, endDate: Date?) {
+        setDates(startDate = startDate, endDate = endDate)
+    }
+
+    private fun fetchData() {
         val job = viewModelScope.async {
             statisticsInteractor.init(
                 startDate = state.startDate,
@@ -49,10 +61,6 @@ class StatisticsViewModel @Inject constructor(
                 state = state.copy(isLoading = false)
             }
         }
-    }
-
-    fun tabSelected(startDate: Date?, endDate: Date?) {
-        setDates(startDate = startDate, endDate = endDate)
     }
 
     private fun setDates(startDate: Date?, endDate: Date?) {
@@ -73,7 +81,11 @@ class StatisticsViewModel @Inject constructor(
 
     private fun initData() {
         val statistics = statisticsInteractor.getStatisticsOnce()
-        setStatisticsData(statistics)
+        if(statistics.isEmpty()) {
+            fetchData()
+        } else {
+            setStatisticsData(statistics)
+        }
     }
 
     private fun observeData() {

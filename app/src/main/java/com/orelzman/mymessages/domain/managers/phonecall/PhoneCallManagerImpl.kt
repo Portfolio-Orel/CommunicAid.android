@@ -6,11 +6,12 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.domain.interactors.*
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
-import com.orelzman.mymessages.domain.service.phone_call.exceptions.WaitingThenRingingException
+import com.orelzman.mymessages.domain.system.phone_call.exceptions.WaitingThenRingingException
 import com.orelzman.mymessages.domain.util.common.Constants.TIME_TO_ADD_CALL_TO_CALL_LOG
-import com.orelzman.mymessages.domain.util.extension.Log
+import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.domain.util.extension.inSeconds
 import com.orelzman.mymessages.domain.util.extension.log
+import com.orelzman.mymessages.domain.util.extension.withoutPrefix
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,14 +39,19 @@ class PhoneCallManagerImpl @Inject constructor(
 
     var context: Context? = null
 
+    init {
+        reset()
+    }
+
     override fun onStateChanged(state: String, number: String, context: Context?) {
-        Log.v("state: $state \n number: $number")
+        Logger.v("state: $state \n number: $number")
+        val numberNoPrefix = number.withoutPrefix()
         this.context = context
         analyticsInteractor?.track("Call Status", mapOf("status" to state))
         when (state) {
             TelephonyManager.EXTRA_STATE_IDLE -> onIdleState()
-            TelephonyManager.EXTRA_STATE_RINGING -> onRingingState(number)
-            TelephonyManager.EXTRA_STATE_OFFHOOK -> onOffHookState(number)
+            TelephonyManager.EXTRA_STATE_RINGING -> onRingingState(numberNoPrefix)
+            TelephonyManager.EXTRA_STATE_OFFHOOK -> onOffHookState(numberNoPrefix)
         }
     }
 

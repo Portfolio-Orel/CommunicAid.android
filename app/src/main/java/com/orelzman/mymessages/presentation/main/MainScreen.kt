@@ -2,33 +2,32 @@ package com.orelzman.mymessages.presentation.main
 
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.LocalOverscrollConfiguration
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.google.accompanist.flowlayout.MainAxisAlignment
-import com.google.accompanist.flowlayout.SizeMode
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
-import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.util.Screen
-import com.orelzman.mymessages.presentation.components.scrollable_flowrow.ScrollDirection
-import com.orelzman.mymessages.presentation.components.scrollable_flowrow.ScrollableFlowRow
-import com.orelzman.mymessages.presentation.main.components.FolderView
+import com.orelzman.mymessages.domain.util.extension.Logger
+import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
+import com.orelzman.mymessages.presentation.components.dropdown.Dropdown
+import com.orelzman.mymessages.presentation.components.dropdown.DropdownDecoratorStyle
 import com.orelzman.mymessages.presentation.main.components.MessageView
+import kotlin.system.measureTimeMillis
 
 
 @ExperimentalFoundationApi
@@ -37,7 +36,14 @@ fun MainScreen(
     navController: NavController,
     viewModel: MainViewModel = hiltViewModel(),
 ) {
-    Content(navController = navController, viewModel = viewModel)
+    OnLifecycleEvent(
+        onResume = viewModel::onResume,
+    )
+
+    val timeToBuildContent = measureTimeMillis {
+        Content(navController = navController, viewModel = viewModel)
+    }
+    Logger.v("Time to build Main content: ${timeToBuildContent}ms")
 }
 
 @Composable
@@ -94,7 +100,8 @@ private fun Content(
                 folders = state.folders,
                 onClick = { viewModel.onFolderClick(it) },
                 onLongClick = { viewModel.onFolderLongClick(it) },
-                isSelected = { state.selectedFolder?.id == it.id }
+                selected = state.folders.firstOrNull(),
+                color = MaterialTheme.colorScheme.primary
             )
 
             MessagesList(
@@ -108,44 +115,35 @@ private fun Content(
                 },
                 spaceBetweenMessages = spaceBetweenMessages.dp,
                 height = messageHeight,
-                width = messageWidth
+                width = messageWidth,
+                borderColor = MaterialTheme.colorScheme.primary
             )
 
         }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FoldersList(
     folders: List<Folder>,
     onClick: (Folder) -> Unit,
     onLongClick: (Folder) -> Unit,
-    isSelected: (Folder) -> Boolean,
-    modifier: Modifier = Modifier
+    selected: Folder?,
+    color: Color,
+    modifier: Modifier = Modifier,
 ) {
-    CompositionLocalProvider(
-        LocalOverscrollConfiguration provides
-                null
-    ) {
-        ScrollableFlowRow(
-            modifier = modifier,
-            scrollDirection = ScrollDirection.Horizontal
-        ) {
-            folders
-                .forEach { folder ->
-                    FolderView(
-                        folder = folder,
-                        isSelected = isSelected(folder),
-                        modifier = Modifier
-                            .height(50.dp)
-                            .width(120.dp),
-                        onClick = onClick,
-                        onLongClick = onLongClick
-                    )
-                }
-        }
-    }
+    Dropdown(
+        items = folders,
+        onSelected = onClick,
+        modifier = modifier,
+        secondaryAction = onLongClick,
+        secondaryIcon = Icons.Rounded.Edit,
+        defaultTitle = 0,
+        selected = selected,
+        color = color,
+        dropdownDecoratorStyle = DropdownDecoratorStyle.Text
+
+    )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -155,112 +153,36 @@ fun MessagesList(
     onClick: (Message) -> Unit,
     onLongClick: (Message, Context) -> Unit,
     spaceBetweenMessages: Dp,
+    borderColor: Color,
     height: Dp,
     width: Dp
 ) {
-    ScrollableFlowRow(
+    LazyVerticalGrid(
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .fillMaxWidth(1F)
             .fillMaxHeight(0.9F),
-        mainAxisSpacing = spaceBetweenMessages,
-        mainAxisAlignment = MainAxisAlignment.SpaceEvenly,
-        mainAxisSize = SizeMode.Expand,
+        columns = GridCells.Fixed(4),
+        horizontalArrangement = Arrangement.spacedBy(spaceBetweenMessages),
+        verticalArrangement = Arrangement.spacedBy(spaceBetweenMessages)
     ) {
-        messages
-            .forEach {
-                MessageView(
-                    message = it,
-                    modifier = Modifier
-                        .height(height)
-                        .width(width)
-                        .padding(0.dp),
-                    onClick = onClick,
-                    onLongClick = onLongClick
-                )
+        items(
+            count = messages.size,
+            key = { index ->
+                // Return a stable + unique key for the item
+                index
             }
-    }
-}
-
-@Composable
-fun WaitingCallBar(
-    activeCall: PhoneCall?,
-    callOnTheLine: PhoneCall?,
-    callInBackground: PhoneCall,
-    setCallInBackground: () -> Unit,
-    setCallOnTheLine: () -> Unit
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    Button(
-                        modifier = Modifier
-                            .border(
-                                1.dp,
-                                color = MaterialTheme.colorScheme.primary,
-                                shape = RoundedCornerShape(32.dp)
-                            )
-                            .width(150.dp)
-                            .height(36.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor =
-                            if (activeCall == callOnTheLine) MaterialTheme.colorScheme.primary
-                            else Color.Transparent
-                        ),
-                        onClick = { setCallOnTheLine() }) {
-                        Text(
-                            callOnTheLine?.number ?: "",
-                            style = MaterialTheme.typography.bodySmall,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            color = if (activeCall == callOnTheLine) MaterialTheme.colorScheme.onPrimary
-                            else MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-
-                    Button(
-                        modifier = Modifier
-                            .border(
-                                1.dp,
-                                color = MaterialTheme.colorScheme.primary,
-                                shape = RoundedCornerShape(32.dp)
-                            )
-                            .width(150.dp)
-                            .height(36.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor =
-                            if (activeCall == callInBackground) MaterialTheme.colorScheme.primary
-                            else Color.Transparent
-                        ),
-                        onClick = { setCallInBackground() }) {
-                        Text(
-                            callInBackground.number,
-                            style = MaterialTheme.typography.bodySmall,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            color = if (activeCall == callInBackground) MaterialTheme.colorScheme.onPrimary
-                            else MaterialTheme.colorScheme.onBackground
-                        )
-
-                    }
-                }
-                Divider(
-                    modifier = Modifier.padding(8.dp),
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                )
-            }
+        ) { index ->
+            MessageView(
+                message = messages[index],
+                modifier = Modifier
+                    .height(height)
+                    .width(width)
+                    .padding(0.dp),
+                borderColor = borderColor,
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
         }
     }
 }
@@ -270,7 +192,7 @@ private fun getMessageWidth(
     messagesInRow: Int = 4,
     spaceBetween: Int = 4
 ): Dp {
-    if(messagesInRow == 0) return 0.dp
+    if (messagesInRow == 0) return 0.dp
     val spacesCount = messagesInRow + 1 // Amount of spaces between each message
     val spaceForMessages = screenWidth - spacesCount * spaceBetween
     return (spaceForMessages / messagesInRow).dp

@@ -5,8 +5,9 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,11 +16,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.orelzman.mymessages.domain.model.BarItem
+import com.orelzman.mymessages.presentation.components.charts.model.BarItem
 
 @Composable
 fun BarChart(
@@ -27,30 +29,26 @@ fun BarChart(
 ) {
     if (items.isEmpty()) return
     val viewModel = BarViewModel(items)
-    val maxValue = remember(items) {
-        items.maxOfOrNull { it.value }?.toDouble() ?: 100.0
-    }
-    Row(
+    LazyRow(
         modifier = Modifier
             .height(160.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.Center
     ) {
-        items.sortedBy { it.value }.forEach {
+        items(items.sortedBy { it.value }) {
             Bar(
                 Modifier
                     .padding(horizontal = 2.dp),
                 barItem = it,
                 normalizedValue = viewModel.getNormalizedValue(it),
-                width = 38f,
+                width = 28f,
                 maxHeight = 100f
             )
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Bar(
     modifier: Modifier = Modifier,
@@ -60,6 +58,11 @@ fun Bar(
     maxHeight: Float
 ) {
     val animatedFloat = remember { Animatable(0f) }
+    val color = Brush.verticalGradient(
+        0f to MaterialTheme.colorScheme.primary,
+        1000f to MaterialTheme.colorScheme.onPrimary
+    )
+
     LaunchedEffect(animatedFloat) {
         animatedFloat.animateTo(
             targetValue = normalizedValue * maxHeight,
@@ -88,8 +91,8 @@ fun Bar(
                         bottomStart = 0.dp
                     ), clip = true
                 )
-                .background(MaterialTheme.colorScheme.primary),
-        ) {}
+                .background(color),
+        )
         Text(
             text = barItem.title,
             overflow = TextOverflow.Ellipsis,

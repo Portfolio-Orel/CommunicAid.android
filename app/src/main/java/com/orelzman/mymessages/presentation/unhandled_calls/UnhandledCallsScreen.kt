@@ -28,12 +28,9 @@ fun UnhandledCallsScreen(
 ) {
     val isRefreshing = viewModel.isRefreshing
 
-    OnLifecycleEvent { _, event ->
-        when (event) {
-            Lifecycle.Event.ON_RESUME -> viewModel.refresh()
-            else -> {}
-        }
-    }
+    OnLifecycleEvent(
+        onResume = viewModel::onResume
+    )
 
     val state = viewModel.state
     if (state.isLoading) {

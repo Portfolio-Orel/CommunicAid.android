@@ -17,7 +17,7 @@ interface SettingsInteractor {
      */
     suspend fun getAllSettingsFlow(): Flow<List<Settings>>
 
-    fun getAllSettings(): List<Settings>
+    fun getAll(): List<Settings>
 
     /**
      * Saves [settings] in the cache only.

@@ -9,15 +9,12 @@ import androidx.lifecycle.viewModelScope
 import com.orelzman.mymessages.domain.interactors.*
 import com.orelzman.mymessages.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
 import com.orelzman.mymessages.domain.model.entities.*
-import com.orelzman.mymessages.domain.util.extension.Log
+import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.domain.util.extension.copyToClipboard
 import com.orelzman.mymessages.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
@@ -32,14 +29,17 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     var state by mutableStateOf(MainState())
+    private var callOnTheLineJob: Deferred<Unit>? = null
+    private var callInTheBackgroundJob: Deferred<Unit>? = null
 
     fun init() {
         initData()
-        getMessages()
-        getFolders()
-        getMessagesInFolder()
         observeNumberOnTheLine()
         observeNumberInBackground()
+    }
+
+    fun onResume() {
+        init()
     }
 
     fun getFoldersMessages(): List<Message> {
@@ -105,50 +105,16 @@ class MainViewModel @Inject constructor(
      */
     private fun initData() {
         state = state.copy(isLoading = true)
-        val messages = messageInteractor.getMessagesOnce()
-        val folders = folderInteractor.getFoldersOnce()
+        val messages = messageInteractor.getAllOnce().sortedByDescending { it.timesUsed }
+        val folders = folderInteractor.getAllOnce().sortedByDescending { it.timesUsed }
         val messagesInFolders = messageInFolderInteractor.getMessagesInFoldersOnce()
         state = state.copy(
             isLoading = false,
             messages = messages,
             folders = folders,
-            messagesInFolders = messagesInFolders
+            messagesInFolders = messagesInFolders,
+            selectedFolder = folders.firstOrNull()
         )
-    }
-
-    private fun getMessagesInFolder() {
-        state = state.copy(messagesInFolders = messageInFolderInteractor.getMessagesInFoldersOnce())
-        viewModelScope.launch {
-            messageInFolderInteractor.getMessagesInFolders().collectLatest {
-                state = state.copy(messagesInFolders = it)
-            }
-        }
-    }
-
-    private fun getMessages() {
-        state = state.copy(messages = messageInteractor.getMessagesOnce().sortedBy { it.timesUsed })
-        viewModelScope.launch {
-            messageInteractor.getMessages().collectLatest {
-                state = state.copy(messages = it)
-            }
-        }
-    }
-
-    private fun getFolders() {
-        val folders = folderInteractor.getFoldersOnce()
-        state = state.copy(selectedFolder = folders.maxByOrNull { it.timesUsed })
-        state = state.copy(folders = folderInteractor.getFoldersOnce().sortedBy { it.timesUsed })
-        viewModelScope.launch {
-            folderInteractor.getFolders().collectLatest {
-                if (state.selectedFolder == null && it.isNotEmpty()) {
-                    state =
-                        state.copy(
-                            folders = it.sortedByDescending { folder -> folder.timesUsed },
-                            selectedFolder = it.maxByOrNull { folder -> folder.timesUsed }!!
-                        )
-                }
-            }
-        }
     }
 
     private fun setCallOnTheLineActive() {
@@ -176,13 +142,18 @@ class MainViewModel @Inject constructor(
     private fun observeNumberOnTheLine() {
         val callOnTheLine = phoneCallManagerInteractor.callsData.callOnTheLine?.toPhoneCall()
         state = state.copy(callOnTheLine = callOnTheLine)
+        callOnTheLineJob = viewModelScope.async {
+            phoneCallManagerInteractor.callsDataFlow.collectLatest {
+                val call = it.callOnTheLine?.toPhoneCall()
+                state = state.copy(callOnTheLine = call)
+                setCallOnTheLineActive()
+            }
+        }
         viewModelScope.launch(SupervisorJob()) {
             try {
-                phoneCallManagerInteractor.callsDataFlow.collectLatest {
-                    val call = it.callOnTheLine?.toPhoneCall()
-                    state = state.copy(callOnTheLine = call)
-                    setCallOnTheLineActive()
-                }
+                callOnTheLineJob?.await()
+            } catch (e: CancellationException) {
+
             } catch (e: Exception) {
                 e.log()
             }
@@ -193,8 +164,8 @@ class MainViewModel @Inject constructor(
         val callInTheBackground =
             phoneCallManagerInteractor.callsData.callInTheBackground?.toPhoneCall()
         state = state.copy(callOnTheLine = callInTheBackground)
-        viewModelScope
-            .launch(SupervisorJob()) {
+        callInTheBackgroundJob = viewModelScope
+            .async {
                 try {
                     phoneCallManagerInteractor.callsDataFlow.collectLatest {
                         val call = it.callOnTheLine?.toPhoneCall()
@@ -202,8 +173,17 @@ class MainViewModel @Inject constructor(
                     }
                 } catch (e: Exception) {
                     e.log()
-                    Log.e("observeNumberInBackground stopped")
+                    Logger.e("observeNumberInBackground stopped")
                 }
             }
+        viewModelScope.launch(SupervisorJob()) {
+            try {
+                callInTheBackgroundJob?.await()
+            } catch (e: CancellationException) {
+
+            } catch (e: Exception) {
+                e.log()
+            }
+        }
     }
 }

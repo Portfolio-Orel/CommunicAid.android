@@ -11,35 +11,57 @@ import java.util.*
  * TODO: Think of a way to inject it with the uid
  */
 interface Repository {
+    /* Messages */
     suspend fun createMessage(createMessageBody: CreateMessageBody): List<String>?
-    suspend fun getMessages(): List<GetMessagesResponse>
     suspend fun deleteMessage(message: Message, folderId: String)
+    suspend fun deleteMessagesFromFolder(folderId: String)
+    suspend fun getMessages(): List<GetMessagesResponse>
     suspend fun updateMessage(
         message: Message,
         oldFolderId: String? = null,
         newFolderId: String? = null
     )
+    /* Messages */
 
+    /* Folders */
     suspend fun createFolder(createFolderBody: CreateFolderBody): String?
-    suspend fun getFolders(): List<GetFoldersResponse>
     suspend fun deleteFolder(folder: Folder)
+    suspend fun getFolders(): List<GetFoldersResponse>
     suspend fun updateFolder(folder: Folder)
+    /* Folders */
 
-    suspend fun createDeletedCall(createDeletedCallBody: CreateDeletedCallBody): String?
-    suspend fun getDeletedCalls(): List<GetDeletedCallsResponse>
-
+    /* Phone Calls */
     suspend fun createPhoneCall(createPhoneCallBody: CreatePhoneCallBody): String?
     suspend fun createPhoneCalls(createPhoneCallBody: List<CreatePhoneCallBody>): List<String>
+    /* Phone Calls */
 
-    suspend fun createUser(createUserBody: CreateUserBody)
-    suspend fun getUser(): GetUserResponse?
+    /*Deleted Phone Calls*/
+    suspend fun createDeletedCall(createDeletedCallBody: CreateDeletedCallBody): String?
+    suspend fun getDeletedCalls(): List<GetDeletedCallsResponse>
+    /*Deleted Phone Calls*/
 
+    /* Settings */
     suspend fun createOrUpdateSettings(createOrUpdateSettingsBody: CreateOrUpdateSettingsBody)
     suspend fun getSettings(key: String = ""): List<SettingsResponse>
     suspend fun getAllSettings(): List<SettingsResponse>
+    /* Settings */
 
-    suspend fun deleteMessagesFromFolder(folderId: String)
+    /* Statistics */
+    suspend fun getCallsCountByType(
+        startDate: Date? = null,
+        endDate: Date? = null
+    ): GetCallsCountResponse
 
-    suspend fun getCallsCountByType(startDate: Date? = null, endDate: Date? = null): GetCallsCountResponse
-    suspend fun getMessagesSentCount(startDate: Date? = null, endDate: Date? = null): List<GetMessagesSentCountResponse>?
+    suspend fun getMessagesSentCount(
+        startDate: Date? = null,
+        endDate: Date? = null
+    ): List<GetMessagesSentCountResponse>?
+    /* Statistics */
+
+    /* User */
+    suspend fun createUser(createUserBody: CreateUserBody)
+    suspend fun getUser(): GetUserResponse?
+    /* User */
+
+
 }

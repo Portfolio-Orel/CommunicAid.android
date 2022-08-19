@@ -10,7 +10,7 @@ fun Throwable.log(values: Map<String, String> = emptyMap()) {
         crashlytics.setCustomKey(key, value)
     }
     crashlytics.log(stackTraceToString())
-    Log.e("Crash logged", this, values)
+    Logger.e("Crash logged", this, values)
 }
 
 fun Throwable.log(loggable: Loggable) {

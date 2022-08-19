@@ -34,7 +34,7 @@ class FolderInteractorImpl @Inject constructor(
 
     override fun getFolders(): Flow<List<Folder>> = db.getFolders()
 
-    override fun getFoldersOnce(): List<Folder> = db.getFoldersOnce()
+    override fun getAllOnce(): List<Folder> = db.getFoldersOnce()
 
     override suspend fun deleteFolder(folder: Folder) {
         repository.deleteFolder(folder)
@@ -63,7 +63,10 @@ class FolderInteractorImpl @Inject constructor(
     }
 
     override suspend fun updateFolder(folder: Folder) {
+        folder.setUploadState(uploadState = UploadState.BeingUploaded)
+        db.update(folder)
         repository.updateFolder(folder)
+        folder.setUploadState(uploadState = UploadState.Uploaded)
         db.update(folder)
     }
 
