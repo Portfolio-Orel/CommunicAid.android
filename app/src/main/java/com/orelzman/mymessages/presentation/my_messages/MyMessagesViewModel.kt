@@ -51,15 +51,18 @@ class MyMessagesViewModel @Inject constructor(
 
     private fun checkIfUserIsAuth() {
         viewModelScope.launch(Dispatchers.Main) {
+            authInteractor.init(authConfigFile)
             state = if (authInteractor.getUser()?.state == UserState.Authorized) {
                 state.copy(isLoading = false, isAuthorized = true)
             } else {
                 state.copy(isLoading = false, isAuthorized = false)
             }
-            authInteractor.init(authConfigFile)
-
         }
     }
+
+    private fun isDataInit(): Boolean =
+        settingsInteractor.getSettings(SettingsKey.IsDataInit)?.value?.toBooleanStrictOrNull()
+            ?: false
 
     private fun observeUser() {
         viewModelScope.launch(SupervisorJob()) {
@@ -109,8 +112,4 @@ class MyMessagesViewModel @Inject constructor(
             }
         }
     }
-
-    private fun isDataInit(): Boolean =
-        settingsInteractor.getSettings(SettingsKey.IsDataInit)?.value?.toBooleanStrictOrNull()
-            ?: false
 }
