@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.util.extension.log
+import java.util.*
 import kotlin.reflect.KClass
 
 /**
@@ -14,9 +15,11 @@ import kotlin.reflect.KClass
  */
 @Entity(primaryKeys = ["key", "extraIdentifier"])
 data class Statistics(
-    val key: StatisticsTypes,
-    val value: Any,
-    val extraIdentifier: String = ""
+    var key: StatisticsTypes,
+    var value: Any,
+    var extraIdentifier: String = "",
+    var startDate: Date? = null,
+    var endDate: Date? = null
 ) {
     /**
      * Casts value to it's actual value type.

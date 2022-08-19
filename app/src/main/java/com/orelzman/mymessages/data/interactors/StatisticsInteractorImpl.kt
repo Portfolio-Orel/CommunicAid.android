@@ -29,29 +29,68 @@ class StatisticsInteractorImpl @Inject constructor(
         val messagesSentCountResponse =
             repository.getMessagesSentCount(startDate = startDate, endDate = endDate)
         db.clear()
-        initCallsCountByType(callsCountResponse = callsCountResponse)
-        initMessagesSentCount(messagesSentCountResponse = messagesSentCountResponse)
+        initCallsCountByType(
+            callsCountResponse = callsCountResponse,
+            startDate = startDate,
+            endDate = endDate
+        )
+        initMessagesSentCount(
+            messagesSentCountResponse = messagesSentCountResponse,
+            startDate = startDate,
+            endDate = endDate
+        )
     }
 
-    private fun initCallsCountByType(callsCountResponse: GetCallsCountResponse) {
+    private fun initCallsCountByType(
+        callsCountResponse: GetCallsCountResponse,
+        startDate: Date?,
+        endDate: Date?
+    ) {
         db.insert(
             listOf(
-                Statistics(StatisticsTypes.IncomingCount, callsCountResponse.incomingCount),
-                Statistics(StatisticsTypes.OutgoingCount, callsCountResponse.outgoingCount),
-                Statistics(StatisticsTypes.MissedCount, callsCountResponse.missedCount),
-                Statistics(StatisticsTypes.RejectedCalls, callsCountResponse.rejectedCount)
+                Statistics(
+                    key = StatisticsTypes.IncomingCount,
+                    value = callsCountResponse.incomingCount,
+                    startDate = startDate,
+                    endDate = endDate
+                ),
+                Statistics(
+                    key = StatisticsTypes.OutgoingCount,
+                    value = callsCountResponse.outgoingCount,
+                    startDate = startDate,
+                    endDate = endDate
+                ),
+                Statistics(
+                    key = StatisticsTypes.MissedCount,
+                    value = callsCountResponse.missedCount,
+                    startDate = startDate,
+                    endDate = endDate
+                ),
+                Statistics(
+                    key = StatisticsTypes.RejectedCalls,
+                    value = callsCountResponse.rejectedCount,
+                    startDate = startDate,
+                    endDate = endDate
+                )
             )
         )
     }
 
-    private fun initMessagesSentCount(messagesSentCountResponse: List<GetMessagesSentCountResponse>?) {
+    private fun initMessagesSentCount(
+        messagesSentCountResponse: List<GetMessagesSentCountResponse>?,
+        startDate: Date?,
+        endDate: Date?
+    ) {
         val statisticsList = ArrayList<Statistics>()
         messagesSentCountResponse?.forEach {
+            val value = mapOf("title" to it.title, "count" to it.count)
             statisticsList.add(
                 Statistics(
-                    StatisticsTypes.MessagesCount,
-                    mapOf("title" to it.title, "count" to it.count),
-                    extraIdentifier = it.title
+                    key = StatisticsTypes.MessagesCount,
+                    value = value,
+                    extraIdentifier = it.title,
+                    startDate = startDate,
+                    endDate = endDate
                 )
             )
         }
