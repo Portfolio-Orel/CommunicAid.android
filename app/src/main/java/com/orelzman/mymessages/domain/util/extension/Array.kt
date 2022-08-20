@@ -17,3 +17,8 @@ fun <T> List<T>.appendAll(list: List<T>): List<T> {
     array.addAll(list)
     return array
 }
+
+fun List<String>.containsNumber(number: String) =
+    map { it.withoutPrefix() }.contains(number.withoutPrefix())
+
+fun List<String>.distinctNumbers() = map { it.withoutPrefix() }.distinct()

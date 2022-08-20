@@ -1,5 +1,6 @@
 package com.orelzman.mymessages.data.interactors
 
+import android.util.Log
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.domain.interactors.DeletedCallsInteractor
 import com.orelzman.mymessages.domain.model.dto.body.create.CreateDeletedCallBody
@@ -17,33 +18,35 @@ class DeletedCallsInteractorImpl @Inject constructor(
     val db = database.deletedCallsDao
 
     override suspend fun create(deletedCall: DeletedCall) {
-            deletedCall.setUploadState(UploadState.NotUploaded)
-            db.insert(deletedCalls = deletedCall)
-            val createDeletedCallBody = CreateDeletedCallBody(
-                number = deletedCall.number,
-                deleteDate = deletedCall.deleteDate
-            )
-            val id: String? = repository.createDeletedCall(createDeletedCallBody)
-            if(id != null) {
-                db.updateId(deletedCall.deleteDate, id)
-                deletedCall.setUploadState(UploadState.Uploaded)
-                deletedCall.id = id
-                db.update(deletedCall)
-            }
+        deletedCall.setUploadState(UploadState.NotUploaded)
+        db.insert(deletedCalls = deletedCall)
+        val createDeletedCallBody = CreateDeletedCallBody(
+            number = deletedCall.number,
+            deleteDate = deletedCall.deleteDate
+        )
+        val id: String? = repository.createDeletedCall(createDeletedCallBody)
+        if (id != null) {
+            db.updateId(deletedCall.deleteDate, id)
+            deletedCall.setUploadState(UploadState.Uploaded)
+            deletedCall.id = id
+            db.update(deletedCall)
+        }
     }
 
     override suspend fun getAll(startDate: Date): Flow<List<DeletedCall>> {
-        if (db.getDBSize() == 0) {
-            init()
-        }
         return db.getAll()
     }
 
-    override fun getAllOnce(startDate: Date): List<DeletedCall> =
-        db.getAllOnce(startDate = startDate.time)
+    override fun getAllOnce(startDate: Date?): List<DeletedCall> {
+        return if (startDate == null) {
+            db.getAllOnce()
+        } else {
+            db.getAllOnce(startDate = startDate.time)
+        }
+    }
 
-    override suspend fun init() {
-        val result = repository.getDeletedCalls()
+    override suspend fun init(fromDate: Date) {
+        val result = repository.getDeletedCalls(fromDate = fromDate)
         val deletedCallsList = result.map {
             val deletedCall = DeletedCall(
                 id = it.id,
@@ -53,10 +56,11 @@ class DeletedCallsInteractorImpl @Inject constructor(
             deletedCall.setUploadState(UploadState.Uploaded)
             deletedCall
         }
-        db.clear()
-        if(deletedCallsList.isEmpty()) {
+        if (deletedCallsList.isEmpty()) {
             db.insert(arrayListOf(DeletedCall())) // Force collectLatest collection
         } else {
+            Log.v("Delete", "Deleted DB")
+            db.clear()
             db.insert(deletedCallsList)
         }
     }

@@ -25,15 +25,25 @@ interface DeletedCallsDao {
         """
         SELECT *
         FROM DeletedCall
-        WHERE DATE(deleteDate) > DATE(:startDate)
+        WHERE deleteDate > :startDate
     """
     )
     fun getAllOnce(startDate: Long): List<DeletedCall>
 
-    @Query("""
+    @Query(
+        """
+        SELECT *
+        FROM DeletedCall
+    """
+    )
+    fun getAllOnce(): List<DeletedCall>
+
+    @Query(
+        """
         SELECT COUNT(*)
         FROM DeletedCall
-    """)
+    """
+    )
     fun getDBSize(): Int
 
     @Delete
@@ -42,16 +52,20 @@ interface DeletedCallsDao {
     @Update
     fun update(deletedCall: DeletedCall)
 
-    @Query("""
+    @Query(
+        """
         UPDATE DeletedCall
         SET id = :newId
         WHERE deleteDate = :deletedDate
-    """)
+    """
+    )
     fun updateId(deletedDate: Long, newId: String)
 
-    @Query("""
+    @Query(
+        """
         DELETE
         FROM DeletedCall
-    """)
+    """
+    )
     fun clear()
 }

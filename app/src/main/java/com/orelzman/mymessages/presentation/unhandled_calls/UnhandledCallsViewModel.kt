@@ -109,13 +109,12 @@ class UnhandledCallsViewModel @Inject constructor(
      */
     private fun fetchDeletedCalls() {
         val job = viewModelScope.async {
-            deletedCallsInteractor.init()
+            deletedCallsInteractor.init(getStartOfDay())
         }
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 job.await()
             } catch (e: Exception) {
-                e.log()
                 Logger.e(e.message ?: "Failed to get unhandled calls")
             } finally {
                 isRefreshing = false

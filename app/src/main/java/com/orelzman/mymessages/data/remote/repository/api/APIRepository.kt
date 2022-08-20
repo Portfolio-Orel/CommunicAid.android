@@ -43,6 +43,7 @@ class APIRepository @Inject constructor(
         val result = api.getMessages()
         return result.body
     }
+
     override suspend fun updateMessage(
         message: Message,
         oldFolderId: String?,
@@ -120,8 +121,8 @@ class APIRepository @Inject constructor(
         return result.body
     }
 
-    override suspend fun getDeletedCalls(): List<GetDeletedCallsResponse> {
-        val result = api.getDeletedCalls()
+    override suspend fun getDeletedCalls(fromDate: Date): List<GetDeletedCallsResponse> {
+        val result = api.getDeletedCalls(fromDate = fromDate.time)
         return result.body
     }
     /* Deleted Phone Calls */

@@ -5,6 +5,7 @@ import com.orelzman.mymessages.domain.model.dto.response.*
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.repository.Repository
+import java.util.*
 
 class StubRepository : Repository {
 
@@ -35,7 +36,7 @@ class StubRepository : Repository {
     override suspend fun createDeletedCall(createDeletedCallBody: CreateDeletedCallBody): String? =
         null
 
-    override suspend fun getDeletedCalls(): List<GetDeletedCallsResponse> = emptyList()
+    override suspend fun getDeletedCalls(fromDate: Date): List<GetDeletedCallsResponse> = emptyList()
 
     override suspend fun createUser(createUserBody: CreateUserBody) = Unit
     override suspend fun getUser(): GetUserResponse? = null
@@ -45,8 +46,16 @@ class StubRepository : Repository {
     override suspend fun getSettings(key: String): List<SettingsResponse> = emptyList()
 
     override suspend fun getAllSettings(): List<SettingsResponse> = emptyList()
+    override suspend fun getCallsCountByType(
+        startDate: Date?,
+        endDate: Date?
+    ): GetCallsCountResponse = GetCallsCountResponse()
+
+    override suspend fun getMessagesSentCount(
+        startDate: Date?,
+        endDate: Date?
+    ): List<GetMessagesSentCountResponse>? = null
+
     override suspend fun deleteMessagesFromFolder(folderId: String) = Unit
-    override suspend fun getCallsCountByType(): GetCallsCountResponse = GetCallsCountResponse()
-    override suspend fun getMessagesSentCount(): List<GetMessagesSentCountResponse> = emptyList()
     override suspend fun updateFolder(folder: Folder) = Unit
 }
