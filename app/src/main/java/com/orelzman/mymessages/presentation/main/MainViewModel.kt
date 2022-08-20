@@ -171,6 +171,8 @@ class MainViewModel @Inject constructor(
                         val call = it.callOnTheLine?.toPhoneCall()
                         state = state.copy(callInBackground = call)
                     }
+                } catch (e: CancellationException) {
+
                 } catch (e: Exception) {
                     e.log()
                     Logger.e("observeNumberInBackground stopped")

@@ -6,3 +6,6 @@ fun String.withoutPrefix(): String =
     } else {
         this
     }
+
+fun String.compareNumberTo(otherNumber: String) =
+    withoutPrefix() == otherNumber.withoutPrefix()

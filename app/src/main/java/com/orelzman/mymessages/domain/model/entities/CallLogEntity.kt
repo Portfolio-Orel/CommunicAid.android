@@ -1,10 +1,7 @@
 package com.orelzman.mymessages.domain.model.entities
 
 import com.orelzman.mymessages.domain.interactors.CallType
-import com.orelzman.mymessages.domain.util.extension.inMilliseconds
-import com.orelzman.mymessages.domain.util.extension.inSeconds
-import com.orelzman.mymessages.domain.util.extension.toDate
-import com.orelzman.mymessages.domain.util.extension.withoutPrefix
+import com.orelzman.mymessages.domain.util.extension.*
 import java.util.*
 
 class CallLogEntity(
@@ -14,10 +11,6 @@ class CallLogEntity(
     var time: Long = 0,
     val callLogType: CallType? = null
 ) {
-
-    init {
-        number = number.withoutPrefix()
-    }
 
     fun isUnhandled(): Boolean =
         callLogType == CallType.REJECTED || callLogType == CallType.MISSED
@@ -40,11 +33,11 @@ val List<CallLogEntity>.unhandledCalls: List<CallLogEntity>
     get() = filter { it.isUnhandled() }
 
 fun ArrayList<CallLogEntity>.addUniqueByNumber(element: CallLogEntity) {
-    if (!numbers.contains(element.number)) add(element)
+    if (!numbers.containsNumber(element.number)) add(element)
 }
 
 fun ArrayList<CallLogEntity>.removeByNumber(element: CallLogEntity) {
-    filter { it.number != element.number }
+    filter { it.number.withoutPrefix() != element.number.withoutPrefix() }
 }
 
 fun List<CallLogEntity>.toPhoneCalls(): List<PhoneCall> {

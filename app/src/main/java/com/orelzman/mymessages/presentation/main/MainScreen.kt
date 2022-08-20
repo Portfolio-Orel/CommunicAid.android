@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.util.Screen
@@ -138,7 +139,7 @@ fun FoldersList(
         modifier = modifier,
         secondaryAction = onLongClick,
         secondaryIcon = Icons.Rounded.Edit,
-        defaultTitle = 0,
+        defaultTitle = R.string.empty_string,
         selected = selected,
         color = color,
         dropdownDecoratorStyle = DropdownDecoratorStyle.Text

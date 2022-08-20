@@ -37,7 +37,7 @@ interface Repository {
 
     /*Deleted Phone Calls*/
     suspend fun createDeletedCall(createDeletedCallBody: CreateDeletedCallBody): String?
-    suspend fun getDeletedCalls(): List<GetDeletedCallsResponse>
+    suspend fun getDeletedCalls(fromDate: Date): List<GetDeletedCallsResponse>
     /*Deleted Phone Calls*/
 
     /* Settings */

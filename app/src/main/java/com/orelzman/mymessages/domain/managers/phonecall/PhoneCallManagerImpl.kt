@@ -9,9 +9,9 @@ import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.system.phone_call.exceptions.WaitingThenRingingException
 import com.orelzman.mymessages.domain.util.common.Constants.TIME_TO_ADD_CALL_TO_CALL_LOG
 import com.orelzman.mymessages.domain.util.extension.Logger
+import com.orelzman.mymessages.domain.util.extension.compareNumberTo
 import com.orelzman.mymessages.domain.util.extension.inSeconds
 import com.orelzman.mymessages.domain.util.extension.log
-import com.orelzman.mymessages.domain.util.extension.withoutPrefix
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -45,13 +45,12 @@ class PhoneCallManagerImpl @Inject constructor(
 
     override fun onStateChanged(state: String, number: String, context: Context?) {
         Logger.v("state: $state \n number: $number")
-        val numberNoPrefix = number.withoutPrefix()
         this.context = context
         analyticsInteractor?.track("Call Status", mapOf("status" to state))
         when (state) {
             TelephonyManager.EXTRA_STATE_IDLE -> onIdleState()
-            TelephonyManager.EXTRA_STATE_RINGING -> onRingingState(numberNoPrefix)
-            TelephonyManager.EXTRA_STATE_OFFHOOK -> onOffHookState(numberNoPrefix)
+            TelephonyManager.EXTRA_STATE_RINGING -> onRingingState(number)
+            TelephonyManager.EXTRA_STATE_OFFHOOK -> onOffHookState(number)
         }
     }
 
@@ -175,7 +174,7 @@ class PhoneCallManagerImpl @Inject constructor(
 
 fun PhoneCall.isEqualsToCallLog(callLog: CallLogEntity?): Boolean =
     callLog != null &&
-            callLog.number == number
+            callLog.number.compareNumberTo(number)
             && (
             callLog.time.inSeconds < startDate.time.inSeconds + 6 && callLog.time.inSeconds > startDate.time.inSeconds - 6
             )

@@ -34,7 +34,10 @@ class MessageInteractorImpl @Inject constructor(
                     it
                 }
             db.insert(messages)
-            messageInFolderInteractor.insert(response.toMessagesInFolders())
+            messageInFolderInteractor.insert(response.toMessagesInFolders().map {
+                it.setUploadState(UploadState.Uploaded)
+                it
+            })
         }
         return messages
     }

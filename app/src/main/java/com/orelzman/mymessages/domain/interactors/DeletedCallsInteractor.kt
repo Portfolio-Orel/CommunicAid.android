@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.Flow
 import java.util.*
 
 interface DeletedCallsInteractor {
-    suspend fun init()
+    suspend fun init(fromDate: Date)
     suspend fun create(deletedCall: DeletedCall)
     suspend fun getAll(startDate: Date): Flow<List<DeletedCall>>
-    fun getAllOnce(startDate: Date): List<DeletedCall>
+    fun getAllOnce(startDate: Date? = null): List<DeletedCall>
 }

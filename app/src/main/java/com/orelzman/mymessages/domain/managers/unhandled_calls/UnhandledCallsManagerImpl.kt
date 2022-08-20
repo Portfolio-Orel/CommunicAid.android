@@ -1,23 +1,29 @@
 package com.orelzman.mymessages.domain.managers.unhandled_calls
 
 import com.orelzman.mymessages.domain.model.entities.*
+import com.orelzman.mymessages.domain.util.extension.compareNumberTo
+import com.orelzman.mymessages.domain.util.extension.containsNumber
+import com.orelzman.mymessages.domain.util.extension.distinctNumbers
 import javax.inject.Inject
 
-class UnhandledCallsManagerImpl @Inject constructor(): UnhandledCallsManager {
+class UnhandledCallsManagerImpl @Inject constructor() : UnhandledCallsManager {
+
     override fun filterUnhandledCalls(
         deletedCalls: List<DeletedCall>,
         callLogs: List<CallLogEntity>
     ): List<CallLogEntity> {
-        val actualDeletedUnhandledCalls = ArrayList(
+        val handledByDeletionCalls = ArrayList(
             filterByDeletedCalls(
                 deletedCalls = deletedCalls,
                 callLogs = callLogs
             )
         )
-        val actualCallsHandled = ArrayList(filterByCallsHandled(callLogs = callLogs))
-        val allActualCallsHandledNumbers =
-            (actualCallsHandled.numbers + actualDeletedUnhandledCalls.numbers).distinct()
-        return callLogs.unhandledCalls.filter { !allActualCallsHandledNumbers.contains(it.phoneCall.number) }
+        val handledByCallBackCalls = ArrayList(filterByCallsHandled(callLogs = callLogs))
+        val handledNumbers =
+            (handledByCallBackCalls.numbers + handledByDeletionCalls.numbers).distinctNumbers()
+        return callLogs.unhandledCalls.filter {
+            !handledNumbers.containsNumber(it.phoneCall.number)
+        }
             .sortedByDescending { it.time }
             .distinctBy { it.number }
     }
@@ -31,7 +37,7 @@ class UnhandledCallsManagerImpl @Inject constructor(): UnhandledCallsManager {
         val unhandledCalls = ArrayList<CallLogEntity>()
         callLogs.sortedByDescending { it.time }.forEach {
             if (it.isUnhandled()) {
-                if (!handledCalls.numbers.contains(it.number)) { // The call was not handled.
+                if (!handledCalls.numbers.containsNumber(it.number)) { // The call was not handled.
                     unhandledCalls.addUniqueByNumber(it)
                     handledCalls.removeByNumber(it)
                 }
@@ -44,20 +50,19 @@ class UnhandledCallsManagerImpl @Inject constructor(): UnhandledCallsManager {
 
     /**
      * Filters calls that were handled because they were deleted by the user.
+     * @return a list of all handled by deletion calls
      */
     private fun filterByDeletedCalls(
         deletedCalls: List<DeletedCall>,
         callLogs: List<CallLogEntity>
     ): List<DeletedCall> {
-        val callsToHandle = callLogs.filter { callLog ->
-            return@filter callLog.isUnhandled()
-        }
+
         return deletedCalls
             .filter { deletedCall ->
-                val lastCallToHandle = callsToHandle.filter { callToHandle ->
-                    callToHandle.number == deletedCall.number
+                val potentiallyUnhandledCall = callLogs.unhandledCalls.filter { callToHandle ->
+                    callToHandle.number.compareNumberTo(deletedCall.number)
                 }.maxByOrNull { it.phoneCall.endDate }
-                return@filter (lastCallToHandle?.time
+                return@filter (potentiallyUnhandledCall?.time
                     ?: 0) < deletedCall.deleteDate
             }
     }

@@ -39,8 +39,10 @@ interface API {
     @POST("/deletedCalls")
     suspend fun createDeletedCall(@Body deletedCallBody: CreateDeletedCallBody): Response<String>
 
-    @GET("/deletedCalls")
-    suspend fun getDeletedCalls(): Response<List<GetDeletedCallsResponse>>
+    @GET("/deletedCalls/{from_date}")
+    suspend fun getDeletedCalls(
+        @Path("from_date") fromDate: Long,
+    ): Response<List<GetDeletedCallsResponse>>
 
     // Phone Calls
     @POST("/phoneCall")
@@ -68,7 +70,7 @@ interface API {
 
 
     // Statistics
-    @GET("/statistics/callsCount?")
+    @GET("/statistics/callsCount")
     suspend fun getCallsCountByType(
         @Query("start_date") startDate: Long? = null,
         @Query("end_date") endDate: Long? = null
