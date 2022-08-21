@@ -14,6 +14,7 @@ import com.orelzman.mymessages.domain.util.extension.inSeconds
 import com.orelzman.mymessages.domain.util.extension.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,6 +30,9 @@ class PhoneCallManagerImpl @Inject constructor(
 
     override val callsDataFlow
         get() = dataSource.callsPreferencesFlow()
+    override val callsState: Flow<CallState?>
+        get() = dataSource.callStateFlow()
+
     override val callsData: CallPreferences
         get() = CallPreferences(
             callOnTheLine = dataSource.getCallOnTheLine()?.number,
@@ -88,21 +92,15 @@ class PhoneCallManagerImpl @Inject constructor(
     }
 
     private fun setBackgroundCall(phoneCall: PhoneCall?) {
-        CoroutineScope(Dispatchers.Main).launch {
-            dataSource.updateCallInTheBackground(phoneCall)
-        }
+        dataSource.updateCallInTheBackground(phoneCall)
     }
 
     private fun setCallOnLine(phoneCall: PhoneCall?) {
-        CoroutineScope(Dispatchers.Main).launch {
-            dataSource.updateCallOnTheLine(phoneCall)
-        }
+        dataSource.updateCallOnTheLine(phoneCall)
     }
 
     private fun setStateValue(callState: CallState) {
-        CoroutineScope(Dispatchers.Main).launch {
-            dataSource.updateState(callState)
-        }
+        dataSource.updateState(callState)
     }
 
     private fun outgoingCall(number: String) {
@@ -151,9 +149,7 @@ class PhoneCallManagerImpl @Inject constructor(
     }
 
     private fun waitingCallNotAnswered() {
-        CoroutineScope(Dispatchers.Main).launch {
-            dataSource.updateCallInTheBackground(null)
-        }
+        dataSource.updateCallInTheBackground(null)
     }
 
     private fun addToBacklog(phoneCall: PhoneCall?) {

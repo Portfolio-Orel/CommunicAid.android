@@ -23,11 +23,14 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
     @Provides
+    @Singleton
     fun provideLocalDatabase(context: Application): LocalDatabase =
         with(context) {
             Room.databaseBuilder(
@@ -64,6 +67,7 @@ object AppModule {
     }
 
     @Provides
+    @Singleton
     fun provideOkHttpClient(authIneractor: AuthInteractor, @AuthConfigFile configFileResourceId: Int?): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor(authIneractor))
@@ -77,6 +81,7 @@ object AppModule {
     fun provideGson(): Gson = Gson()
 
     @Provides
+    @Singleton
     fun providesAPI(
         okHttpClient: OkHttpClient,
         gson: Gson,

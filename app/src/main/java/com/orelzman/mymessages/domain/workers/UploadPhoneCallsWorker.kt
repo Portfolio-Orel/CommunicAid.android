@@ -8,7 +8,6 @@ import com.orelzman.mymessages.domain.interactors.CallLogInteractor
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.model.entities.*
-import com.orelzman.mymessages.domain.util.common.Constants
 import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.domain.util.extension.appendAll
 import com.orelzman.mymessages.domain.util.extension.compareToBallPark
@@ -17,6 +16,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.*
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 
 @HiltWorker
 class UploadPhoneCallsWorker @AssistedInject constructor(
@@ -27,8 +27,16 @@ class UploadPhoneCallsWorker @AssistedInject constructor(
     private val callLogInteractor: CallLogInteractor,
 ) : Worker(context, workerParams) {
 
+    companion object {
+        var isRunning: AtomicBoolean = AtomicBoolean(false)
+    }
+
     override fun doWork(): Result {
         try {
+            if(isRunning.get()) {
+                Logger.v("Worker already running")
+            }
+            isRunning.set(true)
             Logger.v("Upload phone calls worker called")
             uploadCalls()
         } catch (e: Exception) {
@@ -44,15 +52,13 @@ class UploadPhoneCallsWorker @AssistedInject constructor(
     private fun uploadCalls() {
         var phoneCalls = emptyList<PhoneCall>()
         val uploadJob = CoroutineScope(Dispatchers.IO).async {
-            delay(Constants.TIME_TO_ADD_CALL_TO_CALL_LOG)
             phoneCalls = phoneCallsInteractor
                 .getAll()
                 .distinctBy { it.startDate }
                 .filter {
                     it.uploadState == UploadState.NotUploaded
-                            || it.uploadState == UploadState.BeingUploaded
                 }
-                .appendAll(checkCallsNotRecorded())
+                .appendAll(checkCallsNotRecordedFromCallLog())
                 .mapNotNull {
                     it.setUploadState(UploadState.BeingUploaded)
                     phoneCallsInteractor.updateCallUploadState(
@@ -74,7 +80,6 @@ class UploadPhoneCallsWorker @AssistedInject constructor(
         CoroutineScope(SupervisorJob()).launch {
             try {
                 uploadJob.await()
-                Logger.v("Upload phone calls worker done.")
             } catch (e: Exception) {
                 e.log(phoneCalls)
                 Logger.e("Worker failed, reason: $e")
@@ -84,11 +89,14 @@ class UploadPhoneCallsWorker @AssistedInject constructor(
                         uploadState = UploadState.NotUploaded
                     )
                 }
+            } finally {
+                Logger.v("Upload phone calls worker done.")
+                isRunning.set(false)
             }
         }
     }
 
-    private suspend fun checkCallsNotRecorded(): List<PhoneCall> {
+    private suspend fun checkCallsNotRecordedFromCallLog(): List<PhoneCall> {
         val phoneCalls = ArrayList<PhoneCall>()
         val lastUpdateAt = settingsInteractor.getSettings(SettingsKey.CallsUpdateAt)?.value
         val date = Date(lastUpdateAt?.toLongOrNull() ?: Date().time)

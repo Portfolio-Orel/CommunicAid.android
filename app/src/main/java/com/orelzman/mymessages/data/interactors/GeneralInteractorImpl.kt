@@ -12,7 +12,7 @@ class GeneralInteractorImpl @Inject constructor(
     private val messageInteractor: MessageInteractor,
     private val folderInteractor: FolderInteractor,
     private val deletedCallsInteractor: DeletedCallsInteractor,
-    private val DataSourceCallsInteractor: DataSourceCallsInteractor,
+    private val dataSourceCallsInteractor: DataSourceCallsInteractor,
     private val settingsInteractor: SettingsInteractor
 ) : GeneralInteractor {
 
@@ -26,7 +26,7 @@ class GeneralInteractorImpl @Inject constructor(
         clearAllDatabases()
         messageInteractor.initWithMessagesInFolders()
         folderInteractor.init()
-        DataSourceCallsInteractor.init()
+        dataSourceCallsInteractor.init()
         settingsInteractor.init()
         settingsInteractor.saveSettings(Settings(SettingsKey.IsDataInit, true.toString()))
         deletedCallsInteractor.init(DateUtils.getStartOfDay())

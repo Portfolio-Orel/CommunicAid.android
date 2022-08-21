@@ -33,6 +33,7 @@ abstract class RepositoryModule {
     ): AuthInteractor
 
     @Binds
+    @Singleton
     abstract fun provideConnectivityObserver(connectivityObserver: ConnectivityObserverObserverImpl): ConnectivityObserver
 
     @Binds
@@ -55,6 +56,7 @@ abstract class RepositoryModule {
 
     @ExperimentalPermissionsApi
     @Binds
+    @Singleton
     abstract fun providePhoneCallManager(manager: PhoneCallManagerImpl): PhoneCallManager
 
     @ExperimentalPermissionsApi

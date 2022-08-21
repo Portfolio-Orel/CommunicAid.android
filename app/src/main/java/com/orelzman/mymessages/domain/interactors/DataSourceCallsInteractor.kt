@@ -1,20 +1,21 @@
 package com.orelzman.mymessages.domain.interactors
 
 import android.content.SharedPreferences
-import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.managers.phonecall.CallState
+import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import kotlinx.coroutines.flow.Flow
 
 
 interface DataSourceCallsInteractor {
     fun callsPreferencesFlow(): Flow<CallPreferences>
+    fun callStateFlow(): Flow<CallState?>
     fun callsPrefrences(): SharedPreferences
 
-    suspend fun init()
+    fun init()
 
-    suspend fun updateCallOnTheLine(callOnTheLine: PhoneCall?)
-    suspend fun updateCallInTheBackground(callInTheBackground: PhoneCall?)
-    suspend fun updateState(state: CallState?)
+    fun updateCallOnTheLine(callOnTheLine: PhoneCall?)
+    fun updateCallInTheBackground(callInTheBackground: PhoneCall?)
+    fun updateState(state: CallState?)
 
     fun getState(): CallState?
     fun getCallOnTheLine(): PhoneCall?

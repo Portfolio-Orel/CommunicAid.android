@@ -55,22 +55,19 @@ class MainViewModel @Inject constructor(
     fun onMessageClick(message: Message) {
         val phoneCall = state.activeCall
         if (phoneCall != null) {
-            val sendMessageJob = viewModelScope.async {
-                phoneCallsInteractor.addMessageSent(
-                    phoneCall,
-                    MessageSent(sentAt = Date().time, messageId = message.id)
-                )
-                whatsappInteractor.sendMessage(
-                    number = phoneCall.number,
-                    message = message.body
-                )
-            }
+            phoneCallsInteractor.addMessageSent(
+                phoneCall,
+                MessageSent(sentAt = Date().time, messageId = message.id)
+            )
+            whatsappInteractor.sendMessage(
+                number = phoneCall.number,
+                message = message.body
+            )
             val updateTimesUsedJob = viewModelScope.async {
                 messageInteractor.increaseTimesUsed(message.id)
             }
             viewModelScope.launch(Dispatchers.IO) {
                 try {
-                    sendMessageJob.await()
                     updateTimesUsedJob.await()
                 } catch (e: Exception) {
                     e.log()
@@ -82,7 +79,10 @@ class MainViewModel @Inject constructor(
     }
 
     fun onMessageLongClick(message: Message, context: Context) {
-        val phoneCall = state.activeCall
+        var phoneCall = state.activeCall
+        if(phoneCall == null) {
+            phoneCall = phoneCallManagerInteractor.callsData.callOnTheLine?.toPhoneCall()
+        }
         if (phoneCall != null) {
             goToEditMessage(message)
         } else {

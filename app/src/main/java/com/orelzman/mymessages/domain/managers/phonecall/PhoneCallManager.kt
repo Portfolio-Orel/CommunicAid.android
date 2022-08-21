@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
  */
 interface PhoneCallManager {
     val callsDataFlow: Flow<CallPreferences>
+    val callsState: Flow<CallState?>
     val callsData: CallPreferences
 
     fun onStateChanged(state: String, number: String, context: Context? = null)

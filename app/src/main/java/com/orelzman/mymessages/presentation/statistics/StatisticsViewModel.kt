@@ -81,7 +81,7 @@ class StatisticsViewModel @Inject constructor(
 
     private fun initData() {
         val statistics = statisticsInteractor.getStatisticsOnce()
-        if(statistics.isEmpty()) {
+        if (statistics.isEmpty()) {
             fetchData()
         } else {
             setStatisticsData(statistics)
@@ -115,7 +115,8 @@ class StatisticsViewModel @Inject constructor(
 
                         val messageTitle = messageTitleToTimesSent["title"].toString()
                         val timesSent =
-                            messageTitleToTimesSent["count"]?.toString()?.toFloatOrNull()?.toInt()
+                            messageTitleToTimesSent["count"]?.toString()?.toFloatOrNull()
+                                ?.toInt()
                                 ?: return@forEach
                         messagesSentCount.add(Pair(messageTitle, timesSent))
                     } catch (e: Exception) {

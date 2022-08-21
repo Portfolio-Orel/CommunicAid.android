@@ -17,13 +17,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.orelzman.mymessages.R
-import com.orelzman.mymessages.presentation.components.charts.model.BarItem
-import com.orelzman.mymessages.presentation.components.charts.model.DonutItem
 import com.orelzman.mymessages.domain.util.extension.getDayFormatted
 import com.orelzman.mymessages.presentation.components.LtrView
 import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
 import com.orelzman.mymessages.presentation.components.charts.bar.BarChart
 import com.orelzman.mymessages.presentation.components.charts.donut.DonutChart
+import com.orelzman.mymessages.presentation.components.charts.model.BarItem
+import com.orelzman.mymessages.presentation.components.charts.model.DonutItem
 import com.orelzman.mymessages.presentation.statistics.components.StatisticsTabs
 import java.util.*
 
