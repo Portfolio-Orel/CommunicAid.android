@@ -61,6 +61,7 @@ enum class SettingsKey(
     val type: SettingsType,
     val valueType: KClass<*>,
     val defaultValue: String,
+    val enabled: Boolean = true,
     @StringRes val title: Int? = null
 ) {
     CallsUpdateAt(
@@ -90,6 +91,14 @@ enum class SettingsKey(
         defaultValue = emptyList<String>().toString(),
         title = R.string.ignore_list
     ),
+    CanDeleteUnhandledCalls(
+        keyInServer = "can_delete_unhandled_calls",
+        type = SettingsType.Toggle,
+        valueType = Boolean::class,
+        defaultValue = "true",
+        enabled = false,
+        title = R.string.can_delete_unhandled_calls
+    ),
     SendSMSToBackgroundCall(
         keyInServer = "send_sms_to_background_call",
         type = SettingsType.Toggle,
@@ -114,13 +123,4 @@ enum class SettingsType {
     Data,
     NotVisibleToUser,
     PopUp;
-}
-
-fun List<Settings>.isEqualTo(list: List<Settings>): Boolean {
-    forEach { settings1 ->
-        if (list.none { settings2 -> settings1 == settings2 }) {
-            return false
-        }
-    }
-    return true
 }

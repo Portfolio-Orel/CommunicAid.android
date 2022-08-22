@@ -13,10 +13,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.mymessages.domain.interactors.CallLogInteractor
 import com.orelzman.mymessages.domain.interactors.DeletedCallsInteractor
+import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.managers.unhandled_calls.UnhandledCallsManager
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.DeletedCall
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
+import com.orelzman.mymessages.domain.model.entities.SettingsKey
 import com.orelzman.mymessages.domain.util.common.DateUtils.getStartOfDay
 import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.domain.util.extension.log
@@ -29,9 +31,10 @@ import javax.inject.Inject
 @HiltViewModel
 class UnhandledCallsViewModel @Inject constructor(
     application: Application,
-    private val deletedCallsInteractor: DeletedCallsInteractor,
-    private val unhandledCallsManager: UnhandledCallsManager,
     private val callLogInteractor: CallLogInteractor,
+    private val deletedCallsInteractor: DeletedCallsInteractor,
+    private val settingsInteractor: SettingsInteractor,
+    private val unhandledCallsManager: UnhandledCallsManager,
 ) : AndroidViewModel(application) {
 
     var state by mutableStateOf(UnhandledCallsState())
@@ -45,7 +48,7 @@ class UnhandledCallsViewModel @Inject constructor(
 
     fun refresh(isPullToRefresh: Boolean = false) {
         isRefreshing = isPullToRefresh
-        if(isPullToRefresh) {
+        if (isPullToRefresh) {
             fetchDeletedCalls()
         } else {
             val callsToHandle = unhandledCallsManager.filterUnhandledCalls(
@@ -92,11 +95,13 @@ class UnhandledCallsViewModel @Inject constructor(
 
     private fun initData() {
         state = state.copy(isLoading = true)
+        val canDeleteCalls: Boolean =
+            settingsInteractor.getSettings(SettingsKey.CanDeleteUnhandledCalls).getRealValue() ?: true
         val callsToHandle = unhandledCallsManager.filterUnhandledCalls(
             deletedCalls = deletedCallsInteractor.getAllOnce(getStartOfDay()),
             callLogs = getCallsFromCallLog()
         )
-        state = state.copy(callsToHandle = callsToHandle, isLoading = false)
+        state = state.copy(callsToHandle = callsToHandle, canDeleteCalls = canDeleteCalls, isLoading = false)
     }
 
     private fun observeDeletedCalls() {

@@ -74,7 +74,8 @@ fun SettingsScreen(
                         settings = settings,
                         onChecked = viewModel::settingsChanged,
                         modifier = Modifier.padding(horizontal = 8.dp),
-                        checked = settings.getRealValue() ?: false
+                        checked = settings.getRealValue() ?: false,
+                        enabled = settings.key.enabled
                     )
                     SettingsType.Data -> {
                         DataSettings(

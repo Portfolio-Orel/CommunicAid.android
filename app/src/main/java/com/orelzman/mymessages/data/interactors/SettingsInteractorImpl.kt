@@ -17,8 +17,10 @@ class SettingsInteractorImpl @Inject constructor(
 ) : SettingsInteractor {
     val db = database.settingsDao
 
-    override fun getSettings(key: SettingsKey): Settings? =
-        db.get(key)
+    override fun getSettings(key: SettingsKey): Settings {
+        val settings = db.get(key)
+        return settings ?: Settings(key, key.defaultValue)
+    }
 
     override suspend fun getAllSettingsFlow(): Flow<List<Settings>> {
         val settings = repository.getAllSettings()

@@ -1,5 +1,6 @@
 package com.orelzman.mymessages.domain.model.entities
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.room.Entity
 import com.google.gson.GsonBuilder
@@ -61,7 +62,8 @@ enum class StatisticsTypes(
     val title: String,
     val valueType: KClass<*>,
     val defaultValue: String,
-    @StringRes val label: Int
+    @StringRes val label: Int,
+    @DrawableRes val icon: Int? = null
 ) {
     IncomingCount(
         title = "IncomingCount",

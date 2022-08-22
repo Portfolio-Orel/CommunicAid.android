@@ -14,7 +14,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.orelzman.mymessages.R
@@ -93,6 +92,7 @@ fun UnhandledCallsScreen(
                             ) {
                                 UnhandledCallRow(
                                     phoneCall = it.phoneCall,
+                                    canDelete = state.canDeleteCalls,
                                     onDelete = { viewModel.onDelete(it) },
                                     onCall = { viewModel.onCall(it) },
                                     onClick = { viewModel.onCall(it) }
