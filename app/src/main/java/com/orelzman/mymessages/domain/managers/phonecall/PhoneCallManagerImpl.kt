@@ -39,10 +39,6 @@ class PhoneCallManagerImpl @Inject constructor(
 
     var context: Context? = null
 
-    init {
-        reset()
-    }
-
     override fun onStateChanged(state: String, number: String, context: Context?) {
         Logger.v("state: $state \n number: $number")
         val numberNoPrefix = number.withoutPrefix()
@@ -166,7 +162,7 @@ class PhoneCallManagerImpl @Inject constructor(
         analyticsInteractor?.track("Call Cached", mapOf("call" to phoneCall.number))
     }
 
-    private fun reset() {
+    override fun reset() {
         setStateValue(CallState.Idle)
         setCallOnLine(null)
         setBackgroundCall(null)

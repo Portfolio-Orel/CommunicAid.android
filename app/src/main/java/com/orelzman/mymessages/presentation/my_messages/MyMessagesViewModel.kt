@@ -82,9 +82,10 @@ class MyMessagesViewModel @Inject constructor(
                         if (loadingData) { // The data is being loaded and will return true once it's done
                             false
                         } else { // User is authenticated
-                            if (!isDataInit()) {
+                            if (!isDataInit()) { // Maybe replace and place this in login
                                 loadingData = true
                                 state = state.copy(isLoading = true)
+                                phoneCallManager.reset()
                                 withContext(NonCancellable) {
                                     try {
                                         generalInteractor.initData()
