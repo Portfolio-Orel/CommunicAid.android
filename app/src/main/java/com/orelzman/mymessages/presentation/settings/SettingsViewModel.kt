@@ -79,7 +79,7 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             supervisorScope {
                 settingsInteractor.getAll()
-                    .filter { it.key.enabled } // TODO: Make a list request.
+                    .filter { it.key.defaultEnabled } // TODO: Make a list request.
                     .forEach { settings ->
                         state = try {
                             settingsInteractor.createOrUpdate(
