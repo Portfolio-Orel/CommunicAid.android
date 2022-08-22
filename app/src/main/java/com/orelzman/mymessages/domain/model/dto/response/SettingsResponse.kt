@@ -13,9 +13,15 @@ data class SettingsResponse(
 fun List<SettingsResponse>.toSettings(): List<Settings> {
     val array = ArrayList(this)
     val settings = ArrayList<Settings>()
-    array.forEach {settingsResponse ->
+    array.forEach { settingsResponse ->
         SettingsKey.fromString(settingsResponse.key)?.let { settingsKey ->
-            settings.add((Settings(key = settingsKey, value = settingsResponse.value, enabled = settingsResponse.enabled)))
+            settings.add(
+                (Settings(
+                    key = settingsKey,
+                    value = settingsResponse.value,
+                    enabled = settingsResponse.enabled
+                ))
+            )
         }
     }
     return settings
