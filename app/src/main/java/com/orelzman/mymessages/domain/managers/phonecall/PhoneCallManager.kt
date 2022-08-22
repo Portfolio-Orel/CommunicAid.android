@@ -12,6 +12,7 @@ interface PhoneCallManager {
     val callsData: CallPreferences
 
     fun onStateChanged(state: String, number: String, context: Context? = null)
+    fun reset()
 }
 
 enum class CallState(val value: String) {
