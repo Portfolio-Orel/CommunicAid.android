@@ -90,6 +90,12 @@ enum class SettingsKey(
         defaultValue = emptyList<String>().toString(),
         title = R.string.ignore_list
     ),
+    CountRejectedAsMissed(
+        keyInServer = "count_rejected_as_missed",
+        type = SettingsType.Toggle,
+        valueType = Boolean::class,
+        defaultValue = "false",
+        title = R.string.count_rejected_as_missed),
     SendSMSToBackgroundCall(
         keyInServer = "send_sms_to_background_call",
         type = SettingsType.Toggle,

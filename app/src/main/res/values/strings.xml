@@ -86,4 +86,5 @@
     <string name="week">שבוע</string>
     <string name="month">חודש</string>
     <string name="secondary_action">פעולה משנית</string>
+    <string name="count_rejected_as_missed">שיחות דחויות לא טופלו</string>
 </resources>
