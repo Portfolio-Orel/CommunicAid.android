@@ -99,6 +99,13 @@ enum class SettingsKey(
         defaultValue = emptyList<String>().toString(),
         title = R.string.ignore_list
     ),
+    CountRejectedAsMissed(
+        keyInServer = "count_rejected_as_missed",
+        type = SettingsType.Toggle,
+        valueType = Boolean::class,
+        defaultValue = "false",
+        defaultEnabled = true,
+        title = R.string.count_rejected_as_missed),
     CanDeleteUnhandledCalls(
         keyInServer = "can_delete_unhandled_calls",
         type = SettingsType.Toggle,
