@@ -4,6 +4,7 @@ import com.orelzman.mymessages.domain.model.entities.*
 import com.orelzman.mymessages.domain.util.extension.compareNumberTo
 import com.orelzman.mymessages.domain.util.extension.containsNumber
 import com.orelzman.mymessages.domain.util.extension.distinctNumbers
+import com.orelzman.mymessages.domain.util.extension.withoutPrefix
 import javax.inject.Inject
 
 class UnhandledCallsManagerImpl @Inject constructor() : UnhandledCallsManager {
@@ -25,7 +26,7 @@ class UnhandledCallsManagerImpl @Inject constructor() : UnhandledCallsManager {
             !handledNumbers.containsNumber(it.phoneCall.number)
         }
             .sortedByDescending { it.time }
-            .distinctBy { it.number }
+            .distinctBy { it.number.withoutPrefix() }
     }
 
     /**
@@ -41,7 +42,7 @@ class UnhandledCallsManagerImpl @Inject constructor() : UnhandledCallsManager {
                     unhandledCalls.addUniqueByNumber(it)
                     handledCalls.removeByNumber(it)
                 }
-            } else if (!unhandledCalls.numbers.contains(it.number)) {
+            } else if (!unhandledCalls.numbers.containsNumber(it.number)) {
                 handledCalls.addUniqueByNumber(it)
             }
         }

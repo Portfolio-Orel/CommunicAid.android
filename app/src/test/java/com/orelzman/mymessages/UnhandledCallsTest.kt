@@ -7,6 +7,7 @@ import com.orelzman.mymessages.domain.managers.unhandled_calls.UnhandledCallsMan
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.DeletedCall
 import com.orelzman.mymessages.domain.util.common.DateUtils
+import com.orelzman.mymessages.domain.util.extension.containsNumber
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -122,7 +123,7 @@ class DeletedUnhandledCallsTest {
         missedCall(Numbers.Orel)
         val calls = filterCalls().map { it.number }
         assertTrue(calls.size == 1)
-        assertTrue(calls.contains(Numbers.OrelNoPrefix.value))
+        assertTrue(calls.containsNumber(Numbers.OrelNoPrefix.value))
     }
 
     @Test

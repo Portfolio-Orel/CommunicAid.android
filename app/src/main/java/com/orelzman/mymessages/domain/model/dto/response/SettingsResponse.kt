@@ -7,14 +7,21 @@ import com.orelzman.mymessages.domain.model.entities.SettingsKey
 data class SettingsResponse(
     @SerializedName("key") val key: String,
     @SerializedName("value") val value: String,
+    @SerializedName("enabled") val enabled: Boolean
 )
 
 fun List<SettingsResponse>.toSettings(): List<Settings> {
     val array = ArrayList(this)
     val settings = ArrayList<Settings>()
-    array.forEach {
-        SettingsKey.fromString(it.key)?.let { settingsKey ->
-            settings.add((Settings(key = settingsKey, value = it.value)))
+    array.forEach { settingsResponse ->
+        SettingsKey.fromString(settingsResponse.key)?.let { settingsKey ->
+            settings.add(
+                (Settings(
+                    key = settingsKey,
+                    value = settingsResponse.value,
+                    enabled = settingsResponse.enabled
+                ))
+            )
         }
     }
     return settings

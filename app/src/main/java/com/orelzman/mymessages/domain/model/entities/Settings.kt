@@ -13,9 +13,17 @@ import kotlin.reflect.KClass
 
 @Entity
 data class Settings(
-    @PrimaryKey val key: SettingsKey,
-    val value: String = key.defaultValue
-): Uploadable() {
+    @PrimaryKey var key: SettingsKey,
+    var value: String = key.defaultValue,
+    var enabled: Boolean? = null,
+) : Uploadable() {
+
+    /**
+     * Don't understand why I need this.
+     */
+    constructor(key: SettingsKey, value: String) : this(key, value, key.defaultEnabled)
+
+    fun isSettingsEnabled(): Boolean = enabled ?: key.defaultEnabled
 
     override fun equals(other: Any?): Boolean {
         if (other is Settings) {
@@ -61,6 +69,7 @@ enum class SettingsKey(
     val type: SettingsType,
     val valueType: KClass<*>,
     val defaultValue: String,
+    val defaultEnabled: Boolean = true,
     @StringRes val title: Int? = null
 ) {
     CallsUpdateAt(
@@ -90,6 +99,14 @@ enum class SettingsKey(
         defaultValue = emptyList<String>().toString(),
         title = R.string.ignore_list
     ),
+    CanDeleteUnhandledCalls(
+        keyInServer = "can_delete_unhandled_calls",
+        type = SettingsType.Toggle,
+        valueType = Boolean::class,
+        defaultValue = "true",
+        defaultEnabled = false,
+        title = R.string.can_delete_unhandled_calls
+    ),
     SendSMSToBackgroundCall(
         keyInServer = "send_sms_to_background_call",
         type = SettingsType.Toggle,
@@ -114,13 +131,4 @@ enum class SettingsType {
     Data,
     NotVisibleToUser,
     PopUp;
-}
-
-fun List<Settings>.isEqualTo(list: List<Settings>): Boolean {
-    forEach { settings1 ->
-        if (list.none { settings2 -> settings1 == settings2 }) {
-            return false
-        }
-    }
-    return true
 }
