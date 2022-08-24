@@ -79,22 +79,23 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             supervisorScope {
                 settingsInteractor.getAll()
-                    .filter { it.key.defaultEditEnabled } // TODO: Make a list request.
+                    .filter { it.isEnabled() } // TODO: Make a list request.
                     .forEach { settings ->
-                        state = try {
+                        try {
                             settingsInteractor.createOrUpdate(
                                 settings = settings
                             )
-                            state.copy(
-                                isLoading = false,
-                                eventSettings = EventsSettings.Saved,
-                                isUpdated = false
-                            )
                         } catch (e: Exception) {
                             e.log()
-                            state.copy(isLoading = false, eventSettings = EventsSettings.Error)
+                            state =
+                                state.copy(isLoading = false, eventSettings = EventsSettings.Error)
                         }
                     }
+                state = state.copy(
+                    isLoading = false,
+                    eventSettings = EventsSettings.Saved,
+                    isUpdated = false
+                )
             }
         }
     }
