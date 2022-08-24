@@ -79,7 +79,7 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             supervisorScope {
                 settingsInteractor.getAll()
-                    .filter { it.key.defaultEnabled } // TODO: Make a list request.
+                    .filter { it.key.defaultEditEnabled } // TODO: Make a list request.
                     .forEach { settings ->
                         state = try {
                             settingsInteractor.createOrUpdate(
@@ -110,7 +110,7 @@ class SettingsViewModel @Inject constructor(
     private fun settingsChecked(settings: Settings) {
         val prevChecked: Boolean = settings.getRealValue() ?: true
         settingsInteractor.saveSettings(
-            Settings(settings.key, (!prevChecked).toString())
+            Settings(settings.key, (!prevChecked).toString(), editEnabled = settings.editEnabled)
         )
     }
 

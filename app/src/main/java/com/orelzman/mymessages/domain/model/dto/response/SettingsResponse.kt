@@ -19,7 +19,7 @@ fun List<SettingsResponse>.toSettings(): List<Settings> {
                 (Settings(
                     key = settingsKey,
                     value = settingsResponse.value,
-                    enabled = settingsResponse.enabled
+                    editEnabled = settingsResponse.enabled
                 ))
             )
         }

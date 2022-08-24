@@ -27,7 +27,7 @@ fun ToggleSettings(
     onChecked: (Settings) -> Unit,
     modifier: Modifier = Modifier,
     checked: Boolean = false,
-    enabled: Boolean = true
+    enabled: Boolean
 ) {
     val checkedState = remember { mutableStateOf(checked) }
     Row(

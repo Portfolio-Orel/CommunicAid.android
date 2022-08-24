@@ -15,15 +15,12 @@ import kotlin.reflect.KClass
 data class Settings(
     @PrimaryKey var key: SettingsKey,
     var value: String = key.defaultValue,
-    var enabled: Boolean? = null,
+    var editEnabled: Boolean? = null,
 ) : Uploadable() {
 
-    /**
-     * Don't understand why I need this.
-     */
-    constructor(key: SettingsKey, value: String) : this(key, value, key.defaultEnabled)
-
-    fun isSettingsEnabled(): Boolean = enabled ?: key.defaultEnabled
+    fun isEnabled(): Boolean {
+        return if(editEnabled != null) editEnabled!! else key.defaultEditEnabled
+    }
 
     override fun equals(other: Any?): Boolean {
         if (other is Settings) {
@@ -69,7 +66,7 @@ enum class SettingsKey(
     val type: SettingsType,
     val valueType: KClass<*>,
     val defaultValue: String,
-    val defaultEnabled: Boolean = true,
+    val defaultEditEnabled: Boolean = true,
     @StringRes val title: Int? = null
 ) {
     CallsUpdateAt(
@@ -90,6 +87,7 @@ enum class SettingsKey(
         type = SettingsType.Toggle,
         valueType = Boolean::class,
         defaultValue = false.toString(),
+        defaultEditEnabled = false,
         title = R.string.show_app_on_call
     ),
     IgnoredList(
@@ -97,6 +95,7 @@ enum class SettingsKey(
         type = SettingsType.PopUp,
         valueType = Array<String>::class,
         defaultValue = emptyList<String>().toString(),
+        defaultEditEnabled = false,
         title = R.string.ignore_list
     ),
     CountRejectedAsMissed(
@@ -104,14 +103,14 @@ enum class SettingsKey(
         type = SettingsType.Toggle,
         valueType = Boolean::class,
         defaultValue = "false",
-        defaultEnabled = true,
+        defaultEditEnabled = false,
         title = R.string.count_rejected_as_missed),
     CanDeleteUnhandledCalls(
         keyInServer = "can_delete_unhandled_calls",
         type = SettingsType.Toggle,
         valueType = Boolean::class,
         defaultValue = "true",
-        defaultEnabled = false,
+        defaultEditEnabled = false,
         title = R.string.can_delete_unhandled_calls
     ),
     SendSMSToBackgroundCall(
@@ -119,6 +118,7 @@ enum class SettingsKey(
         type = SettingsType.Toggle,
         valueType = Boolean::class,
         defaultValue = false.toString(),
+        defaultEditEnabled = false,
         title = R.string.send_sms_to_background_call
     );
 
