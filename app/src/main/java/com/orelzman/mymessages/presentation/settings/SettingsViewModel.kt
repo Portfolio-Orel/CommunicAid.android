@@ -11,11 +11,8 @@ import com.orelzman.mymessages.domain.model.entities.SettingsKey
 import com.orelzman.mymessages.domain.model.entities.SettingsType
 import com.orelzman.mymessages.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.supervisorScope
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,6 +30,16 @@ class SettingsViewModel @Inject constructor(
     private fun initData() {
         val settingsList = settingsInteractor.getAll()
         setSettings(settingsList)
+
+        val fetchSettingsJob = viewModelScope.async { settingsInteractor.init() }
+        CoroutineScope(SupervisorJob()).launch {
+            try {
+                fetchSettingsJob.await()
+            } catch (e: Exception) {
+                e.log()
+            }
+        }
+
     }
 
     private fun observeSettings() {
@@ -69,26 +76,32 @@ class SettingsViewModel @Inject constructor(
             state = state.copy(isLoading = false, eventSettings = EventsSettings.Unchanged)
             return
         }
-            viewModelScope.launch(Dispatchers.IO) {
-                supervisorScope {
-                    settingsInteractor.getAll().forEach { settings ->
+        viewModelScope.launch(Dispatchers.IO) {
+            supervisorScope {
+                settingsInteractor.getAll()
+                    .filter { it.key.defaultEnabled } // TODO: Make a list request.
+                    .forEach { settings ->
                         state = try {
                             settingsInteractor.createOrUpdate(
                                 settings = settings
                             )
-                            state.copy(isLoading = false, eventSettings = EventsSettings.Saved, isUpdated = false)
+                            state.copy(
+                                isLoading = false,
+                                eventSettings = EventsSettings.Saved,
+                                isUpdated = false
+                            )
                         } catch (e: Exception) {
                             e.log()
                             state.copy(isLoading = false, eventSettings = EventsSettings.Error)
                         }
                     }
-                }
             }
+        }
     }
 
     fun settingsChanged(settings: Settings) {
         state = state.copy(isUpdated = true)
-        when(settings.key.type) {
+        when (settings.key.type) {
             SettingsType.Toggle -> settingsChecked(settings)
             else -> {}
         }

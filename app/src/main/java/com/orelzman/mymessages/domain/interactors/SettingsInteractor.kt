@@ -9,7 +9,7 @@ interface SettingsInteractor {
      * Fetches settings by [key] from the cache.
      * @author Orel Zilberman
      */
-    fun getSettings(key: SettingsKey): Settings?
+    fun getSettings(key: SettingsKey): Settings
 
     /**
      * Returns all the settings from the as Flow.

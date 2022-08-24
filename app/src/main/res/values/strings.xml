@@ -87,4 +87,7 @@
     <string name="month">חודש</string>
     <string name="secondary_action">פעולה משנית</string>
     <string name="count_rejected_as_missed">שיחות דחויות לא טופלו</string>
+    <string name="can_delete_unhandled_calls">אפשר מחיקת שיחות שלא טופלו</string>
+    <string name="call_unhandled_phone_call">התקשר לשיחה שלא טופלה</string>
+    <string name="remove_unhandled_phone_call">מחק שיחה שלא טופלה</string>
 </resources>

@@ -90,8 +90,8 @@ class UploadPhoneCallsWorker @AssistedInject constructor(
 
     private suspend fun checkCallsNotRecorded(): List<PhoneCall> {
         val phoneCalls = ArrayList<PhoneCall>()
-        val lastUpdateAt = settingsInteractor.getSettings(SettingsKey.CallsUpdateAt)?.value
-        val date = Date(lastUpdateAt?.toLongOrNull() ?: Date().time)
+        val lastUpdateAt = settingsInteractor.getSettings(SettingsKey.CallsUpdateAt).value
+        val date = Date(lastUpdateAt.toLongOrNull() ?: Date().time)
         val potentiallyMissedPhoneCalls =
             callLogInteractor.getCallLogsByDate(startDate = date).toPhoneCalls()
         val savedPhoneCalls = phoneCallsInteractor.getAll()

@@ -47,6 +47,10 @@ class MyMessagesViewModel @Inject constructor(
         state = state.copy(isAuthenticated = isUserAuthenticated())
     }
 
+    fun onResume() {
+        initSettings()
+    }
+
     fun signOut() = viewModelScope.launch(Dispatchers.Main) {
         try {
             authInteractor.signOut()
@@ -65,8 +69,24 @@ class MyMessagesViewModel @Inject constructor(
         return isAuthorized
     }
 
+
+    /**
+     * Make sure settings that are applied to the user by the admin
+     * are applied in the app as well.
+     */
+    private fun initSettings() {
+        val fetchSettingsJob = viewModelScope.async { settingsInteractor.init() }
+        CoroutineScope(SupervisorJob()).launch {
+            try {
+                fetchSettingsJob.await()
+            } catch (e: Exception) {
+                e.log()
+            }
+        }
+    }
+
     private fun isDataInit(): Boolean =
-        settingsInteractor.getSettings(SettingsKey.IsDataInit)?.value?.toBooleanStrictOrNull()
+        settingsInteractor.getSettings(SettingsKey.IsDataInit).value.toBooleanStrictOrNull()
             ?: false
 
     private fun observeUser() {

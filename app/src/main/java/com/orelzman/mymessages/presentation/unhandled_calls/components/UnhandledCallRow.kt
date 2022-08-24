@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.orelzman.mymessages.R
@@ -25,6 +26,7 @@ import java.util.*
 fun UnhandledCallRow(
     modifier: Modifier = Modifier,
     phoneCall: PhoneCall,
+    canDelete: Boolean = true,
     onDelete: (PhoneCall) -> Unit = { _ -> },
     onCall: (PhoneCall) -> Unit = { _ -> },
     onClick: (PhoneCall) -> Unit = { _ -> }
@@ -39,7 +41,7 @@ fun UnhandledCallRow(
     ) {
         Icon(
             imageVector = Icons.Filled.Phone,
-            contentDescription = "Call unhandled call",
+            contentDescription = stringResource(R.string.call_unhandled_phone_call),
             modifier = Modifier
                 .localPadding()
                 .localIconSize()
@@ -60,15 +62,17 @@ fun UnhandledCallRow(
             )
         }
         Spacer(modifier = Modifier.weight(1f))
-        Icon(
-            painter = painterResource(id = R.drawable.ic_baseline_remove_circle_24),
-            contentDescription = "Remove unhandled call",
-            modifier = Modifier
-                .localPadding()
-                .localIconSize()
-                .clickable { onDelete(phoneCall) },
-            tint = MaterialTheme.colorScheme.error
-        )
+        if(canDelete) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_remove_circle_24),
+                contentDescription = stringResource(R.string.remove_unhandled_phone_call),
+                modifier = Modifier
+                    .localPadding()
+                    .localIconSize()
+                    .clickable { onDelete(phoneCall) },
+                tint = MaterialTheme.colorScheme.error
+            )
+        }
     }
 }
 

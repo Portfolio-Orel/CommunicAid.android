@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.entities.Settings
@@ -25,7 +26,8 @@ fun ToggleSettings(
     settings: Settings,
     onChecked: (Settings) -> Unit,
     modifier: Modifier = Modifier,
-    checked: Boolean = false
+    checked: Boolean = false,
+    enabled: Boolean = true
 ) {
     val checkedState = remember { mutableStateOf(checked) }
     Row(
@@ -33,6 +35,7 @@ fun ToggleSettings(
             .height(48.dp)
             .fillMaxWidth()
             .noRippleClickable {
+                if (!enabled) return@noRippleClickable
                 checkedState.value = !checkedState.value
                 onChecked(settings)
             },
@@ -40,9 +43,12 @@ fun ToggleSettings(
         horizontalArrangement = Arrangement.Start
     ) {
         Text(
+            modifier = Modifier.fillMaxWidth(0.85f),
             text = stringResource(id = settings.key.title ?: R.string.empty_string),
             style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onBackground
+            color = if (enabled) MaterialTheme.colorScheme.onBackground
+            else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+            overflow = TextOverflow.Ellipsis
         )
         Spacer(modifier = Modifier.weight(1f))
         Switch(
@@ -51,6 +57,7 @@ fun ToggleSettings(
                 checkedState.value = !checkedState.value
                 onChecked(settings)
             },
+            enabled = enabled
         )
     }
 }

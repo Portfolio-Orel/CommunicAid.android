@@ -26,6 +26,7 @@ import androidx.navigation.navArgument
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.util.Screen
 import com.orelzman.mymessages.presentation.components.CustomScaffold
+import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
 import com.orelzman.mymessages.presentation.components.bottom_bar.BottomBar
 import com.orelzman.mymessages.presentation.components.multi_fab.MiniFloatingAction
 import com.orelzman.mymessages.presentation.components.multi_fab.MultiFab
@@ -48,6 +49,11 @@ fun MyMessagesApp(
     val state = viewModel.state
     val navHostController = rememberNavController()
     val navController = navHostController as NavController
+
+    OnLifecycleEvent(
+        onResume = viewModel::onResume,
+    )
+
     CompositionLocalProvider(
         LocalOverscrollConfiguration provides null
     ) {
