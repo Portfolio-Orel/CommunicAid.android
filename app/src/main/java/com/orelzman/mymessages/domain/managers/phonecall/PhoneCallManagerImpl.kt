@@ -6,12 +6,10 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.domain.interactors.*
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
-import com.orelzman.mymessages.domain.system.phone_call.exceptions.WaitingThenRingingException
 import com.orelzman.mymessages.domain.util.common.Constants.TIME_TO_ADD_CALL_TO_CALL_LOG
 import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.domain.util.extension.compareNumberTo
 import com.orelzman.mymessages.domain.util.extension.inSeconds
-import com.orelzman.mymessages.domain.util.extension.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -63,7 +61,9 @@ class PhoneCallManagerImpl @Inject constructor(
             CallState.OnCall -> {
                 waitingCall(number = number)
             }
-            else -> WaitingThenRingingException.log()
+            else -> { // This state should not happen, but if it did it's an incoming call
+                incomingCall(number = number)
+            }
         }
     }
 
@@ -79,7 +79,9 @@ class PhoneCallManagerImpl @Inject constructor(
             CallState.Ringing -> {
                 incomingAnswered()
             }
-            else -> Exception("Weird exception - onOffHookState: $number ${dataSource.getState()}").log()
+            else -> { // This state should not happen, but if it did it's an outgoing call
+                outgoingCall(number = number)
+            }
         }
     }
 
