@@ -27,6 +27,7 @@ class MainApplication : Application(), Configuration.Provider {
 
     @Inject
     lateinit var environmentRepository: EnvironmentRepository
+
     override fun onCreate() {
         super.onCreate()
         val configuration = com.datadog.android.core.configuration.Configuration.Builder(
