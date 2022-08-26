@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.telephony.TelephonyManager
 import com.orelzman.mymessages.domain.managers.phonecall.PhoneCallManager
+import com.orelzman.mymessages.domain.util.extension.Logger
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -19,6 +20,7 @@ class PhonecallReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
         when (intent?.action) {
             PHONE_STATE -> {
+                Logger.v("Received from phonecallReceiver")
                 val stateStr = intent.extras?.getString(TelephonyManager.EXTRA_STATE)
                 @Suppress("DEPRECATION") val number =
                     intent.extras?.getString(TelephonyManager.EXTRA_INCOMING_NUMBER)

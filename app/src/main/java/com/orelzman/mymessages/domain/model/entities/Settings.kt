@@ -1,11 +1,13 @@
 package com.orelzman.mymessages.domain.model.entities
 
+import android.content.Context
 import androidx.annotation.StringRes
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.orelzman.mymessages.R
+import com.orelzman.mymessages.domain.util.common.RequiredPermissions
 import com.orelzman.mymessages.domain.util.extension.formatDayAndHours
 import com.orelzman.mymessages.domain.util.extension.log
 import java.util.*
@@ -54,6 +56,13 @@ data class Settings(
         }
     }
 
+    fun arePermissionsGranted(context: Context): Boolean {
+        key.requiredPermissions.forEach {
+            if (it.isNotGranted(context)) return false
+        }
+        return true
+    }
+
     override fun hashCode(): Int {
         var result = key.hashCode()
         result = 31 * result + value.hashCode()
@@ -67,6 +76,7 @@ enum class SettingsKey(
     val valueType: KClass<*>,
     val defaultValue: String,
     val defaultEditEnabled: Boolean = true,
+    val requiredPermissions: List<RequiredPermissions> = emptyList(),
     @StringRes val title: Int? = null
 ) {
     CallsUpdateAt(
@@ -87,7 +97,7 @@ enum class SettingsKey(
         type = SettingsType.Toggle,
         valueType = Boolean::class,
         defaultValue = false.toString(),
-        defaultEditEnabled = false,
+        requiredPermissions = listOf(RequiredPermissions.DrawOverlays),
         title = R.string.show_app_on_call
     ),
     IgnoredList(
@@ -95,21 +105,19 @@ enum class SettingsKey(
         type = SettingsType.PopUp,
         valueType = Array<String>::class,
         defaultValue = emptyList<String>().toString(),
-        defaultEditEnabled = false,
         title = R.string.ignore_list
     ),
     CountRejectedAsMissed(
         keyInServer = "count_rejected_as_missed",
         type = SettingsType.Toggle,
         valueType = Boolean::class,
-        defaultValue = "false",
-        defaultEditEnabled = false,
+        defaultValue = false.toString(),
         title = R.string.count_rejected_as_missed),
     CanDeleteUnhandledCalls(
         keyInServer = "can_delete_unhandled_calls",
         type = SettingsType.Toggle,
         valueType = Boolean::class,
-        defaultValue = "true",
+        defaultValue = true.toString(),
         defaultEditEnabled = false,
         title = R.string.can_delete_unhandled_calls
     ),
@@ -118,7 +126,7 @@ enum class SettingsKey(
         type = SettingsType.Toggle,
         valueType = Boolean::class,
         defaultValue = false.toString(),
-        defaultEditEnabled = false,
+        requiredPermissions = listOf(RequiredPermissions.SendSMS),
         title = R.string.send_sms_to_background_call
     );
 

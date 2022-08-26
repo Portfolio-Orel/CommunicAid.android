@@ -13,7 +13,7 @@ class LogInterceptor : Interceptor {
                 " status: ${response.code()}," +
                 " request body: ${request.body()}")
         if(!response.isSuccessful) {
-            Logger.v("\nFailed with error: ${response.message()}")
+            Logger.e("\nFailed with error: ${response.message()}")
         } else {
             Logger.v("\nResponse: ${ response.peekBody(2048).string()}")
         }

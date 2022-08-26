@@ -20,6 +20,7 @@ import com.orelzman.mymessages.domain.model.entities.SettingsKey
 import com.orelzman.mymessages.domain.system.connectivity.ConnectivityObserver
 import com.orelzman.mymessages.domain.system.connectivity.NetworkState
 import com.orelzman.mymessages.domain.system.phone_call.PhonecallReceiver
+import com.orelzman.mymessages.domain.system.phone_call.SettingsPhoneCallReceiver
 import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.domain.util.extension.log
 import com.orelzman.mymessages.domain.util.extension.safeCollectLatest
@@ -156,11 +157,13 @@ class MyMessagesViewModel @Inject constructor(
             observeCallState()
             observeInternetConnectivity()
             PhonecallReceiver.enable(context = getApplicationContext())
+            SettingsPhoneCallReceiver.enable(context = getApplicationContext())
         } else {
             generalInteractor.clearAllDatabases()
             Logger.v("Database was cleared.")
             workerManager.clearAll()
             PhonecallReceiver.disable(context = getApplicationContext())
+            SettingsPhoneCallReceiver.disable(context = getApplicationContext())
         }
     }
 }
