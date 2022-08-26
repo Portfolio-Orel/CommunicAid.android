@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.orelzman.mymessages.R
-import com.orelzman.mymessages.domain.util.common.RequiredPermissions
+import com.orelzman.mymessages.domain.util.RequiredPermission
 import com.orelzman.mymessages.domain.util.extension.formatDayAndHours
 import com.orelzman.mymessages.domain.util.extension.log
 import java.util.*
@@ -56,11 +56,17 @@ data class Settings(
         }
     }
 
-    fun arePermissionsGranted(context: Context): Boolean {
+    /**
+     * @return a list of all permissions that are not granted
+     */
+    fun arePermissionsGranted(context: Context): List<RequiredPermission> {
+        val permissionsNotGranted = ArrayList<RequiredPermission>()
         key.requiredPermissions.forEach {
-            if (it.isNotGranted(context)) return false
+            if (it.isNotGranted(context = context)) {
+                permissionsNotGranted.add(it)
+            }
         }
-        return true
+        return permissionsNotGranted
     }
 
     override fun hashCode(): Int {
@@ -76,7 +82,7 @@ enum class SettingsKey(
     val valueType: KClass<*>,
     val defaultValue: String,
     val defaultEditEnabled: Boolean = true,
-    val requiredPermissions: List<RequiredPermissions> = emptyList(),
+    val requiredPermissions: List<RequiredPermission> = emptyList(),
     @StringRes val title: Int? = null
 ) {
     CallsUpdateAt(
@@ -97,7 +103,7 @@ enum class SettingsKey(
         type = SettingsType.Toggle,
         valueType = Boolean::class,
         defaultValue = false.toString(),
-        requiredPermissions = listOf(RequiredPermissions.DrawOverlays),
+        requiredPermissions = listOf(RequiredPermission.DrawOverlays),
         title = R.string.show_app_on_call
     ),
     IgnoredList(
@@ -126,7 +132,7 @@ enum class SettingsKey(
         type = SettingsType.Toggle,
         valueType = Boolean::class,
         defaultValue = false.toString(),
-        requiredPermissions = listOf(RequiredPermissions.SendSMS),
+        requiredPermissions = listOf(RequiredPermission.SendSMS),
         title = R.string.send_sms_to_background_call
     );
 

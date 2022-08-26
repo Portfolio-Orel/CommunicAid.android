@@ -52,7 +52,8 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
 
     private fun checkStartAppOnCallSettings(state: String, context: Context) {
         val settings = settingsInteractor.getSettings(SettingsKey.ShowAppOnCall)
-        if (settings.getRealValue<Boolean>() == true && settings.arePermissionsGranted(context = context)) {
+        if (settings.getRealValue<Boolean>() == true && settings.arePermissionsGranted(context = context)
+                .isEmpty()) {
             if (state == TelephonyManager.EXTRA_STATE_OFFHOOK) {
                 showApp(context = context)
             }
