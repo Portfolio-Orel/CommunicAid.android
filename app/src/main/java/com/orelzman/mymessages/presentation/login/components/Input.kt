@@ -15,7 +15,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.orelzman.mymessages.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Input(
     modifier: Modifier = Modifier,

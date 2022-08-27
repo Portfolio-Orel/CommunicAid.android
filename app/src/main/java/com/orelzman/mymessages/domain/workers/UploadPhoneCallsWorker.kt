@@ -110,9 +110,9 @@ class UploadPhoneCallsWorker @AssistedInject constructor(
 
     private suspend fun updateCallsUpdateTime() {
         settingsInteractor.createOrUpdate(
-            Settings(
+            listOf(Settings(
                 key = SettingsKey.CallsUpdateAt, value = Date().time.toString()
-            )
+            ))
         )
     }
 }

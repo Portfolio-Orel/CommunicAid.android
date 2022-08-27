@@ -54,7 +54,7 @@ interface API {
     // Settings
     @PATCH("/settings")
     suspend fun createOrUpdateSettings(
-        @Body createOrUpdateSettingsBody: CreateOrUpdateSettingsBody
+        @Body createOrUpdateSettingsBody: List<CreateOrUpdateSettingsBody>
     )
 
     @GET("/settings/{key}")

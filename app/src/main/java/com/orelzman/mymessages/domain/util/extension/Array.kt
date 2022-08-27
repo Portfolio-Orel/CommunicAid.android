@@ -18,6 +18,13 @@ fun <T> List<T>.appendAll(list: List<T>): List<T> {
     return array
 }
 
+fun <T> List<T>.equalsTo(list: List<T>): Boolean {
+    list.forEach { if (!contains(it)) return false }
+    return true
+}
+
+fun <T> List<T>.notEqualsTo(list: List<T>): Boolean = !equalsTo(list)
+
 fun List<String>.containsNumber(number: String) =
     map { it.withoutPrefix() }.contains(number.withoutPrefix())
 

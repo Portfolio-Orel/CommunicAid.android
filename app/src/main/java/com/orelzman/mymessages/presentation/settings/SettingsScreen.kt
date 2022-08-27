@@ -79,7 +79,7 @@ fun SettingsScreen(
                         onChecked = viewModel::settingsChanged,
                         modifier = Modifier.padding(horizontal = 8.dp),
                         checked = settings.getRealValue() ?: false,
-                        enabled = settings.isEnabled() && settings.arePermissionsGranted(context = context).isEmpty(),
+                        enabled = settings.isEnabled() && settings.arePermissionsGranted(context = context).isEmpty() && !state.isLoading,
                         onDisabledClick = {
                             val permissionsNotGranted = it.arePermissionsGranted(context = context)
                             permissionsNotGranted.forEach { permission ->
