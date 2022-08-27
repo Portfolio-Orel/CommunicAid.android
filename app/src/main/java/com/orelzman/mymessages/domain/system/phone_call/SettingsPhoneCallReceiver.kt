@@ -5,15 +5,18 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.telephony.SmsManager
 import android.telephony.TelephonyManager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.MainActivity
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.managers.phonecall.PhoneCallManager
+import com.orelzman.mymessages.domain.managers.phonecall.isCallStateWaiting
 import com.orelzman.mymessages.domain.model.entities.SettingsKey
 import com.orelzman.mymessages.domain.util.extension.Logger
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 
 /**
  * @author Orel Zilberman
@@ -36,8 +39,44 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
         when (intent?.action) {
             PHONE_STATE -> {
                 if (debounceExtra(intent)) return
+                checkSendSMSToWaitingCall(context)
                 val state = intent.extras?.getString(TelephonyManager.EXTRA_STATE) ?: return
                 checkStartAppOnCallSettings(state = state, context = context)
+                checkSendSMSToWaitingCall(context = context)
+            }
+        }
+    }
+
+    /**
+     * @see SettingsKey.SendSMSToBackgroundCall
+     */
+    private fun checkSendSMSToWaitingCall(context: Context) {
+        val settings = settingsInteractor.getSettings(SettingsKey.SendSMSToBackgroundCall)
+        if (settings.getRealValue<Boolean>() == true && settings.arePermissionsGranted(context = context)
+                .isEmpty()
+        ) {
+            if (phoneCallManager.callsData.callState.isCallStateWaiting()) {
+                context.getSystemService(SmsManager::class.java).sendTextMessage(
+                    phoneCallManager.callsData.callInTheBackground,
+                    null,
+                    "Text",
+                    null,
+                    null
+                )
+            }
+        }
+    }
+
+    /**
+     * @see SettingsKey.ShowAppOnCall
+     */
+    private fun checkStartAppOnCallSettings(state: String, context: Context) {
+        val settings = settingsInteractor.getSettings(SettingsKey.ShowAppOnCall)
+        if (settings.getRealValue<Boolean>() == true && settings.arePermissionsGranted(context = context)
+                .isEmpty()
+        ) {
+            if (state == TelephonyManager.EXTRA_STATE_OFFHOOK) {
+                showApp(context = context)
             }
         }
     }
@@ -49,16 +88,6 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
     @Suppress("DEPRECATION")
     private fun debounceExtra(intent: Intent): Boolean =
         intent.extras?.getString(TelephonyManager.EXTRA_INCOMING_NUMBER) == null
-
-    private fun checkStartAppOnCallSettings(state: String, context: Context) {
-        val settings = settingsInteractor.getSettings(SettingsKey.ShowAppOnCall)
-        if (settings.getRealValue<Boolean>() == true && settings.arePermissionsGranted(context = context)
-                .isEmpty()) {
-            if (state == TelephonyManager.EXTRA_STATE_OFFHOOK) {
-                showApp(context = context)
-            }
-        }
-    }
 
     @OptIn(ExperimentalPermissionsApi::class)
     private fun showApp(context: Context) {
@@ -72,22 +101,22 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
         val PHONE_STATE: String
             get() = "android.intent.action.PHONE_STATE"
 
-        fun enable(context: Context) {
-            val pm: PackageManager = context.packageManager
-            val componentName =
-                ComponentName(context, SettingsPhoneCallReceiver::class.java)
-            pm.setComponentEnabledSetting(
-                componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP
-            )
-        }
-
         fun disable(context: Context) {
             val pm: PackageManager = context.packageManager
             val componentName =
                 ComponentName(context, SettingsPhoneCallReceiver::class.java)
             pm.setComponentEnabledSetting(
                 componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP
+            )
+        }
+
+        fun enable(context: Context) {
+            val pm: PackageManager = context.packageManager
+            val componentName =
+                ComponentName(context, SettingsPhoneCallReceiver::class.java)
+            pm.setComponentEnabledSetting(
+                componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                 PackageManager.DONT_KILL_APP
             )
         }
