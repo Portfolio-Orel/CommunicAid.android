@@ -33,3 +33,6 @@ enum class CallState(val value: String) {
 
 fun String?.isCallStateIdle(): Boolean =
     CallState.fromString(this) == CallState.Idle
+
+fun String?.isCallStateWaiting(): Boolean =
+    CallState.fromString(this) == CallState.Waiting

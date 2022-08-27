@@ -56,16 +56,15 @@ enum class RequiredPermission(val permissionName: String, priority: PermissionPr
                 PermissionState.DeniedOnce
             }
         }
+        if (PermissionsUtils.checkPermission(context = context, this)) {
+            return PermissionState.Granted
+        }
         if (context as? Activity != null) {
             if (!ActivityCompat.shouldShowRequestPermissionRationale(context, permissionName)) {
                 return PermissionState.DeniedPermanently
             }
         }
-        return if (PermissionsUtils.checkPermission(context = context, this)) {
-            PermissionState.Granted
-        } else {
-            PermissionState.DeniedOnce
-        }
+        return PermissionState.DeniedOnce
     }
 
     fun isNotGranted(context: Context) = isGranted(context = context) != PermissionState.Granted
