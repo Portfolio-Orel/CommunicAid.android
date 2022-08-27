@@ -9,6 +9,7 @@ import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.model.entities.Settings
 import com.orelzman.mymessages.domain.model.entities.SettingsKey
 import com.orelzman.mymessages.domain.model.entities.SettingsType
+import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -72,7 +73,7 @@ class SettingsViewModel @Inject constructor(
 
     fun saveSettings() {
         state = state.copy(isLoading = true, eventSettings = null)
-        if (!state.isUpdated) {
+        if (state.updatedSettings.isEmpty()) {
             state = state.copy(isLoading = false, eventSettings = EventsSettings.Unchanged)
             return
         }
@@ -80,6 +81,7 @@ class SettingsViewModel @Inject constructor(
             supervisorScope {
                 settingsInteractor.getAll()
                     .filter { it.isEnabled() } // TODO: Make a list request.
+                    .filter { state.updatedSettings.contains(it.key) }
                     .forEach { settings ->
                         try {
                             settingsInteractor.createOrUpdate(
@@ -89,19 +91,23 @@ class SettingsViewModel @Inject constructor(
                             e.log()
                             state =
                                 state.copy(isLoading = false, eventSettings = EventsSettings.Error)
+                        } finally {
+                            state = state.copy(isLoading = false)
                         }
                     }
                 state = state.copy(
                     isLoading = false,
                     eventSettings = EventsSettings.Saved,
-                    isUpdated = false
+                    updatedSettings = emptyList()
                 )
             }
         }
     }
 
     fun settingsChanged(settings: Settings) {
-        state = state.copy(isUpdated = true)
+        val updatedSettings = ArrayList(state.updatedSettings)
+        updatedSettings.add(settings.key)
+        state = state.copy(updatedSettings = updatedSettings)
         when (settings.key.type) {
             SettingsType.Toggle -> settingsChecked(settings)
             else -> {}
@@ -109,10 +115,12 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun settingsChecked(settings: Settings) {
+        Logger.v("Settings changed: $settings")
         val prevChecked: Boolean = settings.getRealValue() ?: true
-        settingsInteractor.saveSettings(
+        val updatedSettings =
             Settings(settings.key, (!prevChecked).toString(), editEnabled = settings.editEnabled)
-        )
+        settingsInteractor.saveSettings(updatedSettings)
+
     }
 
 }

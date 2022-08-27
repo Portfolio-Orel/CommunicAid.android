@@ -115,29 +115,23 @@ class DetailsFolderViewModel @Inject constructor(
     private fun saveFolder(folder: Folder = Folder()) {
         if (state.isReadyForSave) {
             state = state.copy(isLoading = true)
-            try {
-                state = state.copy(isLoading = true)
-                viewModelScope.launch(Dispatchers.IO) {
-                    if (state.isEdit) {
-                        folderInteractor.updateFolder(folder = folder)
-                    } else {
-                        folderInteractor.createFolder(
-                            folder = Folder(title = state.title)
-                        )
-                    }
-                }.invokeOnCompletion {
-                    if (it != null) {
-                        state = state.copy(
-                            isLoading = false,
-                            eventFolder = if (state.isEdit) EventsFolder.Updated else EventsFolder.Saved
-                        )
-                    } else {
-                        it?.log()
-                    }
+            val saveJob = viewModelScope.async {
+                if (state.isEdit) {
+                    folderInteractor.updateFolder(folder = folder)
+                } else {
+                    folderInteractor.createFolder(
+                        folder = Folder(title = state.title)
+                    )
                 }
-            } catch (e: Exception) {
-                e.log(state)
-                state = state.copy(isLoading = false, eventFolder = EventsFolder.Error)
+            }
+            viewModelScope.launch(Dispatchers.IO) {
+                state = try {
+                    saveJob.await()
+                    state.copy(isLoading = false, eventFolder = EventsFolder.Saved)
+                } catch (e: Exception) {
+                    e.log(state)
+                    state.copy(isLoading = false, eventFolder = EventsFolder.Error)
+                }
             }
         } else {
             val emptyFields = ArrayList<FolderFields>()
