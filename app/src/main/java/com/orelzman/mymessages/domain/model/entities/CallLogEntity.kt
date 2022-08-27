@@ -12,9 +12,9 @@ class CallLogEntity(
     val callLogType: CallType? = null
 ) {
 
-    fun isUnhandled(): Boolean =
-        callLogType == CallType.REJECTED || callLogType == CallType.MISSED
+    fun isMissed(): Boolean = callLogType == CallType.MISSED
 
+    fun isRejected(): Boolean = callLogType == CallType.REJECTED
 
     val phoneCall: PhoneCall
         get() =
@@ -29,8 +29,8 @@ class CallLogEntity(
 val ArrayList<CallLogEntity>.numbers: List<String>
     get() = map { it.number }
 
-val List<CallLogEntity>.unhandledCalls: List<CallLogEntity>
-    get() = filter { it.isUnhandled() }
+fun List<CallLogEntity>.getUnhandledCalls(countRejectedAsUnhandled: Boolean = false): List<CallLogEntity> =
+    filter { it.isMissed() || (countRejectedAsUnhandled && it.isRejected())}
 
 fun ArrayList<CallLogEntity>.addUniqueByNumber(element: CallLogEntity) {
     if (!numbers.containsNumber(element.number)) add(element)
