@@ -19,11 +19,11 @@ class Logger {
             attributes: Map<String, Any?> = emptyMap()
         ) {
             Log.v(TAG, "$message\n$attributes")
-//            logger.v(
-//                message = message,
-//                throwable = throwable,
-//                attributes = attributes
-//            )
+            logger.v(
+                message = message,
+                throwable = throwable,
+                attributes = attributes
+            )
         }
 
         fun i(

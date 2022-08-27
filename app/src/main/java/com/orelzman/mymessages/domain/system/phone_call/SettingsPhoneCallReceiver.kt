@@ -5,7 +5,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.telephony.SmsManager
 import android.telephony.TelephonyManager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.MainActivity
@@ -56,13 +55,13 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
                 .isEmpty()
         ) {
             if (phoneCallManager.callsData.callState.isCallStateWaiting()) {
-                context.getSystemService(SmsManager::class.java).sendTextMessage(
-                    phoneCallManager.callsData.callInTheBackground,
-                    null,
-                    "Text",
-                    null,
-                    null
-                )
+//                context.getSystemService(SmsManager::class.java).sendTextMessage(
+//                    phoneCallManager.callsData.callInTheBackground,
+//                    null,
+//                    "Text",
+//                    null,
+//                    null
+//                )
             }
         }
     }
