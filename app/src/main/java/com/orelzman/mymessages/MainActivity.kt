@@ -39,6 +39,7 @@ class MainActivity : ComponentActivity() {
                         )
                     )
                     val lifecycleOwner = LocalLifecycleOwner.current
+
                     DisposableEffect(
                         key1 = lifecycleOwner,
                         effect = {

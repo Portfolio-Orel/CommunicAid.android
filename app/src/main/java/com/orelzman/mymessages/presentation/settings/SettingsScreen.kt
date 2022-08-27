@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.entities.SettingsType
+import com.orelzman.mymessages.domain.util.RequiredPermission
+import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.domain.util.extension.noRippleClickable
 import com.orelzman.mymessages.presentation.settings.components.DataSettings
 import com.orelzman.mymessages.presentation.settings.components.ToggleSettings
@@ -29,6 +31,8 @@ fun SettingsScreen(
 ) {
     val state = viewModel.state
     val context = LocalContext.current
+
+
 
     LaunchedEffect(key1 = state.eventSettings) {
         when (state.eventSettings) {
@@ -75,7 +79,18 @@ fun SettingsScreen(
                         onChecked = viewModel::settingsChanged,
                         modifier = Modifier.padding(horizontal = 8.dp),
                         checked = settings.getRealValue() ?: false,
-                        enabled = settings.isEnabled() && settings.arePermissionsGranted(context = context)
+                        enabled = settings.isEnabled() && settings.arePermissionsGranted(context = context).isEmpty(),
+                        onDisabledClick = {
+                            val permissionsNotGranted = it.arePermissionsGranted(context = context)
+                            permissionsNotGranted.forEach { permission ->
+                            val permissionState = permission.isGranted(context = context)
+                                if(permissionState == RequiredPermission.PermissionState.DeniedPermanently) {
+                                    Logger.v("Permanently not allowed")
+                                } else {
+                                    permission.requestPermission(context = context)
+                                }
+                            }
+                        }
                     )
                     SettingsType.Data -> {
                         DataSettings(

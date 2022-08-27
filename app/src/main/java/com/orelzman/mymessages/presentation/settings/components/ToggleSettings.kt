@@ -25,9 +25,10 @@ import com.orelzman.mymessages.domain.util.extension.noRippleClickable
 fun ToggleSettings(
     settings: Settings,
     onChecked: (Settings) -> Unit,
+    enabled: Boolean,
     modifier: Modifier = Modifier,
     checked: Boolean = false,
-    enabled: Boolean
+    onDisabledClick: (Settings) -> Unit = {}
 ) {
     val checkedState = remember { mutableStateOf(checked) }
     Row(
@@ -35,7 +36,10 @@ fun ToggleSettings(
             .height(48.dp)
             .fillMaxWidth()
             .noRippleClickable {
-                if (!enabled) return@noRippleClickable
+                if (!enabled) {
+                    onDisabledClick(settings)
+                    return@noRippleClickable
+                }
                 checkedState.value = !checkedState.value
                 onChecked(settings)
             },
