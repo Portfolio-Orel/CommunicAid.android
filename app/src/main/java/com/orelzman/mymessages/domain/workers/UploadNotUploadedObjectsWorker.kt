@@ -23,7 +23,6 @@ class UploadNotUploadedObjectsWorker @AssistedInject constructor(
     @Assisted workerParams: WorkerParameters,
     private val folderInteractor: FolderInteractor,
     private val messageInteractor: MessageInteractor,
-    private val messageInFolderInteractor: MessageInFolderInteractor,
     private val phoneCallsInteractor: PhoneCallsInteractor,
     private val settingsInteractor: SettingsInteractor,
     private val deletedCallsInteractor: DeletedCallsInteractor
@@ -95,9 +94,7 @@ class UploadNotUploadedObjectsWorker @AssistedInject constructor(
         val settings = settingsInteractor.getAll().filter { it.shouldBeUploaded() }
         if (settings.isNotEmpty()) {
             Logger.v("settings not uploaded")
-            settings.forEach {
-                settingsInteractor.createOrUpdate(it)
-            }
+            settingsInteractor.createOrUpdate(settings)
         }
     }
 }

@@ -41,7 +41,7 @@ interface Repository {
     /*Deleted Phone Calls*/
 
     /* Settings */
-    suspend fun createOrUpdateSettings(createOrUpdateSettingsBody: CreateOrUpdateSettingsBody)
+    suspend fun createOrUpdateSettings(createOrUpdateSettingsBody: List<CreateOrUpdateSettingsBody>)
     suspend fun getSettings(key: String = ""): List<SettingsResponse>
     suspend fun getAllSettings(): List<SettingsResponse>
     /* Settings */

@@ -1,7 +1,6 @@
 package com.orelzman.mymessages.presentation.login
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
@@ -140,16 +139,16 @@ private fun ContentView(viewModel: LoginViewModel) {
                 onLoginClick = { viewModel.onLoginClick() }
             )
             if (!state.isRegister) {
-                Text(
-                    stringResource(R.string.register),
-                    modifier = Modifier
-                        .clickable {
-                            viewModel.onRegisterClick()
-                        },
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.titleSmall,
-                    maxLines = 1,
-                )
+//                Text(
+//                    stringResource(R.string.register),
+//                    modifier = Modifier
+//                        .clickable {
+//                            viewModel.onRegisterClick()
+//                        },
+//                    color = MaterialTheme.colorScheme.primary,
+//                    style = MaterialTheme.typography.titleSmall,
+//                    maxLines = 1,
+//                )
             }
             Text(
                 text = stringResource(state.error ?: R.string.empty_string),

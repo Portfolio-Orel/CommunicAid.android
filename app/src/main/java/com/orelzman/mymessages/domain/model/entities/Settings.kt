@@ -28,6 +28,7 @@ data class Settings(
         if (other is Settings) {
             return (other.key.keyInServer == key.keyInServer)
                     && (other.value == value)
+                    && (other.editEnabled == editEnabled)
         }
         return false
     }
@@ -124,7 +125,6 @@ enum class SettingsKey(
         type = SettingsType.Toggle,
         valueType = Boolean::class,
         defaultValue = true.toString(),
-        defaultEditEnabled = false,
         title = R.string.can_delete_unhandled_calls
     ),
     SendSMSToBackgroundCall(

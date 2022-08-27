@@ -39,15 +39,17 @@ class SettingsInteractorImpl @Inject constructor(
         db.insert(result.toSettings())
     }
 
-    override suspend fun createOrUpdate(settings: Settings) {
-        settings.setUploadState(UploadState.BeingUploaded)
+    override suspend fun createOrUpdate(settings: List<Settings>) {
+        settings.forEach { it.setUploadState(UploadState.BeingUploaded) }
         db.insert(settings)
-        val createOrUpdateSettingsBody = CreateOrUpdateSettingsBody(
-            key = settings.key.keyInServer,
-            value = settings.value
-        )
+        val createOrUpdateSettingsBody = settings.map {
+            CreateOrUpdateSettingsBody(
+                key = it.key.keyInServer,
+                value = it.value
+            )
+        }
         repository.createOrUpdateSettings(createOrUpdateSettingsBody)
-        settings.setUploadState(UploadState.Uploaded)
+        settings.forEach { it.setUploadState(UploadState.Uploaded) }
         db.insert(settings)
     }
 }

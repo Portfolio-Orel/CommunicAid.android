@@ -35,5 +35,5 @@ interface SettingsInteractor {
      * Creates new [settings] in the backend and caches it.
      * @author Orel Zilberman
      */
-    suspend fun createOrUpdate(settings: Settings)
+    suspend fun createOrUpdate(settings: List<Settings>)
 }

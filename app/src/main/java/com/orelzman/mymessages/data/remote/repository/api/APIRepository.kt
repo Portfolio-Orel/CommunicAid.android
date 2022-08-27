@@ -138,7 +138,7 @@ class APIRepository @Inject constructor(
     /* User */
 
     /* Settings */
-    override suspend fun createOrUpdateSettings(createOrUpdateSettingsBody: CreateOrUpdateSettingsBody) =
+    override suspend fun createOrUpdateSettings(createOrUpdateSettingsBody: List<CreateOrUpdateSettingsBody>) =
         api.createOrUpdateSettings(createOrUpdateSettingsBody)
 
     override suspend fun getAllSettings(): List<SettingsResponse> {
