@@ -113,8 +113,8 @@ enum class SettingsKey(
         defaultValue = emptyList<String>().toString(),
         title = R.string.ignore_list
     ),
-    CountRejectedAsMissed(
-        keyInServer = "count_rejected_as_missed",
+    CountRejectedAsUnhandled(
+        keyInServer = "count_rejected_as_unhandled",
         type = SettingsType.Toggle,
         valueType = Boolean::class,
         defaultValue = false.toString(),

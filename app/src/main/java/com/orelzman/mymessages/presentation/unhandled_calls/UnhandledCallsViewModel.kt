@@ -53,7 +53,8 @@ class UnhandledCallsViewModel @Inject constructor(
         } else {
             val callsToHandle = unhandledCallsManager.filterUnhandledCalls(
                 deletedCalls = deletedCallsInteractor.getAllOnce(getStartOfDay()),
-                callLogs = getCallsFromCallLog()
+                callLogs = getCallsFromCallLog(),
+                countRejectedAsUnhandled = isCountRejectedAsUnhandled()
             )
             state = state.copy(callsToHandle = callsToHandle, isLoading = false)
         }
@@ -96,12 +97,18 @@ class UnhandledCallsViewModel @Inject constructor(
     private fun initData() {
         state = state.copy(isLoading = true)
         val canDeleteCalls: Boolean =
-            settingsInteractor.getSettings(SettingsKey.CanDeleteUnhandledCalls).getRealValue() ?: true
+            settingsInteractor.getSettings(SettingsKey.CanDeleteUnhandledCalls).getRealValue()
+                ?: true
         val callsToHandle = unhandledCallsManager.filterUnhandledCalls(
             deletedCalls = deletedCallsInteractor.getAllOnce(getStartOfDay()),
-            callLogs = getCallsFromCallLog()
+            callLogs = getCallsFromCallLog(),
+            countRejectedAsUnhandled = isCountRejectedAsUnhandled()
         )
-        state = state.copy(callsToHandle = callsToHandle, canDeleteCalls = canDeleteCalls, isLoading = false)
+        state = state.copy(
+            callsToHandle = callsToHandle,
+            canDeleteCalls = canDeleteCalls,
+            isLoading = false
+        )
     }
 
     private fun observeDeletedCalls() {
@@ -110,12 +117,17 @@ class UnhandledCallsViewModel @Inject constructor(
                 .collect {
                     val callsToHandle = unhandledCallsManager.filterUnhandledCalls(
                         deletedCalls = it,
-                        callLogs = getCallsFromCallLog()
+                        callLogs = getCallsFromCallLog(),
+                        countRejectedAsUnhandled = isCountRejectedAsUnhandled()
                     )
                     state = state.copy(callsToHandle = callsToHandle, isLoading = false)
                 }
         }
     }
+
+    private fun isCountRejectedAsUnhandled(): Boolean =
+        settingsInteractor.getSettings(SettingsKey.CountRejectedAsUnhandled).getRealValue()
+            ?: true
 
     /**
      * Sets all the calls that were not handled by the user and might require his attention.
