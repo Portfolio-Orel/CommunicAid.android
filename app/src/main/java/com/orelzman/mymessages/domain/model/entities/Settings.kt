@@ -134,7 +134,15 @@ enum class SettingsKey(
         defaultValue = false.toString(),
         requiredPermissions = listOf(RequiredPermission.SendSMS),
         title = R.string.send_sms_to_background_call
+    ),
+    SMSToSendToBackgroundCall(
+        keyInServer = "sms_to_send_to_background_call",
+        type = SettingsType.NotVisibleToUser,
+        valueType = String::class,
+        defaultValue = "",
     );
+
+    fun settings(value: String): Settings = Settings(key = this, value = value)
 
     companion object {
 

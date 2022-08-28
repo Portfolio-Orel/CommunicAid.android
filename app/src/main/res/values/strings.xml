@@ -90,4 +90,6 @@
     <string name="can_delete_unhandled_calls">אפשר מחיקת שיחות שלא טופלו</string>
     <string name="call_unhandled_phone_call">התקשר לשיחה שלא טופלה</string>
     <string name="remove_unhandled_phone_call">מחק שיחה שלא טופלה</string>
+    <string name="sms_to_background_call_placeholder">ראיתי שהתקשרתם, אחזור בהקדם...</string>
+    <string name="show_hide_settings">הצג/הסתר הגדרה</string>
 </resources>

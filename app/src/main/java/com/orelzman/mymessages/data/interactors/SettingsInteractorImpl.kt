@@ -52,4 +52,8 @@ class SettingsInteractorImpl @Inject constructor(
         settings.forEach { it.setUploadState(UploadState.Uploaded) }
         db.insert(settings)
     }
+
+    override suspend fun createOrUpdate(settings: Settings) =
+        createOrUpdate(listOf(settings))
+
 }

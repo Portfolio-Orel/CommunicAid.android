@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,12 +17,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orelzman.mymessages.R
+import com.orelzman.mymessages.domain.model.entities.SettingsKey
 import com.orelzman.mymessages.domain.model.entities.SettingsType
 import com.orelzman.mymessages.domain.util.RequiredPermission
 import com.orelzman.mymessages.domain.util.extension.Logger
-import com.orelzman.mymessages.domain.util.extension.noRippleClickable
+import com.orelzman.mymessages.presentation.components.save_button.SaveButton
 import com.orelzman.mymessages.presentation.settings.components.DataSettings
 import com.orelzman.mymessages.presentation.settings.components.ToggleSettings
+import com.orelzman.mymessages.presentation.settings.components.send_sms_settings.SendSMSSettings
 
 @Composable
 fun SettingsScreen(
@@ -79,12 +80,20 @@ fun SettingsScreen(
                         onChecked = viewModel::settingsChanged,
                         modifier = Modifier.padding(horizontal = 8.dp),
                         checked = settings.getRealValue() ?: false,
-                        enabled = settings.isEnabled() && settings.arePermissionsGranted(context = context).isEmpty() && !state.isLoading,
+                        enabled = settings.isEnabled() && settings.arePermissionsGranted(context = context)
+                            .isEmpty() && !state.isLoading,
+                        contentIfCheck = if (settings.key == SettingsKey.SendSMSToBackgroundCall) {
+                            { onDismiss ->
+                                SendSMSSettings(onDismiss = onDismiss)
+                            }
+                        } else {
+                            null
+                        },
                         onDisabledClick = {
                             val permissionsNotGranted = it.arePermissionsGranted(context = context)
                             permissionsNotGranted.forEach { permission ->
-                            val permissionState = permission.isGranted(context = context)
-                                if(permissionState == RequiredPermission.PermissionState.DeniedPermanently) {
+                                val permissionState = permission.isGranted(context = context)
+                                if (permissionState == RequiredPermission.PermissionState.DeniedPermanently) {
                                     Logger.v("Permanently not allowed")
                                 } else {
                                     permission.requestPermission(context = context)
@@ -114,41 +123,6 @@ fun SettingsScreen(
                 onClick = viewModel::saveSettings
             )
         }
-    }
-}
-
-@Composable
-fun SaveButton(
-    onClick: () -> Unit,
-    isLoading: Boolean,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .padding(8.dp),
-        contentAlignment = Alignment.CenterStart,
-    ) {
-        if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .height(16.dp)
-                    .width(16.dp),
-                strokeWidth = 2.dp,
-                color = MaterialTheme.colorScheme.primary,
-            )
-        } else {
-            Text(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .noRippleClickable {
-                        onClick()
-                    },
-                text = stringResource(id = R.string.save),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
-
     }
 }
 
