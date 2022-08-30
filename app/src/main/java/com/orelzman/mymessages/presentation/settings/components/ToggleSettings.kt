@@ -28,7 +28,6 @@ import com.orelzman.mymessages.domain.util.extension.noRippleClickable
  * It receives a function that is called on dismiss.
  * @param onDisabledClick is called if the settings is disabled and clicked.
  */
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun ToggleSettings(
     settings: Settings,
@@ -36,11 +35,10 @@ fun ToggleSettings(
     enabled: Boolean,
     modifier: Modifier = Modifier,
     checked: Boolean = false,
-    contentIfCheck: @Composable ((() -> Unit) -> Unit)? = null,
+    contentIfCheck: @Composable (() -> Unit)? = null,
     onDisabledClick: (Settings) -> Unit = {}
 ) {
     var checkedState by remember { mutableStateOf(checked) }
-    var showContentChecked by remember { mutableStateOf(false) }
 
     Row(
         modifier = modifier
@@ -52,7 +50,6 @@ fun ToggleSettings(
                     return@noRippleClickable
                 }
                 checkedState = !checkedState
-                showContentChecked = checkedState
                 onChecked(settings)
             },
         verticalAlignment = Alignment.CenterVertically,
@@ -84,7 +81,9 @@ fun ToggleSettings(
             Icon(
                 painter = icon,
                 contentDescription = stringResource(R.string.show_hide_settings),
-                modifier = Modifier.noRippleClickable {
+                modifier = Modifier
+                    .padding(8.dp)
+                    .noRippleClickable {
                     visible = !visible
                 }
             )
@@ -95,9 +94,7 @@ fun ToggleSettings(
                 exit = slideOutVertically() + fadeOut()
             ) {
                 Box(modifier = Modifier.padding(horizontal = 4.dp)) {
-                    contentIfCheck {
-                        showContentChecked = false
-                    }
+                    contentIfCheck()
                 }
             }
         }

@@ -1,6 +1,6 @@
 package com.orelzman.mymessages.domain.model.entities
 
-import com.orelzman.mymessages.domain.model.dto.body.create.CreateMessageSentBody
+import com.orelzman.mymessages.data.remote.dto.body.create.CreateMessageSentBody
 
 data class MessageSent(
     val sentAt: Long,

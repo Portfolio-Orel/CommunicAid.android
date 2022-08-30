@@ -1,6 +1,6 @@
 package com.orelzman.mymessages.presentation.login.components
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,6 +16,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.orelzman.mymessages.R
 
 @Composable
@@ -33,40 +34,44 @@ fun Input(
 ) {
     val value = remember { mutableStateOf(initialText) }
     val passwordVisible = rememberSaveable { mutableStateOf(false) }
+    val lineHeight = 40
+
     val textFieldModifier: Modifier =
-        if (maxLines == 1) Modifier else Modifier.height((40 * minLines).dp)
+        if (maxLines == 1) Modifier else Modifier.height((lineHeight * minLines).dp)
 
-    Column(modifier = modifier.fillMaxWidth()) {
-        Text(title)
-        OutlinedTextField(
-            modifier = textFieldModifier.fillMaxWidth(),
-            value = value.value,
-            onValueChange = {
-                value.value = it
-                onTextChange(it)
-            },
-            placeholder = {
-                Text(
-                    text = placeholder,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
-                )
-            },
-            singleLine = maxLines == 1,
-            visualTransformation = if (isPassword && !passwordVisible.value) PasswordVisualTransformation() else VisualTransformation.None,
-            keyboardOptions = if (isPassword) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions(
-                keyboardType = KeyboardType.Text
-            ),
-            trailingIcon = {
-                if (isPassword) {
-                    PasswordIcon(
-                        passwordVisible = passwordVisible.value,
-                        onClick = { passwordVisible.value = !passwordVisible.value })
-                } else {
-                    trailingIcon()
-                }
-            }
-
-        )
+    Box(modifier = modifier.fillMaxWidth()) {
+        Box(modifier = Modifier.zIndex(1f)) {
+            Text(title)
+            OutlinedTextField(
+                modifier = textFieldModifier
+                    .fillMaxWidth(),
+                value = value.value,
+                onValueChange = {
+                    value.value = it
+                    onTextChange(it)
+                },
+                placeholder = {
+                    Text(
+                        text = placeholder,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                    )
+                },
+                singleLine = maxLines == 1,
+                visualTransformation = if (isPassword && !passwordVisible.value) PasswordVisualTransformation() else VisualTransformation.None,
+                keyboardOptions = if (isPassword) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions(
+                    keyboardType = KeyboardType.Text
+                ),
+                trailingIcon = {
+                    if (isPassword) {
+                        PasswordIcon(
+                            passwordVisible = passwordVisible.value,
+                            onClick = { passwordVisible.value = !passwordVisible.value })
+                    } else {
+                        trailingIcon()
+                    }
+                },
+            )
+        }
     }
 }
 

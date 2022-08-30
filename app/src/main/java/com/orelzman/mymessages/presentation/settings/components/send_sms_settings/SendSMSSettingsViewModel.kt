@@ -9,9 +9,7 @@ import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.model.entities.SettingsKey
 import com.orelzman.mymessages.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 /**
@@ -26,6 +24,7 @@ class SendSMSSettingsViewModel
 ) : ViewModel() {
 
     var state by mutableStateOf(SendSMSSettingsState())
+    private var save: Job? = null
 
     init {
         val smsText: String =
@@ -35,23 +34,22 @@ class SendSMSSettingsViewModel
     }
 
     fun onSMSTextChange(value: String) {
-        state = state.copy(smsText = value)
-    }
-
-    fun saveSMSText(onSaveDone: () -> Unit = {}) {
-        val saveJob = viewModelScope.async {
-            settingsInteractor.createOrUpdate(
-                settings = SettingsKey.SMSToSendToBackgroundCall.settings(value = state.smsText),
-            )
-        }
-        viewModelScope.launch(Dispatchers.IO) {
+        state = state.copy(smsText = value, isLoading = true)
+        save?.cancel()
+        save = viewModelScope.launch(SupervisorJob()) {
             try {
-                saveJob.await()
+                delay(timeMillis = TIME_TO_SAVE_SMS_MILLIS)
+                settingsInteractor.createOrUpdate(SettingsKey.SMSToSendToBackgroundCall.settings(state.smsText))
+                state = state.copy(isLoading = false)
             } catch (e: Exception) {
-                e.log()
-            } finally {
-                onSaveDone()
+                if (e !is CancellationException) {
+                    e.log()
+                }
             }
         }
+    }
+
+    companion object {
+        private const val TIME_TO_SAVE_SMS_MILLIS = 2000L
     }
 }

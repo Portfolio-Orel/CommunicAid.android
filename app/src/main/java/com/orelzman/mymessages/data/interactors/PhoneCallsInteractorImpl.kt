@@ -1,11 +1,11 @@
 package com.orelzman.mymessages.data.interactors
 
 import com.orelzman.mymessages.data.local.LocalDatabase
+import com.orelzman.mymessages.data.remote.dto.body.create.createPhoneCallBodyList
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.model.entities.MessageSent
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.model.entities.UploadState
-import com.orelzman.mymessages.domain.model.entities.createPhoneCallBodyList
 import com.orelzman.mymessages.domain.repository.Repository
 import com.orelzman.mymessages.domain.util.extension.addUniqueWithPredicate
 import java.util.*

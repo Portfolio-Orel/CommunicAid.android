@@ -83,8 +83,8 @@ fun SettingsScreen(
                         enabled = settings.isEnabled() && settings.arePermissionsGranted(context = context)
                             .isEmpty() && !state.isLoading,
                         contentIfCheck = if (settings.key == SettingsKey.SendSMSToBackgroundCall) {
-                            { onDismiss ->
-                                SendSMSSettings(onDismiss = onDismiss)
+                            {
+                                SendSMSSettings()
                             }
                         } else {
                             null

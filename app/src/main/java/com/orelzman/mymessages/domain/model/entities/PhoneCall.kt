@@ -5,7 +5,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.Gson
 import com.orelzman.mymessages.domain.interactors.CallType
-import com.orelzman.mymessages.domain.model.dto.body.create.CreatePhoneCallBody
 import com.orelzman.mymessages.domain.util.common.ContactsUtil
 import com.orelzman.mymessages.domain.util.extension.inSeconds
 import java.util.*
@@ -88,26 +87,6 @@ data class PhoneCall(
                 endDate = Date()
             )
     }
-}
-
-fun List<PhoneCall>.createPhoneCallBodyList(): List<CreatePhoneCallBody> {
-    val array = ArrayList<CreatePhoneCallBody>()
-    forEach {
-        with(it) {
-            array.add(
-                CreatePhoneCallBody(
-                    number = number,
-                    contactName = name,
-                    startDate = startDate.time,
-                    endDate = endDate.time,
-                    isAnswered = isAnswered,
-                    type = type,
-                    messagesSent = messagesSent.map { messageSent -> messageSent.createMessageSentBody }
-                )
-            )
-        }
-    }
-    return array
 }
 
 fun String.toPhoneCall(): PhoneCall? {

@@ -2,8 +2,8 @@ package com.orelzman.mymessages.data.interactors
 
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
-import com.orelzman.mymessages.domain.model.dto.body.create.CreateOrUpdateSettingsBody
-import com.orelzman.mymessages.domain.model.dto.response.toSettings
+import com.orelzman.mymessages.data.remote.dto.body.create.CreateOrUpdateSettingsBody
+import com.orelzman.mymessages.data.remote.dto.response.toSettings
 import com.orelzman.mymessages.domain.model.entities.Settings
 import com.orelzman.mymessages.domain.model.entities.SettingsKey
 import com.orelzman.mymessages.domain.model.entities.UploadState

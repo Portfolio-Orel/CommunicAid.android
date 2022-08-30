@@ -1,9 +1,19 @@
 package com.orelzman.mymessages.presentation.settings.components.send_sms_settings
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.presentation.login.components.Input
@@ -15,16 +25,45 @@ import com.orelzman.mymessages.presentation.login.components.Input
 
 @Composable
 fun SendSMSSettings(
-    onDismiss: () -> Unit,
     viewModel: SendSMSSettingsViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
+
     Column {
         Input(
             minLines = 4,
             maxLines = 6,
             placeholder = stringResource(R.string.sms_to_background_call_placeholder),
-            onTextChange = viewModel::onSMSTextChange
+            initialText = state.smsText,
+            onTextChange = viewModel::onSMSTextChange,
+            trailingIcon = {
+                Box(
+                modifier = Modifier
+                    .zIndex(2f)
+                    .fillMaxHeight()
+                    .background(Color.Transparent)
+                    .padding(vertical = 8.dp),
+                contentAlignment = Alignment.BottomEnd
+            ) {
+                    if(state.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .height(16.dp)
+                                .width(16.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    } else {
+                        Icon(
+                            modifier = Modifier
+                                .size(16.dp),
+                            imageVector = Icons.Filled.Done,
+                            contentDescription = stringResource(R.string.done_icon),
+                            tint = MaterialTheme.colorScheme.tertiary
+                        )
+                    }
+            }
+            }
         )
         Row {
 //            SaveButton(onClick = { viewModel.saveSMSText(onDismiss) }, isLoading = state.isLoading)
