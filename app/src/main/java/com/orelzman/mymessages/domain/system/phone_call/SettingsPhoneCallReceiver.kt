@@ -39,7 +39,6 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
         when (intent?.action) {
             PHONE_STATE -> {
                 if (debounceExtra(intent)) return
-                checkSendSMSToWaitingCall(context)
                 val state = intent.extras?.getString(TelephonyManager.EXTRA_STATE) ?: return
                 checkStartAppOnCallSettings(state = state, context = context)
                 checkSendSMSToWaitingCall(context = context)
@@ -58,10 +57,10 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
             if (phoneCallManager.callsData.callState.isCallStateWaiting()) {
                 val text: String? =
                     settingsInteractor.getSettings(SettingsKey.SMSToSendToBackgroundCall)
-                        .getRealValue()
+                        .getRealValue() // 4601864
                 text?.let { textToSend ->
                     phoneCallManager.callsData.callInTheBackground?.let { callInBackgroundNumber ->
-                        context.getSystemService(SmsManager::class.java).sendTextMessage(
+                        SmsManager.getDefault().sendTextMessage(
                             callInBackgroundNumber,
                             null,
                             textToSend,

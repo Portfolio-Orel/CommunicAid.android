@@ -48,15 +48,15 @@ fun SendSMSSettings(
                     if(state.isLoading) {
                         CircularProgressIndicator(
                             modifier = Modifier
-                                .height(16.dp)
-                                .width(16.dp),
+                                .height(32.dp)
+                                .width(32.dp),
                             strokeWidth = 2.dp,
                             color = MaterialTheme.colorScheme.primary
                         )
                     } else {
                         Icon(
                             modifier = Modifier
-                                .size(16.dp),
+                                .size(32.dp),
                             imageVector = Icons.Filled.Done,
                             contentDescription = stringResource(R.string.done_icon),
                             tint = MaterialTheme.colorScheme.tertiary
