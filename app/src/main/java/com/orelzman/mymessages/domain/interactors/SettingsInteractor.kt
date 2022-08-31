@@ -36,4 +36,6 @@ interface SettingsInteractor {
      * @author Orel Zilberman
      */
     suspend fun createOrUpdate(settings: List<Settings>)
+
+    suspend fun createOrUpdate(settings: Settings)
 }

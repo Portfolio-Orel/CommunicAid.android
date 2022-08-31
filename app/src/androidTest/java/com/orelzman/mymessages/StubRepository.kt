@@ -1,7 +1,7 @@
 package com.orelzman.mymessages
 
-import com.orelzman.mymessages.domain.model.dto.body.create.*
-import com.orelzman.mymessages.domain.model.dto.response.*
+import com.orelzman.mymessages.data.remote.dto.body.create.*
+import com.orelzman.mymessages.data.remote.dto.response.*
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.repository.Repository
@@ -37,11 +37,10 @@ class StubRepository : Repository {
         null
 
     override suspend fun getDeletedCalls(fromDate: Date): List<GetDeletedCallsResponse> = emptyList()
+    override suspend fun createOrUpdateSettings(createOrUpdateSettingsBody: List<CreateOrUpdateSettingsBody>) = Unit
 
     override suspend fun createUser(createUserBody: CreateUserBody) = Unit
     override suspend fun getUser(): GetUserResponse? = null
-    override suspend fun createOrUpdateSettings(createOrUpdateSettingsBody: CreateOrUpdateSettingsBody) =
-        Unit
 
     override suspend fun getSettings(key: String): List<SettingsResponse> = emptyList()
 

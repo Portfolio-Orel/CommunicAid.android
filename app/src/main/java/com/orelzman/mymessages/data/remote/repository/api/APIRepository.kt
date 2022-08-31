@@ -1,9 +1,9 @@
 package com.orelzman.mymessages.data.remote.repository.api
 
-import com.orelzman.mymessages.domain.model.dto.body.create.*
-import com.orelzman.mymessages.domain.model.dto.body.update.UpdateFolderBody
-import com.orelzman.mymessages.domain.model.dto.body.update.UpdateMessageBody
-import com.orelzman.mymessages.domain.model.dto.response.*
+import com.orelzman.mymessages.data.remote.dto.body.create.*
+import com.orelzman.mymessages.data.remote.dto.body.update.UpdateFolderBody
+import com.orelzman.mymessages.data.remote.dto.body.update.UpdateMessageBody
+import com.orelzman.mymessages.data.remote.dto.response.*
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.repository.Repository
