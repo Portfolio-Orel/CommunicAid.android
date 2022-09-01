@@ -138,7 +138,7 @@ private fun ContentView(viewModel: LoginViewModel) {
                 },
                 onLoginClick = { viewModel.onLoginClick() }
             )
-            if (!state.isRegister) {
+//            if (!state.isRegister) {
 //                Text(
 //                    stringResource(R.string.register),
 //                    modifier = Modifier
@@ -149,7 +149,7 @@ private fun ContentView(viewModel: LoginViewModel) {
 //                    style = MaterialTheme.typography.titleSmall,
 //                    maxLines = 1,
 //                )
-            }
+//            }
             Text(
                 text = stringResource(state.error ?: R.string.empty_string),
                 style = MaterialTheme.typography.bodySmall,
