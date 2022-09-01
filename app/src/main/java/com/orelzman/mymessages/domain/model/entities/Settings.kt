@@ -142,7 +142,7 @@ enum class SettingsKey(
         defaultValue = "",
     );
 
-    fun settings(value: String): Settings = Settings(key = this, value = value)
+    fun settings(value: String = defaultValue): Settings = Settings(key = this, value = value)
 
     companion object {
 

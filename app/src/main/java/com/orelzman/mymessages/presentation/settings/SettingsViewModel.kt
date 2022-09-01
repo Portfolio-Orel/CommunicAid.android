@@ -28,12 +28,27 @@ class SettingsViewModel @Inject constructor(
         observeSettings()
     }
 
+    fun settingsChanged(settings: Settings) {
+        when (settings.key.type) {
+            SettingsType.Toggle -> settingsChecked(settings)
+            else -> {}
+        }
+        val updatedSettings = ArrayList(state.updatedSettings)
+        updatedSettings.add(settings)
+        state = state.copy(updatedSettings = updatedSettings)
+        Logger.v("updated settings: $updatedSettings")
+    }
+
+    fun refreshSettings() {
+        setSettings(emptyList())
+        setSettings(settingsInteractor.getAll())
+    }
+
     private fun initData() {
         val settingsList = settingsInteractor.getAll()
         setSettings(settingsList)
 
         val fetchSettingsJob = viewModelScope.async { settingsInteractor.init() }
-//        state = state.copy(isLoading = true)
         CoroutineScope(SupervisorJob()).launch {
             try {
                 fetchSettingsJob.await()
@@ -43,7 +58,6 @@ class SettingsViewModel @Inject constructor(
                 state = state.copy(isLoading = false)
             }
         }
-
     }
 
     private fun observeSettings() {
@@ -91,17 +105,6 @@ class SettingsViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    fun settingsChanged(settings: Settings) {
-        when (settings.key.type) {
-            SettingsType.Toggle -> settingsChecked(settings)
-            else -> {}
-        }
-        val updatedSettings = ArrayList(state.updatedSettings)
-        updatedSettings.add(settings)
-        state = state.copy(updatedSettings = updatedSettings)
-        Logger.v("updated settings: $updatedSettings")
     }
 
     private fun settingsChecked(settings: Settings) {

@@ -32,6 +32,7 @@ class MainViewModel @Inject constructor(
     private var callOnTheLineJob: Deferred<Unit>? = null
     private var callInTheBackgroundJob: Deferred<Unit>? = null
 
+    /* States */
     fun init() {
         initData()
         observeNumberOnTheLine()
@@ -39,30 +40,34 @@ class MainViewModel @Inject constructor(
     }
 
     fun onResume() {
-        init()
+        initData()
+    }
+    /* States */
+
+    fun navigated() {
+        state = state.copy(screenToShow = MainScreens.Default)
     }
 
-    fun getFoldersMessages(): List<Message> {
-        val messageIds = state.messagesInFolders
-            .filter { it.folderId == state.selectedFolder?.id }
-            .map { it.messageId }
-
-        return state.messages
-            .filter { messageIds.contains(it.id) }
-            .sortedByDescending { it.timesUsed }
+    fun onFolderClick(folder: Folder) {
+        state = state.copy(
+            selectedFolder = folder,
+            selectedFoldersMessages = getFoldersMessages(folder.id)
+        )
     }
+
+    fun onFolderLongClick(folder: Folder) = goToEditFolder(folder)
 
     fun onMessageClick(message: Message) {
         val phoneCall = state.activeCall
         if (phoneCall != null) {
-                phoneCallsInteractor.addMessageSent(
-                    phoneCall,
-                    MessageSent(sentAt = Date().time, messageId = message.id)
-                )
-                whatsappInteractor.sendMessage(
-                    number = phoneCall.number,
-                    message = message.body
-                )
+            phoneCallsInteractor.addMessageSent(
+                phoneCall,
+                MessageSent(sentAt = Date().time, messageId = message.id)
+            )
+            whatsappInteractor.sendMessage(
+                number = phoneCall.number,
+                message = message.body
+            )
             val updateTimesUsedJob = viewModelScope.async {
                 messageInteractor.increaseTimesUsed(message.id)
             }
@@ -87,14 +92,24 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun onFolderClick(folder: Folder) {
-        state = state.copy(selectedFolder = folder)
+    private fun getFoldersMessages(folderId: String): List<Message> {
+        val messageIds = state.messagesInFolders
+            .filter { it.folderId == folderId }
+            .map { it.messageId }
+
+        return state.messages
+            .filter { messageIds.contains(it.id) }
+            .sortedByDescending { it.timesUsed }
     }
 
-    fun onFolderLongClick(folder: Folder) = goToEditFolder(folder)
+    private fun goToEditFolder(folder: Folder) {
+        state = state.copy(folderToEdit = folder)
+        navigateTo(MainScreens.DetailsFolder)
+    }
 
-    fun navigated() {
-        state = state.copy(screenToShow = MainScreens.Default)
+    private fun goToEditMessage(message: Message) {
+        state = state.copy(messageToEdit = message)
+        navigateTo(MainScreens.DetailsMessage)
     }
 
     /**
@@ -105,56 +120,19 @@ class MainViewModel @Inject constructor(
         val messages = messageInteractor.getAllOnce().sortedByDescending { it.timesUsed }
         val folders = folderInteractor.getAllOnce().sortedByDescending { it.timesUsed }
         val messagesInFolders = messageInFolderInteractor.getMessagesInFoldersOnce()
+        val selectedFolder = if (state.selectedFolder == null) folders.firstOrNull() else state.selectedFolder
         state = state.copy(
             isLoading = false,
             messages = messages,
             folders = folders,
             messagesInFolders = messagesInFolders,
-            selectedFolder = folders.firstOrNull()
+            selectedFolder = selectedFolder,
+            selectedFoldersMessages = getFoldersMessages(selectedFolder?.id ?: "")
         )
-    }
-
-    private fun setCallOnTheLineActive() {
-        selectActiveCall(state.callOnTheLine)
     }
 
     private fun navigateTo(screen: MainScreens) {
         state = state.copy(screenToShow = screen)
-    }
-
-    private fun selectActiveCall(phoneCall: PhoneCall?) {
-        state = state.copy(activeCall = phoneCall)
-    }
-
-    private fun goToEditMessage(message: Message) {
-        state = state.copy(messageToEdit = message)
-        navigateTo(MainScreens.DetailsMessage)
-    }
-
-    private fun goToEditFolder(folder: Folder) {
-        state = state.copy(folderToEdit = folder)
-        navigateTo(MainScreens.DetailsFolder)
-    }
-
-    private fun observeNumberOnTheLine() {
-        val callOnTheLine = phoneCallManagerInteractor.callsData.callOnTheLine?.toPhoneCall()
-        state = state.copy(callOnTheLine = callOnTheLine)
-        callOnTheLineJob = viewModelScope.async {
-            phoneCallManagerInteractor.callsDataFlow.collectLatest {
-                val call = it.callOnTheLine?.toPhoneCall()
-                state = state.copy(callOnTheLine = call)
-                setCallOnTheLineActive()
-            }
-        }
-        viewModelScope.launch(SupervisorJob()) {
-            try {
-                callOnTheLineJob?.await()
-            } catch (e: CancellationException) {
-
-            } catch (e: Exception) {
-                e.log()
-            }
-        }
     }
 
     private fun observeNumberInBackground() {
@@ -184,5 +162,34 @@ class MainViewModel @Inject constructor(
                 e.log()
             }
         }
+    }
+
+    private fun observeNumberOnTheLine() {
+        val callOnTheLine = phoneCallManagerInteractor.callsData.callOnTheLine?.toPhoneCall()
+        state = state.copy(callOnTheLine = callOnTheLine)
+        callOnTheLineJob = viewModelScope.async {
+            phoneCallManagerInteractor.callsDataFlow.collectLatest {
+                val call = it.callOnTheLine?.toPhoneCall()
+                state = state.copy(callOnTheLine = call)
+                setCallOnTheLineActive()
+            }
+        }
+        viewModelScope.launch(SupervisorJob()) {
+            try {
+                callOnTheLineJob?.await()
+            } catch (e: CancellationException) {
+
+            } catch (e: Exception) {
+                e.log()
+            }
+        }
+    }
+
+    private fun selectActiveCall(phoneCall: PhoneCall?) {
+        state = state.copy(activeCall = phoneCall)
+    }
+
+    private fun setCallOnTheLineActive() {
+        selectActiveCall(state.callOnTheLine)
     }
 }

@@ -101,12 +101,12 @@ private fun Content(
                 folders = state.folders,
                 onClick = { viewModel.onFolderClick(it) },
                 onLongClick = { viewModel.onFolderLongClick(it) },
-                selected = state.folders.firstOrNull(),
+                selected = state.selectedFolder,
                 color = MaterialTheme.colorScheme.primary
             )
 
             MessagesList(
-                messages = viewModel.getFoldersMessages(),
+                messages = state.selectedFoldersMessages,
                 onClick = { viewModel.onMessageClick(it) },
                 onLongClick = { message, context ->
                     viewModel.onMessageLongClick(
@@ -143,7 +143,6 @@ fun FoldersList(
         selected = selected,
         color = color,
         dropdownDecoratorStyle = DropdownDecoratorStyle.Text
-
     )
 }
 
