@@ -1,9 +1,9 @@
 package com.orelzman.mymessages.data.interactors
 
 import com.orelzman.mymessages.data.local.LocalDatabase
-import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.data.remote.dto.body.create.CreateOrUpdateSettingsBody
 import com.orelzman.mymessages.data.remote.dto.response.toSettings
+import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.model.entities.Settings
 import com.orelzman.mymessages.domain.model.entities.SettingsKey
 import com.orelzman.mymessages.domain.model.entities.UploadState
@@ -36,7 +36,14 @@ class SettingsInteractorImpl @Inject constructor(
 
     override suspend fun init() {
         val result = repository.getSettings()
-        db.insert(result.toSettings())
+        val settings = ArrayList(result.toSettings())
+        val settingsKeys = settings.map{it.key}
+        SettingsKey.values().forEach {
+            if(!settingsKeys.contains(it)) {
+                settings.add(it.settings())
+            }
+        }
+        db.insert(settings)
     }
 
     override suspend fun createOrUpdate(settings: List<Settings>) {
