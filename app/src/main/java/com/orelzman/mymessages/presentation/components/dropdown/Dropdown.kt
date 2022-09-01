@@ -38,9 +38,7 @@ fun <T : DropdownItem> Dropdown(
     selected: T? = null,
     dropdownDecoratorStyle: DropdownDecoratorStyle = DropdownDecoratorStyle.Default
 ) {
-
     var expanded by remember { mutableStateOf(false) }
-
     var selectedItem by remember {
         mutableStateOf(
             selected ?: items.firstOrNull()
