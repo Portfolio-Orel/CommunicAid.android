@@ -72,6 +72,7 @@ fun DetailsMessageScreen(
             else -> {}
         }
     }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()

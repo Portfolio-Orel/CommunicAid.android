@@ -3,7 +3,7 @@ package com.orelzman.mymessages.data.interactors
 import android.util.Log
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.domain.interactors.DeletedCallsInteractor
-import com.orelzman.mymessages.domain.model.dto.body.create.CreateDeletedCallBody
+import com.orelzman.mymessages.data.remote.dto.body.create.CreateDeletedCallBody
 import com.orelzman.mymessages.domain.model.entities.DeletedCall
 import com.orelzman.mymessages.domain.model.entities.UploadState
 import com.orelzman.mymessages.domain.repository.Repository

@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.telephony.SmsManager
 import android.telephony.TelephonyManager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.MainActivity
@@ -38,7 +39,6 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
         when (intent?.action) {
             PHONE_STATE -> {
                 if (debounceExtra(intent)) return
-                checkSendSMSToWaitingCall(context)
                 val state = intent.extras?.getString(TelephonyManager.EXTRA_STATE) ?: return
                 checkStartAppOnCallSettings(state = state, context = context)
                 checkSendSMSToWaitingCall(context = context)
@@ -55,13 +55,20 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
                 .isEmpty()
         ) {
             if (phoneCallManager.callsData.callState.isCallStateWaiting()) {
-//                context.getSystemService(SmsManager::class.java).sendTextMessage(
-//                    phoneCallManager.callsData.callInTheBackground,
-//                    null,
-//                    "Text",
-//                    null,
-//                    null
-//                )
+                val text: String? =
+                    settingsInteractor.getSettings(SettingsKey.SMSToSendToBackgroundCall)
+                        .getRealValue() // 4601864
+                text?.let { textToSend ->
+                    phoneCallManager.callsData.callInTheBackground?.let { callInBackgroundNumber ->
+                        SmsManager.getDefault().sendTextMessage(
+                            callInBackgroundNumber,
+                            null,
+                            textToSend,
+                            null,
+                            null
+                        )
+                    }
+                }
             }
         }
     }

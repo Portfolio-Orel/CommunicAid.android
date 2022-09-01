@@ -4,8 +4,8 @@ import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.dao.FolderDao
 import com.orelzman.mymessages.domain.interactors.FolderInteractor
 import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
-import com.orelzman.mymessages.domain.model.dto.body.create.CreateFolderBody
-import com.orelzman.mymessages.domain.model.dto.response.folders
+import com.orelzman.mymessages.data.remote.dto.body.create.CreateFolderBody
+import com.orelzman.mymessages.data.remote.dto.response.folders
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.UploadState
 import com.orelzman.mymessages.domain.repository.Repository
