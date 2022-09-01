@@ -10,14 +10,13 @@ data class MainState(
     val folders: List<Folder> = emptyList(),
     val messagesInFolders: List<MessageInFolder> = emptyList(),
     val selectedFolder: Folder? = null,
+    val selectedFoldersMessages: List<Message> = emptyList(),
 
     val activeCall: PhoneCall? = null,
     val callOnTheLine: PhoneCall? = null,
     val callInBackground: PhoneCall? = null,
 
     val isLoading: Boolean = true,
-    val isLoggedIn: Boolean = false,
-    val maxMessagesInRow: Int = 6,
     val messageToEdit: Message? = null,
     val folderToEdit: Folder? = null,
 
