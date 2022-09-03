@@ -73,7 +73,7 @@ class MainViewModel @Inject constructor(
             }
             viewModelScope.launch(Dispatchers.IO) {
                 try {
-//                    updateTimesUsedJob.await()
+                    updateTimesUsedJob.await()
                 } catch (e: Exception) {
                     e.log()
                 }
@@ -120,7 +120,9 @@ class MainViewModel @Inject constructor(
         val messages = messageInteractor.getAllOnce().sortedByDescending { it.timesUsed }
         val folders = folderInteractor.getAllOnce().sortedByDescending { it.timesUsed }
         val messagesInFolders = messageInFolderInteractor.getMessagesInFoldersOnce()
-        val selectedFolder = if (state.selectedFolder == null) folders.firstOrNull() else state.selectedFolder
+        val selectedFolder = if (
+            state.selectedFolder == null || folders.none { it.id == state.selectedFolder?.id }
+        ) folders.firstOrNull() else state.selectedFolder
         state = state.copy(
             isLoading = false,
             messages = messages,

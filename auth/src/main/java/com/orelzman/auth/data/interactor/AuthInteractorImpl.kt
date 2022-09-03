@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-
 package com.orelzman.auth.data.interactor
 
 import android.app.Activity
@@ -52,7 +50,7 @@ class AuthInteractorImpl @Inject constructor(
             }
             isConfigured = true
             collectState(configFileResourceId)
-            Log.v(TAG, "AWS configured")
+            refreshToken()
             return
         } catch (e: AmplifyException) {
             Log.v(TAG, e.localizedMessage ?: "")
@@ -178,7 +176,12 @@ class AuthInteractorImpl @Inject constructor(
     }
 
     override suspend fun refreshToken(@RawRes configFileResourceId: Int?) {
-        init(configFileResourceId)
+        if (configFileResourceId != null) {
+            init(configFileResourceId)
+        }
+        if (!isConfigured) {
+            return
+        }
         val session = Amplify.Auth.fetchAuthSession()
         userInteractor.get()?.let {
             val user = User(
@@ -220,7 +223,7 @@ class AuthInteractorImpl @Inject constructor(
                         AuthChannelEventName.SESSION_EXPIRED ->
                             try {
                                 refreshToken(configFileResourceId)
-                            } catch(e: Exception) {
+                            } catch (e: Exception) {
                                 signOut()
                             }
                         AuthChannelEventName.USER_DELETED ->
@@ -247,7 +250,8 @@ class AuthInteractorImpl @Inject constructor(
                     email = it.value
                 }
             }
-            val user = User(userId = userId, token = token, email = email, state = UserState.Authorized)
+            val user =
+                User(userId = userId, token = token, email = email, state = UserState.Authorized)
             userInteractor.save(user)
         } catch (e: Exception) {
             when (e) {

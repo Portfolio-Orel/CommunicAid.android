@@ -25,7 +25,7 @@ interface Repository {
 
     /* Folders */
     suspend fun createFolder(createFolderBody: CreateFolderBody): String?
-    suspend fun deleteFolder(folder: Folder)
+    suspend fun deleteFolder(id: String)
     suspend fun getFolders(): List<GetFoldersResponse>
     suspend fun updateFolder(folder: Folder)
     /* Folders */

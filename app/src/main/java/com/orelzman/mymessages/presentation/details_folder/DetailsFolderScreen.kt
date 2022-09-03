@@ -33,7 +33,7 @@ fun DetailsFolderScreen(
         viewModel.setEdit(folderId)
     }
     LaunchedEffect(key1 = state.eventFolder) {
-        when(state.eventFolder) {
+        when (state.eventFolder) {
             EventsFolder.Saved -> {
                 Toast.makeText(
                     context,
@@ -75,7 +75,7 @@ fun DetailsFolderScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-    verticalArrangement = Arrangement.spacedBy(18.dp)
+        verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
         Row(horizontalArrangement = Arrangement.SpaceAround) {
             ActionButton(
@@ -106,8 +106,10 @@ fun DetailsFolderScreen(
             },
             isError = state.emptyFields.contains(FolderFields.Title)
         )
-        DeleteButton(isLoading = state.isLoadingDelete, deleteText = R.string.delete_folder) {
-            viewModel.deleteFolder()
+        if (state.isEdit) {
+            DeleteButton(isLoading = state.isLoadingDelete, deleteText = R.string.delete_folder) {
+                viewModel.deleteFolder()
+            }
         }
     }
 }

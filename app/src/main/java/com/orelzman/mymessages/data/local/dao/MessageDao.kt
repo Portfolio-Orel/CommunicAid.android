@@ -24,12 +24,6 @@ interface MessageDao {
     """)
     fun getMessagesOnce(): List<Message>
 
-    @Query("""
-        SELECT Count(*)
-        FROM Message
-    """)
-    fun getMessagesCount(): Int
-
     @Delete
     fun delete(message: Message)
 

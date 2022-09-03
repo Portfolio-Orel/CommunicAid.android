@@ -2,10 +2,10 @@ package com.orelzman.mymessages.data.interactors
 
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.dao.FolderDao
-import com.orelzman.mymessages.domain.interactors.FolderInteractor
-import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
 import com.orelzman.mymessages.data.remote.dto.body.create.CreateFolderBody
 import com.orelzman.mymessages.data.remote.dto.response.folders
+import com.orelzman.mymessages.domain.interactors.FolderInteractor
+import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.UploadState
 import com.orelzman.mymessages.domain.repository.Repository
@@ -29,6 +29,7 @@ class FolderInteractorImpl @Inject constructor(
                 it.setUploadState(UploadState.Uploaded)
                 it
             }
+        db.clear()
         db.insert(folders)
     }
 
@@ -36,10 +37,10 @@ class FolderInteractorImpl @Inject constructor(
 
     override fun getAllOnce(): List<Folder> = db.getFoldersOnce()
 
-    override suspend fun deleteFolder(folder: Folder) {
-        repository.deleteFolder(folder)
-        messageInFolderInteractor.deleteMessagesFromFolder(folder.id)
-        db.delete(folder.id)
+    override suspend fun deleteFolder(id: String) {
+        repository.deleteFolder(id)
+        messageInFolderInteractor.deleteMessagesFromFolder(id)
+        db.delete(id)
     }
 
     override suspend fun getFolder(folderId: String): Folder =
