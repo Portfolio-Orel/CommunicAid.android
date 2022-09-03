@@ -29,6 +29,9 @@ interface MessageInFolderDao {
     )
     fun getOnce(): List<MessageInFolder>
 
+    @Query("DELETE FROM MessageInFolder")
+    fun clear()
+
     @Update
     suspend fun update(messageInFolder: MessageInFolder)
 
@@ -59,7 +62,4 @@ interface MessageInFolderDao {
     """
     )
     suspend fun get(messageId: String, folderId: String): MessageInFolder
-
-    @Query("DELETE FROM MessageInFolder")
-    suspend fun clear()
 }

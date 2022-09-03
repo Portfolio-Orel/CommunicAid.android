@@ -9,7 +9,6 @@ class EnvironmentRepository @Inject constructor() {
 }
 
 enum class Environments {
-    Local,
     Dev,
     Prod,
     LocalEmulator

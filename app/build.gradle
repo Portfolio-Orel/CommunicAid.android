@@ -108,12 +108,8 @@ dependencies {
 
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:29.0.0')
-    implementation 'com.google.firebase:firebase-auth'
-    implementation 'com.google.firebase:firebase-firestore'
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4"
-
 
     //Dagger - Hilt
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"

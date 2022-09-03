@@ -75,16 +75,8 @@ class APIRepository @Inject constructor(
         }
     }
 
-    override suspend fun deleteFolder(folder: Folder) =
-        api.updateFolder(
-            UpdateFolderBody(
-                id = folder.id,
-                title = folder.title,
-                isActive = false,
-                timesUsed = folder.timesUsed,
-                position = folder.position
-            )
-        )
+    override suspend fun deleteFolder(id: String) =
+        api.deleteFolder(id = id)
 
     override suspend fun getFolders(): List<GetFoldersResponse> {
         val result = api.getFolders()

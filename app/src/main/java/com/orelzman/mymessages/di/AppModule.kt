@@ -1,6 +1,7 @@
 package com.orelzman.mymessages.di
 
 import android.app.Application
+import androidx.annotation.RawRes
 import androidx.room.Room
 import com.google.gson.Gson
 import com.orelzman.auth.domain.interactor.AuthInteractor
@@ -23,6 +24,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -46,7 +48,6 @@ object AppModule {
     fun provideBaseUrl(
         environmentRepository: EnvironmentRepository
     ) = when (environmentRepository.currentEnvironment) {
-        Local -> "http://192.168.192.248:4000"
         Dev -> "https://22jwmm93j9.execute-api.us-east-1.amazonaws.com"
         Prod -> "https://w5l4faau04.execute-api.us-east-1.amazonaws.com/"
         LocalEmulator -> "http://10.0.2.2:4000"
@@ -54,10 +55,10 @@ object AppModule {
 
     @Provides
     @AuthConfigFile
+    @RawRes
     fun provideAuthConfigFile(
         environmentRepository: EnvironmentRepository
-    ): Int = when(environmentRepository.currentEnvironment) {
-        Local -> R.raw.dev_amplifyconfiguration
+    ): Int = when (environmentRepository.currentEnvironment) {
         Dev -> R.raw.dev_amplifyconfiguration
         Prod -> R.raw.prod_amplifyconfiguration
         LocalEmulator -> R.raw.dev_amplifyconfiguration

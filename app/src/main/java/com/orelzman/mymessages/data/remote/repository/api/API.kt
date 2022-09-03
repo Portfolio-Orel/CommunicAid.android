@@ -35,6 +35,9 @@ interface API {
     @PATCH("/folders")
     suspend fun updateFolder(@Body folder: UpdateFolderBody)
 
+    @DELETE("/folders/{id}")
+    suspend fun deleteFolder(@Path("id") id: String)
+
     // Deleted Calls
     @POST("/deletedCalls")
     suspend fun createDeletedCall(@Body deletedCallBody: CreateDeletedCallBody): Response<String>

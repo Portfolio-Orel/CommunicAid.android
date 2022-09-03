@@ -28,6 +28,10 @@ class MessageInFolderInteractorImpl @Inject constructor(
 
     override fun getMessagesInFoldersOnce(): List<MessageInFolder> = db.getOnce()
 
+    override fun clear() =
+        db.clear()
+
+
 
     override suspend fun delete(messageInFolder: MessageInFolder) {
         db.delete(messageInFolder)

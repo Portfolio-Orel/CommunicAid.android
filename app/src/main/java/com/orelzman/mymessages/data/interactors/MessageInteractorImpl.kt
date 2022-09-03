@@ -2,10 +2,10 @@ package com.orelzman.mymessages.data.interactors
 
 import com.orelzman.mymessages.data.exception.MessageNotFoundException
 import com.orelzman.mymessages.data.local.LocalDatabase
-import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
-import com.orelzman.mymessages.domain.interactors.MessageInteractor
 import com.orelzman.mymessages.data.remote.dto.body.create.CreateMessageBody
 import com.orelzman.mymessages.data.remote.dto.response.toMessagesInFolders
+import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
+import com.orelzman.mymessages.domain.interactors.MessageInteractor
 import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.model.entities.MessageInFolder
 import com.orelzman.mymessages.domain.model.entities.UploadState
@@ -23,22 +23,20 @@ class MessageInteractorImpl @Inject constructor(
     private val db = database.messageDao
 
     override suspend fun initWithMessagesInFolders(): List<Message> {
-        val messagesCount = db.getMessagesCount()
-        var messages: List<Message> = emptyList()
-        if (messagesCount == 0) {
-            val response = repository.getMessages()
-            messages = response
-                .map { it.toMessage() }
-                .map {
-                    it.setUploadState(UploadState.Uploaded)
-                    it
-                }
-            db.insert(messages)
-            messageInFolderInteractor.insert(response.toMessagesInFolders().map {
+        val response = repository.getMessages()
+        val messages = response
+            .map { it.toMessage() }
+            .map {
                 it.setUploadState(UploadState.Uploaded)
                 it
-            })
-        }
+            }
+        db.clear()
+        db.insert(messages)
+        messageInFolderInteractor.clear()
+        messageInFolderInteractor.insert(response.toMessagesInFolders().map {
+            it.setUploadState(UploadState.Uploaded)
+            it
+        })
         return messages
     }
 

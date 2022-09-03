@@ -10,6 +10,6 @@ interface FolderInteractor {
     suspend fun getFolder(folderId: String): Folder
     suspend fun createFolder(folder: Folder): String?
     suspend fun updateFolder(folder: Folder)
-    suspend fun deleteFolder(folder: Folder)
+    suspend fun deleteFolder(id: String)
     suspend fun getFolderWithMessageId(messageId: String): Folder?
 }

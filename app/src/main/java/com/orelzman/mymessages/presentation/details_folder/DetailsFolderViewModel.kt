@@ -38,14 +38,7 @@ class DetailsFolderViewModel @Inject constructor(
             with(it) {
                 val deleteFolderJob = viewModelScope.async {
                     state = state.copy(isLoadingDelete = true, eventFolder = null)
-                    val folder = Folder(
-                        title = title,
-                        isActive = false,
-                        timesUsed = timesUsed,
-                        position = position,
-                        id = id
-                    )
-                    folderInteractor.deleteFolder(folder)
+                    folderInteractor.deleteFolder(id = id)
                     state = state.copy(
                         isLoadingDelete = false,
                         eventFolder = EventsFolder.Deleted

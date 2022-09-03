@@ -148,10 +148,11 @@ fun DetailsMessageScreen(
             )
         }
         Spacer(modifier = Modifier.weight(1f))
-        DeleteButton(isLoading = state.isLoadingDelete, deleteText = R.string.delete_message) {
-            viewModel.deleteMessage()
+        if (state.isEdit) {
+            DeleteButton(isLoading = state.isLoadingDelete, deleteText = R.string.delete_message) {
+                viewModel.deleteMessage()
+            }
         }
-
         Text(
             modifier = Modifier.padding(16.dp),
             text = stringResource(id = state.error),
