@@ -14,8 +14,8 @@ import com.orelzman.mymessages.data.local.type_converters.Converters
 import com.orelzman.mymessages.data.remote.EnvironmentRepository
 import com.orelzman.mymessages.data.remote.Environments.*
 import com.orelzman.mymessages.data.remote.repository.api.API
-import com.orelzman.mymessages.domain.AuthConfigFile
-import com.orelzman.mymessages.domain.BaseProjectUrl
+import com.orelzman.mymessages.domain.annotation.AuthConfigFile
+import com.orelzman.mymessages.domain.annotation.BaseProjectUrl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,7 +24,6 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
-import javax.inject.Named
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -65,7 +64,10 @@ object AppModule {
     }
 
     @Provides
-    fun provideOkHttpClient(authIneractor: AuthInteractor, @AuthConfigFile configFileResourceId: Int?): OkHttpClient =
+    fun provideOkHttpClient(
+        authIneractor: AuthInteractor,
+        @AuthConfigFile configFileResourceId: Int?
+    ): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor(authIneractor))
             .addInterceptor(ErrorInterceptor(authIneractor, configFileResourceId))

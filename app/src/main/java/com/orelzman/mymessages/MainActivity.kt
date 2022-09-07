@@ -17,13 +17,19 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.orelzman.mymessages.domain.managers.system_service.SystemServiceManager
 import com.orelzman.mymessages.presentation.my_messages.MyMessagesApp
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @ExperimentalPermissionsApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var systemServiceManager: SystemServiceManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -67,4 +73,18 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        systemServiceManager.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        systemServiceManager.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        systemServiceManager.onDestroy()
+    }
 }
