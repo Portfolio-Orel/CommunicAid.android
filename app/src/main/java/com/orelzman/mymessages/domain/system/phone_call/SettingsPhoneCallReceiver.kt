@@ -9,9 +9,11 @@ import android.telephony.SmsManager
 import android.telephony.TelephonyManager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.MainActivity
+import com.orelzman.mymessages.domain.annotation.Proximity
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.managers.phonecall.PhoneCallManager
 import com.orelzman.mymessages.domain.managers.phonecall.isCallStateWaiting
+import com.orelzman.mymessages.domain.managers.system_service.SystemService
 import com.orelzman.mymessages.domain.model.entities.SettingsKey
 import com.orelzman.mymessages.domain.util.extension.Logger
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,6 +36,10 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
 
     @Inject
     lateinit var settingsInteractor: SettingsInteractor
+
+    @Inject
+    @Proximity
+    lateinit var proximityManager: SystemService
 
     override fun onReceive(context: Context, intent: Intent?) {
         when (intent?.action) {
@@ -77,11 +83,15 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
      * @see SettingsKey.ShowAppOnCall
      */
     private fun checkStartAppOnCallSettings(state: String, context: Context) {
+        if (state != TelephonyManager.EXTRA_STATE_OFFHOOK) {
+            proximityManager.disable()
+        }
         val settings = settingsInteractor.getSettings(SettingsKey.ShowAppOnCall)
         if (settings.getRealValue<Boolean>() == true && settings.arePermissionsGranted(context = context)
                 .isEmpty()
         ) {
             if (state == TelephonyManager.EXTRA_STATE_OFFHOOK) {
+                proximityManager.enable()
                 showApp(context = context)
             }
         }

@@ -26,6 +26,12 @@ class Logger {
             )
         }
 
+        fun vNoRemoteLogging(
+            message: String
+        ) {
+            Log.v(TAG, message)
+        }
+
         fun i(
             message: String,
             throwable: Throwable? = null,

@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.domain
+package com.orelzman.mymessages.domain.annotation
 
 /**
  * @author Orel Zilberman

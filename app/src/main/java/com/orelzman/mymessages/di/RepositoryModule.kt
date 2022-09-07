@@ -5,11 +5,15 @@ import com.orelzman.auth.data.interactor.AuthInteractorImpl
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.data.interactors.*
 import com.orelzman.mymessages.data.remote.repository.api.APIRepository
+import com.orelzman.mymessages.domain.annotation.Proximity
 import com.orelzman.mymessages.domain.interactors.*
 import com.orelzman.mymessages.domain.managers.phonecall.PhoneCallManager
 import com.orelzman.mymessages.domain.managers.phonecall.PhoneCallManagerImpl
 import com.orelzman.mymessages.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
 import com.orelzman.mymessages.domain.managers.phonecall.interactor.PhoneCallManagerInteractorImpl
+import com.orelzman.mymessages.domain.managers.system_service.SystemService
+import com.orelzman.mymessages.domain.managers.system_service.SystemServiceManager
+import com.orelzman.mymessages.domain.managers.system_service.SystemServiceManagerImpl
 import com.orelzman.mymessages.domain.managers.unhandled_calls.UnhandledCallsManager
 import com.orelzman.mymessages.domain.managers.unhandled_calls.UnhandledCallsManagerImpl
 import com.orelzman.mymessages.domain.managers.worker.WorkerManager
@@ -17,6 +21,7 @@ import com.orelzman.mymessages.domain.managers.worker.WorkerManagerImpl
 import com.orelzman.mymessages.domain.repository.Repository
 import com.orelzman.mymessages.domain.system.connectivity.ConnectivityObserver
 import com.orelzman.mymessages.domain.system.connectivity.ConnectivityObserverObserverImpl
+import com.orelzman.mymessages.domain.system.proximity.ProximityManagerImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -80,11 +85,20 @@ abstract class RepositoryModule {
     abstract fun provideCallLogInteractor(interactorImpl: CallLogInteractorImpl): CallLogInteractor
 
     @Binds
+    @Singleton
+    @Proximity
+    abstract fun provideProximityManager(managerImpl: ProximityManagerImpl): SystemService
+
+    @Binds
+    abstract fun provideSystemServiceManager(managerImpl: SystemServiceManagerImpl): SystemServiceManager
+
+    @Binds
     abstract fun provideStatisticsInteractor(interactorImpl: StatisticsInteractorImpl): StatisticsInteractor
 
     @Binds
     abstract fun provideWhatsappInteractor(interactorImpl: WhatsappInteractorImpl): WhatsappInteractor
 
     @Binds
-    abstract fun provideWorkerManager(workerManagerImpl: WorkerManagerImpl): WorkerManager
+    @Singleton
+    abstract fun provideWorkerManager(managerImpl: WorkerManagerImpl): WorkerManager
 }

@@ -12,7 +12,7 @@ import com.orelzman.auth.domain.exception.UserNotFoundException
 import com.orelzman.auth.domain.exception.WrongCredentialsException
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.R
-import com.orelzman.mymessages.domain.AuthConfigFile
+import com.orelzman.mymessages.domain.annotation.AuthConfigFile
 import com.orelzman.mymessages.data.remote.dto.body.create.CreateUserBody
 import com.orelzman.mymessages.domain.repository.Repository
 import com.orelzman.mymessages.domain.util.extension.log

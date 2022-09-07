@@ -9,7 +9,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.auth.domain.model.UserState
-import com.orelzman.mymessages.domain.AuthConfigFile
+import com.orelzman.mymessages.domain.annotation.AuthConfigFile
 import com.orelzman.mymessages.domain.interactors.GeneralInteractor
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.managers.phonecall.PhoneCallManager
