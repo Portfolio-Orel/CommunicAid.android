@@ -60,7 +60,7 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
                         .getRealValue() // 4601864
                 text?.let { textToSend ->
                     phoneCallManager.callsData.callInTheBackground?.let { callInBackgroundNumber ->
-                        SmsManager.getDefault().sendTextMessage(
+                        SmsManager.getDefault()?.sendTextMessage(
                             callInBackgroundNumber,
                             null,
                             textToSend,
