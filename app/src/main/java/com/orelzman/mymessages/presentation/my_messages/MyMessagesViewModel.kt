@@ -92,7 +92,12 @@ class MyMessagesViewModel @Inject constructor(
 
     private fun observeUser() {
         viewModelScope.launch(SupervisorJob()) {
-            authInteractor.init(authConfigFile)
+            try {
+                authInteractor.init(authConfigFile)
+            } catch (e: Exception) {
+                e.log()
+                authInteractor.signOut()
+            }
             authInteractor.getUserFlow().safeCollectLatest({
                 loadingData = false
             }) {

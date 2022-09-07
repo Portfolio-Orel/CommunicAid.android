@@ -32,8 +32,22 @@ class MainViewModel @Inject constructor(
     private var callOnTheLineJob: Deferred<Unit>? = null
     private var callInTheBackgroundJob: Deferred<Unit>? = null
 
+    private var fetchDataJob: Deferred<Unit> = viewModelScope.async {
+        messageInteractor.initWithMessagesInFolders()
+        folderInteractor.init()
+    }
+
     /* States */
     fun init() {
+        viewModelScope.launch(SupervisorJob()) {
+            try {
+                fetchDataJob.await()
+            } catch (e: Exception) {
+                if (e !is CancellationException) {
+                    e.log()
+                }
+            }
+        }
         initData()
         observeNumberOnTheLine()
         observeNumberInBackground()
