@@ -2,16 +2,20 @@ package com.orelzman.mymessages.presentation.components.restore.restore_button
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -22,6 +26,7 @@ import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.util.extension.noRippleClickable
 import com.orelzman.mymessages.presentation.components.restore.folder.RestoreFolderViewModel
 import com.orelzman.mymessages.presentation.components.restore.message.RestoreMessageViewModel
+import com.orelzman.mymessages.presentation.components.util.CRUDResult
 
 /**
  * @author Orel Zilberman
@@ -39,10 +44,12 @@ fun RestoreButton(
     var shouldShowContent by remember { mutableStateOf(false) }
     var content by remember { mutableStateOf<Compose>({}) }
 
-    when (restoreType) {
-        RestoreType.Folder -> content = { RestoreFolder() }
+    content = when (restoreType) {
+        RestoreType.Folder -> {
+            { RestoreFolder() }
+        }
         RestoreType.Message -> {
-            RestoreMessage()
+            { RestoreMessage() }
         }
     }
 
@@ -66,7 +73,6 @@ fun RestoreButton(
     ) {
         Text(
             modifier = Modifier
-                .fillMaxSize()
                 .noRippleClickable {
                     shouldShowContent = true
                 },
@@ -92,6 +98,8 @@ fun RestoreFolder(
                 FolderDetails(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     folder = folder,
+                    restore = viewModel::restore,
+                    isLoading = state.result is CRUDResult.Loading && state.result.data?.id == folder.id,
                     messagesInFolder = viewModel.getFoldersMessages(folderId = folder.id)
                 )
             }
@@ -116,48 +124,74 @@ fun RestoreMessage(
 fun FolderDetails(
     folder: Folder,
     messagesInFolder: List<Message>,
+    restore: (Folder) -> Unit,
+    isLoading: Boolean,
     modifier: Modifier = Modifier
 ) {
     var showDetails by remember { mutableStateOf(false) }
 
-    Column(modifier = modifier) {
-        Text(
-            modifier = Modifier.noRippleClickable {
-                showDetails = !showDetails
-            },
-            text = folder.title,
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.background
-        )
-        if (showDetails) {
-            Box(
-                modifier =
-                modifier
-                    .animateContentSize()
-            ) {
-                if (messagesInFolder.isNotEmpty()) {
-                    Column(
-                        modifier = Modifier
-                            .padding(horizontal = 8.dp)
-                            .fillMaxHeight(0.3f)
-                            .fillMaxWidth()
-                    ) {
-                        messagesInFolder.forEach {
-                            Text(
-                                text = it.title,
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.background
-                            )
+    Row(modifier = modifier) {
+        Column(modifier = modifier) {
+            Text(
+                modifier = Modifier.noRippleClickable {
+                    showDetails = !showDetails
+                },
+                text = folder.title,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.background
+            )
+            if (showDetails) {
+                Box(
+                    modifier = modifier
+                        .animateContentSize()
+                ) {
+                    if (messagesInFolder.isNotEmpty()) {
+                        Column(
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp)
+                                .fillMaxHeight(0.3f)
+                                .fillMaxWidth()
+                        ) {
+                            messagesInFolder.forEach {
+                                Text(
+                                    text = it.title,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.background
+                                )
+                            }
                         }
+                    } else {
+                        Text(
+                            text = stringResource(R.string.dash),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.background
+                        )
                     }
-                } else {
-                    Text(
-                        text = stringResource(R.string.dash),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.background
-                    )
                 }
             }
+        }
+        Spacer(Modifier.weight(1f))
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .height(24.dp)
+                    .width(24.dp),
+                strokeWidth = 1.dp,
+                color = MaterialTheme.colorScheme.background
+            )
+        } else {
+            Icon(
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable {
+                        restore(folder)
+                    },
+                painter = painterResource(id = R.drawable.ic_round_restore),
+                contentDescription = stringResource(
+                    R.string.restore
+                ),
+                tint = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }

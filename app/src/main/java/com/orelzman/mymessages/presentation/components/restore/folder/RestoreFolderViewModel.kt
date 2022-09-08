@@ -34,19 +34,19 @@ class RestoreFolderViewModel @Inject constructor(
     var state by mutableStateOf(RestoreFolderState())
 
     init {
-        val deletedFolders = folderInteractor.getAllOnce(isActive = false)
-        state = state.copy(deletedFolders = deletedFolders)
+        setFolders()
     }
 
     fun restore(folder: Folder) {
-        state = state.copy(result = CRUDResult.Loading())
+        state = state.copy(result = CRUDResult.Loading(data = folder))
         val restoreJob = viewModelScope.async {
             folder.isActive = true
-            folderInteractor.updateFolder(folder)
+            folderInteractor.update(folder)
         }
         viewModelScope.launch(Dispatchers.IO) {
             state = try {
                 restoreJob.await()
+                setFolders()
                 state.copy(result = CRUDResult.Success(data = folder))
             } catch (e: Exception) {
                 e.log()
@@ -64,4 +64,9 @@ class RestoreFolderViewModel @Inject constructor(
         messageInFolderInteractor.getMessagesInFoldersOnce()
             .filter { it.folderId == folderId }
             .mapNotNull { messageInteractor.getMessage((it.messageId)) }
+
+    private fun setFolders() {
+        val folders = folderInteractor.getAllOnce(isActive = false)
+        state = state.copy(deletedFolders = folders)
+    }
 }

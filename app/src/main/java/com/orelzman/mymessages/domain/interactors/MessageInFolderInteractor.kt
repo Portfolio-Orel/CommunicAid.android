@@ -13,4 +13,5 @@ interface MessageInFolderInteractor {
     suspend fun deleteMessagesFromFolder(folderId: String)
     suspend fun getMessageFolderId(messageId: String): String?
     suspend fun update(messageId: String, oldFolderId: String, newFolderId: String)
+    suspend fun restore(folderId: String)
 }

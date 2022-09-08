@@ -97,4 +97,5 @@
     <string name="restore_folder_failed">שחזור התיקייה נכשל.. אנחנו על זה</string>
     <string name="no_deleted_folders">אין תיקיות לשחזר</string>
     <string name="dash">-</string>
+    <string name="restore">שחזור</string>
 </resources>

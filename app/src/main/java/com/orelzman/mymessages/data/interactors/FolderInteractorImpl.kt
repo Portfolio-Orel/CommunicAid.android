@@ -33,18 +33,19 @@ class FolderInteractorImpl @Inject constructor(
         db.insert(folders)
     }
 
-    override fun getFolders(isActive: Boolean): Flow<List<Folder>> = db.getFolders(isActive = isActive)
+    override fun getFolders(isActive: Boolean): Flow<List<Folder>> =
+        db.getFolders(isActive = isActive)
 
-    override fun getAllOnce(isActive: Boolean): List<Folder> = db.getFoldersOnce(isActive = isActive)
+    override fun getAllOnce(isActive: Boolean): List<Folder> =
+        db.getFoldersOnce(isActive = isActive)
+
+    override fun getFolder(folderId: String): Folder = db.get(folderId = folderId)
 
     override suspend fun deleteFolder(id: String) {
         repository.deleteFolder(id)
         messageInFolderInteractor.deleteMessagesFromFolder(id)
         db.delete(id)
     }
-
-    override suspend fun getFolder(folderId: String): Folder =
-        db.get(folderId = folderId)
 
     override suspend fun createFolder(folder: Folder): String? {
         val tempFolder = Folder(folder, UUID.randomUUID().toString())
@@ -63,12 +64,17 @@ class FolderInteractorImpl @Inject constructor(
         return folderId
     }
 
-    override suspend fun updateFolder(folder: Folder) {
+    override suspend fun update(folder: Folder) {
         folder.setUploadState(uploadState = UploadState.BeingUploaded)
         db.update(folder)
         repository.updateFolder(folder)
         folder.setUploadState(uploadState = UploadState.Uploaded)
         db.update(folder)
+        if(folder.isActive) {
+            messageInFolderInteractor.restore(folderId = folder.id)
+        } else {
+            messageInFolderInteractor.deleteMessagesFromFolder(folderId = folder.id)
+        }
     }
 
     override suspend fun getFolderWithMessageId(messageId: String): Folder? {

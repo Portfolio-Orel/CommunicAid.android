@@ -6,6 +6,7 @@ import androidx.room.Entity
 data class MessageInFolder(
     val messageId: String = "",
     val folderId: String = "",
+    val isActive: Boolean,
 ) : Loggable, Uploadable() {
     override val data: Map<String, Any>
         get() = mapOf(

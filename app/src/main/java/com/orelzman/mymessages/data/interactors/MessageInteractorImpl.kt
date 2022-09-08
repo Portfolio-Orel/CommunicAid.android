@@ -50,7 +50,7 @@ class MessageInteractorImpl @Inject constructor(
     ) {
         val tempId = UUID.randomUUID().toString()
         val tempMessage = Message(message, tempId)
-        val tempMessageInFolder = MessageInFolder(tempId, folderId)
+        val tempMessageInFolder = MessageInFolder(tempId, folderId, isActive = true)
 
         tempMessageInFolder.setUploadState(UploadState.BeingUploaded)
         tempMessage.setUploadState(UploadState.BeingUploaded)
@@ -66,7 +66,7 @@ class MessageInteractorImpl @Inject constructor(
             db.delete(tempMessage)
             messageInFolderInteractor.delete(tempMessageInFolder)
 
-            val messageInFolder = MessageInFolder(messageId = messageId, folderId = folderId)
+            val messageInFolder = MessageInFolder(messageId = messageId, folderId = folderId, isActive = true)
             messageInFolder.setUploadState(UploadState.Uploaded)
             messageWithId.setUploadState(UploadState.Uploaded)
 
@@ -109,7 +109,8 @@ class MessageInteractorImpl @Inject constructor(
         messageInFolderInteractor.delete(
             MessageInFolder(
                 messageId = message.id,
-                folderId = folderId
+                folderId = folderId,
+                isActive = false
             )
         )
     }
@@ -140,7 +141,8 @@ fun List<GetMessagesResponse>.toMessagesInFolders(): List<MessageInFolder> {
             array.add(
                 MessageInFolder(
                     messageId = messageId,
-                    folderId = folderId
+                    folderId = folderId,
+                    isActive = isActive
                 )
             )
         }

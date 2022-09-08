@@ -79,6 +79,24 @@ fun DetailsFolderScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
+        OutlinedTextField(
+            value = state.title,
+            onValueChange = { viewModel.setTitle(it) },
+            modifier = Modifier
+                .fillMaxWidth(),
+            placeholder = {
+                Text(text = stringResource(R.string.title))
+            },
+            isError = state.emptyFields.contains(FolderFields.Title)
+        )
+        if (state.isEdit) {
+            DeleteButton(isLoading = state.isLoadingDelete, deleteText = R.string.delete_folder) {
+                viewModel.deleteFolder()
+            }
+        } else {
+            RestoreButton(restoreType = RestoreType.Folder)
+        }
+        Spacer(Modifier.weight(1f))
         Row(horizontalArrangement = Arrangement.SpaceAround) {
             ActionButton(
                 modifier = Modifier
@@ -97,22 +115,6 @@ fun DetailsFolderScreen(
                 text = stringResource(R.string.cancel),
                 onClick = { navController.navigateUp() },
             )
-        }
-        OutlinedTextField(
-            value = state.title,
-            onValueChange = { viewModel.setTitle(it) },
-            modifier = Modifier
-                .fillMaxWidth(),
-            placeholder = {
-                Text(text = stringResource(R.string.title))
-            },
-            isError = state.emptyFields.contains(FolderFields.Title)
-        )
-        RestoreButton(restoreType = RestoreType.Folder)
-        if (state.isEdit) {
-            DeleteButton(isLoading = state.isLoadingDelete, deleteText = R.string.delete_folder) {
-                viewModel.deleteFolder()
-            }
         }
     }
 }

@@ -49,7 +49,7 @@ interface FolderDao {
         FROM Folder
         WHERE id = :folderId
     """)
-    suspend fun get(folderId: String): Folder
+    fun get(folderId: String): Folder
 
     @Query("DELETE FROM Folder")
     suspend fun clear()
