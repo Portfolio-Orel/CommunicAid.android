@@ -131,8 +131,8 @@ class MainViewModel @Inject constructor(
      */
     private fun initData() {
         state = state.copy(isLoading = true)
-        val messages = messageInteractor.getAllOnce().sortedByDescending { it.timesUsed }
-        val folders = folderInteractor.getAllOnce().sortedByDescending { it.timesUsed }
+        val messages = messageInteractor.getAllOnce(isActive = true).sortedByDescending { it.timesUsed }
+        val folders = folderInteractor.getAllOnce(isActive = true).sortedByDescending { it.timesUsed }
         val messagesInFolders = messageInFolderInteractor.getMessagesInFoldersOnce()
         val selectedFolder = if (
             state.selectedFolder == null || folders.none { it.id == state.selectedFolder?.id }

@@ -15,28 +15,30 @@ interface MessageDao {
     @Query("""
         SELECT *
         FROM Message
+        WHERE isActive = :isActive
     """)
+    fun getMessages(isActive: Boolean): Flow<List<Message>>
 
-    fun getMessages(): Flow<List<Message>>
     @Query("""
         SELECT *
         FROM Message
+        WHERE isActive = :isActive
     """)
-    fun getMessagesOnce(): List<Message>
+    fun getMessagesOnce(isActive: Boolean): List<Message>
 
     @Delete
     fun delete(message: Message)
 
     @Query("DELETE FROM Message")
-    suspend fun clear()
+    fun clear()
 
     @Query("""
         SELECT * 
         FROM Message
         WHERE id = :messageId
     """)
-    suspend fun getMessage(messageId: String): Message?
+    fun getMessage(messageId: String): Message?
 
     @Update
-    suspend fun update(message: Message)
+    fun update(message: Message)
 }

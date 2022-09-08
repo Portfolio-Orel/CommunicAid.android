@@ -18,14 +18,14 @@ interface FolderDao {
         FROM Folder
         Where isActive = :isActive
     """)
-    fun getFolders(isActive: Boolean = true): Flow<List<Folder>>
+    fun getFolders(isActive: Boolean): Flow<List<Folder>>
 
     @Query("""
         SELECT *
         FROM Folder
         Where isActive = :isActive
     """)
-    fun getFoldersOnce(isActive: Boolean = true): List<Folder>
+    fun getFoldersOnce(isActive: Boolean): List<Folder>
 
 
     @Query("""
@@ -49,7 +49,7 @@ interface FolderDao {
         FROM Folder
         WHERE id = :folderId
     """)
-    suspend fun get(folderId: String): Folder
+    fun get(folderId: String): Folder
 
     @Query("DELETE FROM Folder")
     suspend fun clear()

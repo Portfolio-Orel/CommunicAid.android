@@ -3,7 +3,7 @@ package com.orelzman.mymessages.data.interactors
 import com.orelzman.mymessages.data.exception.MessageNotFoundException
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.remote.dto.body.create.CreateMessageBody
-import com.orelzman.mymessages.data.remote.dto.response.toMessagesInFolders
+import com.orelzman.mymessages.data.remote.dto.response.GetMessagesResponse
 import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
 import com.orelzman.mymessages.domain.interactors.MessageInteractor
 import com.orelzman.mymessages.domain.model.entities.Message
@@ -40,9 +40,9 @@ class MessageInteractorImpl @Inject constructor(
         return messages
     }
 
-    override fun getMessages(): Flow<List<Message>> = db.getMessages()
+    override fun getMessages(isActive: Boolean): Flow<List<Message>> = db.getMessages(isActive = isActive)
 
-    override fun getAllOnce(): List<Message> = db.getMessagesOnce()
+    override fun getAllOnce(isActive: Boolean): List<Message> = db.getMessagesOnce(isActive = isActive)
 
     override suspend fun createMessage(
         message: Message,
@@ -50,7 +50,7 @@ class MessageInteractorImpl @Inject constructor(
     ) {
         val tempId = UUID.randomUUID().toString()
         val tempMessage = Message(message, tempId)
-        val tempMessageInFolder = MessageInFolder(tempId, folderId)
+        val tempMessageInFolder = MessageInFolder(tempId, folderId, isActive = true)
 
         tempMessageInFolder.setUploadState(UploadState.BeingUploaded)
         tempMessage.setUploadState(UploadState.BeingUploaded)
@@ -66,7 +66,7 @@ class MessageInteractorImpl @Inject constructor(
             db.delete(tempMessage)
             messageInFolderInteractor.delete(tempMessageInFolder)
 
-            val messageInFolder = MessageInFolder(messageId = messageId, folderId = folderId)
+            val messageInFolder = MessageInFolder(messageId = messageId, folderId = folderId, isActive = true)
             messageInFolder.setUploadState(UploadState.Uploaded)
             messageWithId.setUploadState(UploadState.Uploaded)
 
@@ -75,7 +75,7 @@ class MessageInteractorImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMessage(messageId: String): Message? =
+    override fun getMessage(messageId: String): Message? =
         db.getMessage(messageId = messageId)
 
     override suspend fun updateMessage(
@@ -109,7 +109,8 @@ class MessageInteractorImpl @Inject constructor(
         messageInFolderInteractor.delete(
             MessageInFolder(
                 messageId = message.id,
-                folderId = folderId
+                folderId = folderId,
+                isActive = false
             )
         )
     }
@@ -121,6 +122,30 @@ class MessageInteractorImpl @Inject constructor(
             message = message
         )
     }
+}
 
+fun GetMessagesResponse.toMessage(): Message =
+    Message(
+        title = title,
+        shortTitle = shortTitle,
+        body = body,
+        timesUsed = timesUsed,
+        isActive = isActive,
+        id = messageId
+    )
 
+fun List<GetMessagesResponse>.toMessagesInFolders(): List<MessageInFolder> {
+    val array = ArrayList<MessageInFolder>()
+    forEach {
+        with(it) {
+            array.add(
+                MessageInFolder(
+                    messageId = messageId,
+                    folderId = folderId,
+                    isActive = isActive
+                )
+            )
+        }
+    }
+    return array
 }

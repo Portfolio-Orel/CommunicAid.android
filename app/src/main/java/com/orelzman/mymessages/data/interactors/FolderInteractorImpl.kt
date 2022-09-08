@@ -3,7 +3,7 @@ package com.orelzman.mymessages.data.interactors
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.dao.FolderDao
 import com.orelzman.mymessages.data.remote.dto.body.create.CreateFolderBody
-import com.orelzman.mymessages.data.remote.dto.response.folders
+import com.orelzman.mymessages.data.remote.dto.response.GetFoldersResponse
 import com.orelzman.mymessages.domain.interactors.FolderInteractor
 import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
 import com.orelzman.mymessages.domain.model.entities.Folder
@@ -33,18 +33,19 @@ class FolderInteractorImpl @Inject constructor(
         db.insert(folders)
     }
 
-    override fun getFolders(): Flow<List<Folder>> = db.getFolders()
+    override fun getFolders(isActive: Boolean): Flow<List<Folder>> =
+        db.getFolders(isActive = isActive)
 
-    override fun getAllOnce(): List<Folder> = db.getFoldersOnce()
+    override fun getAllOnce(isActive: Boolean): List<Folder> =
+        db.getFoldersOnce(isActive = isActive)
+
+    override fun getFolder(folderId: String): Folder = db.get(folderId = folderId)
 
     override suspend fun deleteFolder(id: String) {
         repository.deleteFolder(id)
         messageInFolderInteractor.deleteMessagesFromFolder(id)
         db.delete(id)
     }
-
-    override suspend fun getFolder(folderId: String): Folder =
-        db.get(folderId = folderId)
 
     override suspend fun createFolder(folder: Folder): String? {
         val tempFolder = Folder(folder, UUID.randomUUID().toString())
@@ -63,17 +64,41 @@ class FolderInteractorImpl @Inject constructor(
         return folderId
     }
 
-    override suspend fun updateFolder(folder: Folder) {
+    override suspend fun update(folder: Folder) {
         folder.setUploadState(uploadState = UploadState.BeingUploaded)
         db.update(folder)
         repository.updateFolder(folder)
         folder.setUploadState(uploadState = UploadState.Uploaded)
         db.update(folder)
+        if(folder.isActive) {
+            messageInFolderInteractor.restore(folderId = folder.id)
+        } else {
+            messageInFolderInteractor.deleteMessagesFromFolder(folderId = folder.id)
+        }
     }
 
     override suspend fun getFolderWithMessageId(messageId: String): Folder? {
         val folderId = messageInFolderInteractor.getMessageFolderId(messageId) ?: return null
         return db.get(folderId)
     }
-
 }
+
+
+val List<GetFoldersResponse>.folders: List<Folder>
+    get() {
+        val array = ArrayList<Folder>()
+        forEach {
+            with(it) {
+                array.add(
+                    Folder(
+                        title = title,
+                        isActive = isActive,
+                        timesUsed = timesUsed,
+                        position = position,
+                        id = id
+                    )
+                )
+            }
+        }
+        return array
+    }

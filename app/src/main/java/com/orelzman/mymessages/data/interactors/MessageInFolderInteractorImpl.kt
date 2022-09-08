@@ -32,9 +32,8 @@ class MessageInFolderInteractorImpl @Inject constructor(
         db.clear()
 
 
-
     override suspend fun delete(messageInFolder: MessageInFolder) {
-        db.delete(messageInFolder)
+        db.delete(folderId = messageInFolder.folderId, messageId = messageInFolder.messageId)
     }
 
     override suspend fun deleteMessagesFromFolder(folderId: String) {
@@ -46,8 +45,12 @@ class MessageInFolderInteractorImpl @Inject constructor(
         db.getWithMessageId(messageId)
 
     override suspend fun update(messageId: String, oldFolderId: String, newFolderId: String) {
-        db.delete(MessageInFolder(messageId = messageId, folderId = oldFolderId))
-        db.insert(MessageInFolder(messageId = messageId, folderId = newFolderId))
+        db.delete(messageId = messageId, folderId = oldFolderId)
+        db.insert(MessageInFolder(messageId = messageId, folderId = newFolderId, isActive = true))
+    }
+
+    override suspend fun restore(folderId: String) {
+        db.restore(folderId)
     }
 
 

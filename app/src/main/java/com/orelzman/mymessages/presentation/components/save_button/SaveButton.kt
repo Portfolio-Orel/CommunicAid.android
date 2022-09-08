@@ -17,7 +17,6 @@ import com.orelzman.mymessages.domain.util.extension.noRippleClickable
  * 28/08/2022
  */
 
-
 @Composable
 fun SaveButton(
     onClick: () -> Unit,

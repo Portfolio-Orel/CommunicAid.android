@@ -22,10 +22,8 @@ class DetailsFolderViewModel @Inject constructor(
 
     fun setEdit(folderId: String?) {
         folderId?.let {
-            viewModelScope.launch(Dispatchers.IO) {
-                val folder = folderInteractor.getFolder(folderId = folderId)
-                state = state.copy(folder = folder, isEdit = true, title = folder.title)
-            }
+            val folder = folderInteractor.getFolder(folderId = folderId)
+            state = state.copy(folder = folder, isEdit = true, title = folder.title)
         }
     }
 
@@ -71,7 +69,7 @@ class DetailsFolderViewModel @Inject constructor(
                         position = position,
                         id = id
                     )
-                    folderInteractor.updateFolder(folder)
+                    folderInteractor.update(folder)
                     state = state.copy(eventFolder = EventsFolder.Restored)
                 }
                 viewModelScope.launch(Dispatchers.Main) {
@@ -110,7 +108,7 @@ class DetailsFolderViewModel @Inject constructor(
             state = state.copy(isLoading = true)
             val saveJob = viewModelScope.async {
                 if (state.isEdit) {
-                    folderInteractor.updateFolder(folder = folder)
+                    folderInteractor.update(folder = folder)
                 } else {
                     folderInteractor.createFolder(
                         folder = Folder(title = state.title)

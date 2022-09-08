@@ -35,15 +35,22 @@ interface MessageInFolderDao {
     @Update
     suspend fun update(messageInFolder: MessageInFolder)
 
-    @Delete
-    suspend fun delete(messageInFolder: MessageInFolder)
+    fun delete(folderId: String, isActive: Boolean = false) {
+        setIsActive(folderId = folderId, isActive = isActive)
+    }
 
-    @Query("""
-        DELETE 
-        FROM MessageInFolder
-        WHERE folderId = :folderId
-    """)
-    suspend fun delete(folderId: String)
+    fun restore(folderId: String, isActive: Boolean = true) {
+        setIsActive(folderId = folderId, isActive = isActive)
+    }
+
+    @Query(
+        """
+        UPDATE MessageInFolder
+        SET isActive = 'false'
+        WHERE folderId = :folderId AND messageId = :messageId
+    """
+    )
+    suspend fun delete(folderId: String, messageId: String)
 
     @Query(
         """
@@ -62,4 +69,13 @@ interface MessageInFolderDao {
     """
     )
     suspend fun get(messageId: String, folderId: String): MessageInFolder
+
+    @Query(
+        """
+            UPDATE MessageInFolder
+            SET isActive = :isActive
+            WHERE folderId = :folderId
+        """
+    )
+    fun setIsActive(folderId: String, isActive: Boolean)
 }
