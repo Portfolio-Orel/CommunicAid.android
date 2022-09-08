@@ -59,7 +59,7 @@ interface MessageInFolderDao {
         WHERE messageId = :messageId
     """
     )
-    suspend fun getWithMessageId(messageId: String): String?
+    fun getWithMessageId(messageId: String): String?
 
     @Query(
         """

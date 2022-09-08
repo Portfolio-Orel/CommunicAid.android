@@ -18,6 +18,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.entities.Folder
+import com.orelzman.mymessages.presentation.components.restore.restore_button.RestoreButton
+import com.orelzman.mymessages.presentation.components.restore.restore_button.RestoreType
 import com.orelzman.mymessages.presentation.components.util.SnackbarController
 import com.orelzman.mymessages.presentation.delete_button.DeleteButton
 import com.orelzman.mymessages.presentation.main.components.ActionButton
@@ -152,6 +154,8 @@ fun DetailsMessageScreen(
             DeleteButton(isLoading = state.isLoadingDelete, deleteText = R.string.delete_message) {
                 viewModel.deleteMessage()
             }
+        } else {
+            RestoreButton(restoreType = RestoreType.Message)
         }
         Text(
             modifier = Modifier.padding(16.dp),

@@ -5,11 +5,11 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Message(
-    val title: String = "",
-    val shortTitle: String = "",
-    val body: String = "",
+    var title: String = "",
+    var shortTitle: String = "",
+    var body: String = "",
     var timesUsed: Int = 0,
-    val isActive: Boolean = true,
+    var isActive: Boolean = true,
     var position: Int = 0,
     @PrimaryKey val id: String = "",
 ) : Loggable, Uploadable() {
