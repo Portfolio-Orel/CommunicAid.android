@@ -26,8 +26,13 @@ interface MessageDao {
     """)
     fun getMessagesOnce(isActive: Boolean): List<Message>
 
-    @Delete
-    fun delete(message: Message)
+    fun delete(message: Message) {
+        updateIsActive(messageId = message.id, isActive = false)
+    }
+
+    fun restore(message: Message) {
+        updateIsActive(messageId = message.id, isActive = true)
+    }
 
     @Query("DELETE FROM Message")
     fun clear()
@@ -41,4 +46,11 @@ interface MessageDao {
 
     @Update
     fun update(message: Message)
+
+    @Query("""
+        UPDATE Message
+        SET isActive = :isActive
+        WHERE id = :messageId
+    """)
+    fun updateIsActive(messageId: String, isActive: Boolean)
 }

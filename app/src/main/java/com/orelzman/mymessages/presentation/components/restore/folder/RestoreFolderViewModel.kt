@@ -67,6 +67,7 @@ class RestoreFolderViewModel @Inject constructor(
 
     private fun setFolders() {
         val folders = folderInteractor.getAllOnce(isActive = false)
+            .sortedBy { it.title }
         state = state.copy(deletedFolders = folders)
     }
 }

@@ -77,7 +77,7 @@ class FolderInteractorImpl @Inject constructor(
         }
     }
 
-    override suspend fun getFolderWithMessageId(messageId: String): Folder? {
+    override fun getFolderWithMessageId(messageId: String): Folder? {
         val folderId = messageInFolderInteractor.getMessageFolderId(messageId) ?: return null
         return db.get(folderId)
     }
