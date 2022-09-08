@@ -63,6 +63,10 @@ class RestoreMessageViewModel @Inject constructor(
 
     private fun setMessages() {
         val messages = messageInteractor.getAllOnce(isActive = false)
+            .filter {
+                val folder = getMessageFolder(messageId = it.id)
+                return@filter folder?.isActive == true
+            }
             .sortedBy { it.title }
         state = state.copy(deletedMessages = messages)
     }

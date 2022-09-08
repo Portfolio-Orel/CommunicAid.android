@@ -74,7 +74,10 @@ fun RestoreButton(
                 .noRippleClickable {
                     shouldShowContent = true
                 },
-            text = stringResource(R.string.restore_folder),
+            text = when (restoreType) {
+                RestoreType.Message -> stringResource(R.string.restore_message)
+                RestoreType.Folder -> stringResource(R.string.restore_folder)
+            },
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.primary
         )
@@ -195,8 +198,8 @@ fun <T> ItemDetails(
 ) {
     var showDetails by remember { mutableStateOf(false) }
 
-    Row(modifier = modifier) {
-        Column(modifier = modifier) {
+    Column(modifier = modifier) {
+        Row(modifier = modifier) {
             Text(
                 modifier = Modifier.noRippleClickable {
                     showDetails = !showDetails
@@ -205,37 +208,37 @@ fun <T> ItemDetails(
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.background
             )
-            if (showDetails) {
-                Box(
-                    modifier = modifier
-                        .animateContentSize()
-                ) {
-                    contentOnExpand()
-                }
+            Spacer(Modifier.weight(1f))
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .height(24.dp)
+                        .width(24.dp),
+                    strokeWidth = 1.dp,
+                    color = MaterialTheme.colorScheme.background
+                )
+            } else {
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable {
+                            restore(item)
+                        },
+                    painter = painterResource(id = R.drawable.ic_round_restore),
+                    contentDescription = stringResource(
+                        R.string.restore
+                    ),
+                    tint = MaterialTheme.colorScheme.primary
+                )
             }
         }
-        Spacer(Modifier.weight(1f))
-        if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .height(24.dp)
-                    .width(24.dp),
-                strokeWidth = 1.dp,
-                color = MaterialTheme.colorScheme.background
-            )
-        } else {
-            Icon(
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickable {
-                        restore(item)
-                    },
-                painter = painterResource(id = R.drawable.ic_round_restore),
-                contentDescription = stringResource(
-                    R.string.restore
-                ),
-                tint = MaterialTheme.colorScheme.primary
-            )
+        if (showDetails) {
+            Box(
+                modifier = modifier
+                    .animateContentSize()
+            ) {
+                contentOnExpand()
+            }
         }
     }
 }
