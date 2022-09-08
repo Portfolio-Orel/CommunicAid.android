@@ -1,7 +1,6 @@
 package com.orelzman.mymessages.domain.managers.system_service
 
 import com.orelzman.mymessages.domain.annotation.Proximity
-import com.orelzman.mymessages.domain.util.extension.Logger
 import javax.inject.Inject
 
 /**
@@ -26,7 +25,6 @@ class SystemServiceManagerImpl @Inject constructor(
     }
 
     override fun onResume() {
-        Logger.vNoRemoteLogging("onResume")
         systemServicesList.forEach {
             if (it.isSuspended()) {
                 it.enable()
@@ -35,7 +33,6 @@ class SystemServiceManagerImpl @Inject constructor(
     }
 
     override fun onPause() {
-        Logger.vNoRemoteLogging("onPause")
         systemServicesList.forEach {
             if (it.isEnabled()) {
                 it.suspend()
@@ -44,7 +41,6 @@ class SystemServiceManagerImpl @Inject constructor(
     }
 
     override fun onDestroy() {
-        Logger.vNoRemoteLogging("onDestroy")
         systemServicesList.forEach {
             it.suspend()
         }

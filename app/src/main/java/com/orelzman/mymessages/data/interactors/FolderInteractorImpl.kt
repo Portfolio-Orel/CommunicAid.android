@@ -3,7 +3,7 @@ package com.orelzman.mymessages.data.interactors
 import com.orelzman.mymessages.data.local.LocalDatabase
 import com.orelzman.mymessages.data.local.dao.FolderDao
 import com.orelzman.mymessages.data.remote.dto.body.create.CreateFolderBody
-import com.orelzman.mymessages.data.remote.dto.response.folders
+import com.orelzman.mymessages.data.remote.dto.response.GetFoldersResponse
 import com.orelzman.mymessages.domain.interactors.FolderInteractor
 import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
 import com.orelzman.mymessages.domain.model.entities.Folder
@@ -33,9 +33,9 @@ class FolderInteractorImpl @Inject constructor(
         db.insert(folders)
     }
 
-    override fun getFolders(): Flow<List<Folder>> = db.getFolders()
+    override fun getFolders(isActive: Boolean): Flow<List<Folder>> = db.getFolders(isActive = isActive)
 
-    override fun getAllOnce(): List<Folder> = db.getFoldersOnce()
+    override fun getAllOnce(isActive: Boolean): List<Folder> = db.getFoldersOnce(isActive = isActive)
 
     override suspend fun deleteFolder(id: String) {
         repository.deleteFolder(id)
@@ -75,5 +75,24 @@ class FolderInteractorImpl @Inject constructor(
         val folderId = messageInFolderInteractor.getMessageFolderId(messageId) ?: return null
         return db.get(folderId)
     }
-
 }
+
+
+val List<GetFoldersResponse>.folders: List<Folder>
+    get() {
+        val array = ArrayList<Folder>()
+        forEach {
+            with(it) {
+                array.add(
+                    Folder(
+                        title = title,
+                        isActive = isActive,
+                        timesUsed = timesUsed,
+                        position = position,
+                        id = id
+                    )
+                )
+            }
+        }
+        return array
+    }

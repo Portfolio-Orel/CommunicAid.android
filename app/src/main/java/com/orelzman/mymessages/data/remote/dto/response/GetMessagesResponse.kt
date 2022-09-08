@@ -1,8 +1,6 @@
 package com.orelzman.mymessages.data.remote.dto.response
 
 import com.google.gson.annotations.SerializedName
-import com.orelzman.mymessages.domain.model.entities.Message
-import com.orelzman.mymessages.domain.model.entities.MessageInFolder
 
 data class GetMessagesResponse(
     @SerializedName("message_in_folder_id") val messageInFolderId: String,
@@ -13,29 +11,6 @@ data class GetMessagesResponse(
     @SerializedName("body") val body: String,
     @SerializedName("position") val position: Int,
     @SerializedName("times_used") val timesUsed: Int,
-) {
-    fun toMessage(): Message =
-        Message(
-            title = title,
-            shortTitle = shortTitle,
-            body = body,
-            timesUsed = timesUsed,
-            isActive = true,
-            id = messageId
-        )
-}
+    @SerializedName("is_active") val isActive: Boolean
 
-fun List<GetMessagesResponse>.toMessagesInFolders(): List<MessageInFolder> {
-    val array = ArrayList<MessageInFolder>()
-    forEach {
-        with(it) {
-            array.add(
-                MessageInFolder(
-                    messageId = messageId,
-                    folderId = folderId
-                )
-            )
-        }
-    }
-    return array
-}
+)

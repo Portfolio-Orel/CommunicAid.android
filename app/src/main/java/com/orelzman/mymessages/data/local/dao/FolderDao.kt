@@ -18,14 +18,14 @@ interface FolderDao {
         FROM Folder
         Where isActive = :isActive
     """)
-    fun getFolders(isActive: Boolean = true): Flow<List<Folder>>
+    fun getFolders(isActive: Boolean): Flow<List<Folder>>
 
     @Query("""
         SELECT *
         FROM Folder
         Where isActive = :isActive
     """)
-    fun getFoldersOnce(isActive: Boolean = true): List<Folder>
+    fun getFoldersOnce(isActive: Boolean): List<Folder>
 
 
     @Query("""
