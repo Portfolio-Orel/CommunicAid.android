@@ -162,20 +162,6 @@ fun Fab(
                 icon = painterResource(id = R.drawable.ic_new_folder),
                 description = ""
             ),
-            MiniFloatingAction(
-                action = {
-                    navController.navigate(
-                        Screen.DetailsMessage.route
-                    ) {
-                        popUpTo(navHostController.graph.findStartDestination().id) {
-                            inclusive = false
-                        }
-                        launchSingleTop = true
-                    }
-                },
-                icon = painterResource(id = R.drawable.ic_new_message),
-                description = ""
-            ),
         ),
         iconCollapsed = painterResource(R.drawable.ic_arrow_left),
         iconExpanded = painterResource(R.drawable.ic_close),
