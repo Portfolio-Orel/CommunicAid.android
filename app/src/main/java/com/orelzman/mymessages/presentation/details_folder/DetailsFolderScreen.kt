@@ -97,7 +97,8 @@ fun DetailsFolderScreen(
             RestoreButton(restoreType = RestoreType.Folder)
         }
         Spacer(Modifier.weight(1f))
-        Row(horizontalArrangement = Arrangement.SpaceAround) {
+        // Remove padding when the Fab is removed.
+        Row(modifier = Modifier.padding(bottom = 60.dp), horizontalArrangement = Arrangement.SpaceAround) {
             ActionButton(
                 modifier = Modifier
                     .width(120.dp)

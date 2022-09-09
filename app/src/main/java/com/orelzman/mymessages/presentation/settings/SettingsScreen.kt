@@ -2,6 +2,7 @@ package com.orelzman.mymessages.presentation.settings
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -33,8 +34,6 @@ fun SettingsScreen(
     val state = viewModel.state
     val context = LocalContext.current
 
-
-
     LaunchedEffect(key1 = state.eventSettings) {
         when (state.eventSettings) {
             EventsSettings.Saved -> {
@@ -57,7 +56,8 @@ fun SettingsScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxHeight(0.9f)
+            .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
@@ -121,6 +121,22 @@ fun SettingsScreen(
                     .height(50.dp),
                 isLoading = state.isLoading,
                 onClick = viewModel::saveSettings
+            )
+        }
+        Spacer(Modifier.weight(1f))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                modifier = Modifier
+                    .clickable {
+                        viewModel.signOut()
+                    },
+                text = stringResource(id = R.string.logout),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.errorContainer
             )
         }
     }

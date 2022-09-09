@@ -77,33 +77,12 @@ fun DetailsMessageScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.9f)
+            .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
-        Row(horizontalArrangement = Arrangement.SpaceAround) {
-            ActionButton(
-                modifier = Modifier
-                    .width(120.dp)
-                    .height(48.dp),
-                text = stringResource(R.string.save),
-                isLoading = state.isLoading,
-                onClick = { viewModel.saveMessage() },
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            ActionButton(
-                modifier = Modifier
-                    .width(120.dp)
-                    .height(48.dp),
-                isPrimary = false,
-                text = stringResource(R.string.cancel),
-                onClick = { navController.navigateUp() },
-            )
-        }
         Column(
             modifier = Modifier
-                .fillMaxHeight(0.9f)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
@@ -149,7 +128,6 @@ fun DetailsMessageScreen(
                 isError = state.emptyFields.contains(MessageFields.Body)
             )
         }
-        Spacer(modifier = Modifier.weight(1f))
         if (state.isEdit) {
             DeleteButton(isLoading = state.isLoadingDelete, deleteText = R.string.delete_message) {
                 viewModel.deleteMessage()
@@ -158,11 +136,32 @@ fun DetailsMessageScreen(
             RestoreButton(restoreType = RestoreType.Message)
         }
         Text(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(8.dp),
             text = stringResource(id = state.error),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.error,
         )
+        Spacer(Modifier.weight(1f))
+        // Remove padding when the Fab is removed.
+        Row(modifier = Modifier.padding(bottom = 60.dp), horizontalArrangement = Arrangement.SpaceAround) {
+            ActionButton(
+                modifier = Modifier
+                    .width(120.dp)
+                    .height(48.dp),
+                text = stringResource(R.string.save),
+                isLoading = state.isLoading,
+                onClick = { viewModel.saveMessage() },
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            ActionButton(
+                modifier = Modifier
+                    .width(120.dp)
+                    .height(48.dp),
+                isPrimary = false,
+                text = stringResource(R.string.cancel),
+                onClick = { navController.navigateUp() },
+            )
+        }
     }
 }
 

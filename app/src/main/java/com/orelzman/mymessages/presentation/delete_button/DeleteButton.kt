@@ -16,7 +16,8 @@ import androidx.compose.ui.unit.dp
 fun DeleteButton(
     isLoading: Boolean,
     @StringRes deleteText: Int,
-    onDelete: () -> Unit
+    modifier: Modifier = Modifier,
+    onDelete: () -> Unit = {},
 ) {
     if (isLoading) {
         CircularProgressIndicator(
@@ -28,7 +29,7 @@ fun DeleteButton(
         )
     } else {
         Text(
-            modifier = Modifier.clickable {
+            modifier = modifier.clickable {
                 onDelete()
             },
             text = stringResource(deleteText),

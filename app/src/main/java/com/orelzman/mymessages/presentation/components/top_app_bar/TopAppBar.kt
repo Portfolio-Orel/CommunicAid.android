@@ -45,7 +45,7 @@ fun TopAppBar(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Person,
-                    contentDescription = "User icon to go to settings",
+                    contentDescription = stringResource(R.string.icon_settings),
                     tint = MaterialTheme.colorScheme.onBackground
                 )
             }

@@ -39,7 +39,7 @@ class FolderInteractorImpl @Inject constructor(
     override fun getAllOnce(isActive: Boolean): List<Folder> =
         db.getFoldersOnce(isActive = isActive)
 
-    override fun getFolder(folderId: String): Folder = db.get(folderId = folderId)
+    override fun getFolder(folderId: String): Folder? = db.get(folderId = folderId)
 
     override suspend fun deleteFolder(id: String) {
         repository.deleteFolder(id)
