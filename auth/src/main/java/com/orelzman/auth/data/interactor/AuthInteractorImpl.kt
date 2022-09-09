@@ -196,8 +196,11 @@ class AuthInteractorImpl @Inject constructor(
     }
 
     override suspend fun signOut() {
-        Amplify.Auth.signOut()
-        userInteractor.clear()
+        try {
+            Amplify.Auth.signOut()
+        } finally {
+            userInteractor.clear()
+        }
     }
 
     private suspend fun resendConfirmationCode(username: String) =

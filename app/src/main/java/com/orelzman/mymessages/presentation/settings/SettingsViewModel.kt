@@ -5,10 +5,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.model.entities.Settings
 import com.orelzman.mymessages.domain.model.entities.SettingsType
 import com.orelzman.mymessages.domain.util.extension.Logger
+import com.orelzman.mymessages.domain.util.extension.launchCatching
 import com.orelzman.mymessages.domain.util.extension.log
 import com.orelzman.mymessages.domain.util.extension.notEqualsTo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val settingsInteractor: SettingsInteractor
+    private val settingsInteractor: SettingsInteractor,
+    private val authInteractor: AuthInteractor,
 ) :
     ViewModel() {
     var state by mutableStateOf(SettingsState())
@@ -42,6 +45,12 @@ class SettingsViewModel @Inject constructor(
     fun refreshSettings() {
         setSettings(emptyList())
         setSettings(settingsInteractor.getAll())
+    }
+
+    fun signOut() {
+        viewModelScope.launchCatching(Dispatchers.Main) {
+            authInteractor.signOut()
+        }
     }
 
     private fun initData() {

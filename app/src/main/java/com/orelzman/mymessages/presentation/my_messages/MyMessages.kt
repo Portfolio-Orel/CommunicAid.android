@@ -11,7 +11,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -83,14 +82,6 @@ fun MyMessagesApp(
                         Fab(
                             navController = navController,
                             navHostController = navHostController,
-                            signOut = {
-                                viewModel.signOut()
-                               navController.navigate(Screen.Main.route) {
-                                   popUpTo(navHostController.graph.findStartDestination().id) {
-                                       inclusive = true
-                                   }
-                               }
-                            }
                         )
                     },
                 ) {
@@ -153,16 +144,10 @@ fun MyMessagesApp(
 @Composable
 fun Fab(
     navController: NavController,
-    navHostController: NavHostController,
-    signOut: () -> Unit
+    navHostController: NavHostController
 ) {
     MultiFab(
         fabs = listOf(
-            MiniFloatingAction(
-                action = { signOut() },
-                icon = painterResource(id = R.drawable.ic_login),
-                description = stringResource(R.string.sign_out)
-            ),
             MiniFloatingAction(
                 action = {
                     navController.navigate(

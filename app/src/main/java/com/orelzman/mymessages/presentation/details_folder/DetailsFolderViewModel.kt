@@ -23,7 +23,9 @@ class DetailsFolderViewModel @Inject constructor(
     fun setEdit(folderId: String?) {
         folderId?.let {
             val folder = folderInteractor.getFolder(folderId = folderId)
-            state = state.copy(folder = folder, isEdit = true, title = folder.title)
+            folder?.let {
+                state = state.copy(folder = it, isEdit = true, title = it.title)
+            }
         }
     }
 

@@ -13,10 +13,9 @@ typealias CoroutineFunction = suspend CoroutineScope.() -> Unit
 
 fun CoroutineScope.launchCatching(dispatcher: CoroutineContext, block: CoroutineFunction) {
     launch(dispatcher) {
-        try {
-            block()
-        } catch (e: Exception) {
-            e.log()
+        val result = kotlin.runCatching { block() }
+        if(result.isFailure) {
+            result.exceptionOrNull()?.log()
         }
     }
 }

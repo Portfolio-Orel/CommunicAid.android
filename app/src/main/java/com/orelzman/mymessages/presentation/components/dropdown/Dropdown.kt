@@ -71,7 +71,7 @@ fun <T : DropdownItem> Dropdown(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier
-                .height(400.dp)
+                .heightIn(max = 400.dp)
                 .fillMaxWidth()
                 .background(
                     MaterialTheme.colorScheme.background
