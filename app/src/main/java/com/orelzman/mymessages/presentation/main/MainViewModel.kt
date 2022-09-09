@@ -38,7 +38,7 @@ class MainViewModel @Inject constructor(
     }
 
     /* States */
-    fun init() {
+    init {
         viewModelScope.launch(SupervisorJob()) {
             try {
                 fetchDataJob.await()

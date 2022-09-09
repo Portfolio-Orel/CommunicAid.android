@@ -1,10 +1,7 @@
 package com.orelzman.mymessages.presentation.main
 
-import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.CircularProgressIndicator
@@ -21,14 +18,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.entities.Folder
-import com.orelzman.mymessages.domain.model.entities.Message
 import com.orelzman.mymessages.domain.util.Screen
-import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
 import com.orelzman.mymessages.presentation.components.dropdown.Dropdown
 import com.orelzman.mymessages.presentation.components.dropdown.DropdownDecoratorStyle
-import com.orelzman.mymessages.presentation.main.components.MessageView
-import kotlin.system.measureTimeMillis
+import com.orelzman.mymessages.presentation.main.components.MessagesContainer
 
 
 @ExperimentalFoundationApi
@@ -40,11 +34,7 @@ fun MainScreen(
     OnLifecycleEvent(
         onResume = viewModel::onResume,
     )
-
-    val timeToBuildContent = measureTimeMillis {
-        Content(navController = navController, viewModel = viewModel)
-    }
-    Logger.v("Time to build Main content: ${timeToBuildContent}ms")
+    Content(navController = navController, viewModel = viewModel)
 }
 
 @Composable
@@ -60,10 +50,6 @@ private fun Content(
         getMessageWidth(screenWidth = screen.screenWidthDp, spaceBetween = spaceBetweenMessages)
 
     val messageHeight = (messageWidth * 1.5f)
-
-    LaunchedEffect(key1 = viewModel) {
-        viewModel.init()
-    }
 
     LaunchedEffect(key1 = state.screenToShow) {
         when (state.screenToShow) {
@@ -104,22 +90,25 @@ private fun Content(
                 selected = state.selectedFolder,
                 color = MaterialTheme.colorScheme.primary
             )
-
-            MessagesList(
-                messages = state.selectedFoldersMessages,
-                onClick = { viewModel.onMessageClick(it) },
-                onLongClick = { message, context ->
-                    viewModel.onMessageLongClick(
-                        message,
-                        context
-                    )
-                },
-                spaceBetweenMessages = spaceBetweenMessages.dp,
-                height = messageHeight,
-                width = messageWidth,
-                borderColor = MaterialTheme.colorScheme.primary
-            )
-
+            if (state.folders.isNotEmpty()) {
+                MessagesContainer(
+                    messages = state.selectedFoldersMessages,
+                    onClick = { viewModel.onMessageClick(it) },
+                    onLongClick = { message, context ->
+                        viewModel.onMessageLongClick(
+                            message,
+                            context
+                        )
+                    },
+                    addNewMessage = {
+                        navController.navigate(Screen.DetailsMessage.route)
+                    },
+                    spaceBetweenMessages = spaceBetweenMessages.dp,
+                    height = messageHeight,
+                    width = messageWidth,
+                    borderColor = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }
@@ -144,47 +133,6 @@ fun FoldersList(
         color = color,
         dropdownDecoratorStyle = DropdownDecoratorStyle.Text
     )
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun MessagesList(
-    messages: List<Message>,
-    onClick: (Message) -> Unit,
-    onLongClick: (Message, Context) -> Unit,
-    spaceBetweenMessages: Dp,
-    borderColor: Color,
-    height: Dp,
-    width: Dp
-) {
-    LazyVerticalGrid(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .fillMaxWidth(1F)
-            .fillMaxHeight(0.9F),
-        columns = GridCells.Fixed(4),
-        horizontalArrangement = Arrangement.spacedBy(spaceBetweenMessages),
-        verticalArrangement = Arrangement.spacedBy(spaceBetweenMessages)
-    ) {
-        items(
-            count = messages.size,
-            key = { index ->
-                // Return a stable + unique key for the item
-                index
-            }
-        ) { index ->
-            MessageView(
-                message = messages[index],
-                modifier = Modifier
-                    .height(height)
-                    .width(width)
-                    .padding(0.dp),
-                borderColor = borderColor,
-                onClick = onClick,
-                onLongClick = onLongClick
-            )
-        }
-    }
 }
 
 private fun getMessageWidth(
