@@ -10,25 +10,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.util.Screen
 import com.orelzman.mymessages.presentation.components.CustomScaffold
 import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
 import com.orelzman.mymessages.presentation.components.bottom_bar.BottomBar
-import com.orelzman.mymessages.presentation.components.multi_fab.MiniFloatingAction
-import com.orelzman.mymessages.presentation.components.multi_fab.MultiFab
 import com.orelzman.mymessages.presentation.components.top_app_bar.TopAppBar
 import com.orelzman.mymessages.presentation.details_folder.DetailsFolderScreen
 import com.orelzman.mymessages.presentation.details_message.DetailsMessageScreen
@@ -78,12 +72,6 @@ fun MyMessagesApp(
                     navController = navHostController,
                     topBar = { TopAppBar(navController = navController) },
                     bottomBar = { BottomBar(navController = it) },
-                    floatingActionButton = {
-                        Fab(
-                            navController = navController,
-                            navHostController = navHostController,
-                        )
-                    },
                 ) {
                     NavHost(
                         modifier = Modifier.padding(
@@ -139,31 +127,4 @@ fun MyMessagesApp(
             }
         }
     }
-}
-
-@Composable
-fun Fab(
-    navController: NavController,
-    navHostController: NavHostController
-) {
-    MultiFab(
-        fabs = listOf(
-            MiniFloatingAction(
-                action = {
-                    navController.navigate(
-                        Screen.DetailsFolder.route
-                    ) {
-                        popUpTo(navHostController.graph.findStartDestination().id) {
-                            inclusive = false
-                        }
-                        launchSingleTop = true
-                    }
-                },
-                icon = painterResource(id = R.drawable.ic_new_folder),
-                description = ""
-            ),
-        ),
-        iconCollapsed = painterResource(R.drawable.ic_arrow_left),
-        iconExpanded = painterResource(R.drawable.ic_close),
-    )
 }

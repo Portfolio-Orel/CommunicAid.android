@@ -2,26 +2,20 @@ package com.orelzman.mymessages.presentation.main
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.util.Screen
 import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
-import com.orelzman.mymessages.presentation.components.dropdown.Dropdown
-import com.orelzman.mymessages.presentation.components.dropdown.DropdownDecoratorStyle
+import com.orelzman.mymessages.presentation.main.components.FoldersContainer
 import com.orelzman.mymessages.presentation.main.components.MessagesContainer
 
 
@@ -82,11 +76,12 @@ private fun Content(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            FoldersList(
+            FoldersContainer(
                 modifier = Modifier.padding(bottom = 32.dp),
                 folders = state.folders,
                 onClick = { viewModel.onFolderClick(it) },
                 onLongClick = { viewModel.onFolderLongClick(it) },
+                addNewFolder = {navController.navigate(Screen.DetailsFolder.route)},
                 selected = state.selectedFolder,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -111,28 +106,6 @@ private fun Content(
             }
         }
     }
-}
-
-@Composable
-fun FoldersList(
-    folders: List<Folder>,
-    onClick: (Folder) -> Unit,
-    onLongClick: (Folder) -> Unit,
-    selected: Folder?,
-    color: Color,
-    modifier: Modifier = Modifier,
-) {
-    Dropdown(
-        items = folders,
-        onSelected = onClick,
-        modifier = modifier,
-        secondaryAction = onLongClick,
-        secondaryIcon = Icons.Rounded.Edit,
-        defaultTitle = R.string.empty_string,
-        selected = selected,
-        color = color,
-        dropdownDecoratorStyle = DropdownDecoratorStyle.Text
-    )
 }
 
 private fun getMessageWidth(
