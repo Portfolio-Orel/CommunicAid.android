@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.orelzman.mymessages.domain.util.Screen
-import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
 import com.orelzman.mymessages.presentation.main.components.FoldersContainer
 import com.orelzman.mymessages.presentation.main.components.MessagesContainer
 
@@ -24,12 +23,7 @@ import com.orelzman.mymessages.presentation.main.components.MessagesContainer
 fun MainScreen(
     navController: NavController,
     viewModel: MainViewModel = hiltViewModel(),
-) {
-    OnLifecycleEvent(
-        onResume = viewModel::onResume,
-    )
-    Content(navController = navController, viewModel = viewModel)
-}
+) = Content(navController = navController, viewModel = viewModel)
 
 @Composable
 private fun Content(
@@ -80,8 +74,9 @@ private fun Content(
                 modifier = Modifier.padding(bottom = 32.dp),
                 folders = state.folders,
                 onClick = { viewModel.onFolderClick(it) },
-                onLongClick = { viewModel.onFolderLongClick(it) },
-                addNewFolder = {navController.navigate(Screen.DetailsFolder.route)},
+                onEditClick = { viewModel.editFolder(it) },
+                onDropdownClick = viewModel::onFoldersDropdownClick,
+                addNewFolder = { navController.navigate(Screen.DetailsFolder.route) },
                 selected = state.selectedFolder,
                 color = MaterialTheme.colorScheme.primary
             )

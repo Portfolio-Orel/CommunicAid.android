@@ -1,6 +1,6 @@
 package com.orelzman.mymessages.domain.managers.system_service
 
-import com.orelzman.mymessages.domain.annotation.Proximity
+import com.orelzman.mymessages.di.annotation.Proximity
 import javax.inject.Inject
 
 /**

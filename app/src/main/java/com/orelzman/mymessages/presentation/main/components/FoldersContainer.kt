@@ -31,7 +31,8 @@ import com.orelzman.mymessages.presentation.components.dropdown.DropdownDecorato
 fun FoldersContainer(
     folders: List<Folder>,
     onClick: (Folder) -> Unit,
-    onLongClick: (Folder) -> Unit,
+    onEditClick: (Folder) -> Unit,
+    onDropdownClick: () -> Unit,
     addNewFolder: () -> Unit,
     selected: Folder?,
     color: Color,
@@ -54,11 +55,12 @@ fun FoldersContainer(
         Dropdown(
             items = folders,
             onSelected = onClick,
-            secondaryAction = onLongClick,
+            secondaryAction = onEditClick,
             secondaryIcon = Icons.Rounded.Edit,
             defaultTitle = R.string.empty_string,
             selected = selected,
             color = color,
+            onClick = onDropdownClick,
             dropdownDecoratorStyle = DropdownDecoratorStyle.Text
         )
         Spacer(modifier = Modifier.weight(0.5f))

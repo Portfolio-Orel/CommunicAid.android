@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface AuthInteractor {
 
-    suspend fun init(@RawRes configFileResourceId: Int? = null)
+    suspend fun init(@RawRes configFileResourceId: Int)
     suspend fun signOut()
     suspend fun signUp(
         email: String,
@@ -21,7 +21,7 @@ interface AuthInteractor {
         isSaveCredentials: Boolean = false
     )
 
-    suspend fun refreshToken(@RawRes configFileResourceId: Int? = null)
+    suspend fun refreshToken()
 
     /**
      * Used after sign up.

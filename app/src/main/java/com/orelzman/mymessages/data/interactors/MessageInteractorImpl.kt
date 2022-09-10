@@ -30,9 +30,7 @@ class MessageInteractorImpl @Inject constructor(
                 it.setUploadState(UploadState.Uploaded)
                 it
             }
-        db.clear()
         db.insert(messages)
-        messageInFolderInteractor.clear()
         messageInFolderInteractor.insert(response.toMessagesInFolders().map {
             it.setUploadState(UploadState.Uploaded)
             it
@@ -40,9 +38,11 @@ class MessageInteractorImpl @Inject constructor(
         return messages
     }
 
-    override fun getMessages(isActive: Boolean): Flow<List<Message>> = db.getMessages(isActive = isActive)
+    override fun getMessages(isActive: Boolean): Flow<List<Message>> =
+        db.getMessages(isActive = isActive)
 
-    override fun getAllOnce(isActive: Boolean): List<Message> = db.getMessagesOnce(isActive = isActive)
+    override fun getAllOnce(isActive: Boolean): List<Message> =
+        db.getMessagesOnce(isActive = isActive)
 
     override suspend fun createMessage(
         message: Message,
@@ -66,7 +66,8 @@ class MessageInteractorImpl @Inject constructor(
             db.delete(tempMessage)
             messageInFolderInteractor.delete(tempMessageInFolder)
 
-            val messageInFolder = MessageInFolder(messageId = messageId, folderId = folderId, isActive = true)
+            val messageInFolder =
+                MessageInFolder(messageId = messageId, folderId = folderId, isActive = true)
             messageInFolder.setUploadState(UploadState.Uploaded)
             messageWithId.setUploadState(UploadState.Uploaded)
 

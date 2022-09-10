@@ -12,8 +12,9 @@ import com.orelzman.auth.domain.exception.UserNotFoundException
 import com.orelzman.auth.domain.exception.WrongCredentialsException
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.R
-import com.orelzman.mymessages.domain.annotation.AuthConfigFile
 import com.orelzman.mymessages.data.remote.dto.body.create.CreateUserBody
+import com.orelzman.mymessages.di.annotation.AuthConfigFile
+import com.orelzman.mymessages.domain.model.entities.ConfigFile
 import com.orelzman.mymessages.domain.repository.Repository
 import com.orelzman.mymessages.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,14 +27,12 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val interactor: AuthInteractor,
     private val repository: Repository,
-    @AuthConfigFile private val authConfigFile: Int,
 ) : ViewModel() {
     var state by mutableStateOf(LoginState())
 
     init {
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                interactor.init(authConfigFile)
                 var isAuthorized = false
                 val user = interactor.getUser()
 

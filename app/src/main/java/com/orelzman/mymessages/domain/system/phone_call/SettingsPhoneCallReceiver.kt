@@ -9,7 +9,7 @@ import android.telephony.SmsManager
 import android.telephony.TelephonyManager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.MainActivity
-import com.orelzman.mymessages.domain.annotation.Proximity
+import com.orelzman.mymessages.di.annotation.Proximity
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.managers.phonecall.PhoneCallManager
 import com.orelzman.mymessages.domain.managers.phonecall.isCallStateWaiting

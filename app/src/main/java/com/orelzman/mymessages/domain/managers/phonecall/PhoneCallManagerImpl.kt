@@ -3,7 +3,10 @@ package com.orelzman.mymessages.domain.managers.phonecall
 import android.content.Context
 import android.telephony.TelephonyManager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.orelzman.mymessages.domain.interactors.*
+import com.orelzman.mymessages.domain.interactors.CallLogInteractor
+import com.orelzman.mymessages.domain.interactors.CallPreferences
+import com.orelzman.mymessages.domain.interactors.DataSourceCallsInteractor
+import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.util.common.Constants.TIME_TO_ADD_CALL_TO_CALL_LOG
@@ -20,7 +23,6 @@ import javax.inject.Inject
 @ExperimentalPermissionsApi
 class PhoneCallManagerImpl @Inject constructor(
     private val phoneCallInteractor: PhoneCallsInteractor,
-    private val analyticsInteractor: AnalyticsInteractor?,
     private val dataSource: DataSourceCallsInteractor,
     private val callLogInteractor: CallLogInteractor
 ) : PhoneCallManager {
@@ -40,7 +42,6 @@ class PhoneCallManagerImpl @Inject constructor(
     override fun onStateChanged(state: String, number: String, context: Context?) {
         Logger.i("state: $state \n number: $number")
         this.context = context
-        analyticsInteractor?.track("Call Status", mapOf("status" to state))
         when (state) {
             TelephonyManager.EXTRA_STATE_IDLE -> onIdleState()
             TelephonyManager.EXTRA_STATE_RINGING -> onRingingState(number)
@@ -156,11 +157,7 @@ class PhoneCallManagerImpl @Inject constructor(
 
     private fun addToBacklog(phoneCall: PhoneCall?) {
         if (phoneCall == null) return
-        if (phoneCallInteractor.getAll().any { it.startDate == phoneCall.startDate }) {
-            analyticsInteractor?.track("Call Cached", "value" to "Double add attempt")
-        }
         phoneCallInteractor.cachePhoneCall(phoneCall = phoneCall)
-        analyticsInteractor?.track("Call Cached", mapOf("call" to phoneCall.number))
     }
 
     override fun reset() {

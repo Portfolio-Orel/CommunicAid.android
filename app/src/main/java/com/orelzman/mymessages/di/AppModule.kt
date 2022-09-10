@@ -1,7 +1,6 @@
 package com.orelzman.mymessages.di
 
 import android.app.Application
-import androidx.annotation.RawRes
 import androidx.room.Room
 import com.google.gson.Gson
 import com.orelzman.auth.domain.interactor.AuthInteractor
@@ -14,8 +13,11 @@ import com.orelzman.mymessages.data.local.type_converters.Converters
 import com.orelzman.mymessages.data.remote.EnvironmentRepository
 import com.orelzman.mymessages.data.remote.Environments.*
 import com.orelzman.mymessages.data.remote.repository.api.API
-import com.orelzman.mymessages.domain.annotation.AuthConfigFile
-import com.orelzman.mymessages.domain.annotation.BaseProjectUrl
+import com.orelzman.mymessages.di.annotation.AuthConfigFile
+import com.orelzman.mymessages.di.annotation.BaseProjectUrl
+import com.orelzman.mymessages.di.annotation.DatadogConfigFile
+import com.orelzman.mymessages.di.annotation.MixpanelConfigFile
+import com.orelzman.mymessages.domain.model.entities.ConfigFile
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,32 +48,48 @@ object AppModule {
     @BaseProjectUrl
     fun provideBaseUrl(
         environmentRepository: EnvironmentRepository
-    ) = when (environmentRepository.currentEnvironment) {
+    ): String = when (environmentRepository.currentEnvironment) {
         Dev -> "https://22jwmm93j9.execute-api.us-east-1.amazonaws.com"
         Prod -> "https://w5l4faau04.execute-api.us-east-1.amazonaws.com/"
         LocalEmulator -> "http://10.0.2.2:4000"
     }
 
     @Provides
+    @MixpanelConfigFile
+    fun provideMixpanelToken(
+        environmentRepository: EnvironmentRepository
+    ): ConfigFile = when (environmentRepository.currentEnvironment) {
+        Dev, LocalEmulator -> ConfigFile(fileResId = R.raw.dev_mixpanel_config)
+        Prod -> ConfigFile(fileResId = R.raw.prod_mixpanel_config)
+    }
+
+    @Provides
+    @DatadogConfigFile
+    fun provideDatadogConfig(
+        environmentRepository: EnvironmentRepository
+    ): ConfigFile = when (environmentRepository.currentEnvironment) {
+        Dev, LocalEmulator -> ConfigFile(fileResId = R.raw.dev_datadog_config)
+        Prod -> ConfigFile(fileResId = R.raw.prod_datadog_config)
+    }
+
+    @Provides
     @AuthConfigFile
-    @RawRes
     fun provideAuthConfigFile(
         environmentRepository: EnvironmentRepository
-    ): Int = when (environmentRepository.currentEnvironment) {
-        Dev -> R.raw.dev_amplifyconfiguration
-        Prod -> R.raw.prod_amplifyconfiguration
-        LocalEmulator -> R.raw.dev_amplifyconfiguration
+    ): ConfigFile = when (environmentRepository.currentEnvironment) {
+        Dev, LocalEmulator -> ConfigFile(fileResId = R.raw.dev_amplifyconfiguration)
+        Prod -> ConfigFile(fileResId = R.raw.prod_amplifyconfiguration)
     }
 
     @Provides
     fun provideOkHttpClient(
         authIneractor: AuthInteractor,
-        @AuthConfigFile configFileResourceId: Int?
     ): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor(authIneractor))
-            .addInterceptor(ErrorInterceptor(authIneractor, configFileResourceId))
+            .addInterceptor(ErrorInterceptor(authIneractor))
             .addInterceptor(LogInterceptor())
+            .retryOnConnectionFailure(true)
             .connectTimeout(30L, TimeUnit.SECONDS)
             .readTimeout(30L, TimeUnit.SECONDS)
             .build()

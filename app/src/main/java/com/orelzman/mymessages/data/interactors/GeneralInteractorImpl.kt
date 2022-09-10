@@ -23,10 +23,10 @@ class GeneralInteractorImpl @Inject constructor(
     }
 
     override suspend fun initData() {
-        clearAllDatabases()
+//        clearAllDatabases()
         messageInteractor.initWithMessagesInFolders()
         folderInteractor.init()
-        DataSourceCallsInteractor.init()
+//        DataSourceCallsInteractor.init()
         settingsInteractor.init()
         settingsInteractor.saveSettings(Settings(SettingsKey.IsDataInit, true.toString()))
         deletedCallsInteractor.init(DateUtils.getStartOfDay())

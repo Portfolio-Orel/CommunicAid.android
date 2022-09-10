@@ -6,6 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.mymessages.domain.interactors.AnalyticsIdentifiers
+import com.orelzman.mymessages.domain.interactors.AnalyticsInteractor
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.model.entities.Settings
 import com.orelzman.mymessages.domain.model.entities.SettingsType
@@ -22,13 +24,57 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val settingsInteractor: SettingsInteractor,
     private val authInteractor: AuthInteractor,
+    private val analyticsInteractor: AnalyticsInteractor
 ) :
     ViewModel() {
     var state by mutableStateOf(SettingsState())
 
     init {
+        analyticsInteractor.track(AnalyticsIdentifiers.SettingsScreenShow)
         initData()
         observeSettings()
+    }
+
+    fun onDestroy() {
+        if(isSettingsChanges()) {
+            analyticsInteractor.track(AnalyticsIdentifiers.SettingsScreenLeftWithoutSave)
+        }
+    }
+
+    fun signOut() {
+        viewModelScope.launchCatching(Dispatchers.Main) {
+            authInteractor.signOut()
+        }
+    }
+
+    fun saveSettings() {
+        state = state.copy(isLoading = true, eventSettings = null)
+        if (!isSettingsChanges()) {
+            analyticsInteractor.track(AnalyticsIdentifiers.SettingsSavedWithoutChanges)
+            state = state.copy(isLoading = false, eventSettings = EventsSettings.Unchanged)
+            return
+        }
+        analyticsInteractor.track(AnalyticsIdentifiers.SettingsSaved)
+        viewModelScope.launch(Dispatchers.IO) {
+            supervisorScope {
+                val settings = state.updatedSettings
+                    .filter { it.isEnabled() }
+                try {
+                    settingsInteractor.createOrUpdate(settings = settings)
+                } catch (e: Exception) {
+                    e.log()
+                    state = state.copy(isLoading = false, eventSettings = EventsSettings.Error)
+                } finally {
+                    state = state.copy(isLoading = false)
+                }
+
+                state = state.copy(
+                    isLoading = false,
+                    eventSettings = EventsSettings.Saved,
+                    updatedSettings = emptyList()
+                )
+            }
+        }
     }
 
     fun settingsChanged(settings: Settings) {
@@ -42,23 +88,12 @@ class SettingsViewModel @Inject constructor(
         Logger.v("updated settings: $updatedSettings")
     }
 
-    fun refreshSettings() {
-        setSettings(emptyList())
-        setSettings(settingsInteractor.getAll())
-    }
-
-    fun signOut() {
-        viewModelScope.launchCatching(Dispatchers.Main) {
-            authInteractor.signOut()
-        }
-    }
-
     private fun initData() {
         val settingsList = settingsInteractor.getAll()
         setSettings(settingsList)
 
         val fetchSettingsJob = viewModelScope.async { settingsInteractor.init() }
-        CoroutineScope(SupervisorJob()).launch {
+        viewModelScope.launch(SupervisorJob()) {
             try {
                 fetchSettingsJob.await()
             } catch (e: Exception) {
@@ -88,33 +123,7 @@ class SettingsViewModel @Inject constructor(
         )
     }
 
-    fun saveSettings() {
-        state = state.copy(isLoading = true, eventSettings = null)
-        if (state.updatedSettings.isEmpty()) {
-            state = state.copy(isLoading = false, eventSettings = EventsSettings.Unchanged)
-            return
-        }
-        viewModelScope.launch(Dispatchers.IO) {
-            supervisorScope {
-                val settings = state.updatedSettings
-                    .filter { it.isEnabled() }
-                try {
-                    settingsInteractor.createOrUpdate(settings = settings)
-                } catch (e: Exception) {
-                    e.log()
-                    state = state.copy(isLoading = false, eventSettings = EventsSettings.Error)
-                } finally {
-                    state = state.copy(isLoading = false)
-                }
-
-                state = state.copy(
-                    isLoading = false,
-                    eventSettings = EventsSettings.Saved,
-                    updatedSettings = emptyList()
-                )
-            }
-        }
-    }
+    private fun isSettingsChanges(): Boolean = state.updatedSettings.isNotEmpty()
 
     private fun settingsChecked(settings: Settings) {
         val prevChecked: Boolean = settings.getRealValue() ?: true

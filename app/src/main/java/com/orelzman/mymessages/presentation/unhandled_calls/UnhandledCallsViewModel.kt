@@ -11,9 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.orelzman.mymessages.domain.interactors.CallLogInteractor
-import com.orelzman.mymessages.domain.interactors.DeletedCallsInteractor
-import com.orelzman.mymessages.domain.interactors.SettingsInteractor
+import com.orelzman.mymessages.domain.interactors.*
 import com.orelzman.mymessages.domain.managers.unhandled_calls.UnhandledCallsManager
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.DeletedCall
@@ -35,6 +33,7 @@ class UnhandledCallsViewModel @Inject constructor(
     private val deletedCallsInteractor: DeletedCallsInteractor,
     private val settingsInteractor: SettingsInteractor,
     private val unhandledCallsManager: UnhandledCallsManager,
+    private val analyticsInteractor: AnalyticsInteractor
 ) : AndroidViewModel(application) {
 
     var state by mutableStateOf(UnhandledCallsState())
@@ -42,11 +41,15 @@ class UnhandledCallsViewModel @Inject constructor(
     var isRefreshing by mutableStateOf(false)
 
     init {
+        analyticsInteractor.track(AnalyticsIdentifiers.UnhandledCallsShow)
         initData()
         observeDeletedCalls()
     }
 
     fun refresh(isPullToRefresh: Boolean = false) {
+        if(isPullToRefresh) {
+            analyticsInteractor.track(AnalyticsIdentifiers.UnhandledCallsRefresh)
+        }
         isRefreshing = isPullToRefresh
         if (isPullToRefresh) {
             fetchDeletedCalls()

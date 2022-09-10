@@ -5,10 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.orelzman.mymessages.domain.interactors.AnalyticsIdentifiers
+import com.orelzman.mymessages.domain.interactors.AnalyticsInteractor
 import com.orelzman.mymessages.domain.interactors.StatisticsInteractor
 import com.orelzman.mymessages.domain.model.entities.Statistics
 import com.orelzman.mymessages.domain.model.entities.StatisticsTypes
 import com.orelzman.mymessages.domain.util.extension.log
+import com.orelzman.mymessages.presentation.statistics.components.StatisticsTabs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -20,12 +23,14 @@ import javax.inject.Inject
 @HiltViewModel
 class StatisticsViewModel @Inject constructor(
     private val statisticsInteractor: StatisticsInteractor,
+    private val analyticsInteractor: AnalyticsInteractor
 ) : ViewModel() {
     var state by mutableStateOf(StatisticsState())
 
     var isRefreshing by mutableStateOf(false)
 
     fun init() {
+        analyticsInteractor.track(AnalyticsIdentifiers.StatisticsScreenShow)
         initData()
         observeData()
     }
@@ -39,8 +44,13 @@ class StatisticsViewModel @Inject constructor(
         fetchData()
     }
 
-    fun tabSelected(startDate: Date?, endDate: Date?) {
-        setDates(startDate = startDate, endDate = endDate)
+    fun tabSelected(statisticsTab: StatisticsTabs) {
+        when (statisticsTab) {
+            StatisticsTabs.Week -> analyticsInteractor.track(AnalyticsIdentifiers.StatisticsScreenShowWeeks)
+            StatisticsTabs.Month -> analyticsInteractor.track(AnalyticsIdentifiers.StatisticsScreenShowMonths)
+            StatisticsTabs.All -> analyticsInteractor.track(AnalyticsIdentifiers.StatisticsScreenShowAll)
+        }
+        setDates(startDate = statisticsTab.startDate, endDate = statisticsTab.endDate)
     }
 
     private fun fetchData() {
@@ -81,7 +91,7 @@ class StatisticsViewModel @Inject constructor(
 
     private fun initData() {
         val statistics = statisticsInteractor.getStatisticsOnce()
-        if(statistics.isEmpty()) {
+        if (statistics.isEmpty()) {
             fetchData()
         } else {
             setStatisticsData(statistics)

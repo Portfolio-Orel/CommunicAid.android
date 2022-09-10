@@ -22,6 +22,7 @@ import com.orelzman.mymessages.domain.model.entities.SettingsKey
 import com.orelzman.mymessages.domain.model.entities.SettingsType
 import com.orelzman.mymessages.domain.util.RequiredPermission
 import com.orelzman.mymessages.domain.util.extension.Logger
+import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
 import com.orelzman.mymessages.presentation.components.save_button.SaveButton
 import com.orelzman.mymessages.presentation.settings.components.DataSettings
 import com.orelzman.mymessages.presentation.settings.components.ToggleSettings
@@ -33,6 +34,8 @@ fun SettingsScreen(
 ) {
     val state = viewModel.state
     val context = LocalContext.current
+
+    OnLifecycleEvent(onDestroy = viewModel::onDestroy)
 
     LaunchedEffect(key1 = state.eventSettings) {
         when (state.eventSettings) {

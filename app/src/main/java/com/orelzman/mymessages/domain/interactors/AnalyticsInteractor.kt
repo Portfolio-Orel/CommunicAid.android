@@ -1,11 +1,38 @@
 package com.orelzman.mymessages.domain.interactors
 
-import com.orelzman.mymessages.domain.model.entities.Loggable
-
 interface AnalyticsInteractor {
+    fun track(identifier: AnalyticsIdentifiers, value: Map<String, Any> = emptyMap())
+    fun track(identifier: AnalyticsIdentifiers, values: List<Map<String, Any>>)
+}
 
-    fun track(identifier: String, data: Map<String, Any>)
-    fun track(identifier: String, loggable: Loggable)
-    fun track(identifier: String, loggables: List<Loggable>)
-    fun track(identifier: String, pair: Pair<String, Any>)
+enum class AnalyticsIdentifiers(val identifier: String) {
+    /* Main */
+    SelectFolderClick("user clicks a folder"),
+    FoldersDropdownClick("user clicked the folders dropdown"),
+    EditFolderClick("user clicks on edit folder"),
+    MessageClickOnCall("user clicked a message when on a call"),
+    MessageClickNotOnCall("user clicked a message when not on a call"),
+    MessageLongClickOnCall("user long clicked a message when on a call"),
+    MessageLongNotOnCall("user long clicked a message when not on a call"),
+    /* Main */
+
+    /* Statistics */
+    StatisticsScreenShow("user navigated to statistics screen"),
+    StatisticsScreenShowWeeks("user chose to see weeks statistics"),
+    StatisticsScreenShowMonths("user chose to see months statistics"),
+    StatisticsScreenShowAll("user chose to see all statistics"),
+    /* Statistics */
+
+    /* Unhandled calls */
+    UnhandledCallsShow("user navigated to unhandled calls screen"),
+    UnhandledCallsRefresh("user refreshed unhandled calls screen"),
+    /* Unhandled calls */
+
+    /* Settings */
+    SettingsScreenShow("user navigated to settings screen"),
+    SettingsScreenLeftWithoutSave("user changes settings and left without saving it"),
+    SettingsSaved("user pressed on save in settings screen"),
+    SettingsSavedWithoutChanges("user pressed on save in settings screen without changing the settings")
+    /* Settings */
+
 }

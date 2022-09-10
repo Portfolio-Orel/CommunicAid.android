@@ -2,36 +2,58 @@ package com.orelzman.mymessages.data.interactors
 
 import android.content.Context
 import com.mixpanel.android.mpmetrics.MixpanelAPI
+import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orelzman.mymessages.di.annotation.MixpanelConfigFile
+import com.orelzman.mymessages.domain.interactors.AnalyticsIdentifiers
 import com.orelzman.mymessages.domain.interactors.AnalyticsInteractor
-import com.orelzman.mymessages.domain.model.entities.Loggable
+import com.orelzman.mymessages.domain.model.entities.ConfigFile
+import com.orelzman.mymessages.domain.util.extension.rawResToStringMap
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.json.JSONObject
 import javax.inject.Inject
 
 class AnalyticsInteractorImpl @Inject constructor(
-    @ApplicationContext context: Context
+    @ApplicationContext context: Context,
+    @MixpanelConfigFile mixpanelConfigFile: ConfigFile,
+    private val authInteractor: AuthInteractor
 ) : AnalyticsInteractor {
-    private val mixpanel: MixpanelAPI =
-        MixpanelAPI.getInstance(context, "1922ffdaa9090167dd5b313cdd3a64b6")
+    private val mixpanel: MixpanelAPI
 
-    override fun track(identifier: String, data: Map<String, Any>) {
-        val props = JSONObject()
-        data.forEach { (key, value) ->
-            props.put(key, value)
-        }
-        mixpanel.track(identifier, props)
+    init {
+        val token =
+            context.rawResToStringMap(mixpanelConfigFile.fileResId).getOrDefault("token", "")
+        mixpanel = MixpanelAPI.getInstance(context, token)
     }
 
-    override fun track(identifier: String, loggable: Loggable) =
-        track(identifier, loggable.data)
+    override fun track(identifier: AnalyticsIdentifiers, value: Map<String, Any>) =
+        trackWithUsername(identifier, listOf(value))
 
+    override fun track(identifier: AnalyticsIdentifiers, values: List<Map<String, Any>>) =
+        trackWithUsername(identifier, values)
 
-    override fun track(identifier: String, loggables: List<Loggable>) =
-        loggables.forEach { loggable ->
-            track(identifier, loggable)
+    private fun trackWithUsername(
+        identifier: AnalyticsIdentifiers,
+        values: List<Map<String, Any>>
+    ) {
+        mixpanel.track(
+            identifier.identifier,
+            values.asJson(
+                extras = mapOf(
+                    "username" to ((authInteractor.getUser()?.username) ?: "")
+                )
+            )
+        )
+    }
+}
+
+fun List<Map<String, Any>>.asJson(extras: Map<String, Any> = emptyMap()): JSONObject {
+    val json = JSONObject()
+    val allValues = ArrayList(this)
+    allValues.add(extras)
+    allValues.forEach {
+        it.forEach { (key, value) ->
+            json.put(key, value)
         }
-
-    override fun track(identifier: String, pair: Pair<String, Any>) =
-        track(identifier, mapOf(pair.first to pair.second))
-
+    }
+    return json
 }

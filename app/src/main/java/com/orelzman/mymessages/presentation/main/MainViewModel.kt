@@ -25,7 +25,8 @@ class MainViewModel @Inject constructor(
     private val phoneCallManagerInteractor: PhoneCallManagerInteractor,
     private val phoneCallsInteractor: PhoneCallsInteractor,
     private val messageInFolderInteractor: MessageInFolderInteractor,
-    private val whatsappInteractor: WhatsappInteractor
+    private val whatsappInteractor: WhatsappInteractor,
+    private val analyticsInteractor: AnalyticsInteractor,
 ) : ViewModel() {
 
     var state by mutableStateOf(MainState())
@@ -49,12 +50,10 @@ class MainViewModel @Inject constructor(
             }
         }
         initData()
+        observeMessages()
+        observeFolders()
         observeNumberOnTheLine()
         observeNumberInBackground()
-    }
-
-    fun onResume() {
-        initData()
     }
     /* States */
 
@@ -62,18 +61,27 @@ class MainViewModel @Inject constructor(
         state = state.copy(screenToShow = MainScreens.Default)
     }
 
+    fun onFoldersDropdownClick() {
+        analyticsInteractor.track(AnalyticsIdentifiers.FoldersDropdownClick)
+    }
+
     fun onFolderClick(folder: Folder) {
+        analyticsInteractor.track(AnalyticsIdentifiers.SelectFolderClick, mapOf("title" to folder.title))
         state = state.copy(
             selectedFolder = folder,
             selectedFoldersMessages = getFoldersMessages(folder.id)
         )
     }
 
-    fun onFolderLongClick(folder: Folder) = goToEditFolder(folder)
+    fun editFolder(folder: Folder) {
+        analyticsInteractor.track(AnalyticsIdentifiers.EditFolderClick, mapOf("title" to folder.title))
+        goToEditFolder(folder)
+    }
 
     fun onMessageClick(message: Message) {
         val phoneCall = state.activeCall
         if (phoneCall != null) {
+            analyticsInteractor.track(AnalyticsIdentifiers.MessageClickOnCall, mapOf("title" to message.title))
             phoneCallsInteractor.addMessageSent(
                 phoneCall,
                 MessageSent(sentAt = Date().time, messageId = message.id)
@@ -93,6 +101,7 @@ class MainViewModel @Inject constructor(
                 }
             }
         } else {
+            analyticsInteractor.track(AnalyticsIdentifiers.MessageClickNotOnCall, mapOf("title" to message.title))
             goToEditMessage(message = message)
         }
     }
@@ -100,18 +109,20 @@ class MainViewModel @Inject constructor(
     fun onMessageLongClick(message: Message, context: Context) {
         val phoneCall = state.activeCall
         if (phoneCall != null) {
+            analyticsInteractor.track(AnalyticsIdentifiers.MessageLongClickOnCall, mapOf("title" to message.title))
             goToEditMessage(message)
         } else {
+            analyticsInteractor.track(AnalyticsIdentifiers.MessageLongNotOnCall, mapOf("title" to message.title))
             context.copyToClipboard(label = message.title, value = message.body)
         }
     }
 
     private fun getFoldersMessages(folderId: String): List<Message> {
-        val messageIds = state.messagesInFolders
+        val messageIds = messageInFolderInteractor.getMessagesInFoldersOnce()
             .filter { it.folderId == folderId }
             .map { it.messageId }
 
-        return state.messages
+        return messageInteractor.getAllOnce(isActive = true)
             .filter { messageIds.contains(it.id) }
             .sortedByDescending { it.timesUsed }
     }
@@ -131,9 +142,10 @@ class MainViewModel @Inject constructor(
      */
     private fun initData() {
         state = state.copy(isLoading = true)
-        val messages = messageInteractor.getAllOnce(isActive = true).sortedByDescending { it.timesUsed }
-        val folders = folderInteractor.getAllOnce(isActive = true).sortedByDescending { it.timesUsed }
-        val messagesInFolders = messageInFolderInteractor.getMessagesInFoldersOnce()
+        val messages =
+            messageInteractor.getAllOnce(isActive = true).sortedByDescending { it.timesUsed }
+        val folders =
+            folderInteractor.getAllOnce(isActive = true).sortedByDescending { it.timesUsed }
         val selectedFolder = if (
             state.selectedFolder == null || folders.none { it.id == state.selectedFolder?.id }
         ) folders.firstOrNull() else state.selectedFolder
@@ -141,7 +153,6 @@ class MainViewModel @Inject constructor(
             isLoading = false,
             messages = messages,
             folders = folders,
-            messagesInFolders = messagesInFolders,
             selectedFolder = selectedFolder,
             selectedFoldersMessages = getFoldersMessages(selectedFolder?.id ?: "")
         )
@@ -176,6 +187,22 @@ class MainViewModel @Inject constructor(
 
             } catch (e: Exception) {
                 e.log()
+            }
+        }
+    }
+
+    private fun observeFolders() {
+        viewModelScope.launch {
+            folderInteractor.getFolders(isActive = true).collectLatest {
+                state = state.copy(folders = it)
+            }
+        }
+    }
+
+    private fun observeMessages() {
+        viewModelScope.launch {
+            messageInteractor.getMessages(isActive = true).collectLatest {
+                state = state.copy(messages = it)
             }
         }
     }

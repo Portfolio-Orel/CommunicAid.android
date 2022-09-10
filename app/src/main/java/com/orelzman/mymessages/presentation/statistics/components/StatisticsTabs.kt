@@ -21,7 +21,7 @@ import java.util.*
 
 @Composable
 fun StatisticsTabs(
-    onClick: (Date?, Date?) -> Unit,
+    onClick: (StatisticsTabs) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val configuration = LocalConfiguration.current
@@ -50,7 +50,7 @@ fun StatisticsTabs(
                     )
                     .clickable {
                         selected = tab
-                        onClick(tab.startDate, tab.endDate)
+                        onClick(tab)
                     },
                 contentAlignment = Alignment.Center
             ) {

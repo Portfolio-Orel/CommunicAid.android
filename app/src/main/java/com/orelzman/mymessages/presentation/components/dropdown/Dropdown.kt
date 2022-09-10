@@ -36,6 +36,7 @@ fun <T : DropdownItem> Dropdown(
     color: Color = MaterialTheme.colorScheme.onBackground,
     isError: Boolean = false,
     selected: T? = null,
+    onClick: () -> Unit = {},
     dropdownDecoratorStyle: DropdownDecoratorStyle = DropdownDecoratorStyle.Default
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -76,12 +77,13 @@ fun <T : DropdownItem> Dropdown(
                 .background(
                     MaterialTheme.colorScheme.background
                 )
+                .clickable { onClick() }
         ) {
             items.forEach {
                 DropdownMenuItem(
                     modifier = Modifier
                         .padding(horizontal = 18.dp)
-                        .clickable {  },
+                        .clickable { },
                     text = {
                         Text(
                             text = it.getValue(),
