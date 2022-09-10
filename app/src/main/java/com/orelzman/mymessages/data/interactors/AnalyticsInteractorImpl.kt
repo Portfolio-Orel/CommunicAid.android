@@ -26,27 +26,34 @@ class AnalyticsInteractorImpl @Inject constructor(
     }
 
     override fun track(identifier: AnalyticsIdentifiers, value: Map<String, Any>) =
-        mixpanel.track(identifier.identifier, value.asJson())
+        trackWithUsername(identifier, listOf(value))
 
     override fun track(identifier: AnalyticsIdentifiers, values: List<Map<String, Any>>) =
-        mixpanel.track(identifier.identifier, values.asJson())
-}
+        trackWithUsername(identifier, values)
 
-fun Map<String, Any>.asJson(): JSONObject {
-    val props = JSONObject()
-    forEach { (key, value) ->
-        props.put(key, value)
+    private fun trackWithUsername(
+        identifier: AnalyticsIdentifiers,
+        values: List<Map<String, Any>>
+    ) {
+        mixpanel.track(
+            identifier.identifier,
+            values.asJson(
+                extras = mapOf(
+                    "username" to ((authInteractor.getUser()?.username) ?: "")
+                )
+            )
+        )
     }
-    return props
 }
 
-
-fun List<Map<String, Any>>.asJson(): JSONObject {
-    val props = JSONObject()
-    forEach {
+fun List<Map<String, Any>>.asJson(extras: Map<String, Any> = emptyMap()): JSONObject {
+    val json = JSONObject()
+    val allValues = ArrayList(this)
+    allValues.add(extras)
+    allValues.forEach {
         it.forEach { (key, value) ->
-            props.put(key, value)
+            json.put(key, value)
         }
     }
-    return props
+    return json
 }

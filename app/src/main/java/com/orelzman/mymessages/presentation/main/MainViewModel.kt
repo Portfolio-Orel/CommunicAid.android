@@ -62,7 +62,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun onFoldersDropdownClick() {
-        analyticsInteractor.track(AnalyticsIdentifiers.FoldersDropdownClick, emptyMap())
+        analyticsInteractor.track(AnalyticsIdentifiers.FoldersDropdownClick)
     }
 
     fun onFolderClick(folder: Folder) {
