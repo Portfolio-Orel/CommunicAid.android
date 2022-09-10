@@ -5,7 +5,7 @@ import com.datadog.android.log.Logger
 
 class Logger {
     companion object {
-        private const val TAG = ":::MyMessages:::"
+        private const val TAG = "MyMessages"
         private val logger = Logger.Builder()
             .setNetworkInfoEnabled(true)
             .setLogcatLogsEnabled(true)
@@ -34,13 +34,11 @@ class Logger {
 
         fun i(
             message: String,
-            throwable: Throwable? = null,
             attributes: Map<String, Any?> = emptyMap()
         ) {
             Log.i(TAG, "$message\n$attributes")
             logger.i(
                 message = message,
-                throwable = throwable,
                 attributes = attributes
             )
         }

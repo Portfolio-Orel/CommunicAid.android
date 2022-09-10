@@ -84,11 +84,10 @@ object AppModule {
     @Provides
     fun provideOkHttpClient(
         authIneractor: AuthInteractor,
-        @AuthConfigFile configFileResourceId: ConfigFile
     ): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor(authIneractor))
-            .addInterceptor(ErrorInterceptor(authIneractor, configFileResourceId.fileResId))
+            .addInterceptor(ErrorInterceptor(authIneractor))
             .addInterceptor(LogInterceptor())
             .retryOnConnectionFailure(true)
             .connectTimeout(30L, TimeUnit.SECONDS)

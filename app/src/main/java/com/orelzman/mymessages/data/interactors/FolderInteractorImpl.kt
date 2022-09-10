@@ -29,7 +29,6 @@ class FolderInteractorImpl @Inject constructor(
                 it.setUploadState(UploadState.Uploaded)
                 it
             }
-        db.clear()
         db.insert(folders)
     }
 

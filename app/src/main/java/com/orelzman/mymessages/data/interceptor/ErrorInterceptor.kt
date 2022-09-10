@@ -1,6 +1,5 @@
 package com.orelzman.mymessages.data.interceptor
 
-import androidx.annotation.RawRes
 import com.orelzman.auth.domain.exception.CouldNotRefreshTokenException
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.domain.util.extension.log
@@ -10,14 +9,13 @@ import okhttp3.Response
 
 class ErrorInterceptor(
     private val authInteractor: AuthInteractor,
-    @RawRes private val configFileResourceId: Int? = null
 ) : Interceptor {
     @OptIn(DelicateCoroutinesApi::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         var response = chain.proceed(chain.request())
         when (response.code()) {
             401 -> {
-                val job = GlobalScope.async { authInteractor.refreshToken(configFileResourceId) }
+                val job = GlobalScope.async { authInteractor.refreshToken() }
                 CoroutineScope(SupervisorJob()).launch {
                     try {
                         job.join()

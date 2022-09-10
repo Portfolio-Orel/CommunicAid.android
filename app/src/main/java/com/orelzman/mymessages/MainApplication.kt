@@ -80,8 +80,8 @@ class MainApplication : Application(), Configuration.Provider {
             } catch (e: Exception) {
                 e.log()
             }
-            authInteractor.getUserFlow().collectLatest {
-                if (authInteractor.isAuthorized(it)) {
+            authInteractor.getUserFlow().collectLatest { user ->
+                if (authInteractor.isAuthorized(user)) {
                     PhonecallReceiver.enable(context = applicationContext)
                     SettingsPhoneCallReceiver.enable(context = applicationContext)
                 } else {

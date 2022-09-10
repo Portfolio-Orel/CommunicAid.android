@@ -5,7 +5,6 @@ import android.content.Context
 import android.util.Log
 import androidx.annotation.RawRes
 import com.amazonaws.mobileconnectors.cognitoauth.util.JWTParser
-import com.amplifyframework.AmplifyException
 import com.amplifyframework.auth.AuthChannelEventName
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.AuthProvider
@@ -40,35 +39,21 @@ class AuthInteractorImpl @Inject constructor(
         const val TAG = "AuthAWS:::"
     }
 
-    override suspend fun init(@RawRes configFileResourceId: Int?) {
+    @Throws(NullConfigurationFile::class)
+    override suspend fun init(@RawRes configFileResourceId: Int) {
         if (isConfigured) return
-        try {
-            Amplify.addPlugin(AWSCognitoAuthPlugin())
-            val configFile =
-                configFileResourceId?.let { AmplifyConfiguration.fromConfigFile(context, it) }
-            if (configFile != null) {
-                Amplify.configure(configFile, context)
-            } else {
-                Amplify.configure(context)
-            }
-            isConfigured = true
-            collectState(configFileResourceId)
-            refreshToken()
-            return
-        } catch (e: AmplifyException) {
-            Log.v(TAG, e.localizedMessage ?: "")
-        } finally {
-            val user = getUser()
-            if (Amplify.Auth.getCurrentUser()?.userId != user?.userId) {
-                userInteractor.clear()
-            }
-            if (Amplify.Auth.fetchAuthSession().isSignedIn) {
-                userSignInSuccessfully()
-            }
-        }
+        Amplify.addPlugin(AWSCognitoAuthPlugin())
+        Amplify.configure(
+            AmplifyConfiguration.fromConfigFile(context, configFileResourceId),
+            context
+        )
+        isConfigured = true
+        refreshUserData()
+        collectState()
     }
 
     override fun getUser(): User? = userInteractor.get()
+
     override fun getUserFlow(): Flow<User?> = userInteractor.getFlow()
 
     override suspend fun isAuthorized(user: User?): Boolean {
@@ -107,7 +92,7 @@ class AuthInteractorImpl @Inject constructor(
             val result = Amplify.Auth.confirmSignUp(username, code)
             Amplify.Auth.signIn(username = username, password = password)
             if (result.isSignUpComplete) {
-                userSignInSuccessfully()
+                refreshUserData()
                 Log.i(TAG, "Signup confirmed")
             } else {
                 Log.i(TAG, "Signup confirmation not yet complete")
@@ -129,7 +114,7 @@ class AuthInteractorImpl @Inject constructor(
     override suspend fun googleAuth(activity: Activity) {
         try {
             val result = Amplify.Auth.signInWithSocialWebUI(AuthProvider.google(), activity)
-            userSignInSuccessfully()
+            refreshUserData()
             Log.i(TAG, "Sign in OK: $result")
         } catch (e: AuthException) {
             Log.e(TAG, "Sign in failed", e)
@@ -145,7 +130,7 @@ class AuthInteractorImpl @Inject constructor(
         try {
             val result = Amplify.Auth.signIn(username, password)
             if (result.isSignInComplete) {
-                userSignInSuccessfully()
+                refreshUserData()
                 Log.v(TAG, "Sign in succeeded")
                 (Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession).awsCredentials.error?.localizedMessage?.let {
                     Log.v(
@@ -171,24 +156,8 @@ class AuthInteractorImpl @Inject constructor(
         }
     }
 
-    override suspend fun refreshToken(@RawRes configFileResourceId: Int?) {
-        if (configFileResourceId != null) {
-            init(configFileResourceId)
-        }
-        if (!isConfigured) {
-            return
-        }
-        val session = Amplify.Auth.fetchAuthSession()
-        userInteractor.get()?.let {
-            val user = User(
-                userId = it.userId,
-                token = (session as AWSCognitoAuthSession).userPoolTokens.value?.accessToken
-                    ?: throw CouldNotRefreshTokenException(),
-                email = it.email
-            )
-            Log.v(TAG, "Refreshed Token: ${user.token}")
-            userInteractor.save(user)
-        }
+    override suspend fun refreshToken() {
+        refreshUserData()
     }
 
     override suspend fun signOut() {
@@ -199,14 +168,10 @@ class AuthInteractorImpl @Inject constructor(
         }
     }
 
-    private suspend fun resendConfirmationCode(username: String) =
-        try {
-            Amplify.Auth.resendSignUpCode(username)
-        } catch (e: AuthException.LimitExceededException) {
-            throw LimitExceededException()
-        }
+    override fun isValidCredentials(email: String, password: String): Boolean =
+        email.isNotBlank() && password.isNotBlank()
 
-    private suspend fun collectState(@RawRes configFileResourceId: Int?) {
+    private fun collectState() {
         CoroutineScope(SupervisorJob()).launch {
             Amplify.Hub.subscribe(HubChannel.AUTH).collectLatest {
                 when (it.name) {
@@ -221,7 +186,7 @@ class AuthInteractorImpl @Inject constructor(
                             Log.i(TAG, "Auth just became signed out.")
                         AuthChannelEventName.SESSION_EXPIRED ->
                             try {
-                                refreshToken(configFileResourceId)
+                                refreshToken()
                             } catch (e: Exception) {
                                 signOut()
                             }
@@ -233,11 +198,14 @@ class AuthInteractorImpl @Inject constructor(
         }
     }
 
-    private suspend fun userSignInSuccessfully() =
-        setUser()
+    private suspend fun resendConfirmationCode(username: String) =
+        try {
+            Amplify.Auth.resendSignUpCode(username)
+        } catch (e: AuthException.LimitExceededException) {
+            throw LimitExceededException()
+        }
 
-
-    private suspend fun setUser() {
+    private suspend fun refreshUserData() {
         try {
             val userId = Amplify.Auth.getCurrentUser()?.userId ?: return
             val token =
@@ -247,7 +215,13 @@ class AuthInteractorImpl @Inject constructor(
                 .first { it.key == AuthUserAttributeKey.email() }.value
             val username = JWTParser.getClaim(token, "username")
             val user =
-                User(userId = userId, token = token, email = email, username = username, state = UserState.Authorized)
+                User(
+                    userId = userId,
+                    token = token,
+                    email = email,
+                    username = username,
+                    state = UserState.Authorized
+                )
             userInteractor.save(user)
         } catch (e: Exception) {
             when (e) {
@@ -256,8 +230,5 @@ class AuthInteractorImpl @Inject constructor(
             }
         }
     }
-
-    override fun isValidCredentials(email: String, password: String): Boolean =
-        email.isNotBlank() && password.isNotBlank()
 
 }

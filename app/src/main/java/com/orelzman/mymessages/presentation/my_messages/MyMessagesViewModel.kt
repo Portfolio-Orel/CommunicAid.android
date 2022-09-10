@@ -74,9 +74,9 @@ class MyMessagesViewModel @Inject constructor(
         viewModelScope.launch(SupervisorJob()) {
             authInteractor.getUserFlow().safeCollectLatest({
                 loadingData = false
-            }) {
+            }) { user ->
                 val isAuthenticated =
-                    if (!authInteractor.isAuthorized(it)) {
+                    if (!authInteractor.isAuthorized(user)) {
                         false
                     } else {
                         if (loadingData) { // The data is being loaded and will return true once it's done
