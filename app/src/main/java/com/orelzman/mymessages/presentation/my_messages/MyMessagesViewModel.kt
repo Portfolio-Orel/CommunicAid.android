@@ -1,15 +1,12 @@
 package com.orelzman.mymessages.presentation.my_messages
 
-import android.app.Application
-import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.auth.domain.model.UserState
-import com.orelzman.mymessages.domain.annotation.AuthConfigFile
 import com.orelzman.mymessages.domain.interactors.GeneralInteractor
 import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.managers.phonecall.PhoneCallManager
@@ -19,9 +16,6 @@ import com.orelzman.mymessages.domain.managers.worker.WorkerType
 import com.orelzman.mymessages.domain.model.entities.SettingsKey
 import com.orelzman.mymessages.domain.system.connectivity.ConnectivityObserver
 import com.orelzman.mymessages.domain.system.connectivity.NetworkState
-import com.orelzman.mymessages.domain.system.phone_call.PhonecallReceiver
-import com.orelzman.mymessages.domain.system.phone_call.SettingsPhoneCallReceiver
-import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.domain.util.extension.log
 import com.orelzman.mymessages.domain.util.extension.safeCollectLatest
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,15 +25,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyMessagesViewModel @Inject constructor(
-    application: Application,
     private val authInteractor: AuthInteractor,
     private val generalInteractor: GeneralInteractor,
     private val settingsInteractor: SettingsInteractor,
     private val phoneCallManager: PhoneCallManager,
     private val workerManager: WorkerManager,
     private val connectivityObserver: ConnectivityObserver,
-    @AuthConfigFile private val authConfigFile: Int,
-) : AndroidViewModel(application) {
+) : ViewModel() {
     var state by mutableStateOf(MyMessagesState())
     private var loadingData: Boolean = false
 
@@ -51,18 +43,6 @@ class MyMessagesViewModel @Inject constructor(
     fun onResume() {
         initSettings()
     }
-
-    fun signOut() = viewModelScope.launch(Dispatchers.Main) {
-        try {
-            authInteractor.signOut()
-            generalInteractor.clearAllDatabases()
-        } catch (e: Exception) {
-            e.log()
-        }
-    }
-
-    private fun getApplicationContext(): Context =
-        getApplication<Application>().applicationContext
 
     private fun isUserAuthenticated(): Boolean {
         val isAuthorized = authInteractor.getUser()?.state == UserState.Authorized
@@ -92,12 +72,6 @@ class MyMessagesViewModel @Inject constructor(
 
     private fun observeUser() {
         viewModelScope.launch(SupervisorJob()) {
-            try {
-                authInteractor.init(authConfigFile)
-            } catch (e: Exception) {
-                e.log()
-                authInteractor.signOut()
-            }
             authInteractor.getUserFlow().safeCollectLatest({
                 loadingData = false
             }) {
@@ -161,14 +135,8 @@ class MyMessagesViewModel @Inject constructor(
         if (isAuthenticated) {
             observeCallState()
             observeInternetConnectivity()
-            PhonecallReceiver.enable(context = getApplicationContext())
-            SettingsPhoneCallReceiver.enable(context = getApplicationContext())
         } else {
-            generalInteractor.clearAllDatabases()
-            Logger.v("Database was cleared.")
             workerManager.clearAll()
-            PhonecallReceiver.disable(context = getApplicationContext())
-            SettingsPhoneCallReceiver.disable(context = getApplicationContext())
         }
     }
 }

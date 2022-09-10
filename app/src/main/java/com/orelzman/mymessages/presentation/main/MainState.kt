@@ -2,13 +2,11 @@ package com.orelzman.mymessages.presentation.main
 
 import com.orelzman.mymessages.domain.model.entities.Folder
 import com.orelzman.mymessages.domain.model.entities.Message
-import com.orelzman.mymessages.domain.model.entities.MessageInFolder
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
 
 data class MainState(
     val messages: List<Message> = emptyList(),
     val folders: List<Folder> = emptyList(),
-    val messagesInFolders: List<MessageInFolder> = emptyList(),
     val selectedFolder: Folder? = null,
     val selectedFoldersMessages: List<Message> = emptyList(),
 

@@ -1,5 +1,8 @@
 package com.orelzman.mymessages.domain.util.extension
 
+import android.content.Context
+import androidx.annotation.RawRes
+import com.google.gson.Gson
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
@@ -33,4 +36,13 @@ fun Int.toFormattedNumber(): String {
         }
         else -> this.toString()
     }
+}
+
+@Suppress("UNCHECKED_CAST")
+fun Context.rawResToStringMap(@RawRes res: Int): Map<String, String> {
+    val dataString = resources.openRawResource(res)
+        .bufferedReader()
+        .use { it.readText() }
+    return Gson().fromJson(dataString, Map::class.java) as? Map<String, String>
+        ?: return emptyMap()
 }

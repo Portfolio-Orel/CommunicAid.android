@@ -1,4 +1,4 @@
-package com.orelzman.auth.data.interactor
+package com.orelzman.auth.data.remote
 
 import android.app.Activity
 import android.content.Context
@@ -237,9 +237,9 @@ class AuthInteractorImpl @Inject constructor(
         }
     }
 
-    private suspend fun userSignInSuccessfully() {
+    private suspend fun userSignInSuccessfully() =
         setUser()
-    }
+
 
     private suspend fun setUser() {
         try {
@@ -247,12 +247,7 @@ class AuthInteractorImpl @Inject constructor(
             val token =
                 (Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession).userPoolTokens.value?.accessToken
                     ?: return
-            var email = ""
-            Amplify.Auth.fetchUserAttributes().forEach {
-                if (it.key == AuthUserAttributeKey.email()) {
-                    email = it.value
-                }
-            }
+            val email = Amplify.Auth.fetchUserAttributes().first { it.key == AuthUserAttributeKey.email() }.value
             val user =
                 User(userId = userId, token = token, email = email, state = UserState.Authorized)
             userInteractor.save(user)

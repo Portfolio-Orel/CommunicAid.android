@@ -49,12 +49,10 @@ class MainViewModel @Inject constructor(
             }
         }
         initData()
+        observeMessages()
+        observeFolders()
         observeNumberOnTheLine()
         observeNumberInBackground()
-    }
-
-    fun onResume() {
-        initData()
     }
     /* States */
 
@@ -107,11 +105,11 @@ class MainViewModel @Inject constructor(
     }
 
     private fun getFoldersMessages(folderId: String): List<Message> {
-        val messageIds = state.messagesInFolders
+        val messageIds = messageInFolderInteractor.getMessagesInFoldersOnce()
             .filter { it.folderId == folderId }
             .map { it.messageId }
 
-        return state.messages
+        return messageInteractor.getAllOnce(isActive = true)
             .filter { messageIds.contains(it.id) }
             .sortedByDescending { it.timesUsed }
     }
@@ -131,9 +129,10 @@ class MainViewModel @Inject constructor(
      */
     private fun initData() {
         state = state.copy(isLoading = true)
-        val messages = messageInteractor.getAllOnce(isActive = true).sortedByDescending { it.timesUsed }
-        val folders = folderInteractor.getAllOnce(isActive = true).sortedByDescending { it.timesUsed }
-        val messagesInFolders = messageInFolderInteractor.getMessagesInFoldersOnce()
+        val messages =
+            messageInteractor.getAllOnce(isActive = true).sortedByDescending { it.timesUsed }
+        val folders =
+            folderInteractor.getAllOnce(isActive = true).sortedByDescending { it.timesUsed }
         val selectedFolder = if (
             state.selectedFolder == null || folders.none { it.id == state.selectedFolder?.id }
         ) folders.firstOrNull() else state.selectedFolder
@@ -141,7 +140,6 @@ class MainViewModel @Inject constructor(
             isLoading = false,
             messages = messages,
             folders = folders,
-            messagesInFolders = messagesInFolders,
             selectedFolder = selectedFolder,
             selectedFoldersMessages = getFoldersMessages(selectedFolder?.id ?: "")
         )
@@ -176,6 +174,22 @@ class MainViewModel @Inject constructor(
 
             } catch (e: Exception) {
                 e.log()
+            }
+        }
+    }
+
+    private fun observeFolders() {
+        viewModelScope.launch {
+            folderInteractor.getFolders(isActive = true).collectLatest {
+                state = state.copy(folders = it)
+            }
+        }
+    }
+
+    private fun observeMessages() {
+        viewModelScope.launch {
+            messageInteractor.getMessages(isActive = true).collectLatest {
+                state = state.copy(messages = it)
             }
         }
     }

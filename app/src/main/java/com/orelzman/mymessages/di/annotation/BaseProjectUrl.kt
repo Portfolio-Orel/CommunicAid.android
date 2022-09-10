@@ -1,5 +1,4 @@
-package com.orelzman.mymessages.domain.annotation
-
+package com.orelzman.mymessages.di.annotation
 import javax.inject.Qualifier
 
 /**
@@ -9,4 +8,4 @@ import javax.inject.Qualifier
 
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Proximity
+annotation class BaseProjectUrl

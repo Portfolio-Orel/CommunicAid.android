@@ -6,9 +6,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.orelzman.auth.data.dao.UserDao
-import com.orelzman.auth.data.interactor.UserInteractorImpl
 import com.orelzman.auth.data.local.AuthDatabase
-import com.orelzman.auth.data.repository.AuthRepository
+import com.orelzman.auth.data.local.UserInteractorImpl
 import com.orelzman.auth.domain.interactor.UserInteractor
 import dagger.Module
 import dagger.Provides
