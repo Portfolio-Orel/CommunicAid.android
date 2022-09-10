@@ -70,6 +70,7 @@ abstract class RepositoryModule {
     abstract fun provideDatabaseInteractor(interactorImpl: GeneralInteractorImpl): GeneralInteractor
 
     @Binds
+    @Singleton
     abstract fun provideAnalyticsInteractor(interactorImpl: AnalyticsInteractorImpl): AnalyticsInteractor
 
     @Binds

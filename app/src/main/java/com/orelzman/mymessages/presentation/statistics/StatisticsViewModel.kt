@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.orelzman.mymessages.domain.interactors.AnalyticsInteractor
 import com.orelzman.mymessages.domain.interactors.StatisticsInteractor
 import com.orelzman.mymessages.domain.model.entities.Statistics
 import com.orelzman.mymessages.domain.model.entities.StatisticsTypes
@@ -20,12 +21,14 @@ import javax.inject.Inject
 @HiltViewModel
 class StatisticsViewModel @Inject constructor(
     private val statisticsInteractor: StatisticsInteractor,
+    private val analyticsInteractor: AnalyticsInteractor
 ) : ViewModel() {
     var state by mutableStateOf(StatisticsState())
 
     var isRefreshing by mutableStateOf(false)
 
     fun init() {
+//        analyticsInteractor.track(AnalyticsIdentifiers.StatisticsScreenShow, "")
         initData()
         observeData()
     }

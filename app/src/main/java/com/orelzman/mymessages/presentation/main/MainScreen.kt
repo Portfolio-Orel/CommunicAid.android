@@ -74,7 +74,8 @@ private fun Content(
                 modifier = Modifier.padding(bottom = 32.dp),
                 folders = state.folders,
                 onClick = { viewModel.onFolderClick(it) },
-                onLongClick = { viewModel.onFolderLongClick(it) },
+                onEditClick = { viewModel.editFolder(it) },
+                onDropdownClick = viewModel::onFoldersDropdownClick,
                 addNewFolder = { navController.navigate(Screen.DetailsFolder.route) },
                 selected = state.selectedFolder,
                 color = MaterialTheme.colorScheme.primary

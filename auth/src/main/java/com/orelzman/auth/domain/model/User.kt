@@ -8,6 +8,7 @@ data class User(
     @PrimaryKey val userId: String = "",
     val token: String = "",
     val email: String = "",
+    val username: String = "",
     var state: UserState = UserState.NotAuthorized
 ) {
 

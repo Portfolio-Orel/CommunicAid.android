@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.util.Log
 import androidx.annotation.RawRes
+import com.amazonaws.mobileconnectors.cognitoauth.util.JWTParser
 import com.amplifyframework.AmplifyException
 import com.amplifyframework.auth.AuthChannelEventName
 import com.amplifyframework.auth.AuthException
@@ -22,9 +23,11 @@ import com.orelzman.auth.domain.interactor.UserInteractor
 import com.orelzman.auth.domain.model.User
 import com.orelzman.auth.domain.model.UserState
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -70,15 +73,8 @@ class AuthInteractorImpl @Inject constructor(
 
     override suspend fun isAuthorized(user: User?): Boolean {
         val isLocallyAuthorized = user != null && user.token != "" && user.userId != ""
-        val authorizedAgainstServerJob = CoroutineScope(Dispatchers.IO).async {
-            val isRemotelyAuthorized = Amplify.Auth.fetchAuthSession().isSignedIn
-            return@async isLocallyAuthorized && isRemotelyAuthorized && user?.state == UserState.Authorized
-        }
-        try {
-            return authorizedAgainstServerJob.await()
-        } catch (e: Exception) {
-            throw e
-        }
+        val isRemotelyAuthorized = Amplify.Auth.fetchAuthSession().isSignedIn
+        return isLocallyAuthorized && isRemotelyAuthorized
     }
 
 
@@ -247,9 +243,11 @@ class AuthInteractorImpl @Inject constructor(
             val token =
                 (Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession).userPoolTokens.value?.accessToken
                     ?: return
-            val email = Amplify.Auth.fetchUserAttributes().first { it.key == AuthUserAttributeKey.email() }.value
+            val email = Amplify.Auth.fetchUserAttributes()
+                .first { it.key == AuthUserAttributeKey.email() }.value
+            val username = JWTParser.getClaim(token, "username")
             val user =
-                User(userId = userId, token = token, email = email, state = UserState.Authorized)
+                User(userId = userId, token = token, email = email, username = username, state = UserState.Authorized)
             userInteractor.save(user)
         } catch (e: Exception) {
             when (e) {
