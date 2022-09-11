@@ -23,7 +23,6 @@ import com.orelzman.mymessages.domain.model.entities.SettingsType
 import com.orelzman.mymessages.domain.util.RequiredPermission
 import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
-import com.orelzman.mymessages.presentation.components.save_button.SaveButton
 import com.orelzman.mymessages.presentation.settings.components.DataSettings
 import com.orelzman.mymessages.presentation.settings.components.ToggleSettings
 import com.orelzman.mymessages.presentation.settings.components.send_sms_settings.SendSMSSettings
@@ -79,9 +78,10 @@ fun SettingsScreen(
             state.settingsList.forEach { settings ->
                 when (settings.key.type) {
                     SettingsType.Toggle -> ToggleSettings(
+                        modifier = Modifier.padding(horizontal = 8.dp),
                         settings = settings,
                         onChecked = viewModel::settingsChanged,
-                        modifier = Modifier.padding(horizontal = 8.dp),
+                        isLoading = state.loadingSettings.contains(settings.key),
                         checked = settings.getRealValue() ?: false,
                         enabled = settings.isEnabled() && settings.arePermissionsGranted(context = context)
                             .isEmpty() && !state.isLoading,
@@ -117,14 +117,6 @@ fun SettingsScreen(
                     else -> {}
                 }
             }
-            Spacer(Modifier.weight(1f))
-            SaveButton(
-                modifier = Modifier
-                    .width(120.dp)
-                    .height(50.dp),
-                isLoading = state.isLoading,
-                onClick = viewModel::saveSettings
-            )
         }
         Spacer(Modifier.weight(1f))
         Box(

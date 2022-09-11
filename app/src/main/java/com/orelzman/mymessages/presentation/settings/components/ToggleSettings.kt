@@ -2,10 +2,7 @@ package com.orelzman.mymessages.presentation.settings.components
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +30,7 @@ fun ToggleSettings(
     settings: Settings,
     onChecked: (Settings) -> Unit,
     enabled: Boolean,
+    isLoading: Boolean,
     modifier: Modifier = Modifier,
     checked: Boolean = false,
     contentIfCheck: @Composable (() -> Unit)? = null,
@@ -70,6 +68,17 @@ fun ToggleSettings(
                 checkedState = !checkedState
                 onChecked(settings)
             },
+            thumbContent = {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.padding(3.dp),
+                        color = if (checked) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.background,
+                        strokeWidth = 1.dp
+                    )
+                } else {
+                    Spacer(modifier = Modifier)
+                }
+            },
             enabled = enabled
         )
     }
@@ -84,8 +93,8 @@ fun ToggleSettings(
                 modifier = Modifier
                     .padding(8.dp)
                     .noRippleClickable {
-                    visible = !visible
-                }
+                        visible = !visible
+                    }
             )
             AnimatedVisibility(
                 visible = visible,
