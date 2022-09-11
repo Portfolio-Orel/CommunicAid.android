@@ -9,6 +9,7 @@ data class SettingsState(
     val eventSettings: EventsSettings? = null,
 
     val loadingSettings: List<SettingsKey> = emptyList(),
+    val settingsWaitingForPermissions: List<Settings> = emptyList(),
 
     val isLoading: Boolean = false
 )

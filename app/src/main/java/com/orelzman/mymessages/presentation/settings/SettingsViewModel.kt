@@ -38,10 +38,8 @@ class SettingsViewModel @Inject constructor(
         observeSettings()
     }
 
-    fun onDestroy() {
-        if(isSettingsChanges()) {
-            analyticsInteractor.track(AnalyticsIdentifiers.SettingsScreenLeftWithoutSave)
-        }
+    fun onResume() {
+        initData()
     }
 
     fun signOut() {

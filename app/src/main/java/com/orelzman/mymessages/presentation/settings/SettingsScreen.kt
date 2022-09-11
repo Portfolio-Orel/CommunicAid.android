@@ -34,7 +34,7 @@ fun SettingsScreen(
     val state = viewModel.state
     val context = LocalContext.current
 
-    OnLifecycleEvent(onDestroy = viewModel::onDestroy)
+    OnLifecycleEvent(onResume = viewModel::onResume)
 
     LaunchedEffect(key1 = state.eventSettings) {
         when (state.eventSettings) {
@@ -83,8 +83,10 @@ fun SettingsScreen(
                         onChecked = viewModel::settingsChanged,
                         isLoading = state.loadingSettings.contains(settings.key),
                         checked = settings.getRealValue() ?: false,
-                        enabled = settings.isEnabled() && settings.arePermissionsGranted(context = context)
-                            .isEmpty() && !state.isLoading,
+                        enabled = {
+                            settings.isEnabled() && settings.getPermissionsNotGranted(context = context)
+                                .isEmpty() && !state.isLoading
+                        },
                         contentIfCheck = if (settings.key == SettingsKey.SendSMSToBackgroundCall) {
                             {
                                 SendSMSSettings()
@@ -93,8 +95,7 @@ fun SettingsScreen(
                             null
                         },
                         onDisabledClick = {
-                            val permissionsNotGranted = it.arePermissionsGranted(context = context)
-                            permissionsNotGranted.forEach { permission ->
+                            it.getPermissionsNotGranted(context = context).forEach { permission ->
                                 val permissionState = permission.isGranted(context = context)
                                 if (permissionState == RequiredPermission.PermissionState.DeniedPermanently) {
                                     Logger.v("Permanently not allowed")

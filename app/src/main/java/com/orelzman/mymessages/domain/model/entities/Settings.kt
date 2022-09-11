@@ -60,7 +60,7 @@ data class Settings(
     /**
      * @return a list of all permissions that are not granted
      */
-    fun arePermissionsGranted(context: Context): List<RequiredPermission> {
+    fun getPermissionsNotGranted(context: Context): List<RequiredPermission> {
         val permissionsNotGranted = ArrayList<RequiredPermission>()
         key.requiredPermissions.forEach {
             if (it.isNotGranted(context = context)) {
