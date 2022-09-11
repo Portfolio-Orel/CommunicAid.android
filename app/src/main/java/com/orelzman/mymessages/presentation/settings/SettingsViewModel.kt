@@ -16,8 +16,11 @@ import com.orelzman.mymessages.domain.util.extension.launchCatching
 import com.orelzman.mymessages.domain.util.extension.log
 import com.orelzman.mymessages.domain.util.extension.notEqualsTo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,45 +38,13 @@ class SettingsViewModel @Inject constructor(
         observeSettings()
     }
 
-    fun onDestroy() {
-        if(isSettingsChanges()) {
-            analyticsInteractor.track(AnalyticsIdentifiers.SettingsScreenLeftWithoutSave)
-        }
+    fun onResume() {
+        initData()
     }
 
     fun signOut() {
         viewModelScope.launchCatching(Dispatchers.Main) {
             authInteractor.signOut()
-        }
-    }
-
-    fun saveSettings() {
-        state = state.copy(isLoading = true, eventSettings = null)
-        if (!isSettingsChanges()) {
-            analyticsInteractor.track(AnalyticsIdentifiers.SettingsSavedWithoutChanges)
-            state = state.copy(isLoading = false, eventSettings = EventsSettings.Unchanged)
-            return
-        }
-        analyticsInteractor.track(AnalyticsIdentifiers.SettingsSaved)
-        viewModelScope.launch(Dispatchers.IO) {
-            supervisorScope {
-                val settings = state.updatedSettings
-                    .filter { it.isEnabled() }
-                try {
-                    settingsInteractor.createOrUpdate(settings = settings)
-                } catch (e: Exception) {
-                    e.log()
-                    state = state.copy(isLoading = false, eventSettings = EventsSettings.Error)
-                } finally {
-                    state = state.copy(isLoading = false)
-                }
-
-                state = state.copy(
-                    isLoading = false,
-                    eventSettings = EventsSettings.Saved,
-                    updatedSettings = emptyList()
-                )
-            }
         }
     }
 
@@ -128,7 +99,13 @@ class SettingsViewModel @Inject constructor(
     private fun settingsChecked(settings: Settings) {
         val prevChecked: Boolean = settings.getRealValue() ?: true
         settings.value = (!prevChecked).toString()
-        settingsInteractor.saveSettings(settings)
+        var loadingSettings = state.loadingSettings + settings.key
+        state = state.copy(loadingSettings = loadingSettings)
+        viewModelScope.launch(SupervisorJob()) {
+            settingsInteractor.createOrUpdate(settings)
+            loadingSettings = loadingSettings - settings.key
+            state = state.copy(loadingSettings = loadingSettings)
+        }
     }
 
 }

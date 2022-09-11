@@ -7,6 +7,7 @@ interface AnalyticsInteractor {
 
 enum class AnalyticsIdentifiers(val identifier: String) {
     /* Main */
+    ShowMainScreen("user navigated to main sreen"),
     SelectFolderClick("user clicks a folder"),
     FoldersDropdownClick("user clicked the folders dropdown"),
     EditFolderClick("user clicks on edit folder"),
@@ -31,8 +32,6 @@ enum class AnalyticsIdentifiers(val identifier: String) {
     /* Settings */
     SettingsScreenShow("user navigated to settings screen"),
     SettingsScreenLeftWithoutSave("user changes settings and left without saving it"),
-    SettingsSaved("user pressed on save in settings screen"),
-    SettingsSavedWithoutChanges("user pressed on save in settings screen without changing the settings")
     /* Settings */
 
 }

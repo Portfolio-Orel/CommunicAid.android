@@ -38,7 +38,6 @@ class MainActivity : ComponentActivity() {
                     val permissionsState = rememberMultiplePermissionsState(
                         permissions = listOf(
                             Manifest.permission.READ_CALL_LOG,
-                            Manifest.permission.SEND_SMS,
                             Manifest.permission.CALL_PHONE,
                             Manifest.permission.READ_PHONE_STATE,
                             Manifest.permission.READ_CONTACTS

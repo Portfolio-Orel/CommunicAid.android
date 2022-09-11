@@ -2,10 +2,7 @@ package com.orelzman.mymessages.presentation.settings.components
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.model.entities.Settings
 import com.orelzman.mymessages.domain.util.extension.noRippleClickable
+import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
 
 
 /**
@@ -32,25 +30,29 @@ import com.orelzman.mymessages.domain.util.extension.noRippleClickable
 fun ToggleSettings(
     settings: Settings,
     onChecked: (Settings) -> Unit,
-    enabled: Boolean,
+    enabled: () -> Boolean,
+    isLoading: Boolean,
     modifier: Modifier = Modifier,
     checked: Boolean = false,
     contentIfCheck: @Composable (() -> Unit)? = null,
     onDisabledClick: (Settings) -> Unit = {}
 ) {
     var checkedState by remember { mutableStateOf(checked) }
+    var disabled by remember { mutableStateOf(!enabled()) }
+
+    OnLifecycleEvent(onResume = {
+        disabled = !enabled()
+    })
 
     Row(
         modifier = modifier
             .height(48.dp)
             .fillMaxWidth()
             .noRippleClickable {
-                if (!enabled) {
-                    onDisabledClick(settings)
-                    return@noRippleClickable
+                if (!disabled) {
+                    checkedState = !checkedState
+                    onChecked(settings)
                 }
-                checkedState = !checkedState
-                onChecked(settings)
             },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
@@ -59,19 +61,45 @@ fun ToggleSettings(
             modifier = Modifier.fillMaxWidth(0.85f),
             text = stringResource(id = settings.key.title ?: R.string.empty_string),
             style = MaterialTheme.typography.labelLarge,
-            color = if (enabled) MaterialTheme.colorScheme.onBackground
-            else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+            color = MaterialTheme.colorScheme.onBackground,
             overflow = TextOverflow.Ellipsis
         )
         Spacer(modifier = Modifier.weight(1f))
-        Switch(
-            checked = checkedState,
-            onCheckedChange = {
-                checkedState = !checkedState
-                onChecked(settings)
-            },
-            enabled = enabled
-        )
+        if (!disabled) {
+            Switch(
+                checked = checkedState,
+                onCheckedChange = {
+                    checkedState = !checkedState
+                    onChecked(settings)
+                },
+                thumbContent = {
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.padding(3.dp),
+                            color = if (checked) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.background,
+                            strokeWidth = 1.dp
+                        )
+                    } else {
+                        Spacer(modifier = Modifier)
+                    }
+                },
+                enabled = !disabled
+            )
+        } else {
+            Icon(
+                modifier = Modifier
+                    .size(48.dp)
+                    .padding(end = 8.dp)
+                    .noRippleClickable {
+                        onDisabledClick(settings)
+                    },
+                painter = painterResource(id = R.drawable.ic_round_lock_open),
+                contentDescription = stringResource(
+                    R.string.ask_permissions
+                ),
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
     }
     if (contentIfCheck != null && checked) {
         var visible by remember { mutableStateOf(false) }
@@ -84,8 +112,8 @@ fun ToggleSettings(
                 modifier = Modifier
                     .padding(8.dp)
                     .noRippleClickable {
-                    visible = !visible
-                }
+                        visible = !visible
+                    }
             )
             AnimatedVisibility(
                 visible = visible,

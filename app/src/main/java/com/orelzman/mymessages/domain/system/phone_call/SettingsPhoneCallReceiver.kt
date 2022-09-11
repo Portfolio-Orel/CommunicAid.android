@@ -57,7 +57,7 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
      */
     private fun checkSendSMSToWaitingCall(context: Context) {
         val settings = settingsInteractor.getSettings(SettingsKey.SendSMSToBackgroundCall)
-        if (settings.getRealValue<Boolean>() == true && settings.arePermissionsGranted(context = context)
+        if (settings.getRealValue<Boolean>() == true && settings.getPermissionsNotGranted(context = context)
                 .isEmpty()
         ) {
             if (phoneCallManager.callsData.callState.isCallStateWaiting()) {
@@ -87,7 +87,7 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
             proximityManager.disable()
         }
         val settings = settingsInteractor.getSettings(SettingsKey.ShowAppOnCall)
-        if (settings.getRealValue<Boolean>() == true && settings.arePermissionsGranted(context = context)
+        if (settings.getRealValue<Boolean>() == true && settings.getPermissionsNotGranted(context = context)
                 .isEmpty()
         ) {
             if (state == TelephonyManager.EXTRA_STATE_OFFHOOK) {

@@ -40,6 +40,7 @@ class MainViewModel @Inject constructor(
 
     /* States */
     init {
+        analyticsInteractor.track(AnalyticsIdentifiers.ShowMainScreen)
         viewModelScope.launch(SupervisorJob()) {
             try {
                 fetchDataJob.await()
@@ -65,7 +66,10 @@ class MainViewModel @Inject constructor(
     }
 
     fun onFolderClick(folder: Folder) {
-        analyticsInteractor.track(AnalyticsIdentifiers.SelectFolderClick, mapOf("title" to folder.title))
+        analyticsInteractor.track(
+            AnalyticsIdentifiers.SelectFolderClick,
+            mapOf("title" to folder.title)
+        )
         state = state.copy(
             selectedFolder = folder,
             selectedFoldersMessages = getFoldersMessages(folder.id)
@@ -73,14 +77,20 @@ class MainViewModel @Inject constructor(
     }
 
     fun editFolder(folder: Folder) {
-        analyticsInteractor.track(AnalyticsIdentifiers.EditFolderClick, mapOf("title" to folder.title))
+        analyticsInteractor.track(
+            AnalyticsIdentifiers.EditFolderClick,
+            mapOf("title" to folder.title)
+        )
         goToEditFolder(folder)
     }
 
     fun onMessageClick(message: Message) {
         val phoneCall = state.activeCall
         if (phoneCall != null) {
-            analyticsInteractor.track(AnalyticsIdentifiers.MessageClickOnCall, mapOf("title" to message.title))
+            analyticsInteractor.track(
+                AnalyticsIdentifiers.MessageClickOnCall,
+                mapOf("title" to message.title)
+            )
             phoneCallsInteractor.addMessageSent(
                 phoneCall,
                 MessageSent(sentAt = Date().time, messageId = message.id)
@@ -100,7 +110,10 @@ class MainViewModel @Inject constructor(
                 }
             }
         } else {
-            analyticsInteractor.track(AnalyticsIdentifiers.MessageClickNotOnCall, mapOf("title" to message.title))
+            analyticsInteractor.track(
+                AnalyticsIdentifiers.MessageClickNotOnCall,
+                mapOf("title" to message.title)
+            )
             goToEditMessage(message = message)
         }
     }
@@ -108,10 +121,16 @@ class MainViewModel @Inject constructor(
     fun onMessageLongClick(message: Message, context: Context) {
         val phoneCall = state.activeCall
         if (phoneCall != null) {
-            analyticsInteractor.track(AnalyticsIdentifiers.MessageLongClickOnCall, mapOf("title" to message.title))
+            analyticsInteractor.track(
+                AnalyticsIdentifiers.MessageLongClickOnCall,
+                mapOf("title" to message.title)
+            )
             goToEditMessage(message)
         } else {
-            analyticsInteractor.track(AnalyticsIdentifiers.MessageLongNotOnCall, mapOf("title" to message.title))
+            analyticsInteractor.track(
+                AnalyticsIdentifiers.MessageLongNotOnCall,
+                mapOf("title" to message.title)
+            )
             context.copyToClipboard(label = message.title, value = message.body)
         }
     }
