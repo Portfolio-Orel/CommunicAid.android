@@ -25,7 +25,7 @@ fun DeleteButton(
                 .height(16.dp)
                 .width(16.dp),
             strokeWidth = 2.dp,
-            color = MaterialTheme.colorScheme.errorContainer,
+            color = MaterialTheme.colorScheme.error,
         )
     } else {
         Text(
@@ -34,7 +34,7 @@ fun DeleteButton(
             },
             text = stringResource(deleteText),
             style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.errorContainer
+            color = MaterialTheme.colorScheme.error
         )
     }
 }

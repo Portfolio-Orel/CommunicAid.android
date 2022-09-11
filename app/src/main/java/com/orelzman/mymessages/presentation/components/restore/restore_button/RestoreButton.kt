@@ -59,7 +59,7 @@ fun RestoreButton(
                 modifier = Modifier
                     .clip(RoundedCornerShape(6.dp))
                     .heightIn(min = 100.dp, max = 400.dp)
-                    .background(MaterialTheme.colorScheme.onBackground)
+                    .background(MaterialTheme.colorScheme.background)
             ) {
                 content()
             }
@@ -97,7 +97,7 @@ fun RestoreFolder(
         ) {
             items(state.deletedFolders) { folder ->
                 ItemDetails(
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = 12.dp),
                     item = folder,
                     title = folder.title,
                     restore = viewModel::restore,
@@ -206,7 +206,7 @@ fun <T> ItemDetails(
                 },
                 text = title,
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.background
+                color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(Modifier.weight(1f))
             if (isLoading) {
@@ -215,12 +215,12 @@ fun <T> ItemDetails(
                         .height(24.dp)
                         .width(24.dp),
                     strokeWidth = 1.dp,
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             } else {
                 Icon(
                     modifier = Modifier
-                        .size(24.dp)
+                        .size(28.dp)
                         .clickable {
                             restore(item)
                         },
@@ -228,7 +228,7 @@ fun <T> ItemDetails(
                     contentDescription = stringResource(
                         R.string.restore
                     ),
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
         }

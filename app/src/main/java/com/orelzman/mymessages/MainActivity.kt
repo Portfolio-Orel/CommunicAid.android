@@ -10,6 +10,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.LayoutDirection
@@ -17,6 +19,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.orelzman.mymessages.domain.managers.system_service.SystemServiceManager
 import com.orelzman.mymessages.presentation.my_messages.MyMessagesApp
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
@@ -34,6 +37,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MyMessagesTheme {
+                val systemUiController = rememberSystemUiController()
+                systemUiController.setStatusBarColor(
+                    color = MaterialTheme.colorScheme.background,
+                    darkIcons = MaterialTheme.colorScheme.background.luminance() > 0.5f
+                )
+                window.statusBarColor = MaterialTheme.colorScheme.background.toArgb()
+
+
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                     val permissionsState = rememberMultiplePermissionsState(
                         permissions = listOf(

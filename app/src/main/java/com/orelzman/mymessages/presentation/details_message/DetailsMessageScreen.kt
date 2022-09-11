@@ -33,7 +33,7 @@ fun DetailsMessageScreen(
     val context = LocalContext.current
     val state = viewModel.state
     val snackbarController = SnackbarController.getInstance()
-
+    val scrollState = rememberScrollState()
 
     LaunchedEffect(key1 = messageId) {
         viewModel.setEdit(messageId = messageId)
@@ -78,12 +78,11 @@ fun DetailsMessageScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(scrollState)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
         Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
             OutlinedTextField(
@@ -120,7 +119,7 @@ fun DetailsMessageScreen(
                 onValueChange = { viewModel.setBody(it) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(120.dp),
+                    .heightIn(min = 150.dp),
                 placeholder = {
                     Text(text = stringResource(R.string.message))
                 },
@@ -135,16 +134,19 @@ fun DetailsMessageScreen(
         } else {
             RestoreButton(restoreType = RestoreType.Message)
         }
-        Text(
-            modifier = Modifier.padding(8.dp),
-            text = stringResource(id = state.error),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.error,
-        )
+        if (state.error != R.string.empty_string) {
+            Text(
+                modifier = Modifier.padding(8.dp),
+                text = stringResource(id = state.error),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
 
         Spacer(Modifier.weight(1f))
-
-        Row(horizontalArrangement = Arrangement.SpaceAround) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
             ActionButton(
                 modifier = Modifier
                     .width(120.dp)
