@@ -55,6 +55,11 @@ class MainViewModel @Inject constructor(
         observeNumberOnTheLine()
         observeNumberInBackground()
     }
+
+    fun onResume() {
+        initData()
+    }
+
     /* States */
 
     fun navigated() {

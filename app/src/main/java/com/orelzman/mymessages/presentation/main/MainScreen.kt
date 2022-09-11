@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.orelzman.mymessages.domain.util.Screen
+import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
 import com.orelzman.mymessages.presentation.main.components.FoldersContainer
 import com.orelzman.mymessages.presentation.main.components.MessagesContainer
 
@@ -51,6 +52,8 @@ private fun Content(
         }
         viewModel.navigated()
     }
+
+    OnLifecycleEvent(onResume = viewModel::onResume)
 
     if (state.isLoading) {
         Box(
