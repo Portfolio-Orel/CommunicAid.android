@@ -132,7 +132,7 @@ fun SettingsScreen(
                     },
                 text = stringResource(id = R.string.logout),
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.errorContainer
+                color = MaterialTheme.colorScheme.error
             )
         }
     }

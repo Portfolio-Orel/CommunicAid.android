@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -118,6 +119,8 @@ private fun AddNewMessageFab(
         FloatingActionButton(
             onClick = onClick,
             shape = RoundedCornerShape(50),
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
             content = { Icon(Icons.Filled.Add, stringResource(id = R.string.add_message)) }
         )
     }
