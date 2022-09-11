@@ -128,6 +128,7 @@ class AuthInteractorImpl @Inject constructor(
         isSaveCredentials: Boolean
     ) {
         try {
+            Amplify.Auth.signOut()
             val result = Amplify.Auth.signIn(username, password)
             if (result.isSignInComplete) {
                 refreshUserData()
@@ -211,7 +212,7 @@ class AuthInteractorImpl @Inject constructor(
             val token =
                 (Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession).userPoolTokens.value?.accessToken
                     ?: return
-            val email = Amplify.Auth.fetchUserAttributes()
+            val email =  Amplify.Auth.fetchUserAttributes()
                 .first { it.key == AuthUserAttributeKey.email() }.value
             val username = JWTParser.getClaim(token, "username")
             val user =

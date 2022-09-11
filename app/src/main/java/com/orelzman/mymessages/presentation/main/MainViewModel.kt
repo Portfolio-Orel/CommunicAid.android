@@ -49,7 +49,6 @@ class MainViewModel @Inject constructor(
                 }
             }
         }
-        initData()
         observeMessages()
         observeFolders()
         observeNumberOnTheLine()
@@ -195,6 +194,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             folderInteractor.getFolders(isActive = true).collectLatest {
                 state = state.copy(folders = it)
+                initData()
             }
         }
     }
@@ -203,6 +203,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             messageInteractor.getMessages(isActive = true).collectLatest {
                 state = state.copy(messages = it)
+                initData()
             }
         }
     }

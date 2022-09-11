@@ -10,5 +10,6 @@ interface WorkerManager {
 enum class WorkerType {
     UploadCalls,
     UploadCallsOnce,
-    UploadNotUploadedObjectsOnce;
+    UploadNotUploadedObjectsOnce,
+    RefreshToken;
 }

@@ -97,6 +97,7 @@ class MyMessagesViewModel @Inject constructor(
                                     }
                                 }
                             }
+                            workerManager.startWorker(WorkerType.RefreshToken)
                             true
                         }
                     }

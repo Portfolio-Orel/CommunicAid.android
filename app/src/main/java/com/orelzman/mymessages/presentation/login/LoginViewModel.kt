@@ -13,8 +13,7 @@ import com.orelzman.auth.domain.exception.WrongCredentialsException
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.data.remote.dto.body.create.CreateUserBody
-import com.orelzman.mymessages.di.annotation.AuthConfigFile
-import com.orelzman.mymessages.domain.model.entities.ConfigFile
+import com.orelzman.mymessages.domain.interactors.GeneralInteractor
 import com.orelzman.mymessages.domain.repository.Repository
 import com.orelzman.mymessages.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +26,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val interactor: AuthInteractor,
     private val repository: Repository,
+    private val generalInteractor: GeneralInteractor
 ) : ViewModel() {
     var state by mutableStateOf(LoginState())
 
@@ -63,6 +63,7 @@ class LoginViewModel @Inject constructor(
         when (event) {
             is LoginEvents.OnLoginCompleted -> {
                 if (event.isAuthorized) {
+                    generalInteractor.clearAllDatabases()
                     onUserAuthorizedSuccessfully()
                 } else {
                     loginFailed(event.exception)

@@ -7,10 +7,13 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MessageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(message: Message)
+    fun insert(message: Message)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(messages: List<Message>)
+    fun insert(messages: List<Message>)
+
+    @Update()
+    fun update(messages: List<Message>)
 
     @Query("""
         SELECT *
