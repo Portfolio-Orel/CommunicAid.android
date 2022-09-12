@@ -60,12 +60,13 @@ fun StatisticsScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
                     .padding(vertical = 12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top
             ) {
                 Row(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState()),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(30.dp),
                 ) {
@@ -145,7 +146,7 @@ fun StatisticsScreen(
 private fun createBarItemList(
     color: Color,
     list: List<Pair<String, Int>>,
-    maxItems: Int = 8,
+    maxItems: Int = 15,
 ): List<BarItem> {
     val barItems = ArrayList<BarItem>()
     list

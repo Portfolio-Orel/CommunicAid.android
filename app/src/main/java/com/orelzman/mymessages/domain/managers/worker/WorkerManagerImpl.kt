@@ -98,7 +98,7 @@ class WorkerManagerImpl @Inject constructor(
         val UploadWorkerIntervalTimeUnit = TimeUnit.MINUTES
         val UploadWorkerFlexibleTimeUnit = TimeUnit.MINUTES
 
-        const val RefreshTokenWorkerIntervalTime: Long = 60
+        const val RefreshTokenWorkerIntervalTime: Long = 15
         const val RefreshTokenWorkerFlexibleTime: Long = 5
         val RefreshTokenWorkerIntervalTimeUnit = TimeUnit.MINUTES
         val RefreshTokenWorkerFlexibleTimeUnit = TimeUnit.MINUTES
