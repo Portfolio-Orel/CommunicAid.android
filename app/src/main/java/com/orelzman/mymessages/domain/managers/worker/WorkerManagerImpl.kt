@@ -2,6 +2,7 @@ package com.orelzman.mymessages.domain.managers.worker
 
 import android.content.Context
 import androidx.work.*
+import com.orelzman.mymessages.domain.workers.EndCallWorker
 import com.orelzman.mymessages.domain.workers.RefreshTokenWorker
 import com.orelzman.mymessages.domain.workers.UploadNotUploadedObjectsWorker
 import com.orelzman.mymessages.domain.workers.UploadPhoneCallsWorker
@@ -29,6 +30,10 @@ class WorkerManagerImpl @Inject constructor(
             )
             WorkerType.RefreshToken -> queuePeriodicWorker(
                 worker = buildPeriodicRefreshTokenWorker(),
+                type = type
+            )
+            WorkerType.EndCallOnce -> queueOneTimeWorker(
+                worker = buildOneTimeWorker<EndCallWorker>(),
                 type = type
             )
         }

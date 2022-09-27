@@ -29,19 +29,18 @@ class UploadNotUploadedObjectsWorker @AssistedInject constructor(
 ) : Worker(context, workerParams) {
 
     override fun doWork(): Result {
-        try {
-            Logger.v("Upload not uploaded worker called")
-            CoroutineScope(SupervisorJob()).launch {
+        Logger.v("Upload not uploaded worker called")
+        CoroutineScope(SupervisorJob()).launch {
+            try {
                 checkDeletedCalls()
                 // TODO("Think of a way to store data of update/create/delete action")
 //                checkFolders()
 //                checkMessages()
                 checkSettings()
                 Logger.v("Upload not uploaded done")
+            } catch (e: Exception) {
+                Logger.e("Upload not uploaded failed with an error: ${e.message ?: e.localizedMessage}")
             }
-        } catch (e: Exception) {
-            Logger.e("Upload not uploaded failed with an error: ${e.message ?: e.localizedMessage}")
-            return Result.failure()
         }
         return Result.success()
     }

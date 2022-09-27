@@ -12,6 +12,7 @@ interface PhoneCallManager {
     val callsData: CallPreferences
 
     fun onStateChanged(state: String, number: String, context: Context? = null)
+    fun hangupCall(context: Context)
     fun reset()
 }
 

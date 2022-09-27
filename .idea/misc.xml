@@ -50,9 +50,12 @@
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.129" />
         <entry key="app/src/main/res/drawable/ic_add_folder.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_add_message.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_add_message_light.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_arrow_down_24.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_remove_circle_24.xml" value="0.152" />
         <entry key="app/src/main/res/drawable/ic_close.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_empty_folder_dark.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_empty_folder_light.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_home.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.152" />
         <entry key="app/src/main/res/drawable/ic_missed_call.xml" value="0.1" />

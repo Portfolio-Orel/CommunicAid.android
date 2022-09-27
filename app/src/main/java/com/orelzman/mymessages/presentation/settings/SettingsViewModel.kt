@@ -79,7 +79,6 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch(SupervisorJob()) {
             settingsInteractor.getAllSettingsFlow().collectLatest { settingsList ->
                 if (state.settingsList.notEqualsTo(settingsList) && state.updatedSettings.isEmpty()) {
-                    Logger.v("Edited settings")
                     setSettings(settingsList = settingsList)
                 }
             }

@@ -24,7 +24,16 @@ import com.orelzman.mymessages.presentation.main.components.MessagesContainer
 fun MainScreen(
     navController: NavController,
     viewModel: MainViewModel = hiltViewModel(),
-) = Content(navController = navController, viewModel = viewModel)
+) {
+    /*
+        Images.NoMessagesInFolder { icon ->
+        Box(modifier = Modifier.fillMaxSize()) {
+            icon()
+        }
+    }
+     */
+    Content(navController = navController, viewModel = viewModel)
+}
 
 @Composable
 private fun Content(
@@ -70,11 +79,12 @@ private fun Content(
         }
     } else {
         Column(
-            modifier = modifier,
+            modifier = modifier
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             FoldersContainer(
-                modifier = Modifier.padding(bottom = 32.dp),
                 folders = state.folders,
                 onClick = { viewModel.onFolderClick(it) },
                 onEditClick = { viewModel.editFolder(it) },

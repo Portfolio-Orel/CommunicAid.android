@@ -1,7 +1,14 @@
 package com.orelzman.mymessages.domain.managers.phonecall
 
+import android.Manifest
 import android.content.Context
+import android.content.Context.TELECOM_SERVICE
+import android.content.pm.PackageManager
+import android.os.Build
+import android.telecom.TelecomManager
 import android.telephony.TelephonyManager
+import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.domain.interactors.CallLogInteractor
 import com.orelzman.mymessages.domain.interactors.CallPreferences
@@ -47,6 +54,20 @@ class PhoneCallManagerImpl @Inject constructor(
             TelephonyManager.EXTRA_STATE_RINGING -> onRingingState(number)
             TelephonyManager.EXTRA_STATE_OFFHOOK -> onOffHookState(number)
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    override fun hangupCall(context: Context) {
+        val mgr: TelecomManager? = context.getSystemService(TELECOM_SERVICE) as TelecomManager?
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ANSWER_PHONE_CALLS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+        mgr?.endCall()
+        Logger.vNoRemoteLogging("Call Hangup")
     }
 
     private fun onIdleState() {

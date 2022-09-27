@@ -16,6 +16,7 @@ import com.orelzman.mymessages.domain.managers.worker.WorkerType
 import com.orelzman.mymessages.domain.model.entities.SettingsKey
 import com.orelzman.mymessages.domain.system.connectivity.ConnectivityObserver
 import com.orelzman.mymessages.domain.system.connectivity.NetworkState
+import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.domain.util.extension.log
 import com.orelzman.mymessages.domain.util.extension.safeCollectLatest
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -75,6 +76,7 @@ class MyMessagesViewModel @Inject constructor(
             authInteractor.getUserFlow().safeCollectLatest({
                 loadingData = false
             }) { user ->
+                Logger.v("JWT: ${user?.token}")
                 val isAuthenticated =
                     if (!authInteractor.isAuthorized(user)) {
                         false

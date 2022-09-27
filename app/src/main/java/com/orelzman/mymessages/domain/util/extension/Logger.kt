@@ -5,7 +5,7 @@ import com.datadog.android.log.Logger
 
 class Logger {
     companion object {
-        private const val TAG = "MyMessages"
+        private const val TAG = ":::MyMessages:::"
         private val logger = Logger.Builder()
             .setNetworkInfoEnabled(true)
             .setLogcatLogsEnabled(true)

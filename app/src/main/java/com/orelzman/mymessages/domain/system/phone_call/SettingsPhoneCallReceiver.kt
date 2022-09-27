@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.telephony.SmsManager
 import android.telephony.TelephonyManager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -14,6 +15,8 @@ import com.orelzman.mymessages.domain.interactors.SettingsInteractor
 import com.orelzman.mymessages.domain.managers.phonecall.PhoneCallManager
 import com.orelzman.mymessages.domain.managers.phonecall.isCallStateWaiting
 import com.orelzman.mymessages.domain.managers.system_service.SystemService
+import com.orelzman.mymessages.domain.managers.worker.WorkerManager
+import com.orelzman.mymessages.domain.managers.worker.WorkerType
 import com.orelzman.mymessages.domain.model.entities.SettingsKey
 import com.orelzman.mymessages.domain.util.extension.Logger
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,7 +29,7 @@ import javax.inject.Inject
  */
 
 /**
- * This receiver MUST come first before any other receiver.
+ * This receiver MUST come after the main phone calls receiver before any other receiver.
  */
 @AndroidEntryPoint
 class SettingsPhoneCallReceiver : BroadcastReceiver() {
@@ -36,6 +39,9 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
 
     @Inject
     lateinit var settingsInteractor: SettingsInteractor
+
+    @Inject
+    lateinit var workerManager: WorkerManager
 
     @Inject
     @Proximity
@@ -66,13 +72,20 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
                         .getRealValue() // 4601864
                 text?.let { textToSend ->
                     phoneCallManager.callsData.callInTheBackground?.let { callInBackgroundNumber ->
-                        SmsManager.getDefault()?.sendTextMessage(
+                        val smsManager: SmsManager? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            context.getSystemService(SmsManager::class.java)
+                        } else {
+                            SmsManager.getDefault()
+                        }
+                        smsManager?.sendTextMessage(
                             callInBackgroundNumber,
                             null,
                             textToSend,
                             null,
                             null
                         )
+//                        phoneCallManagerInteractor.hangupCall()
+                        workerManager.startWorker(WorkerType.EndCallOnce)
                     }
                 }
             }

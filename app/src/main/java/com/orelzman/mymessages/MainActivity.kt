@@ -51,7 +51,8 @@ class MainActivity : ComponentActivity() {
                             Manifest.permission.READ_CALL_LOG,
                             Manifest.permission.CALL_PHONE,
                             Manifest.permission.READ_PHONE_STATE,
-                            Manifest.permission.READ_CONTACTS
+                            Manifest.permission.READ_CONTACTS,
+                            Manifest.permission.ANSWER_PHONE_CALLS
                         )
                     )
                     val lifecycleOwner = LocalLifecycleOwner.current

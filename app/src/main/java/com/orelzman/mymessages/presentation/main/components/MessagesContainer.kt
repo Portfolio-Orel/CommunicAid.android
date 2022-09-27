@@ -61,7 +61,6 @@ fun MessagesContainer(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth(1F)
-                .fillMaxHeight(0.9F)
                 .heightIn(max = 2000.dp),
             columns = GridCells.Fixed(4),
             state = listState,
