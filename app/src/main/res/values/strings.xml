@@ -9,7 +9,7 @@
     <string name="password_icon">אייקון של סיסמא</string>
     <string name="show_password">הצג סיסמא</string>
     <string name="hide_password">הסתר סיסמא</string>
-    <string name="user_name">שם משתמש</string>
+    <string name="username">שם משתמש</string>
     <string name="signing_in">מתחבר…</string>
     <string name="login">התחבר</string>
     <string name="registering">נרשם…</string>
@@ -102,4 +102,11 @@
     <string name="icon_settings">אייקון להגדרות</string>
     <string name="plus">+</string>
     <string name="ask_permissions">בקשת הרשאות</string>
+    <string name="error_passwords_mismatch">הסיסמאות לא תואמות</string>
+    <string name="error_wrong_code">הקוד שגוי.. בוא ננסה שוב</string>
+    <string name="did_forget_password">שכחת את הסיסמא?</string>
+    <string name="check">בדוק</string>
+    <string name="reset_code">קוד איפוס</string>
+    <string name="insert_username">הכנס את שם המשתמש</string>
+    <string name="reset_password">אפס סיסמא</string>
 </resources>

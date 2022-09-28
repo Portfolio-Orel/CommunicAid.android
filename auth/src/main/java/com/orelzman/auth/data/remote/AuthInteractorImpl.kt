@@ -111,6 +111,16 @@ class AuthInteractorImpl @Inject constructor(
         }
     }
 
+    override suspend fun forgotPassword(username: String): Boolean {
+        val result = Amplify.Auth.resetPassword(username = username)
+        Log.i(TAG, "$result")
+        return result.isPasswordReset
+    }
+
+    override suspend fun confirmResetPassword(code: String, password: String) {
+        Amplify.Auth.confirmResetPassword(code, password)
+    }
+
     override suspend fun googleAuth(activity: Activity) {
         try {
             val result = Amplify.Auth.signInWithSocialWebUI(AuthProvider.google(), activity)

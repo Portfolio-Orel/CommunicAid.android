@@ -32,6 +32,15 @@ interface AuthInteractor {
         code: String
     )
 
+    suspend fun forgotPassword(
+        username: String
+    ): Boolean
+
+    suspend fun confirmResetPassword(
+        code: String,
+        password: String
+    )
+
     suspend fun googleAuth(activity: Activity)
 
     fun getUser(): User?

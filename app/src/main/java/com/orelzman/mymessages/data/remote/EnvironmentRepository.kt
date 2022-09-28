@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 class EnvironmentRepository @Inject constructor() {
     val currentEnvironment: Environments =
-        if (BuildConfig.DEBUG) Environments.Dev else Environments.Prod
+        if (BuildConfig.DEBUG) Environments.Prod else Environments.Prod
 }
 
 enum class Environments {

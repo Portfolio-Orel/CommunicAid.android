@@ -59,7 +59,8 @@ fun ConfirmationScreen(
                 Text(
                     stringResource(R.string.insert_email_code),
                     modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 if (state.error != null) {
                     Text(
