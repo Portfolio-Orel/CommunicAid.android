@@ -3,7 +3,7 @@ package com.orelzman.mymessages
 import android.content.Context
 import com.orelzman.mymessages.domain.interactors.CallType
 import com.orelzman.mymessages.domain.managers.unhandled_calls.UnhandledCallsManager
-import com.orelzman.mymessages.domain.managers.unhandled_calls.UnhandledCallsManagerImpl
+import com.orels.data.managers.unhandled_calls.UnhandledCallsManagerImpl
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.DeletedCall
 import com.orelzman.mymessages.domain.util.common.DateUtils

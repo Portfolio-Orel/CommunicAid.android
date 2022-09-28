@@ -13,10 +13,10 @@ import com.orelzman.mymessages.data.local.type_converters.Converters
 import com.orelzman.mymessages.data.remote.EnvironmentRepository
 import com.orelzman.mymessages.data.remote.Environments.*
 import com.orelzman.mymessages.data.remote.repository.api.API
-import com.orelzman.mymessages.di.annotation.AuthConfigFile
-import com.orelzman.mymessages.di.annotation.BaseProjectUrl
-import com.orelzman.mymessages.di.annotation.DatadogConfigFile
-import com.orelzman.mymessages.di.annotation.MixpanelConfigFile
+import com.orels.data.annotation.AuthConfigFile
+import com.orels.data.annotation.BaseProjectUrl
+import com.orels.data.annotation.DatadogConfigFile
+import com.orels.data.annotation.MixpanelConfigFile
 import com.orelzman.mymessages.domain.model.entities.ConfigFile
 import dagger.Module
 import dagger.Provides

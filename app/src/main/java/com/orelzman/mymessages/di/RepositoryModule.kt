@@ -1,23 +1,25 @@
 package com.orelzman.mymessages.di
 
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.orels.data.annotation.Proximity
+import com.orels.data.interactors.UserInteractorImpl
+import com.orels.data.managers.phonecall.interactor.PhoneCallManagerImpl
+import com.orels.data.managers.system_service.SystemServiceManager
+import com.orels.data.managers.system_service.SystemServiceManagerImpl
+import com.orels.data.managers.unhandled_calls.UnhandledCallsManagerImpl
+import com.orels.data.managers.worker.WorkerManagerImpl
+import com.orels.domain.interactors.AnalyticsInteractor
+import com.orels.domain.interactors.UserInteractor
 import com.orelzman.auth.data.remote.AuthInteractorImpl
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.data.interactors.*
 import com.orelzman.mymessages.data.remote.repository.api.APIRepository
-import com.orelzman.mymessages.di.annotation.Proximity
 import com.orelzman.mymessages.domain.interactors.*
 import com.orelzman.mymessages.domain.managers.phonecall.PhoneCallManager
-import com.orelzman.mymessages.domain.managers.phonecall.PhoneCallManagerImpl
 import com.orelzman.mymessages.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
 import com.orelzman.mymessages.domain.managers.phonecall.interactor.PhoneCallManagerInteractorImpl
 import com.orelzman.mymessages.domain.managers.system_service.SystemService
-import com.orelzman.mymessages.domain.managers.system_service.SystemServiceManager
-import com.orelzman.mymessages.domain.managers.system_service.SystemServiceManagerImpl
 import com.orelzman.mymessages.domain.managers.unhandled_calls.UnhandledCallsManager
-import com.orelzman.mymessages.domain.managers.unhandled_calls.UnhandledCallsManagerImpl
 import com.orelzman.mymessages.domain.managers.worker.WorkerManager
-import com.orelzman.mymessages.domain.managers.worker.WorkerManagerImpl
 import com.orelzman.mymessages.domain.repository.Repository
 import com.orelzman.mymessages.domain.system.connectivity.ConnectivityObserver
 import com.orelzman.mymessages.domain.system.connectivity.ConnectivityObserverObserverImpl
@@ -37,6 +39,9 @@ abstract class RepositoryModule {
         authInteractorImpl: AuthInteractorImpl
     ): AuthInteractor
 
+    @Binds
+    abstract fun provideUserInteractor(userInteractor: UserInteractorImpl): UserInteractor
+    
     @Binds
     abstract fun provideConnectivityObserver(connectivityObserver: ConnectivityObserverObserverImpl): ConnectivityObserver
 
@@ -58,11 +63,9 @@ abstract class RepositoryModule {
     @Binds
     abstract fun provideUnhandledCallsInteractor(interactorImpl: DeletedCallsInteractorImpl): DeletedCallsInteractor
 
-    @ExperimentalPermissionsApi
     @Binds
     abstract fun providePhoneCallManager(manager: PhoneCallManagerImpl): PhoneCallManager
 
-    @ExperimentalPermissionsApi
     @Binds
     abstract fun providePhoneCallManagerInteractor(interactorImpl: PhoneCallManagerInteractorImpl): PhoneCallManagerInteractor
 

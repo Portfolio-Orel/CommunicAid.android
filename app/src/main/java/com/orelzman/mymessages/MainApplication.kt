@@ -10,8 +10,8 @@ import com.datadog.android.rum.GlobalRum
 import com.datadog.android.rum.RumMonitor
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.mymessages.data.remote.EnvironmentRepository
-import com.orelzman.mymessages.di.annotation.AuthConfigFile
-import com.orelzman.mymessages.di.annotation.DatadogConfigFile
+import com.orels.data.annotation.AuthConfigFile
+import com.orels.data.annotation.DatadogConfigFile
 import com.orelzman.mymessages.domain.model.entities.ConfigFile
 import com.orelzman.mymessages.domain.system.phone_call.PhonecallReceiver
 import com.orelzman.mymessages.domain.system.phone_call.SettingsPhoneCallReceiver

@@ -1,0 +1,12 @@
+<resources>
+    <!--  Settings  -->
+    <string name="settings">הגדרות</string>
+    <string name="last_calls_update">עדכון שיחות אחרון</string>
+    <string name="show_app_on_call">הצג אפליקציה בעת שיחה</string>
+    <string name="ignore_list">רשימת התעלמות</string>
+    <string name="send_sms_to_background_call">שליחת הודעה לשיחה ממתינה</string>
+    <string name="settings_saved_successfully">ההגדרות נשמרו בהצלחה</string>
+    <string name="count_rejected_as_missed">שיחות דחויות לא טופלו</string>
+    <string name="can_delete_unhandled_calls">אפשר מחיקת שיחות שלא טופלו</string>
+    <!--  Settings  -->
+</resources>
