@@ -41,6 +41,7 @@ class StatisticsViewModel @Inject constructor(
 
     fun refreshData() {
         isRefreshing = true
+        analyticsInteractor.track(AnalyticsIdentifiers.PullToRefreshStatistics)
         fetchData()
     }
 
