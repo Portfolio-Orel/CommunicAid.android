@@ -13,7 +13,7 @@ interface PhoneCallManager {
 
     fun onStateChanged(state: String, number: String, context: Context? = null)
     fun hangupCall(context: Context)
-    fun reset()
+    fun resetIfNoActiveCall()
 }
 
 enum class CallState(val value: String) {

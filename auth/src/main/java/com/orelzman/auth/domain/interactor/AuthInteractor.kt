@@ -2,6 +2,7 @@ package com.orelzman.auth.domain.interactor
 
 import android.app.Activity
 import androidx.annotation.RawRes
+import com.orelzman.auth.domain.model.ResetPasswordStep
 import com.orelzman.auth.domain.model.User
 import kotlinx.coroutines.flow.Flow
 
@@ -30,6 +31,15 @@ interface AuthInteractor {
         username: String,
         password: String,
         code: String
+    )
+
+    suspend fun forgotPassword(
+        username: String
+    ): ResetPasswordStep
+
+    suspend fun confirmResetPassword(
+        code: String,
+        password: String
     )
 
     suspend fun googleAuth(activity: Activity)

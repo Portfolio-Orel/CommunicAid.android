@@ -87,7 +87,7 @@ class MyMessagesViewModel @Inject constructor(
                             if (!isDataInit()) { // Maybe replace and place this in login
                                 loadingData = true
                                 state = state.copy(isLoading = true)
-                                phoneCallManager.reset()
+                                phoneCallManager.resetIfNoActiveCall()
                                 withContext(NonCancellable) {
                                     try {
                                         generalInteractor.initData()

@@ -19,6 +19,7 @@ import com.orelzman.mymessages.presentation.components.confirmation_pop_up.Confi
 import com.orelzman.mymessages.presentation.components.login_button.LoginButton
 import com.orelzman.mymessages.presentation.components.register_button.RegisterButton
 import com.orelzman.mymessages.presentation.login.components.Input
+import com.orelzman.mymessages.presentation.login.components.forgot_password.ForgotPasswordComponent
 import com.orelzman.mymessages.ui.theme.MyMessagesTheme
 
 @ExperimentalMaterial3Api
@@ -81,14 +82,14 @@ private fun ContentView(viewModel: LoginViewModel) {
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             Input(
-                title = stringResource(R.string.user_name),
-                placeholder = stringResource(R.string.user_name),
+                title = stringResource(R.string.username),
+                placeholder = stringResource(R.string.username),
                 initialText = "",
                 isPassword = false,
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Person,
-                        stringResource(R.string.user_name)
+                        stringResource(R.string.username)
                     )
                 },
                 onTextChange = { viewModel.onUsernameChange(it) }
@@ -125,6 +126,7 @@ private fun ContentView(viewModel: LoginViewModel) {
                     email = state.email,
                     onRegisterComplete = { viewModel.onEvent(LoginEvents.UserRegisteredSuccessfully) })
             }
+            ForgotPasswordComponent()
             LoginButton(
                 username = state.username,
                 password = state.password,

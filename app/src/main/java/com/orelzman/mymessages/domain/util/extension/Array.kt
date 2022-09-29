@@ -6,7 +6,7 @@ fun <T> ArrayList<T>.addUnique(element: T) {
     }
 }
 
-fun <T> ArrayList<T>.addUniqueWithPredicate(element: T, predicate: (T) -> Boolean) {
+fun <T> ArrayList<T>.addUniqueIf(element: T, predicate: (T) -> Boolean) {
     if (predicate(element)) {
         add(element)
     }
