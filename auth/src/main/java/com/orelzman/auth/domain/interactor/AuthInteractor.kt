@@ -50,6 +50,7 @@ interface AuthInteractor {
     /**
      * Checks if the user is authorized against the user pool.
      */
+    @Throws(Exception::class)
     suspend fun isAuthorized(user: User?): Boolean
     /**
      * Checks if the credentials entered are valid

@@ -81,12 +81,16 @@ class MainApplication : Application(), Configuration.Provider {
                 e.log()
             }
             authInteractor.getUserFlow().collectLatest { user ->
-                if (authInteractor.isAuthorized(user)) {
-                    PhonecallReceiver.enable(context = applicationContext)
-                    SettingsPhoneCallReceiver.enable(context = applicationContext)
-                } else {
-                    PhonecallReceiver.disable(context = applicationContext)
-                    SettingsPhoneCallReceiver.disable(context = applicationContext)
+                try {
+                    if (authInteractor.isAuthorized(user)) {
+                        PhonecallReceiver.enable(context = applicationContext)
+                        SettingsPhoneCallReceiver.enable(context = applicationContext)
+                    } else {
+                        PhonecallReceiver.disable(context = applicationContext)
+                        SettingsPhoneCallReceiver.disable(context = applicationContext)
+                    }
+                } catch(e: Exception) {
+                    e.log()
                 }
             }
         }

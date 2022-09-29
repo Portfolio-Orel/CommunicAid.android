@@ -42,7 +42,7 @@ class AuthInteractorImpl @Inject constructor(
         const val TAG = "AuthAWS:::"
     }
 
-    @Throws(NullConfigurationFile::class)
+    @Throws(NullConfigurationFile::class, Exception::class)
     override suspend fun init(@RawRes configFileResourceId: Int) {
         if (isConfigured) return
         Amplify.addPlugin(AWSCognitoAuthPlugin())
@@ -51,8 +51,8 @@ class AuthInteractorImpl @Inject constructor(
             context
         )
         isConfigured = true
-        refreshUserData()
         collectState()
+        refreshUserData()
     }
 
     override fun getUser(): User? = userInteractor.get()
@@ -60,6 +60,7 @@ class AuthInteractorImpl @Inject constructor(
     override fun getUserFlow(): Flow<User?> = userInteractor.getFlow()
 
     override suspend fun isAuthorized(user: User?): Boolean {
+        refreshUserData()
         val isLocallyAuthorized = user != null && user.token != "" && user.userId != ""
         val isRemotelyAuthorized = Amplify.Auth.fetchAuthSession().isSignedIn
         return isLocallyAuthorized && isRemotelyAuthorized
@@ -262,6 +263,7 @@ class AuthInteractorImpl @Inject constructor(
                 is AuthException.NotAuthorizedException -> userInteractor.save(User.blocked())
                 else -> userInteractor.save(User.notAuthorized())
             }
+            throw e
         }
     }
 

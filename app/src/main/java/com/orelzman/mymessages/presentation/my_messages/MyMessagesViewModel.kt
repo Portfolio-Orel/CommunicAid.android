@@ -75,6 +75,7 @@ class MyMessagesViewModel @Inject constructor(
         viewModelScope.launch(SupervisorJob()) {
             authInteractor.getUserFlow().safeCollectLatest({
                 loadingData = false
+                it.log()
             }) { user ->
                 Logger.v("JWT: ${user?.token}")
                 val isAuthenticated =
