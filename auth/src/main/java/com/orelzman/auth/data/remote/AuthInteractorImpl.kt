@@ -12,6 +12,7 @@ import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
 import com.amplifyframework.auth.options.AuthSignUpOptions
+import com.amplifyframework.auth.result.step.AuthResetPasswordStep
 import com.amplifyframework.core.AmplifyConfiguration
 import com.amplifyframework.core.InitializationStatus
 import com.amplifyframework.hub.HubChannel
@@ -19,6 +20,7 @@ import com.amplifyframework.kotlin.core.Amplify
 import com.orelzman.auth.domain.exception.*
 import com.orelzman.auth.domain.interactor.AuthInteractor
 import com.orelzman.auth.domain.interactor.UserInteractor
+import com.orelzman.auth.domain.model.ResetPasswordStep
 import com.orelzman.auth.domain.model.User
 import com.orelzman.auth.domain.model.UserState
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -27,6 +29,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.security.InvalidParameterException
 import javax.inject.Inject
 
 
@@ -111,14 +114,34 @@ class AuthInteractorImpl @Inject constructor(
         }
     }
 
-    override suspend fun forgotPassword(username: String): Boolean {
-        val result = Amplify.Auth.resetPassword(username = username)
-        Log.i(TAG, "$result")
-        return result.isPasswordReset
+    override suspend fun forgotPassword(username: String): ResetPasswordStep {
+        return try {
+            val result = Amplify.Auth.resetPassword(username = username)
+            when (result.nextStep.resetPasswordStep) {
+                AuthResetPasswordStep.CONFIRM_RESET_PASSWORD_WITH_CODE -> {
+                    ResetPasswordStep.ConfirmResetPasswordWithCode
+                }
+                AuthResetPasswordStep.DONE -> {
+                    ResetPasswordStep.Done
+                }
+                else -> {
+                    ResetPasswordStep.Error
+                }
+            }
+
+        } catch (e: InvalidParameterException) {
+            throw UserNotFoundException()
+        } catch (e: LimitExceededException) {
+            throw LimitExceededException()
+        } catch (e: AuthException.UserNotFoundException) {
+            throw UserNotFoundException()
+        }  catch (e: Exception) {
+            throw e
+        }
     }
 
     override suspend fun confirmResetPassword(code: String, password: String) {
-        Amplify.Auth.confirmResetPassword(code, password)
+        Amplify.Auth.confirmResetPassword(newPassword = password, confirmationCode = code)
     }
 
     override suspend fun googleAuth(activity: Activity) {
@@ -222,7 +245,7 @@ class AuthInteractorImpl @Inject constructor(
             val token =
                 (Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession).userPoolTokens.value?.accessToken
                     ?: return
-            val email =  Amplify.Auth.fetchUserAttributes()
+            val email = Amplify.Auth.fetchUserAttributes()
                 .first { it.key == AuthUserAttributeKey.email() }.value
             val username = JWTParser.getClaim(token, "username")
             val user =

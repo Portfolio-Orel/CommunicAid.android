@@ -1,6 +1,7 @@
 package com.orelzman.mymessages.presentation.login.components.forgot_password
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,12 +13,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.presentation.login.components.Input
@@ -28,6 +32,7 @@ import com.orelzman.mymessages.presentation.main.components.ActionButton
  * 28/09/2022
  */
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun ForgotPasswordComponent(
     modifier: Modifier = Modifier,
@@ -47,7 +52,13 @@ fun ForgotPasswordComponent(
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.45f)
             )
             if (shouldShowDialog) {
-                Dialog(onDismissRequest = { }) {
+                Dialog(
+                    onDismissRequest = { },
+                    properties = DialogProperties(
+                        dismissOnBackPress = true,
+                        dismissOnClickOutside = false
+                    )
+                ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -67,27 +78,38 @@ fun ForgotPasswordComponent(
                     when (state.event) {
                         ForgotPasswordEvent.Default -> {}
                         ForgotPasswordEvent.InsertUsername, ForgotPasswordEvent.InsertCodeAndPassword -> {
-                            Column(
+                            Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(6.dp))
+                                    .heightIn(min = 480.dp, max = 1000.dp)
                                     .background(MaterialTheme.colorScheme.background.copy(alpha = 0.9f))
                                     .padding(12.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(
-                                    12.dp,
-                                    Alignment.CenterVertically
-                                )
+                                contentAlignment = Alignment.Center
                             ) {
-                                if (state.event == ForgotPasswordEvent.InsertUsername) {
-                                    InsertUsername(
-                                        isLoading = state.isLoading,
-                                        onClick = viewModel::insertUsername
-                                    )
-                                } else {
-                                    InsertCodeAndPasswords(
-                                        isLoading = state.isLoading,
-                                        onClick = viewModel::insertCodeAndPasswords
-                                    )
+                                AnimatedContent(targetState = state.event) {
+                                    if (state.event == ForgotPasswordEvent.InsertUsername) {
+                                        InsertUsername(
+                                            modifier = Modifier.animateEnterExit(
+                                                enter = fadeIn(),
+                                                exit = ExitTransition.None
+                                            ),
+                                            isLoading = state.isLoading,
+                                            onClick = viewModel::insertUsername,
+                                            errorFields = state.errorFields,
+                                            error = state.error
+                                        )
+                                    } else {
+                                        InsertCodeAndPasswords(
+                                            modifier = Modifier.animateEnterExit(
+                                                enter = fadeIn(),
+                                                exit = ExitTransition.None
+                                            ),
+                                            isLoading = state.isLoading,
+                                            onClick = viewModel::insertCodeAndPasswords,
+                                            errorFields = state.errorFields,
+                                            error = state.error
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -101,66 +123,139 @@ fun ForgotPasswordComponent(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun InsertUsername(
     isLoading: Boolean,
     onClick: (String) -> Unit,
-    errorFields: List<ForgotPasswordFields> = emptyList()
+    errorFields: List<ForgotPasswordFields>,
+    modifier: Modifier = Modifier,
+    @StringRes error: Int? = null
 ) {
-    var username = ""
+    var username by remember { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-    Text(
-        stringResource(R.string.insert_username),
-        modifier = Modifier.padding(16.dp),
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onBackground,
-    )
-    Input(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        title = stringResource(R.string.username),
-        placeholder = stringResource(R.string.confirmation_code),
+    Column(
+        modifier = modifier.wrapContentSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(
+            12.dp,
+            Alignment.CenterVertically
+        )
+    ) {
+        Text(
+            stringResource(R.string.insert_username),
+            modifier = Modifier.padding(16.dp),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onBackground,
+        )
 
-        onTextChange = {
-            username = it
-        })
-    ActionButton(
-        text = stringResource(R.string.reset_password),
-        onClick = { onClick(username) },
-        isLoading = isLoading
-    )
+        if (error != null) {
+            ErrorText(error = error)
+        }
+
+        Input(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            title = stringResource(R.string.username),
+            placeholder = stringResource(R.string.username),
+            isError = errorFields.contains(ForgotPasswordFields.Username),
+            shouldFocus = true,
+            onTextChange = {
+                username = it
+            })
+        ActionButton(
+            text = stringResource(R.string.reset_password),
+            onClick = {
+                keyboardController?.hide()
+                onClick(username)
+            },
+            isLoading = isLoading
+        )
+    }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun InsertCodeAndPasswords(
     isLoading: Boolean,
     onClick: (String, String, String) -> Unit,
-    errorFields: List<ForgotPasswordFields> = emptyList()
+    errorFields: List<ForgotPasswordFields>,
+    modifier: Modifier = Modifier,
+    @StringRes error: Int? = null
 ) {
-    var code = ""
-    var password = ""
-    var confirmPassword = ""
+    var code by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-    Input(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        stringResource(R.string.insert_email_code),
-        placeholder = stringResource(R.string.confirmation_code),
-        onTextChange = {
+    Column(
+        modifier = modifier.height(500.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(
+            12.dp,
+            Alignment.CenterVertically
+        )
+    ) {
 
-        })
-    ActionButton(
-        text = stringResource(R.string.check),
-        onClick = { onClick(code, password, confirmPassword) },
-        isLoading = isLoading
-    )
+        Text(
+            stringResource(R.string.insert_email_code),
+            modifier = Modifier.padding(16.dp),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onBackground,
+        )
+
+        if (error != null) {
+            ErrorText(error = error)
+        }
+
+        Input(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            title = stringResource(R.string.confirmation_code),
+            placeholder = stringResource(R.string.confirmation_code),
+            isError = errorFields.contains(ForgotPasswordFields.Code),
+            shouldFocus = true,
+            onTextChange = {
+                code = it
+            })
+        Input(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            title = stringResource(R.string.password),
+            isPassword = true,
+            placeholder = stringResource(R.string.password),
+            isError = errorFields.contains(ForgotPasswordFields.Password),
+            onTextChange = {
+                password = it
+            })
+        Input(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            title = stringResource(R.string.confirm_password),
+            isPassword = true,
+            placeholder = stringResource(R.string.confirm_password),
+            isError = errorFields.contains(ForgotPasswordFields.ConfirmPassword),
+            onTextChange = {
+                confirmPassword = it
+            })
+        Spacer(Modifier.weight(1f))
+        ActionButton(
+            text = stringResource(R.string.change_password),
+            onClick = {
+                keyboardController?.hide()
+                onClick(code, password, confirmPassword)
+            },
+            isLoading = isLoading
+        )
+    }
 }
 
 @Composable
-fun ErrorText(@StringRes res: Int?) {
-    if (res != null) {
-        Text(
-            text = stringResource(id = res),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.error
-        )
+fun ErrorText(@StringRes error: Int?) {
+    AnimatedVisibility(visible = error != null) {
+        error?.let {
+            Text(
+                text = stringResource(id = it),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
     }
 }

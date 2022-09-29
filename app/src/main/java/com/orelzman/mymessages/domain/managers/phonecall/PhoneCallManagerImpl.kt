@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Context.TELECOM_SERVICE
 import android.content.pm.PackageManager
+import android.media.AudioManager
 import android.os.Build
 import android.telecom.TelecomManager
 import android.telephony.TelephonyManager
@@ -20,6 +21,7 @@ import com.orelzman.mymessages.domain.util.common.Constants.TIME_TO_ADD_CALL_TO_
 import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.domain.util.extension.compareNumberTo
 import com.orelzman.mymessages.domain.util.extension.inSeconds
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,6 +31,7 @@ import javax.inject.Inject
 @Suppress("MoveVariableDeclarationIntoWhen")
 @ExperimentalPermissionsApi
 class PhoneCallManagerImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val phoneCallInteractor: PhoneCallsInteractor,
     private val dataSource: DataSourceCallsInteractor,
     private val callLogInteractor: CallLogInteractor
@@ -43,12 +46,8 @@ class PhoneCallManagerImpl @Inject constructor(
             callState = dataSource.getState()?.value
         )
 
-
-    var context: Context? = null
-
     override fun onStateChanged(state: String, number: String, context: Context?) {
         Logger.i("state: $state \n number: $number")
-        this.context = context
         when (state) {
             TelephonyManager.EXTRA_STATE_IDLE -> onIdleState()
             TelephonyManager.EXTRA_STATE_RINGING -> onRingingState(number)
@@ -66,12 +65,11 @@ class PhoneCallManagerImpl @Inject constructor(
         ) {
             return
         }
-        mgr?.endCall()
         Logger.vNoRemoteLogging("Call Hangup")
     }
 
     private fun onIdleState() {
-        reset()
+        resetIfNoActiveCall()
     }
 
     private fun onRingingState(number: String) {
@@ -181,7 +179,15 @@ class PhoneCallManagerImpl @Inject constructor(
         phoneCallInteractor.cachePhoneCall(phoneCall = phoneCall)
     }
 
-    override fun reset() {
+    private fun isCallActive(): Boolean {
+        val manager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        return manager.mode == AudioManager.MODE_IN_CALL
+    }
+
+    override fun resetIfNoActiveCall() {
+        if(isCallActive()) {
+            return
+        }
         setStateValue(CallState.Idle)
         setCallOnLine(null)
         setBackgroundCall(null)

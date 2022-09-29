@@ -7,5 +7,6 @@ interface PhoneCallManagerInteractor {
     val callsDataFlow: Flow<CallPreferences>
     val callsData: CallPreferences
 
+    fun resetIfNoActiveCall()
     fun hangupCall()
 }

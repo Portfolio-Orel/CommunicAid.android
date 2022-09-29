@@ -109,4 +109,9 @@
     <string name="reset_code">קוד איפוס</string>
     <string name="insert_username">הכנס את שם המשתמש</string>
     <string name="reset_password">אפס סיסמא</string>
+    <string name="confirm_password">אישור</string>
+    <string name="error_username_does_not_exist">שם המשתמש לא קיים אצלנו..</string>
+    <string name="new_password">סיסמא חדשה</string>
+    <string name="change_password">שנה סיסמא</string>
+    <string name="error_limit_exceeded_operation">ניסית יותר מידי פעמים.. תנסה שוב עוד מעט</string>
 </resources>

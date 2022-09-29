@@ -58,6 +58,7 @@ class MainViewModel @Inject constructor(
 
     fun onResume() {
         initData()
+        phoneCallManagerInteractor.resetIfNoActiveCall()
     }
 
     /* States */
