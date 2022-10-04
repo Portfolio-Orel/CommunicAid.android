@@ -50,7 +50,7 @@ class UnhandledCallsViewModel @Inject constructor(
 
     fun refresh(isPullToRefresh: Boolean = false) {
         if(isPullToRefresh) {
-            analyticsInteractor.track(AnalyticsIdentifiers.UnhandledCallsRefresh)
+            analyticsInteractor.track(AnalyticsIdentifiers.PullToRefreshUnhandledCalls)
         }
         isRefreshing = isPullToRefresh
         if (isPullToRefresh) {

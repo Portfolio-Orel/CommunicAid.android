@@ -70,13 +70,15 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
                 val text: String? =
                     settingsInteractor.getSettings(SettingsKey.SMSToSendToBackgroundCall)
                         .getRealValue() // 4601864
+                if (text?.isEmpty() == true) return
                 text?.let { textToSend ->
                     phoneCallManager.callsData.callInTheBackground?.let { callInBackgroundNumber ->
-                        val smsManager: SmsManager? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            context.getSystemService(SmsManager::class.java)
-                        } else {
-                            SmsManager.getDefault()
-                        }
+                        val smsManager: SmsManager? =
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                context.getSystemService(SmsManager::class.java)
+                            } else {
+                                SmsManager.getDefault()
+                            }
                         smsManager?.sendTextMessage(
                             callInBackgroundNumber,
                             null,
@@ -84,7 +86,6 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
                             null,
                             null
                         )
-//                        phoneCallManagerInteractor.hangupCall()
                         workerManager.startWorker(WorkerType.EndCallOnce)
                     }
                 }

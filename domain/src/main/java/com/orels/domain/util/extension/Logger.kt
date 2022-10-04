@@ -2,8 +2,9 @@ package com.orelzman.mymessages.domain.util.extension
 
 import android.util.Log
 import com.datadog.android.log.Logger
+import com.orelzman.auth.domain.model.AuthLogger
 
-class Logger {
+class Logger : AuthLogger {
     companion object {
         private const val TAG = ":::MyMessages:::"
         private val logger = Logger.Builder()
@@ -34,9 +35,10 @@ class Logger {
 
         fun i(
             message: String,
-            attributes: Map<String, Any?> = emptyMap()
+            attributes: Map<String, Any?> = emptyMap(),
+            tag: String? = null
         ) {
-            Log.i(TAG, "$message\n$attributes")
+            Log.i(tag ?: TAG, "$message\n$attributes")
             logger.i(
                 message = message,
                 attributes = attributes
@@ -46,14 +48,27 @@ class Logger {
         fun e(
             message: String,
             throwable: Throwable? = null,
-            attributes: Map<String, Any?> = emptyMap()
+            attributes: Map<String, Any?> = emptyMap(),
+            tag: String? = null
         ) {
-            Log.e(TAG, "$message\n$throwable\n${attributes}")
+            Log.e(tag ?: TAG, "$message\n$throwable\n${attributes}")
             logger.e(
                 message = message,
                 throwable = throwable,
                 attributes = attributes
             )
         }
+    }
+
+    override fun info(tag: String, data: Any) {
+        i(message = "$data", tag = tag)
+    }
+
+    override fun error(tag: String, data: Any, e: Throwable) {
+        e(
+            message = "$data",
+            tag = tag,
+            throwable = e
+        )
     }
 }

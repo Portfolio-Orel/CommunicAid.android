@@ -26,12 +26,14 @@ enum class AnalyticsIdentifiers(val identifier: String) {
 
     /* Unhandled calls */
     UnhandledCallsShow("user navigated to unhandled calls screen"),
-    UnhandledCallsRefresh("user refreshed unhandled calls screen"),
     /* Unhandled calls */
 
     /* Settings */
     SettingsScreenShow("user navigated to settings screen"),
-    SettingsScreenLeftWithoutSave("user changes settings and left without saving it"),
     /* Settings */
 
+    /* Pull to Refresh */
+    PullToRefreshStatistics("user refreshed statistics screen"),
+    PullToRefreshUnhandledCalls("user refreshed unhandled calls screen");
+    /* Pull to Refresh */
 }

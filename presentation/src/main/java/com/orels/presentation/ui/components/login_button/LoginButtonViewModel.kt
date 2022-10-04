@@ -15,9 +15,9 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginButtonViewModel @Inject constructor(
     private val authInteractor: AuthInteractor,
-): ViewModel() {
-    var state by mutableStateOf(LoginButtonState())
+) : ViewModel() {
 
+    var state by mutableStateOf(LoginButtonState())
     fun login(username: String, password: String, onLoginComplete: (Boolean, Exception?) -> Unit) {
         state = state.copy(isLoading = true)
         viewModelScope.launch(Dispatchers.IO) {
@@ -25,7 +25,7 @@ class LoginButtonViewModel @Inject constructor(
                 authInteractor.signIn(username = username, password = password)
                 onLoginComplete(true, null)
                 state.copy(isLoading = false)
-            } catch(e: Exception) {
+            } catch (e: Exception) {
                 e.log()
                 onLoginComplete(false, e)
                 state.copy(isLoading = false)

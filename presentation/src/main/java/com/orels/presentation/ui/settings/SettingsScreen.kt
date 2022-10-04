@@ -85,7 +85,7 @@ fun SettingsScreen(
                         checked = settings.getRealValue() ?: false,
                         enabled = {
                             settings.isEnabled() && settings.getPermissionsNotGranted(context = context)
-                                .isEmpty() && !state.isLoading
+                                .isEmpty()
                         },
                         contentIfCheck = if (settings.key == SettingsKey.SendSMSToBackgroundCall) {
                             {

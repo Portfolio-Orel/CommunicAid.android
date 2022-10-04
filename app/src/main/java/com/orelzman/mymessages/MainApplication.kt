@@ -15,6 +15,7 @@ import com.orels.data.annotation.DatadogConfigFile
 import com.orelzman.mymessages.domain.model.entities.ConfigFile
 import com.orelzman.mymessages.domain.system.phone_call.PhonecallReceiver
 import com.orelzman.mymessages.domain.system.phone_call.SettingsPhoneCallReceiver
+import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.domain.util.extension.log
 import com.orelzman.mymessages.domain.util.extension.rawResToStringMap
 import dagger.hilt.android.HiltAndroidApp
@@ -76,17 +77,21 @@ class MainApplication : Application(), Configuration.Provider {
     private fun observeUser() {
         CoroutineScope(Dispatchers.Default).launch {
             try {
-                authInteractor.init(configFileResourceId = authConfigFile.fileResId)
+                authInteractor.init(configFileResourceId = authConfigFile.fileResId, Logger())
             } catch (e: Exception) {
                 e.log()
             }
             authInteractor.getUserFlow().collectLatest { user ->
-                if (authInteractor.isAuthorized(user)) {
-                    PhonecallReceiver.enable(context = applicationContext)
-                    SettingsPhoneCallReceiver.enable(context = applicationContext)
-                } else {
-                    PhonecallReceiver.disable(context = applicationContext)
-                    SettingsPhoneCallReceiver.disable(context = applicationContext)
+                try {
+                    if (authInteractor.isAuthorized(user)) {
+                        PhonecallReceiver.enable(context = applicationContext)
+                        SettingsPhoneCallReceiver.enable(context = applicationContext)
+                    } else {
+                        PhonecallReceiver.disable(context = applicationContext)
+                        SettingsPhoneCallReceiver.disable(context = applicationContext)
+                    }
+                } catch(e: Exception) {
+                    e.log()
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.orelzman.mymessages.presentation.login.components
 
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +12,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -28,7 +31,9 @@ fun Input(
     initialText: String = "",
     minLines: Int = 1,
     maxLines: Int = 1,
+    isError: Boolean = false,
     isPassword: Boolean = false,
+    shouldFocus: Boolean = false,
     leadingIcon: @Composable (() -> Unit) = { },
     trailingIcon: @Composable (() -> Unit) = { },
     onTextChange: (String) -> Unit = {}
@@ -36,16 +41,20 @@ fun Input(
     val value = remember { mutableStateOf(initialText) }
     val passwordVisible = rememberSaveable { mutableStateOf(false) }
     val lineHeight = 40
+    val focusRequester = FocusRequester()
 
-    val textFieldModifier: Modifier =
-        if (maxLines == 1) Modifier else Modifier.height((lineHeight * minLines).dp)
+    var inputModifier = if(shouldFocus) Modifier.focusRequester(focusRequester) else Modifier
+
+    inputModifier =
+        if (maxLines == 1) inputModifier else inputModifier.height((lineHeight * minLines).dp)
 
     Column(modifier = modifier.fillMaxWidth()) {
         Text(title)
         Box(modifier = Modifier.zIndex(1f)) {
             OutlinedTextField(
-                modifier = textFieldModifier
-                    .fillMaxWidth(),
+                modifier = inputModifier
+                    .fillMaxWidth()
+                    .focusable(enabled = shouldFocus),
                 value = value.value,
                 onValueChange = {
                     value.value = it
@@ -71,6 +80,7 @@ fun Input(
                         trailingIcon()
                     }
                 },
+                isError = isError
             )
         }
     }

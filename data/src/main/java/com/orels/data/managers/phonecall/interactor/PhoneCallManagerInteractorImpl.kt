@@ -16,5 +16,7 @@ class PhoneCallManagerInteractorImpl @Inject constructor(
     override val callsData: CallPreferences
         get() = phoneCallManager.callsData
 
+    override fun resetIfNoActiveCall() = phoneCallManager.resetIfNoActiveCall()
+
     override fun hangupCall() = phoneCallManager.hangupCall(context = context)
 }

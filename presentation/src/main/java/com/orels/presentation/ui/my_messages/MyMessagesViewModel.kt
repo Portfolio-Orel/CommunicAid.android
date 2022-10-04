@@ -75,6 +75,7 @@ class MyMessagesViewModel @Inject constructor(
         viewModelScope.launch(SupervisorJob()) {
             authInteractor.getUserFlow().safeCollectLatest({
                 loadingData = false
+                it.log()
             }) { user ->
                 Logger.v("JWT: ${user?.token}")
                 val isAuthenticated =
@@ -87,7 +88,6 @@ class MyMessagesViewModel @Inject constructor(
                             if (!isDataInit()) { // Maybe replace and place this in login
                                 loadingData = true
                                 state = state.copy(isLoading = true)
-                                phoneCallManager.reset()
                                 withContext(NonCancellable) {
                                     try {
                                         generalInteractor.initData()

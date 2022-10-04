@@ -1,24 +1,24 @@
-package com.orels.data.managers.phonecall.interactor
+package com.orelzman.mymessages.domain.managers.phonecall
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Context.TELECOM_SERVICE
-import android.content.pm.PackageManager
-import android.telecom.TelecomManager
+import android.media.AudioManager
+import android.media.AudioManager.*
+import android.os.Build
 import android.telephony.TelephonyManager
-import androidx.core.app.ActivityCompat
+import androidx.annotation.RequiresApi
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.orelzman.mymessages.domain.interactors.CallLogInteractor
 import com.orelzman.mymessages.domain.interactors.CallPreferences
 import com.orelzman.mymessages.domain.interactors.DataSourceCallsInteractor
 import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
-import com.orelzman.mymessages.domain.managers.phonecall.CallState
-import com.orelzman.mymessages.domain.managers.phonecall.PhoneCallManager
 import com.orelzman.mymessages.domain.model.entities.CallLogEntity
 import com.orelzman.mymessages.domain.model.entities.PhoneCall
 import com.orelzman.mymessages.domain.util.common.Constants.TIME_TO_ADD_CALL_TO_CALL_LOG
 import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.domain.util.extension.compareNumberTo
 import com.orelzman.mymessages.domain.util.extension.inSeconds
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,7 +26,9 @@ import javax.inject.Inject
 
 
 @Suppress("MoveVariableDeclarationIntoWhen")
+@ExperimentalPermissionsApi
 class PhoneCallManagerImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val phoneCallInteractor: PhoneCallsInteractor,
     private val dataSource: DataSourceCallsInteractor,
     private val callLogInteractor: CallLogInteractor
@@ -41,12 +43,8 @@ class PhoneCallManagerImpl @Inject constructor(
             callState = dataSource.getState()?.value
         )
 
-
-    var context: Context? = null
-
     override fun onStateChanged(state: String, number: String, context: Context?) {
-        Logger.i("state: $state \n number: $number")
-        this.context = context
+        Logger.i("state: $state \n number: $number, audio manager state: ${getAudioManagerMode()}")
         when (state) {
             TelephonyManager.EXTRA_STATE_IDLE -> onIdleState()
             TelephonyManager.EXTRA_STATE_RINGING -> onRingingState(number)
@@ -54,21 +52,20 @@ class PhoneCallManagerImpl @Inject constructor(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun hangupCall(context: Context) {
-        val mgr: TelecomManager? = context.getSystemService(TELECOM_SERVICE) as TelecomManager?
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ANSWER_PHONE_CALLS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return
-        }
-//        mgr?.endCall()
-        Logger.vNoRemoteLogging("Call Hangup")
+//        val mgr: TelecomManager? = context.getSystemService(TELECOM_SERVICE) as TelecomManager?
+//        if (ActivityCompat.checkSelfPermission(
+//                context,
+//                Manifest.permission.ANSWER_PHONE_CALLS
+//            ) != PackageManager.PERMISSION_GRANTED
+//        ) {
+//            return
+//        }
     }
 
     private fun onIdleState() {
-        reset()
+        resetIfNoActiveCall()
     }
 
     private fun onRingingState(number: String) {
@@ -105,18 +102,21 @@ class PhoneCallManagerImpl @Inject constructor(
     }
 
     private fun setBackgroundCall(phoneCall: PhoneCall?) {
+        Logger.i("Set call in the background: ${phoneCall?.number}")
         CoroutineScope(Dispatchers.Main).launch {
             dataSource.updateCallInTheBackground(phoneCall)
         }
     }
 
     private fun setCallOnLine(phoneCall: PhoneCall?) {
+        Logger.i("Set call on line: ${phoneCall?.number}")
         CoroutineScope(Dispatchers.Main).launch {
             dataSource.updateCallOnTheLine(phoneCall)
         }
     }
 
     private fun setStateValue(callState: CallState) {
+        Logger.i("Set state: ${callState.value}")
         CoroutineScope(Dispatchers.Main).launch {
             dataSource.updateState(callState)
         }
@@ -178,7 +178,24 @@ class PhoneCallManagerImpl @Inject constructor(
         phoneCallInteractor.cachePhoneCall(phoneCall = phoneCall)
     }
 
-    override fun reset() {
+    @SuppressLint("SwitchIntDef")
+    private fun getAudioManagerMode(): String {
+        val manager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        return when (manager.mode) {
+            MODE_CALL_SCREENING -> "MODE_CALL_SCREENING"
+            MODE_CURRENT -> "MODE_CURRENT"
+            MODE_INVALID -> "MODE_INVALID"
+            MODE_IN_CALL -> "MODE_IN_CALL"
+            MODE_IN_COMMUNICATION -> "MODE_IN_COMMUNICATION"
+            MODE_NORMAL -> "MODE_NORMAL"
+            MODE_RINGTONE -> "MODE_RINGTONE"
+            else -> ""
+        }
+
+    }
+
+    override fun resetIfNoActiveCall() {
+        Logger.i("reset phonecall manager")
         setStateValue(CallState.Idle)
         setCallOnLine(null)
         setBackgroundCall(null)
@@ -191,3 +208,5 @@ fun PhoneCall.isEqualsToCallLog(callLog: CallLogEntity?): Boolean =
             && (
             callLog.time.inSeconds < startDate.time.inSeconds + 6 && callLog.time.inSeconds > startDate.time.inSeconds - 6
             )
+
+fun String.toState(): CallState? = CallState.fromString(this)

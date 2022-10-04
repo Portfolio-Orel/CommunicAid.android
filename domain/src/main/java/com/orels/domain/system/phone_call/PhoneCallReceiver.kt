@@ -20,11 +20,11 @@ class PhonecallReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
         when (intent?.action) {
             PHONE_STATE -> {
-                Logger.v("Received from phonecallReceiver")
                 val stateStr = intent.extras?.getString(TelephonyManager.EXTRA_STATE)
                 @Suppress("DEPRECATION") val number =
                     intent.extras?.getString(TelephonyManager.EXTRA_INCOMING_NUMBER)
                         ?: return
+                Logger.i("Receiver number: $number, with state: $stateStr")
                 stateStr?.let {
                     phoneCallManager.onStateChanged(it, number, context)
                 }
