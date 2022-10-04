@@ -2,13 +2,14 @@ package com.orelzman.auth.domain.interactor
 
 import android.app.Activity
 import androidx.annotation.RawRes
+import com.orelzman.auth.domain.model.AuthLogger
 import com.orelzman.auth.domain.model.ResetPasswordStep
 import com.orelzman.auth.domain.model.User
 import kotlinx.coroutines.flow.Flow
 
 interface AuthInteractor {
 
-    suspend fun init(@RawRes configFileResourceId: Int)
+    suspend fun init(@RawRes configFileResourceId: Int, authLogger: AuthLogger? = null)
     suspend fun signOut()
     suspend fun signUp(
         email: String,

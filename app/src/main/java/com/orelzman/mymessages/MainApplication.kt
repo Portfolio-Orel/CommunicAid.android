@@ -15,6 +15,7 @@ import com.orelzman.mymessages.di.annotation.DatadogConfigFile
 import com.orelzman.mymessages.domain.model.entities.ConfigFile
 import com.orelzman.mymessages.domain.system.phone_call.PhonecallReceiver
 import com.orelzman.mymessages.domain.system.phone_call.SettingsPhoneCallReceiver
+import com.orelzman.mymessages.domain.util.extension.Logger
 import com.orelzman.mymessages.domain.util.extension.log
 import com.orelzman.mymessages.domain.util.extension.rawResToStringMap
 import dagger.hilt.android.HiltAndroidApp
@@ -76,7 +77,7 @@ class MainApplication : Application(), Configuration.Provider {
     private fun observeUser() {
         CoroutineScope(Dispatchers.Default).launch {
             try {
-                authInteractor.init(configFileResourceId = authConfigFile.fileResId)
+                authInteractor.init(configFileResourceId = authConfigFile.fileResId, Logger())
             } catch (e: Exception) {
                 e.log()
             }

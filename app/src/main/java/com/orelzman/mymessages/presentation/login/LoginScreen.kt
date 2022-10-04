@@ -140,18 +140,6 @@ private fun ContentView(viewModel: LoginViewModel) {
                 },
                 onLoginClick = { viewModel.onLoginClick() }
             )
-//            if (!state.isRegister) {
-//                Text(
-//                    stringResource(R.string.register),
-//                    modifier = Modifier
-//                        .clickable {
-//                            viewModel.onRegisterClick()
-//                        },
-//                    color = MaterialTheme.colorScheme.primary,
-//                    style = MaterialTheme.typography.titleSmall,
-//                    maxLines = 1,
-//                )
-//            }
             Text(
                 text = stringResource(state.error ?: R.string.empty_string),
                 style = MaterialTheme.typography.bodySmall,
