@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.components.util
+package com.orels.presentation.ui.components.util
 
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
@@ -6,7 +6,6 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.mutableStateOf
 
 class SnackbarController private constructor() {
-
     val snackbarHostState = mutableStateOf(SnackbarHostState())
 
     companion object {
@@ -32,5 +31,4 @@ class SnackbarController private constructor() {
             withDismissAction = withDismissAction,
             duration = duration
         )
-
 }

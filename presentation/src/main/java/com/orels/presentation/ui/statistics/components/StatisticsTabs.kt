@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.statistics.components
+package com.orels.presentation.ui.statistics.components
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -15,8 +15,8 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.domain.util.common.DateUtils
+import com.orels.domain.util.common.DateUtils
+import com.orels.presentation.R
 import java.util.*
 
 @Composable

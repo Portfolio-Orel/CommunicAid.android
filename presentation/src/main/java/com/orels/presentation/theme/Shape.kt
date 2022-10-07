@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.ui.theme
+package com.orels.presentation.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes

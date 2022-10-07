@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.settings.components
+package com.orels.presentation.ui.settings.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

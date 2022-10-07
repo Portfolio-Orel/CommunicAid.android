@@ -1,9 +1,9 @@
-package com.orelzman.mymessages.domain.repository
+package com.orels.domain.repository
 
-import com.orelzman.mymessages.data.remote.dto.body.create.*
-import com.orelzman.mymessages.data.remote.dto.response.*
-import com.orelzman.mymessages.domain.model.entities.Folder
-import com.orelzman.mymessages.domain.model.entities.Message
+import com.orels.domain.model.dto.body.create.*
+import com.orels.domain.model.dto.response.*
+import com.orels.domain.model.entities.Folder
+import com.orels.domain.model.entities.Message
 import java.util.*
 
 

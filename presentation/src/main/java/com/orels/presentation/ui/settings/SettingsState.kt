@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.settings
+package com.orels.presentation.ui.settings
 
 import com.orels.domain.model.entities.Settings
 import com.orels.domain.model.entities.SettingsKey

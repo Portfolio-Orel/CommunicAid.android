@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.login
+package com.orels.presentation.ui.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -14,13 +14,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.presentation.components.confirmation_pop_up.ConfirmationScreen
-import com.orelzman.mymessages.presentation.components.login_button.LoginButton
-import com.orelzman.mymessages.presentation.components.register_button.RegisterButton
-import com.orelzman.mymessages.presentation.login.components.Input
-import com.orelzman.mymessages.presentation.login.components.forgot_password.ForgotPasswordComponent
-import com.orelzman.mymessages.ui.theme.MyMessagesTheme
+import com.orels.presentation.R
+import com.orels.presentation.theme.MyMessagesTheme
+import com.orels.presentation.ui.components.confirmation_pop_up.ConfirmationScreen
+import com.orels.presentation.ui.components.login_button.LoginButton
+import com.orels.presentation.ui.components.register_button.RegisterButton
+import com.orels.presentation.ui.login.components.Input
+import com.orels.presentation.ui.login.components.forgot_password.ForgotPasswordComponent
 
 @ExperimentalMaterial3Api
 @Composable

@@ -1,6 +1,6 @@
-package com.orelzman.mymessages.data.interceptor
+package com.orels.data.interceptor
 
-import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orels.auth.domain.interactor.AuthInteractor
 import okhttp3.Interceptor
 import okhttp3.Response
 

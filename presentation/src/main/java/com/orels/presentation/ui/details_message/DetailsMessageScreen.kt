@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.details_message
+package com.orels.presentation.ui.details_message
 
 import android.widget.Toast
 import androidx.compose.foundation.*
@@ -16,14 +16,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.domain.model.entities.Folder
-import com.orelzman.mymessages.presentation.components.restore.restore_button.RestoreButton
-import com.orelzman.mymessages.presentation.components.restore.restore_button.RestoreType
-import com.orelzman.mymessages.presentation.components.util.SnackbarController
-import com.orelzman.mymessages.presentation.delete_button.DeleteButton
-import com.orelzman.mymessages.presentation.main.components.ActionButton
+import com.orels.domain.model.entities.Folder
+import com.orels.presentation.R
+import com.orels.presentation.ui.components.restore.restore_button.RestoreButton
+import com.orels.presentation.ui.components.restore.restore_button.RestoreType
+import com.orels.presentation.ui.components.util.SnackbarController
+import com.orels.presentation.ui.delete_button.DeleteButton
+import com.orels.presentation.ui.main.components.ActionButton
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailsMessageScreen(
     navController: NavController,

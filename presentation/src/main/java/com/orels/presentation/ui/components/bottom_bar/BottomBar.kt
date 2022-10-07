@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.components.bottom_bar
+package com.orels.presentation.ui.components.bottom_bar
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -9,8 +9,9 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.domain.util.Screen
+import com.orels.domain.util.Screen
+import com.orels.presentation.R
+
 
 private val Screen.icon: Int?
     get() =

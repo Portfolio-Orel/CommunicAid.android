@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.components.confirmation_pop_up
+package com.orels.presentation.ui.components.confirmation_pop_up
 
 import androidx.annotation.StringRes
 

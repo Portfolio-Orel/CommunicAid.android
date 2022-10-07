@@ -1,7 +1,7 @@
-package com.orelzman.mymessages.domain.managers.unhandled_calls
+package com.orels.domain.managers.unhandled_calls
 
-import com.orelzman.mymessages.domain.model.entities.CallLogEntity
-import com.orelzman.mymessages.domain.model.entities.DeletedCall
+import com.orels.domain.model.entities.CallLogEntity
+import com.orels.domain.model.entities.DeletedCall
 
 interface UnhandledCallsManager {
 

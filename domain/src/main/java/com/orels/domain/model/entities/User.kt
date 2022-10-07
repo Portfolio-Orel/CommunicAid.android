@@ -28,8 +28,17 @@ data class User(
     }
 }
 
-enum class UserState {
+enum class UserState { // ToDo: Understand if needed
     NotAuthorized,
     Authorized,
     Blocked;
+}
+
+/**
+ * @author Orel Zilberman
+ * 19/08/2022
+ */
+interface DropdownItem {
+    fun getIdentifier(): String
+    fun getValue(): String
 }

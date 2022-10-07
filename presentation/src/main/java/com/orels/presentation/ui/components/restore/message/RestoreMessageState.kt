@@ -1,7 +1,7 @@
-package com.orelzman.mymessages.presentation.components.restore.message
+package com.orels.presentation.ui.components.restore.message
 
-import com.orelzman.mymessages.domain.model.entities.Message
-import com.orelzman.mymessages.presentation.components.util.CRUDResult
+import com.orels.domain.model.entities.Message
+import com.orels.presentation.ui.components.util.CRUDResult
 
 /**
  * @author Orel Zilberman

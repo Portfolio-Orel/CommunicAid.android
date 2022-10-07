@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.main.components
+package com.orels.presentation.ui.main.components
 
 import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
@@ -27,8 +27,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.domain.model.entities.Message
+import com.orels.domain.model.entities.Message
+import com.orels.presentation.R
 
 /**
  * @author Orel Zilberman

@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.components.confirmation_pop_up
+package com.orels.presentation.ui.components.confirmation_pop_up
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
@@ -6,12 +6,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orelzman.auth.domain.exception.CodeExpiredException
-import com.orelzman.auth.domain.exception.CodeMismatchException
-import com.orelzman.auth.domain.exception.NotAuthorizedException
-import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.domain.util.extension.log
+import com.orels.auth.domain.exception.CodeExpiredException
+import com.orels.auth.domain.exception.CodeMismatchException
+import com.orels.auth.domain.exception.NotAuthorizedException
+import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.domain.util.extension.log
+import com.orels.presentation.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

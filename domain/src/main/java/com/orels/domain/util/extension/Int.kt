@@ -1,4 +1,6 @@
-package com.orelzman.mymessages.domain.util.extension
+@file:Suppress("unused")
+
+package com.orels.domain.util.extension
 
 import android.content.Context
 import androidx.annotation.RawRes

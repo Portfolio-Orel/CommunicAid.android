@@ -1,12 +1,12 @@
-package com.orelzman.mymessages.domain.model.entities
+package com.orels.domain.model.entities
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.room.Entity
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.domain.util.extension.log
+import com.orels.domain.R
+import com.orels.domain.util.extension.log
 import java.util.*
 import kotlin.reflect.KClass
 

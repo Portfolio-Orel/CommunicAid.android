@@ -1,15 +1,16 @@
-package com.orelzman.mymessages.domain.model.entities
+package com.orels.domain.model.entities
 
-import com.orelzman.mymessages.domain.interactors.CallType
-import com.orelzman.mymessages.domain.util.extension.*
+import com.orels.domain.model.entities.PhoneCall
+import com.orels.domain.interactors.CallType
+import com.orels.domain.util.extension.*
 import java.util.*
 
 class CallLogEntity(
     var number: String = "",
-    val duration: Long = 0,
-    val name: String = "",
+    var duration: Long = 0,
+    var name: String = "",
     var time: Long = 0,
-    val callLogType: CallType? = null
+    var callLogType: CallType? = null
 ) {
 
     fun isMissed(): Boolean = callLogType == CallType.MISSED

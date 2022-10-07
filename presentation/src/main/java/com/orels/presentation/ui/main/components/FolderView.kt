@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.main.components
+package com.orels.presentation.ui.main.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.orelzman.mymessages.domain.model.entities.Folder
+import com.orels.domain.model.entities.Folder
 
 
 @ExperimentalFoundationApi

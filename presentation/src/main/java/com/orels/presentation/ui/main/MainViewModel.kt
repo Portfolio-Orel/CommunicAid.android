@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.main
+package com.orels.presentation.ui.main
 
 import android.content.Context
 import androidx.compose.runtime.getValue
@@ -6,14 +6,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orels.domain.interactors.AnalyticsIdentifiers
-import com.orels.domain.interactors.AnalyticsInteractor
-import com.orelzman.mymessages.domain.interactors.*
-import com.orelzman.mymessages.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
-import com.orelzman.mymessages.domain.model.entities.*
-import com.orelzman.mymessages.domain.util.extension.Logger
-import com.orelzman.mymessages.domain.util.extension.copyToClipboard
-import com.orelzman.mymessages.domain.util.extension.log
+import com.orels.domain.interactors.*
+import com.orels.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
+import com.orels.domain.model.entities.*
+import com.orels.domain.util.common.Logger
+import com.orels.domain.util.extension.copyToClipboard
+import com.orels.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest

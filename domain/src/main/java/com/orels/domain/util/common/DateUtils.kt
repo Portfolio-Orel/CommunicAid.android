@@ -1,10 +1,10 @@
-package com.orelzman.mymessages.domain.util.common
+package com.orels.domain.util.common
 
 import android.content.Context
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.domain.util.extension.maxTime
-import com.orelzman.mymessages.domain.util.extension.resetTime
-import com.orelzman.mymessages.domain.util.extension.toDate
+import com.orels.domain.R
+import com.orels.domain.util.extension.maxTime
+import com.orels.domain.util.extension.resetTime
+import com.orels.domain.util.extension.toDate
 import java.util.*
 
 object DateUtils {

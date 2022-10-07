@@ -1,6 +1,6 @@
-package com.orelzman.mymessages.domain.interactors
+package com.orels.domain.interactors
 
-import com.orelzman.mymessages.domain.model.entities.Message
+import com.orels.domain.model.entities.Message
 import kotlinx.coroutines.flow.Flow
 
 interface MessageInteractor {

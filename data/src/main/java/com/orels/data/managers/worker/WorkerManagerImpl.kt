@@ -2,12 +2,12 @@ package com.orels.data.managers.worker
 
 import android.content.Context
 import androidx.work.*
-import com.orelzman.mymessages.domain.managers.worker.WorkerManager
-import com.orelzman.mymessages.domain.managers.worker.WorkerType
-import com.orelzman.mymessages.domain.workers.EndCallWorker
-import com.orelzman.mymessages.domain.workers.RefreshTokenWorker
-import com.orelzman.mymessages.domain.workers.UploadNotUploadedObjectsWorker
-import com.orelzman.mymessages.domain.workers.UploadPhoneCallsWorker
+import com.orels.data.workers.RefreshTokenWorker
+import com.orels.data.workers.UploadNotUploadedObjectsWorker
+import com.orels.data.workers.UploadPhoneCallsWorker
+import com.orels.domain.managers.worker.WorkerManager
+import com.orels.domain.managers.worker.WorkerType
+import com.orels.domain.workers.EndCallWorker
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -41,8 +41,9 @@ class WorkerManagerImpl @Inject constructor(
         }
     }
 
-    override fun clearAll(): Operation =
+    override fun clearAll() {
         WorkManager.getInstance(context).cancelAllWorkByTag(TAG)
+    }
 
     private fun queuePeriodicWorker(
         worker: PeriodicWorkRequest,

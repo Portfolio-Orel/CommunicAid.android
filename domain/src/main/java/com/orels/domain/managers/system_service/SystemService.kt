@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.domain.managers.system_service
+package com.orels.domain.managers.system_service
 
 /**
  * In order for the derived classes to work smoothly with the app,

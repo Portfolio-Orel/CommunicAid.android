@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.components.scrollable_flowrow
+package com.orels.presentation.ui.components.scrollable_flowrow
 
 import androidx.compose.foundation.*
 import androidx.compose.runtime.Composable

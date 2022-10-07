@@ -1,8 +1,8 @@
-package com.orelzman.mymessages.domain.interactors
+package com.orels.domain.interactors
 
 import android.provider.CallLog
-import com.orelzman.mymessages.domain.model.entities.CallLogEntity
-import com.orelzman.mymessages.domain.model.entities.PhoneCall
+import com.orels.domain.model.entities.CallLogEntity
+import com.orels.domain.model.entities.PhoneCall
 import java.util.*
 
 interface CallLogInteractor {

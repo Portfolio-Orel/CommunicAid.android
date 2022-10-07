@@ -1,10 +1,10 @@
-package com.orelzman.mymessages.domain.workers
+package com.orels.domain.workers
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.orelzman.mymessages.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
+import com.orels.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope

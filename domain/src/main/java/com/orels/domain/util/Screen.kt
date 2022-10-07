@@ -1,7 +1,7 @@
-package com.orelzman.mymessages.domain.util
+package com.orels.domain.util
 
 import androidx.annotation.StringRes
-import com.orelzman.mymessages.R
+import com.orels.domain.R
 
 sealed class Screen(val route: String, @StringRes val resourceId: Int) {
     object Main : Screen("main", R.string.main)
@@ -19,5 +19,4 @@ sealed class Screen(val route: String, @StringRes val resourceId: Int) {
                 append("/${arg ?: ""}")
             }
         }
-
 }

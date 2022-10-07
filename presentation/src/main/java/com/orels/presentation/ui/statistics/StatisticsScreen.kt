@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.statistics
+package com.orels.presentation.ui.statistics
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -16,16 +16,16 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.domain.model.entities.StatisticsTypes
-import com.orelzman.mymessages.domain.util.extension.getDayFormatted
-import com.orelzman.mymessages.presentation.components.LtrView
-import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
-import com.orelzman.mymessages.presentation.components.charts.bar.BarChart
-import com.orelzman.mymessages.presentation.components.charts.donut.DonutChart
-import com.orelzman.mymessages.presentation.components.charts.model.BarItem
-import com.orelzman.mymessages.presentation.components.charts.model.DonutItem
-import com.orelzman.mymessages.presentation.statistics.components.StatisticsTabs
+import com.orels.domain.model.entities.StatisticsTypes
+import com.orels.domain.util.extension.getDayFormatted
+import com.orels.presentation.R
+import com.orels.presentation.ui.components.LtrView
+import com.orels.presentation.ui.components.OnLifecycleEvent
+import com.orels.presentation.ui.components.charts.bar.BarChart
+import com.orels.presentation.ui.components.charts.donut.DonutChart
+import com.orels.presentation.ui.components.charts.model.BarItem
+import com.orels.presentation.ui.components.charts.model.DonutItem
+import com.orels.presentation.ui.statistics.components.StatisticsTabs
 import java.util.*
 
 @Composable

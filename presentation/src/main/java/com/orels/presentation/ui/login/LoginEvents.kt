@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.login
+package com.orels.presentation.ui.login
 
 sealed class LoginEvents {
     object UserRegisteredSuccessfully : LoginEvents()

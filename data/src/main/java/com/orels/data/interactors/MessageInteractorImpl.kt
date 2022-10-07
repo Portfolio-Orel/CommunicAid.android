@@ -1,18 +1,19 @@
-package com.orelzman.mymessages.data.interactors
+package com.orels.data.interactors
 
-import com.orelzman.mymessages.data.exception.MessageNotFoundException
-import com.orelzman.mymessages.data.local.LocalDatabase
-import com.orelzman.mymessages.data.remote.dto.body.create.CreateMessageBody
-import com.orelzman.mymessages.data.remote.dto.response.GetMessagesResponse
-import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
-import com.orelzman.mymessages.domain.interactors.MessageInteractor
-import com.orelzman.mymessages.domain.model.entities.Message
-import com.orelzman.mymessages.domain.model.entities.MessageInFolder
-import com.orelzman.mymessages.domain.model.entities.UploadState
-import com.orelzman.mymessages.domain.repository.Repository
+import com.orels.data.exception.MessageNotFoundException
+import com.orels.data.local.LocalDatabase
+import com.orels.domain.interactors.MessageInFolderInteractor
+import com.orels.domain.interactors.MessageInteractor
+import com.orels.domain.model.dto.body.create.CreateMessageBody
+import com.orels.domain.model.dto.response.GetMessagesResponse
+import com.orels.domain.model.entities.Message
+import com.orels.domain.model.entities.MessageInFolder
+import com.orels.domain.model.entities.UploadState
+import com.orels.domain.repository.Repository
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 import javax.inject.Inject
+
 
 class MessageInteractorImpl @Inject constructor(
     private val repository: Repository,

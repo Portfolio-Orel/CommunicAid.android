@@ -1,20 +1,20 @@
-package com.orelzman.mymessages.presentation.settings
+package com.orels.presentation.ui.settings
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orelzman.auth.domain.interactor.AuthInteractor
+import com.orels.auth.domain.interactor.AuthInteractor
 import com.orels.domain.interactors.AnalyticsIdentifiers
 import com.orels.domain.interactors.AnalyticsInteractor
-import com.orelzman.mymessages.domain.interactors.SettingsInteractor
+import com.orels.domain.interactors.SettingsInteractor
 import com.orels.domain.model.entities.Settings
 import com.orels.domain.model.entities.SettingsType
-import com.orelzman.mymessages.domain.util.extension.Logger
-import com.orelzman.mymessages.domain.util.extension.launchCatching
-import com.orelzman.mymessages.domain.util.extension.log
-import com.orelzman.mymessages.domain.util.extension.notEqualsTo
+import com.orels.domain.util.common.Logger
+import com.orels.domain.util.extension.launchCatching
+import com.orels.domain.util.extension.log
+import com.orels.domain.util.extension.notEqualsTo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -27,7 +27,7 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val settingsInteractor: SettingsInteractor,
     private val authInteractor: AuthInteractor,
-    private val analyticsInteractor: AnalyticsInteractor
+    analyticsInteractor: AnalyticsInteractor
 ) :
     ViewModel() {
     var state by mutableStateOf(SettingsState())

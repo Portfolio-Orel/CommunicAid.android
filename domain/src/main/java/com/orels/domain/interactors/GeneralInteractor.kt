@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.domain.interactors
+package com.orels.domain.interactors
 
 interface GeneralInteractor {
     fun clearAllDatabases()

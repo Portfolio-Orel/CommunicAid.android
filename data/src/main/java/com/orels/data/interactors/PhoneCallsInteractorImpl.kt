@@ -1,13 +1,13 @@
-package com.orelzman.mymessages.data.interactors
+package com.orels.data.interactors
 
-import com.orelzman.mymessages.data.local.LocalDatabase
-import com.orelzman.mymessages.data.remote.dto.body.create.createPhoneCallBodyList
-import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
-import com.orelzman.mymessages.domain.model.entities.MessageSent
-import com.orelzman.mymessages.domain.model.entities.PhoneCall
-import com.orelzman.mymessages.domain.model.entities.UploadState
-import com.orelzman.mymessages.domain.repository.Repository
-import com.orelzman.mymessages.domain.util.extension.addUniqueIf
+import com.orels.data.local.LocalDatabase
+import com.orels.domain.interactors.PhoneCallsInteractor
+import com.orels.domain.model.dto.body.create.createPhoneCallBodyList
+import com.orels.domain.model.entities.MessageSent
+import com.orels.domain.model.entities.PhoneCall
+import com.orels.domain.model.entities.UploadState
+import com.orels.domain.repository.Repository
+import com.orels.domain.util.extension.addUniqueIf
 import java.util.*
 import javax.inject.Inject
 

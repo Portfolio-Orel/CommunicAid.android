@@ -1,18 +1,18 @@
-package com.orelzman.mymessages.presentation.components.restore.folder
+package com.orels.presentation.ui.components.restore.folder
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.domain.interactors.FolderInteractor
-import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
-import com.orelzman.mymessages.domain.interactors.MessageInteractor
-import com.orelzman.mymessages.domain.model.entities.Folder
-import com.orelzman.mymessages.domain.model.entities.Message
-import com.orelzman.mymessages.domain.util.extension.log
-import com.orelzman.mymessages.presentation.components.util.CRUDResult
+import com.orels.domain.interactors.FolderInteractor
+import com.orels.domain.interactors.MessageInFolderInteractor
+import com.orels.domain.interactors.MessageInteractor
+import com.orels.domain.model.entities.Folder
+import com.orels.domain.model.entities.Message
+import com.orels.domain.util.extension.log
+import com.orels.presentation.R
+import com.orels.presentation.ui.components.util.CRUDResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

@@ -1,7 +1,7 @@
-package com.orelzman.mymessages.presentation.statistics
+package com.orels.presentation.ui.statistics
 
-import com.orelzman.mymessages.domain.util.common.DateUtils.getFirstDayOfWeek
-import com.orelzman.mymessages.domain.util.common.DateUtils.getLastDayOfWeek
+import com.orels.domain.util.common.DateUtils.getFirstDayOfWeek
+import com.orels.domain.util.common.DateUtils.getLastDayOfWeek
 import java.util.*
 
 data class StatisticsState(

@@ -1,8 +1,8 @@
-package com.orelzman.mymessages.domain.interactors
+package com.orels.domain.interactors
 
-import com.orelzman.mymessages.domain.model.entities.MessageSent
-import com.orelzman.mymessages.domain.model.entities.PhoneCall
-import com.orelzman.mymessages.domain.model.entities.UploadState
+import com.orels.domain.model.entities.MessageSent
+import com.orels.domain.model.entities.PhoneCall
+import com.orels.domain.model.entities.UploadState
 import java.util.*
 
 interface PhoneCallsInteractor {

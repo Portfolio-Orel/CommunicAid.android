@@ -1,6 +1,6 @@
-package com.orelzman.mymessages.domain.interactors
+package com.orels.domain.interactors
 
-import com.orelzman.mymessages.domain.model.entities.Folder
+import com.orels.domain.model.entities.Folder
 import kotlinx.coroutines.flow.Flow
 
 interface FolderInteractor {

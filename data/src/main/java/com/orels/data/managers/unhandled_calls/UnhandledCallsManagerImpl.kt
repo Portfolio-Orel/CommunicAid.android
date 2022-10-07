@@ -1,11 +1,11 @@
 package com.orels.data.managers.unhandled_calls
 
-import com.orelzman.mymessages.domain.managers.unhandled_calls.UnhandledCallsManager
-import com.orelzman.mymessages.domain.model.entities.*
-import com.orelzman.mymessages.domain.util.extension.compareNumberTo
-import com.orelzman.mymessages.domain.util.extension.containsNumber
-import com.orelzman.mymessages.domain.util.extension.distinctNumbers
-import com.orelzman.mymessages.domain.util.extension.withoutPrefix
+import com.orels.domain.managers.unhandled_calls.UnhandledCallsManager
+import com.orels.domain.model.entities.*
+import com.orels.domain.util.extension.compareNumberTo
+import com.orels.domain.util.extension.containsNumber
+import com.orels.domain.util.extension.distinctNumbers
+import com.orels.domain.util.extension.withoutPrefix
 import javax.inject.Inject
 
 class UnhandledCallsManagerImpl @Inject constructor() : UnhandledCallsManager {

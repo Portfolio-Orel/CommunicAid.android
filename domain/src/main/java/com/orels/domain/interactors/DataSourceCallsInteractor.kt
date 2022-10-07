@@ -1,8 +1,8 @@
-package com.orelzman.mymessages.domain.interactors
+package com.orels.domain.interactors
 
 import android.content.SharedPreferences
-import com.orelzman.mymessages.domain.model.entities.PhoneCall
-import com.orelzman.mymessages.domain.managers.phonecall.CallState
+import com.orels.domain.managers.phonecall.CallState
+import com.orels.domain.model.entities.PhoneCall
 import kotlinx.coroutines.flow.Flow
 
 

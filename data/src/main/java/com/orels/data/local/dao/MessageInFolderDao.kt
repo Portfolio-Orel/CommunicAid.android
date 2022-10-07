@@ -1,17 +1,17 @@
-package com.orelzman.mymessages.data.local.dao
+package com.orels.data.local.dao
 
 import androidx.room.*
-import com.orelzman.mymessages.domain.model.entities.MessageInFolder
+import com.orels.domain.model.entities.MessageInFolder
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MessageInFolderDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(messageInFolder: MessageInFolder)
+    fun insert(messageInFolder: MessageInFolder)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(messagesInFolder: List<MessageInFolder>)
+    fun insert(messagesInFolder: List<MessageInFolder>)
 
     @Query(
         """
@@ -33,7 +33,7 @@ interface MessageInFolderDao {
     fun clear()
 
     @Update
-    suspend fun update(messageInFolder: MessageInFolder)
+    fun update(messageInFolder: MessageInFolder)
 
     fun delete(folderId: String, isActive: Boolean = false) {
         setIsActive(folderId = folderId, isActive = isActive)
@@ -50,7 +50,7 @@ interface MessageInFolderDao {
         WHERE folderId = :folderId AND messageId = :messageId
     """
     )
-    suspend fun delete(folderId: String, messageId: String)
+    fun delete(folderId: String, messageId: String)
 
     @Query(
         """
@@ -68,7 +68,7 @@ interface MessageInFolderDao {
         WHERE messageId = :messageId AND folderId = :folderId
     """
     )
-    suspend fun get(messageId: String, folderId: String): MessageInFolder
+    fun get(messageId: String, folderId: String): MessageInFolder
 
     @Query(
         """

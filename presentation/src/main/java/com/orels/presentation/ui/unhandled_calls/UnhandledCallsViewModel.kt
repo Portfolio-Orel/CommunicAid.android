@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.unhandled_calls
+package com.orels.presentation.ui.unhandled_calls
 
 import android.app.Application
 import android.content.Context
@@ -11,20 +11,19 @@ import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.orels.domain.interactors.AnalyticsIdentifiers
-import com.orels.domain.interactors.AnalyticsInteractor
-import com.orelzman.mymessages.domain.interactors.*
-import com.orelzman.mymessages.domain.managers.unhandled_calls.UnhandledCallsManager
-import com.orelzman.mymessages.domain.model.entities.CallLogEntity
-import com.orelzman.mymessages.domain.model.entities.DeletedCall
-import com.orelzman.mymessages.domain.model.entities.PhoneCall
+import com.orels.domain.interactors.*
+import com.orels.domain.managers.unhandled_calls.UnhandledCallsManager
+import com.orels.domain.model.entities.CallLogEntity
+import com.orels.domain.model.entities.DeletedCall
+import com.orels.domain.model.entities.PhoneCall
 import com.orels.domain.model.entities.SettingsKey
-import com.orelzman.mymessages.domain.util.common.DateUtils.getStartOfDay
-import com.orelzman.mymessages.domain.util.extension.Logger
-import com.orelzman.mymessages.domain.util.extension.log
+import com.orels.domain.util.common.DateUtils.getStartOfDay
+import com.orels.domain.util.common.Logger
+import com.orels.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -119,7 +118,7 @@ class UnhandledCallsViewModel @Inject constructor(
     private fun observeDeletedCalls() {
         viewModelScope.launch(Dispatchers.Main) {
             deletedCallsInteractor.getAll(getStartOfDay())
-                .collect {
+                .collectLatest {
                     val callsToHandle = unhandledCallsManager.filterUnhandledCalls(
                         deletedCalls = it,
                         callLogs = getCallsFromCallLog(),

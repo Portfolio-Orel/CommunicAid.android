@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.components
+package com.orels.presentation.ui.components
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -8,7 +8,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.navigation.NavHostController
-import com.orelzman.mymessages.presentation.components.util.SnackbarController
+import com.orels.presentation.ui.components.util.SnackbarController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

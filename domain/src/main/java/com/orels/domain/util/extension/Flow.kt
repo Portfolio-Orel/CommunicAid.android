@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.domain.util.extension
+package com.orels.domain.util.extension
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest

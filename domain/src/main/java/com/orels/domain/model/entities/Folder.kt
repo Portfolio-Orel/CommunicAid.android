@@ -1,16 +1,15 @@
-package com.orelzman.mymessages.domain.model.entities
+package com.orels.domain.model.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.orelzman.mymessages.presentation.components.dropdown.model.DropdownItem
 
 @Entity
 data class Folder(
-    val title: String = "",
+    var title: String = "",
     var isActive: Boolean = true,
-    val timesUsed: Int = 0,
-    val position: Int = 0,
-    @PrimaryKey val id: String = "",
+    var timesUsed: Int = 0,
+    var position: Int = 0,
+    @PrimaryKey var id: String = "",
 ) : Loggable, DropdownItem, Uploadable() {
 
     override val data: Map<String, Any>

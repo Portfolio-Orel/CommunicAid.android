@@ -1,13 +1,13 @@
-package com.orelzman.mymessages.presentation.details_folder
+package com.orels.presentation.ui.details_folder
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orelzman.mymessages.domain.interactors.FolderInteractor
-import com.orelzman.mymessages.domain.model.entities.Folder
-import com.orelzman.mymessages.domain.util.extension.log
+import com.orels.domain.interactors.FolderInteractor
+import com.orels.domain.model.entities.Folder
+import com.orels.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

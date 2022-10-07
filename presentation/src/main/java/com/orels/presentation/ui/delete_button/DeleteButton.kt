@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.delete_button
+package com.orels.presentation.ui.delete_button
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable

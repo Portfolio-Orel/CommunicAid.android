@@ -1,11 +1,11 @@
-package com.orelzman.mymessages.presentation.components.top_app_bar
+package com.orels.presentation.ui.components.top_app_bar
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.orelzman.mymessages.domain.model.entities.toPhoneCall
-import com.orelzman.mymessages.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
+import com.orels.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
+import com.orels.domain.model.entities.toPhoneCall
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.components.charts.side_values
+package com.orels.presentation.ui.components.charts.side_values
 
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas

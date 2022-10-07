@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.domain.system.connectivity
+package com.orels.domain.system.connectivity
 
 import kotlinx.coroutines.flow.Flow
 

@@ -1,8 +1,8 @@
-package com.orelzman.mymessages.domain.system.proximity
+package com.orels.domain.system.proximity
 
 import android.content.Context
 import android.os.PowerManager
-import com.orelzman.mymessages.domain.managers.system_service.SystemService
+import com.orels.domain.managers.system_service.SystemService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 

@@ -1,13 +1,13 @@
-package com.orelzman.mymessages.data.local.type_converters
+package com.orels.data.local.type_converters
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.orelzman.mymessages.domain.model.entities.MessageSent
+import com.orels.domain.model.entities.MessageSent
 import com.orels.domain.model.entities.SettingsKey
-import com.orelzman.mymessages.domain.model.entities.StatisticsTypes
-import com.orelzman.mymessages.domain.model.entities.UploadState
+import com.orels.domain.model.entities.StatisticsTypes
+import com.orels.domain.model.entities.UploadState
 import java.util.*
 
 @ProvidedTypeConverter

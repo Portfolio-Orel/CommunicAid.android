@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.main.components
+package com.orels.presentation.ui.main.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -17,10 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.domain.model.entities.Folder
-import com.orelzman.mymessages.presentation.components.dropdown.Dropdown
-import com.orelzman.mymessages.presentation.components.dropdown.DropdownDecoratorStyle
+import com.orels.domain.model.entities.Folder
+import com.orels.presentation.R
+import com.orels.presentation.ui.components.dropdown.Dropdown
+import com.orels.presentation.ui.components.dropdown.DropdownDecoratorStyle
 
 /**
  * @author Orel Zilberman

@@ -1,10 +1,10 @@
-package com.orelzman.mymessages.data.interactors
+package com.orels.data.interactors
 
-import com.orelzman.mymessages.data.local.LocalDatabase
-import com.orelzman.mymessages.data.local.dao.MessageInFolderDao
-import com.orelzman.mymessages.domain.interactors.MessageInFolderInteractor
-import com.orelzman.mymessages.domain.model.entities.MessageInFolder
-import com.orelzman.mymessages.domain.repository.Repository
+import com.orels.data.local.LocalDatabase
+import com.orels.data.local.dao.MessageInFolderDao
+import com.orels.domain.interactors.MessageInFolderInteractor
+import com.orels.domain.model.entities.MessageInFolder
+import com.orels.domain.repository.Repository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

@@ -1,10 +1,10 @@
-package com.orelzman.mymessages.domain.util.common
+package com.orels.domain.util.common
 
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.ContactsContract
-import com.orelzman.mymessages.domain.util.extension.log
+import com.orels.domain.util.extension.log
 
 object ContactsUtil {
     fun getContactName(number: String, context: Context): String {

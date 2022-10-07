@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.unhandled_calls
+package com.orels.presentation.ui.unhandled_calls
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -16,9 +16,9 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
-import com.orelzman.mymessages.presentation.unhandled_calls.components.UnhandledCallRow
+import com.orels.presentation.R
+import com.orels.presentation.ui.components.OnLifecycleEvent
+import com.orels.presentation.ui.unhandled_calls.components.UnhandledCallRow
 
 
 @Composable

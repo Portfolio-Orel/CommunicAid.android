@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.components.top_app_bar
+package com.orels.presentation.ui.components.top_app_bar
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -14,8 +14,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.domain.util.Screen
+import com.orels.domain.util.Screen
+import com.orels.presentation.R
 
 @Composable
 fun TopAppBar(

@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.settings.components.send_sms_settings
+package com.orels.presentation.ui.settings.components.send_sms_settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,8 +15,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.presentation.login.components.Input
+import com.orels.presentation.R
+import com.orels.presentation.ui.login.components.Input
 
 /**
  * @author Orel Zilberman

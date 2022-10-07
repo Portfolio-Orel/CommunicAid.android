@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.components.util
+package com.orels.presentation.ui.components.util
 
 import androidx.annotation.StringRes
 

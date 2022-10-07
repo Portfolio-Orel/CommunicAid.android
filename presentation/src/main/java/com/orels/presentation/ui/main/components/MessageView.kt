@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.main.components
+package com.orels.presentation.ui.main.components
 
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -17,8 +17,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.orelzman.mymessages.domain.model.entities.Message
-import com.orelzman.mymessages.ui.theme.MyMessagesTheme
+import com.orels.domain.model.entities.Message
+import com.orels.presentation.theme.MyMessagesTheme
 
 @ExperimentalFoundationApi
 @Composable

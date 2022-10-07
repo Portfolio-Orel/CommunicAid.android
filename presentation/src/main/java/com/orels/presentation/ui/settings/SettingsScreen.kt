@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.settings
+package com.orels.presentation.ui.settings
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -17,15 +17,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.orelzman.mymessages.R
 import com.orels.domain.model.entities.SettingsKey
 import com.orels.domain.model.entities.SettingsType
-import com.orelzman.mymessages.domain.util.RequiredPermission
-import com.orelzman.mymessages.domain.util.extension.Logger
-import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
-import com.orelzman.mymessages.presentation.settings.components.DataSettings
-import com.orelzman.mymessages.presentation.settings.components.ToggleSettings
-import com.orelzman.mymessages.presentation.settings.components.send_sms_settings.SendSMSSettings
+import com.orels.domain.util.RequiredPermission
+import com.orels.domain.util.common.Logger
+import com.orels.presentation.R
+import com.orels.presentation.ui.components.OnLifecycleEvent
+import com.orels.presentation.ui.settings.components.DataSettings
+import com.orels.presentation.ui.settings.components.ToggleSettings
+import com.orels.presentation.ui.settings.components.send_sms_settings.SendSMSSettings
 
 @Composable
 fun SettingsScreen(
@@ -98,7 +98,7 @@ fun SettingsScreen(
                             it.getPermissionsNotGranted(context = context).forEach { permission ->
                                 val permissionState = permission.isGranted(context = context)
                                 if (permissionState == RequiredPermission.PermissionState.DeniedPermanently) {
-                                    Logger.v("Permanently not allowed")
+                                    Logger.v("Permanently not allowed") // ToDo
                                 } else {
                                     permission.requestPermission(context = context)
                                 }

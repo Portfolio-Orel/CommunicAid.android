@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.unhandled_calls.components
+package com.orels.presentation.ui.unhandled_calls.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,10 +16,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.domain.model.entities.PhoneCall
-import com.orelzman.mymessages.domain.util.extension.formatDayAndHours
-import com.orelzman.mymessages.ui.theme.MyMessagesTheme
+import com.orels.domain.model.entities.PhoneCall
+import com.orels.domain.util.extension.formatDayAndHours
+import com.orels.presentation.R
+import com.orels.presentation.theme.MyMessagesTheme
 import java.util.*
 
 @Composable

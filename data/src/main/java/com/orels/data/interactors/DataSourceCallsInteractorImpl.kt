@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.data.interactors
+package com.orels.data.interactors
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -6,13 +6,13 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.orelzman.mymessages.domain.interactors.CallPreferences
-import com.orelzman.mymessages.domain.interactors.DataSourceCallsInteractor
-import com.orelzman.mymessages.domain.managers.phonecall.toState
-import com.orelzman.mymessages.domain.model.entities.PhoneCall
-import com.orelzman.mymessages.domain.model.entities.toPhoneCall
-import com.orelzman.mymessages.domain.managers.phonecall.CallState
-import com.orelzman.mymessages.domain.util.extension.Logger
+import com.orels.domain.interactors.CallPreferences
+import com.orels.domain.interactors.DataSourceCallsInteractor
+import com.orels.domain.managers.phonecall.CallState
+import com.orels.domain.managers.phonecall.toState
+import com.orels.domain.model.entities.PhoneCall
+import com.orels.domain.model.entities.toPhoneCall
+import com.orels.domain.util.common.Logger
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

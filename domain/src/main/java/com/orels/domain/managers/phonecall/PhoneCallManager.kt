@@ -1,7 +1,7 @@
-package com.orelzman.mymessages.domain.managers.phonecall
+package com.orels.domain.managers.phonecall
 
 import android.content.Context
-import com.orelzman.mymessages.domain.interactors.CallPreferences
+import com.orels.domain.interactors.CallPreferences
 import kotlinx.coroutines.flow.Flow
 
 /**

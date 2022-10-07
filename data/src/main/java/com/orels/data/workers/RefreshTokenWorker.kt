@@ -1,12 +1,12 @@
-package com.orelzman.mymessages.domain.workers
+package com.orels.data.workers
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.mymessages.domain.util.extension.Logger
-import com.orelzman.mymessages.domain.util.extension.log
+import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.domain.util.common.Logger
+import com.orels.domain.util.extension.log
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope

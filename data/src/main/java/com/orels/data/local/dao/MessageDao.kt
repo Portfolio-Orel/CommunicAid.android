@@ -1,7 +1,7 @@
-package com.orelzman.mymessages.data.local.dao
+package com.orels.data.local.dao
 
 import androidx.room.*
-import com.orelzman.mymessages.domain.model.entities.Message
+import com.orels.domain.model.entities.Message
 import kotlinx.coroutines.flow.Flow
 
 @Dao

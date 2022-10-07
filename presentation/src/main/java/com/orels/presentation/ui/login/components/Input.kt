@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.login.components
+package com.orels.presentation.ui.login.components
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
@@ -21,7 +21,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.orelzman.mymessages.R
+import com.orels.presentation.R
 
 @Composable
 fun Input(

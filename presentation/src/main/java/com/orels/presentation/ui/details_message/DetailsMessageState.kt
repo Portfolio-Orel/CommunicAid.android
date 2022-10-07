@@ -1,10 +1,10 @@
-package com.orelzman.mymessages.presentation.details_message
+package com.orels.presentation.ui.details_message
 
 import androidx.annotation.StringRes
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.domain.model.entities.Folder
-import com.orelzman.mymessages.domain.model.entities.Loggable
-import com.orelzman.mymessages.domain.model.entities.Message
+import com.orels.domain.model.entities.Folder
+import com.orels.domain.model.entities.Loggable
+import com.orels.domain.model.entities.Message
+import com.orels.presentation.R
 
 data class DetailsMessageState(
     val folders: List<Folder> = emptyList(),

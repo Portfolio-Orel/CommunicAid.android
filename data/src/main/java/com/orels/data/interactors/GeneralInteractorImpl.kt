@@ -1,10 +1,10 @@
-package com.orelzman.mymessages.data.interactors
+package com.orels.data.interactors
 
-import com.orelzman.mymessages.data.local.LocalDatabase
-import com.orelzman.mymessages.domain.interactors.*
+import com.orels.data.local.LocalDatabase
+import com.orels.domain.interactors.*
 import com.orels.domain.model.entities.Settings
 import com.orels.domain.model.entities.SettingsKey
-import com.orelzman.mymessages.domain.util.common.DateUtils
+import com.orels.domain.util.common.DateUtils
 import javax.inject.Inject
 
 class GeneralInteractorImpl @Inject constructor(

@@ -1,12 +1,12 @@
-package com.orelzman.mymessages.data.interactors
+package com.orels.data.interactors
 
 import android.util.Log
-import com.orelzman.mymessages.data.local.LocalDatabase
-import com.orelzman.mymessages.domain.interactors.DeletedCallsInteractor
-import com.orelzman.mymessages.data.remote.dto.body.create.CreateDeletedCallBody
-import com.orelzman.mymessages.domain.model.entities.DeletedCall
-import com.orelzman.mymessages.domain.model.entities.UploadState
-import com.orelzman.mymessages.domain.repository.Repository
+import com.orels.data.local.LocalDatabase
+import com.orels.domain.interactors.DeletedCallsInteractor
+import com.orels.domain.model.dto.body.create.CreateDeletedCallBody
+import com.orels.domain.model.entities.DeletedCall
+import com.orels.domain.model.entities.UploadState
+import com.orels.domain.repository.Repository
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 import javax.inject.Inject

@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.login
+package com.orels.presentation.ui.login
 
 import android.security.keystore.UserNotAuthenticatedException
 import androidx.compose.runtime.getValue
@@ -6,16 +6,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orelzman.auth.domain.exception.CodeMismatchException
-import com.orelzman.auth.domain.exception.UserNotConfirmedException
-import com.orelzman.auth.domain.exception.UserNotFoundException
-import com.orelzman.auth.domain.exception.WrongCredentialsException
-import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.data.remote.dto.body.create.CreateUserBody
-import com.orelzman.mymessages.domain.interactors.GeneralInteractor
-import com.orelzman.mymessages.domain.repository.Repository
-import com.orelzman.mymessages.domain.util.extension.log
+import com.orels.auth.domain.exception.CodeMismatchException
+import com.orels.auth.domain.exception.UserNotConfirmedException
+import com.orels.auth.domain.exception.UserNotFoundException
+import com.orels.auth.domain.exception.WrongCredentialsException
+import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.domain.interactors.GeneralInteractor
+import com.orels.domain.model.dto.body.create.CreateUserBody
+import com.orels.domain.repository.Repository
+import com.orels.domain.util.extension.log
+import com.orels.presentation.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

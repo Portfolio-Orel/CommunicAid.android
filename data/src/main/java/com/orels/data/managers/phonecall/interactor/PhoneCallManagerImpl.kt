@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.domain.managers.phonecall
+package com.orels.data.managers.phonecall.interactor
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,17 +7,18 @@ import android.media.AudioManager.*
 import android.os.Build
 import android.telephony.TelephonyManager
 import androidx.annotation.RequiresApi
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.orelzman.mymessages.domain.interactors.CallLogInteractor
-import com.orelzman.mymessages.domain.interactors.CallPreferences
-import com.orelzman.mymessages.domain.interactors.DataSourceCallsInteractor
-import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
-import com.orelzman.mymessages.domain.model.entities.CallLogEntity
-import com.orelzman.mymessages.domain.model.entities.PhoneCall
-import com.orelzman.mymessages.domain.util.common.Constants.TIME_TO_ADD_CALL_TO_CALL_LOG
-import com.orelzman.mymessages.domain.util.extension.Logger
-import com.orelzman.mymessages.domain.util.extension.compareNumberTo
-import com.orelzman.mymessages.domain.util.extension.inSeconds
+import com.orels.domain.interactors.CallLogInteractor
+import com.orels.domain.interactors.CallPreferences
+import com.orels.domain.interactors.DataSourceCallsInteractor
+import com.orels.domain.interactors.PhoneCallsInteractor
+import com.orels.domain.managers.phonecall.CallState
+import com.orels.domain.managers.phonecall.PhoneCallManager
+import com.orels.domain.model.entities.CallLogEntity
+import com.orels.domain.model.entities.PhoneCall
+import com.orels.domain.util.common.Constants.TIME_TO_ADD_CALL_TO_CALL_LOG
+import com.orels.domain.util.common.Logger
+import com.orels.domain.util.extension.compareNumberTo
+import com.orels.domain.util.extension.inSeconds
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +27,6 @@ import javax.inject.Inject
 
 
 @Suppress("MoveVariableDeclarationIntoWhen")
-@ExperimentalPermissionsApi
 class PhoneCallManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val phoneCallInteractor: PhoneCallsInteractor,
@@ -208,5 +208,3 @@ fun PhoneCall.isEqualsToCallLog(callLog: CallLogEntity?): Boolean =
             && (
             callLog.time.inSeconds < startDate.time.inSeconds + 6 && callLog.time.inSeconds > startDate.time.inSeconds - 6
             )
-
-fun String.toState(): CallState? = CallState.fromString(this)

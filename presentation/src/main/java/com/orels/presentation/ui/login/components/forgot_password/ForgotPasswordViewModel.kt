@@ -1,17 +1,17 @@
-package com.orelzman.mymessages.presentation.login.components.forgot_password
+package com.orels.presentation.ui.login.components.forgot_password
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orelzman.auth.domain.exception.LimitExceededException
-import com.orelzman.auth.domain.exception.UserNotFoundException
-import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.auth.domain.model.ResetPasswordStep
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.domain.util.extension.addUniqueIf
-import com.orelzman.mymessages.domain.util.extension.log
+import com.orels.auth.domain.exception.LimitExceededException
+import com.orels.auth.domain.exception.UserNotFoundException
+import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.auth.domain.model.ResetPasswordStep
+import com.orels.domain.util.extension.addUniqueIf
+import com.orels.domain.util.extension.log
+import com.orels.presentation.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

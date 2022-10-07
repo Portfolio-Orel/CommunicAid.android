@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.login.components.forgot_password
+package com.orels.presentation.ui.login.components.forgot_password
 
 import androidx.annotation.StringRes
 

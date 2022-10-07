@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.settings.components
+package com.orels.presentation.ui.settings.components
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
@@ -10,10 +10,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.orelzman.mymessages.R
 import com.orels.domain.model.entities.Settings
-import com.orelzman.mymessages.domain.util.extension.noRippleClickable
-import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
+import com.orels.presentation.R
+import com.orels.presentation.theme.noRippleClickable
+import com.orels.presentation.ui.components.OnLifecycleEvent
 
 
 /**

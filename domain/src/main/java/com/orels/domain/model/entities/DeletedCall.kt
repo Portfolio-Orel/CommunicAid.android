@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.domain.model.entities
+package com.orels.domain.model.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

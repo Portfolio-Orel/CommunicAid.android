@@ -1,13 +1,13 @@
-package com.orelzman.mymessages.presentation.settings.components.send_sms_settings
+package com.orels.presentation.ui.settings.components.send_sms_settings
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orelzman.mymessages.domain.interactors.SettingsInteractor
+import com.orels.domain.interactors.SettingsInteractor
 import com.orels.domain.model.entities.SettingsKey
-import com.orelzman.mymessages.domain.util.extension.log
+import com.orels.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import javax.inject.Inject

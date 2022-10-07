@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.settings.components.send_sms_settings
+package com.orels.presentation.ui.settings.components.send_sms_settings
 
 /**
  * @author Orel Zilberman

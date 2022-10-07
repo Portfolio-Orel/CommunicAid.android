@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.domain.interactors
+package com.orels.domain.interactors
 
 import android.content.Context
 import android.content.Intent

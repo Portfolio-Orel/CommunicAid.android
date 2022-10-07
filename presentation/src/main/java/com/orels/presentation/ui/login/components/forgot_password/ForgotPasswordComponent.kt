@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.login.components.forgot_password
+package com.orels.presentation.ui.login.components.forgot_password
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.*
@@ -23,9 +23,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.presentation.login.components.Input
-import com.orelzman.mymessages.presentation.main.components.ActionButton
+import com.orels.presentation.R
+import com.orels.presentation.ui.login.components.Input
+import com.orels.presentation.ui.main.components.ActionButton
 
 /**
  * @author Orel Zilberman

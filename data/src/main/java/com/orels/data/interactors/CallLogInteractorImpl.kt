@@ -1,15 +1,15 @@
-package com.orelzman.mymessages.data.interactors
+package com.orels.data.interactors
 
 import android.content.Context
 import android.provider.CallLog
-import com.orelzman.mymessages.domain.interactors.CallLogInteractor
-import com.orelzman.mymessages.domain.interactors.CallType
-import com.orelzman.mymessages.domain.model.entities.CallLogEntity
-import com.orelzman.mymessages.domain.model.entities.PhoneCall
-import com.orelzman.mymessages.domain.util.common.DateUtils
-import com.orelzman.mymessages.domain.util.extension.compareToBallPark
-import com.orelzman.mymessages.domain.util.extension.inSeconds
-import com.orelzman.mymessages.domain.util.extension.toDate
+import com.orels.domain.interactors.CallLogInteractor
+import com.orels.domain.interactors.CallType
+import com.orels.domain.model.entities.CallLogEntity
+import com.orels.domain.model.entities.PhoneCall
+import com.orels.domain.util.common.DateUtils
+import com.orels.domain.util.extension.compareToBallPark
+import com.orels.domain.util.extension.inSeconds
+import com.orels.domain.util.extension.toDate
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import java.util.*

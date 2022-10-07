@@ -1,10 +1,10 @@
-package com.orelzman.mymessages.domain.util.extension
+package com.orels.domain.util.extension
 
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.widget.Toast
-import com.orelzman.mymessages.R
+import com.orels.domain.R
 
 fun Context.copyToClipboard(label: String, value: String) {
     val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager

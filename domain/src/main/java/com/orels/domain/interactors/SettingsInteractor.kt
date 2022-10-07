@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.domain.interactors
+package com.orels.domain.interactors
 
 import com.orels.domain.model.entities.Settings
 import com.orels.domain.model.entities.SettingsKey

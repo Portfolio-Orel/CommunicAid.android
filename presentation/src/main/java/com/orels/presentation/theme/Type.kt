@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.ui.theme
+package com.orels.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
@@ -6,7 +6,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.orelzman.mymessages.R
+import com.orels.presentation.R
 
 // Set of Material typography styles to start with
 

@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.domain.util
+package com.orels.domain.util
 
 import android.Manifest
 import android.app.Activity
@@ -9,7 +9,6 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.orelzman.mymessages.domain.util.extension.Logger
 
 /**
  * @author Orel Zilberman
@@ -71,7 +70,6 @@ enum class RequiredPermission(val permissionName: String, priority: PermissionPr
 
     fun requestPermission(context: Context) {
         if (context as? Activity == null) {
-            Logger.e("context is not an activity in requestPermission")
             // ToDo: Do something
             return
         }

@@ -7,10 +7,9 @@ import androidx.room.PrimaryKey
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.orels.domain.R
-import com.orelzman.mymessages.domain.model.entities.Uploadable
-import com.orelzman.mymessages.domain.util.RequiredPermission
-import com.orelzman.mymessages.domain.util.extension.formatDayAndHours
-import com.orelzman.mymessages.domain.util.extension.log
+import com.orels.domain.util.RequiredPermission
+import com.orels.domain.util.extension.formatDayAndHours
+import com.orels.domain.util.extension.log
 import java.util.*
 import kotlin.reflect.KClass
 

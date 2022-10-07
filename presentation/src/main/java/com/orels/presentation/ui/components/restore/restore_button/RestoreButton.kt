@@ -1,10 +1,11 @@
-package com.orelzman.mymessages.presentation.components.restore.restore_button
+package com.orels.presentation.ui.components.restore.restore_button
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -19,11 +20,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.domain.util.extension.noRippleClickable
-import com.orelzman.mymessages.presentation.components.restore.folder.RestoreFolderViewModel
-import com.orelzman.mymessages.presentation.components.restore.message.RestoreMessageViewModel
-import com.orelzman.mymessages.presentation.components.util.CRUDResult
+import com.orels.presentation.R
+import com.orels.presentation.theme.noRippleClickable
+import com.orels.presentation.ui.components.restore.folder.RestoreFolderViewModel
+import com.orels.presentation.ui.components.restore.message.RestoreMessageViewModel
+import com.orels.presentation.ui.components.util.CRUDResult
 
 /**
  * @author Orel Zilberman

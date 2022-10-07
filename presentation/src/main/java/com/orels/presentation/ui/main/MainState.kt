@@ -1,8 +1,8 @@
-package com.orelzman.mymessages.presentation.main
+package com.orels.presentation.ui.main
 
-import com.orelzman.mymessages.domain.model.entities.Folder
-import com.orelzman.mymessages.domain.model.entities.Message
-import com.orelzman.mymessages.domain.model.entities.PhoneCall
+import com.orels.domain.model.entities.Folder
+import com.orels.domain.model.entities.Message
+import com.orels.domain.model.entities.PhoneCall
 
 data class MainState(
     val messages: List<Message> = emptyList(),

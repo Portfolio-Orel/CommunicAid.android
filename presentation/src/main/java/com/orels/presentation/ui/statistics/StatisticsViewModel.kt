@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.statistics
+package com.orels.presentation.ui.statistics
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -7,11 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orels.domain.interactors.AnalyticsIdentifiers
 import com.orels.domain.interactors.AnalyticsInteractor
-import com.orelzman.mymessages.domain.interactors.StatisticsInteractor
-import com.orelzman.mymessages.domain.model.entities.Statistics
-import com.orelzman.mymessages.domain.model.entities.StatisticsTypes
-import com.orelzman.mymessages.domain.util.extension.log
-import com.orelzman.mymessages.presentation.statistics.components.StatisticsTabs
+import com.orels.domain.interactors.StatisticsInteractor
+import com.orels.domain.model.entities.Statistics
+import com.orels.domain.model.entities.StatisticsTypes
+import com.orels.domain.util.extension.log
+import com.orels.presentation.ui.statistics.components.StatisticsTabs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

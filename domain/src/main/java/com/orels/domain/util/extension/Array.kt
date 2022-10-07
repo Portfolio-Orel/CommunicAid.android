@@ -1,4 +1,6 @@
-package com.orelzman.mymessages.domain.util.extension
+@file:Suppress("unused")
+
+package com.orels.domain.util.extension
 
 fun <T> ArrayList<T>.addUnique(element: T) {
     if (!contains(element)) {

@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.components
+package com.orels.presentation.ui.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect

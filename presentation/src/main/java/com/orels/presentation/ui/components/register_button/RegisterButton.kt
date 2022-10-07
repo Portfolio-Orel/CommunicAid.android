@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.components.register_button
+package com.orels.presentation.ui.components.register_button
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -14,8 +14,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.ui.theme.Shapes
+import com.orels.presentation.R
+import com.orels.presentation.theme.Shapes
+
 
 @Composable
 fun RegisterButton(

@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.my_messages
+package com.orels.presentation.ui.my_messages
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
@@ -19,18 +19,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.orelzman.mymessages.domain.util.Screen
-import com.orelzman.mymessages.presentation.components.CustomScaffold
-import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
-import com.orelzman.mymessages.presentation.components.bottom_bar.BottomBar
-import com.orelzman.mymessages.presentation.components.top_app_bar.TopAppBar
-import com.orelzman.mymessages.presentation.details_folder.DetailsFolderScreen
-import com.orelzman.mymessages.presentation.details_message.DetailsMessageScreen
-import com.orelzman.mymessages.presentation.login.LoginScreen
-import com.orelzman.mymessages.presentation.main.MainScreen
-import com.orelzman.mymessages.presentation.settings.SettingsScreen
-import com.orelzman.mymessages.presentation.statistics.StatisticsScreen
-import com.orelzman.mymessages.presentation.unhandled_calls.UnhandledCallsScreen
+import com.orels.domain.util.Screen
+import com.orels.presentation.ui.components.CustomScaffold
+import com.orels.presentation.ui.components.OnLifecycleEvent
+import com.orels.presentation.ui.components.bottom_bar.BottomBar
+import com.orels.presentation.ui.components.top_app_bar.TopAppBar
+import com.orels.presentation.ui.details_folder.DetailsFolderScreen
+import com.orels.presentation.ui.details_message.DetailsMessageScreen
+import com.orels.presentation.ui.login.LoginScreen
+import com.orels.presentation.ui.main.MainScreen
+import com.orels.presentation.ui.settings.SettingsScreen
+import com.orels.presentation.ui.statistics.StatisticsScreen
+import com.orels.presentation.ui.unhandled_calls.UnhandledCallsScreen
 
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class

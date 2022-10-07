@@ -1,8 +1,8 @@
-package com.orelzman.mymessages.data.interceptor
+package com.orels.data.interceptor
 
-import com.orelzman.auth.domain.exception.CouldNotRefreshTokenException
-import com.orelzman.auth.domain.interactor.AuthInteractor
-import com.orelzman.mymessages.domain.util.extension.log
+import com.orels.auth.domain.exception.CouldNotRefreshTokenException
+import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.domain.util.extension.log
 import kotlinx.coroutines.*
 import okhttp3.Interceptor
 import okhttp3.Response

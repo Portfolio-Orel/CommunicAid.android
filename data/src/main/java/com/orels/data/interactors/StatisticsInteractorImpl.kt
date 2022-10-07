@@ -1,12 +1,12 @@
-package com.orelzman.mymessages.data.interactors
+package com.orels.data.interactors
 
-import com.orelzman.mymessages.data.local.LocalDatabase
-import com.orelzman.mymessages.domain.interactors.StatisticsInteractor
-import com.orelzman.mymessages.data.remote.dto.response.GetCallsCountResponse
-import com.orelzman.mymessages.data.remote.dto.response.GetMessagesSentCountResponse
-import com.orelzman.mymessages.domain.model.entities.Statistics
-import com.orelzman.mymessages.domain.model.entities.StatisticsTypes
-import com.orelzman.mymessages.domain.repository.Repository
+import com.orels.data.local.LocalDatabase
+import com.orels.domain.interactors.StatisticsInteractor
+import com.orels.domain.model.dto.response.GetCallsCountResponse
+import com.orels.domain.model.dto.response.GetMessagesSentCountResponse
+import com.orels.domain.model.entities.Statistics
+import com.orels.domain.model.entities.StatisticsTypes
+import com.orels.domain.repository.Repository
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 import javax.inject.Inject

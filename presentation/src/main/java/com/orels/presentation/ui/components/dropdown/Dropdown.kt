@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.components.dropdown
+package com.orels.presentation.ui.components.dropdown
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -17,8 +17,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.orelzman.mymessages.R
-import com.orelzman.mymessages.presentation.components.dropdown.model.DropdownItem
+import com.orels.domain.model.entities.DropdownItem
+import com.orels.presentation.R
 
 /**
  * @author Orel Zilberman

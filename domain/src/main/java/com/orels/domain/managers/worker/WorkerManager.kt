@@ -1,10 +1,8 @@
-package com.orelzman.mymessages.domain.managers.worker
-
-import androidx.work.Operation
+package com.orels.domain.managers.worker
 
 interface WorkerManager {
     fun startWorker(type: WorkerType)
-    fun clearAll(): Operation
+    fun clearAll()
 }
 
 enum class WorkerType {

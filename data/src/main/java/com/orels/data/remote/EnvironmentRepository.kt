@@ -1,11 +1,10 @@
-package com.orelzman.mymessages.data.remote
+package com.orels.data.remote
 
-import com.orelzman.mymessages.BuildConfig
 import javax.inject.Inject
 
+
 class EnvironmentRepository @Inject constructor() {
-    val currentEnvironment: Environments =
-        if (BuildConfig.DEBUG) Environments.Prod else Environments.Prod
+    val currentEnvironment: Environments = Environments.Prod
 }
 
 enum class Environments {

@@ -1,11 +1,11 @@
-package com.orelzman.mymessages.presentation.components.charts.bar
+package com.orels.presentation.ui.components.charts.bar
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.orelzman.mymessages.presentation.components.charts.model.BarItem
-import com.orelzman.mymessages.presentation.components.charts.domain.extension.normalizeBetween0AndMax
+import com.orels.domain.util.extension.normalizeBetween0AndMax
+import com.orels.presentation.ui.components.charts.model.BarItem
 
 class BarViewModel(items: List<BarItem>) : ViewModel() {
     var state by mutableStateOf(BarState())

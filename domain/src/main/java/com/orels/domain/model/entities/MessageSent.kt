@@ -1,10 +1,10 @@
-package com.orelzman.mymessages.domain.model.entities
+package com.orels.domain.model.entities
 
-import com.orelzman.mymessages.data.remote.dto.body.create.CreateMessageSentBody
+import com.orels.domain.model.dto.body.create.CreateMessageSentBody
 
 data class MessageSent(
-    val sentAt: Long,
-    val messageId: String
+    var sentAt: Long,
+    var messageId: String
 ) : Loggable {
     val createMessageSentBody: CreateMessageSentBody
         get() = CreateMessageSentBody(sentAt = sentAt, messageId = messageId)

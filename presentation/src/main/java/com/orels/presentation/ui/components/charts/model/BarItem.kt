@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.components.charts.model
+package com.orels.presentation.ui.components.charts.model
 
 import androidx.compose.ui.graphics.Color
 

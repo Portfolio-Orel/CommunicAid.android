@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.main
+package com.orels.presentation.ui.main
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
@@ -13,10 +13,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.orelzman.mymessages.domain.util.Screen
-import com.orelzman.mymessages.presentation.components.OnLifecycleEvent
-import com.orelzman.mymessages.presentation.main.components.FoldersContainer
-import com.orelzman.mymessages.presentation.main.components.MessagesContainer
+import com.orels.domain.util.Screen
+import com.orels.presentation.ui.components.OnLifecycleEvent
+import com.orels.presentation.ui.main.components.FoldersContainer
+import com.orels.presentation.ui.main.components.MessagesContainer
 
 
 @ExperimentalFoundationApi

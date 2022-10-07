@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.domain.model.entities
+package com.orels.domain.model.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -11,7 +11,7 @@ data class Message(
     var timesUsed: Int = 0,
     var isActive: Boolean = true,
     var position: Int = 0,
-    @PrimaryKey val id: String = "",
+    @PrimaryKey var id: String = "",
 ) : Loggable, Uploadable() {
 
     constructor(message: Message, id: String) : this(

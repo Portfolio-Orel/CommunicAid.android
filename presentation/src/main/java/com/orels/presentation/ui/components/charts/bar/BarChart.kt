@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.components.charts.bar
+package com.orels.presentation.ui.components.charts.bar
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.orelzman.mymessages.presentation.components.charts.model.BarItem
+import com.orels.presentation.ui.components.charts.model.BarItem
 
 @Composable
 fun BarChart(

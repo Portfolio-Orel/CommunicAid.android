@@ -1,12 +1,12 @@
-package com.orelzman.mymessages.domain.model.entities
+package com.orels.domain.model.entities
 
 import androidx.room.Entity
 
 @Entity(primaryKeys = ["messageId", "folderId"])
 data class MessageInFolder(
-    val messageId: String = "",
-    val folderId: String = "",
-    val isActive: Boolean,
+    var messageId: String = "",
+    var folderId: String = "",
+    var isActive: Boolean,
 ) : Loggable, Uploadable() {
     override val data: Map<String, Any>
         get() = mapOf(

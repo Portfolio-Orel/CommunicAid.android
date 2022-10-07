@@ -1,19 +1,14 @@
 package com.orels.data.managers.system_service
 
-import com.orels.data.annotation.Proximity
-import com.orelzman.mymessages.domain.managers.system_service.SystemService
+import com.orels.domain.annotation.Proximity
+import com.orels.domain.managers.SystemServiceManager
+import com.orels.domain.managers.system_service.SystemService
 import javax.inject.Inject
 
 /**
  * @author Orel Zilberman
  * 07/09/2022
  */
-
-interface SystemServiceManager {
-    fun onResume()
-    fun onPause()
-    fun onDestroy()
-}
 
 class SystemServiceManagerImpl @Inject constructor(
     @Proximity proximityManager: SystemService

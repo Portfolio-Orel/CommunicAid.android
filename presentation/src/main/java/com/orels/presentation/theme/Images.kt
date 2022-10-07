@@ -1,11 +1,11 @@
-package com.orelzman.mymessages.ui.theme
+package com.orels.presentation.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.orelzman.mymessages.R
+import com.orels.presentation.R
 
 /**
  * @author Orel Zilberman

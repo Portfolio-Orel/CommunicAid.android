@@ -1,12 +1,11 @@
-package com.orelzman.mymessages.data.local
+package com.orels.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.orels.domain.model.entities.Settings
-import com.orelzman.mymessages.data.local.dao.*
-import com.orelzman.mymessages.data.local.type_converters.Converters
-import com.orelzman.mymessages.domain.model.entities.*
+import com.orels.data.local.dao.*
+import com.orels.data.local.type_converters.Converters
+import com.orels.domain.model.entities.*
 
 @Database(
     entities = [

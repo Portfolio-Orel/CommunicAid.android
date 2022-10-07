@@ -1,6 +1,6 @@
-package com.orelzman.mymessages.data.interceptor
+package com.orels.data.interceptor
 
-import com.orelzman.mymessages.domain.util.extension.Logger
+import com.orels.domain.util.common.Logger
 import okhttp3.Interceptor
 import okhttp3.Response
 import okio.Buffer

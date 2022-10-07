@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.data.interceptor
+package com.orels.data.interceptor
 
 import com.google.gson.Gson
 import okhttp3.Interceptor

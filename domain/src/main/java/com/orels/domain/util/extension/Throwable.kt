@@ -1,8 +1,9 @@
-package com.orelzman.mymessages.domain.util.extension
+package com.orels.domain.util.extension
 
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
-import com.orelzman.mymessages.domain.model.entities.Loggable
+import com.orels.domain.model.entities.Loggable
+import com.orels.domain.util.common.Logger
 
 fun Throwable.log(values: Map<String, String> = emptyMap()) {
     val crashlytics = Firebase.crashlytics

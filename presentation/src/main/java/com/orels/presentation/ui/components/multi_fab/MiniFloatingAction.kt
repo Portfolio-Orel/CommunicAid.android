@@ -1,4 +1,4 @@
-package com.orelzman.mymessages.presentation.components.multi_fab
+package com.orels.presentation.ui.components.multi_fab
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FloatingActionButton

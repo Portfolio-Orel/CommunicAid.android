@@ -1,15 +1,16 @@
-package com.orelzman.mymessages.data.interactors
+package com.orels.data.interactors
 
-import com.orelzman.mymessages.data.local.LocalDatabase
-import com.orelzman.mymessages.data.remote.dto.body.create.CreateOrUpdateSettingsBody
-import com.orelzman.mymessages.data.remote.dto.response.toSettings
-import com.orelzman.mymessages.domain.interactors.SettingsInteractor
+import com.orels.data.local.LocalDatabase
+import com.orels.domain.interactors.SettingsInteractor
+import com.orels.domain.model.dto.body.create.CreateOrUpdateSettingsBody
+import com.orels.domain.model.dto.response.toSettings
 import com.orels.domain.model.entities.Settings
 import com.orels.domain.model.entities.SettingsKey
-import com.orelzman.mymessages.domain.model.entities.UploadState
-import com.orelzman.mymessages.domain.repository.Repository
+import com.orels.domain.model.entities.UploadState
+import com.orels.domain.repository.Repository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+
 
 class SettingsInteractorImpl @Inject constructor(
     private val repository: Repository,

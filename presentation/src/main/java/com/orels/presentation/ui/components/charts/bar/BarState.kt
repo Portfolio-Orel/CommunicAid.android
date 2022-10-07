@@ -1,6 +1,6 @@
-package com.orelzman.mymessages.presentation.components.charts.bar
+package com.orels.presentation.ui.components.charts.bar
 
-import com.orelzman.mymessages.presentation.components.charts.model.BarItem
+import com.orels.presentation.ui.components.charts.model.BarItem
 
 data class BarState(
     val isLoading: Boolean = false,
