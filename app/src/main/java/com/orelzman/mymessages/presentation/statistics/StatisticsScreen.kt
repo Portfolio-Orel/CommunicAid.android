@@ -64,70 +64,12 @@ fun StatisticsScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top
             ) {
-                Row(
-                    modifier = Modifier
-                        .verticalScroll(rememberScrollState()),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(30.dp),
-                ) {
-                    DonutChart(
-                        item = DonutItem(
-                            title = {
-                                Text(
-                                    text = stringResource(id = StatisticsTypes.IncomingCount.label),
-                                    style = MaterialTheme.typography.titleSmall,
-                                    color = MaterialTheme.colorScheme.onBackground
-                                )
-                            },
-                            textInside = {
-                                DonutText(
-                                    text = state.incomingCount.toString(),
-                                    isLoading = state.isLoading
-                                )
-                            },
-                            outerColor = MaterialTheme.colorScheme.secondary,
-                            innerColor = MaterialTheme.colorScheme.background
-                        )
-                    )
-                    DonutChart(
-                        item = DonutItem(
-                            title = {
-                                Text(
-                                    text = stringResource(StatisticsTypes.OutgoingCount.label),
-                                    style = MaterialTheme.typography.titleSmall,
-                                    color = MaterialTheme.colorScheme.onBackground
-                                )
-                            },
-                            textInside = {
-                                DonutText(
-                                    text = state.outgoingCount.toString(),
-                                    isLoading = state.isLoading
-                                )
-                            },
-                            outerColor = MaterialTheme.colorScheme.secondary,
-                            innerColor = MaterialTheme.colorScheme.background
-                        )
-                    )
-                    DonutChart(
-                        item = DonutItem(
-                            title = {
-                                Text(
-                                    text = stringResource(R.string.total),
-                                    style = MaterialTheme.typography.titleSmall,
-                                    color = MaterialTheme.colorScheme.onBackground
-                                )
-                            },
-                            textInside = {
-                                DonutText(
-                                    text = state.totalCallsCount.toString(),
-                                    isLoading = state.isLoading
-                                )
-                            },
-                            outerColor = MaterialTheme.colorScheme.secondary,
-                            innerColor = MaterialTheme.colorScheme.background
-                        )
-                    )
-                }
+                CallTypesStatistics(
+                    incomingCount = state.incomingCount,
+                    outgoingCount = state.outgoingCount,
+                    totalCallsCount = state.totalCallsCount,
+                    isLoading = state.isLoading
+                )
                 if (state.isLoading) {
                     Loading()
                 } else {
@@ -140,6 +82,79 @@ fun StatisticsScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun CallTypesStatistics(
+    incomingCount: Int,
+    outgoingCount: Int,
+    totalCallsCount: Int,
+    isLoading: Boolean
+) {
+    Row(
+        modifier = Modifier
+            .verticalScroll(rememberScrollState()),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(30.dp),
+    ) {
+        DonutChart(
+            item = DonutItem(
+                title = {
+                    Text(
+                        text = stringResource(id = StatisticsTypes.IncomingCount.label),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                },
+                textInside = {
+                    DonutText(
+                        text = incomingCount.toString(),
+                        isLoading = isLoading
+                    )
+                },
+                outerColor = MaterialTheme.colorScheme.secondary,
+                innerColor = MaterialTheme.colorScheme.background
+            )
+        )
+        DonutChart(
+            item = DonutItem(
+                title = {
+                    Text(
+                        text = stringResource(StatisticsTypes.OutgoingCount.label),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                },
+                textInside = {
+                    DonutText(
+                        text = outgoingCount.toString(),
+                        isLoading = isLoading
+                    )
+                },
+                outerColor = MaterialTheme.colorScheme.secondary,
+                innerColor = MaterialTheme.colorScheme.background
+            )
+        )
+        DonutChart(
+            item = DonutItem(
+                title = {
+                    Text(
+                        text = stringResource(R.string.total),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                },
+                textInside = {
+                    DonutText(
+                        text = totalCallsCount.toString(),
+                        isLoading = isLoading
+                    )
+                },
+                outerColor = MaterialTheme.colorScheme.secondary,
+                innerColor = MaterialTheme.colorScheme.background
+            )
+        )
     }
 }
 
