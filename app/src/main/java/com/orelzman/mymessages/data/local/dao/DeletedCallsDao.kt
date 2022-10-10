@@ -38,14 +38,6 @@ interface DeletedCallsDao {
     )
     fun getAllOnce(): List<DeletedCall>
 
-    @Query(
-        """
-        SELECT COUNT(*)
-        FROM DeletedCall
-    """
-    )
-    fun getDBSize(): Int
-
     @Delete
     fun delete(deletedCall: DeletedCall)
 
