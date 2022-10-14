@@ -1,5 +1,4 @@
 package com.orels.auth.di
-
 import android.content.Context
 import androidx.room.Room
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -20,7 +19,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AuthModule {
 
-    const val DB_NAME = "Auth_DB"
+    private const val DB_NAME = "Auth_DB"
 
     @Provides
     fun provideAuthRepository(): AuthRepository =

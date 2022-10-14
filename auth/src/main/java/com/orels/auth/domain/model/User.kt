@@ -5,10 +5,10 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class User(
-    @PrimaryKey val userId: String = "",
-    val token: String = "",
-    val email: String = "",
-    val username: String = "",
+    @PrimaryKey var userId: String = "",
+    var token: String = "",
+    var email: String = "",
+    var username: String = "",
     var state: UserState = UserState.NotAuthorized
 ) {
 
