@@ -46,6 +46,8 @@ fun StatisticsScreen(
         StatisticsTabs(
             onClick = viewModel::tabSelected,
             modifier = Modifier
+                .padding(bottom = 24.dp, top = 12.dp)
+                .padding(horizontal = 8.dp)
                 .height(40.dp)
                 .fillMaxWidth()
         )
@@ -96,7 +98,7 @@ private fun CallTypesStatistics(
         modifier = Modifier
             .verticalScroll(rememberScrollState()),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(30.dp),
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         DonutChart(
             item = DonutItem(
@@ -190,7 +192,7 @@ private fun Dates(startDate: Date?, endDate: Date?) {
     LtrView {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Text(
                 text = startDate?.getDayFormatted(withYear = false) ?: "",
