@@ -2,8 +2,8 @@ package com.orelzman.mymessages.data.interactors
 
 import android.util.Log
 import com.orelzman.mymessages.data.local.LocalDatabase
-import com.orelzman.mymessages.domain.interactors.DeletedCallsInteractor
 import com.orelzman.mymessages.data.remote.dto.body.create.CreateDeletedCallBody
+import com.orelzman.mymessages.domain.interactors.DeletedCallsInteractor
 import com.orelzman.mymessages.domain.model.entities.DeletedCall
 import com.orelzman.mymessages.domain.model.entities.UploadState
 import com.orelzman.mymessages.domain.repository.Repository
@@ -26,7 +26,9 @@ class DeletedCallsInteractorImpl @Inject constructor(
         )
         val id: String? = repository.createDeletedCall(createDeletedCallBody)
         if (id != null) {
-            db.updateId(deletedCall.deleteDate, id)
+            db.delete(deletedCall)
+            deletedCall.id = id
+            db.insert(deletedCall)
             deletedCall.setUploadState(UploadState.Uploaded)
             deletedCall.id = id
             db.update(deletedCall)

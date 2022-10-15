@@ -46,15 +46,6 @@ interface DeletedCallsDao {
 
     @Query(
         """
-        UPDATE DeletedCall
-        SET id = :newId
-        WHERE deleteDate = :deletedDate
-    """
-    )
-    fun updateId(deletedDate: Long, newId: String)
-
-    @Query(
-        """
         DELETE
         FROM DeletedCall
     """

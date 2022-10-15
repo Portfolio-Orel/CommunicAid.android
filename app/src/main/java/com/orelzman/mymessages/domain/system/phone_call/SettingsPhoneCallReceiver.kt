@@ -54,6 +54,7 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
                 val state = intent.extras?.getString(TelephonyManager.EXTRA_STATE) ?: return
                 checkStartAppOnCallSettings(state = state, context = context)
                 checkSendSMSToWaitingCall(context = context)
+                checkProximitySensor(state = state)
             }
         }
     }
@@ -97,17 +98,21 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
      * @see SettingsKey.ShowAppOnCall
      */
     private fun checkStartAppOnCallSettings(state: String, context: Context) {
-        if (state != TelephonyManager.EXTRA_STATE_OFFHOOK) {
-            proximityManager.disable()
-        }
         val settings = settingsInteractor.getSettings(SettingsKey.ShowAppOnCall)
         if (settings.getRealValue<Boolean>() == true && settings.getPermissionsNotGranted(context = context)
                 .isEmpty()
         ) {
             if (state == TelephonyManager.EXTRA_STATE_OFFHOOK) {
-                proximityManager.enable()
                 showApp(context = context)
             }
+        }
+    }
+
+    private fun checkProximitySensor(state: String) {
+        if (state == TelephonyManager.EXTRA_STATE_OFFHOOK) {
+            proximityManager.enable()
+        } else {
+            proximityManager.enable()
         }
     }
 

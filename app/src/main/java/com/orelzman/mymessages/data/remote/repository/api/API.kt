@@ -40,7 +40,7 @@ interface API {
 
     // Deleted Calls
     @POST("/deletedCalls")
-    suspend fun createDeletedCall(@Body deletedCallBody: CreateDeletedCallBody): Response<String>
+    suspend fun createDeletedCall(@Body deletedCallBody: CreateDeletedCallBody): Response<String?>
 
     @GET("/deletedCalls/{from_date}")
     suspend fun getDeletedCalls(

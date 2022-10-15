@@ -108,7 +108,7 @@ class APIRepository @Inject constructor(
     /* Phone Calls */
 
     /* Deleted Phone Calls */
-    override suspend fun createDeletedCall(createDeletedCallBody: CreateDeletedCallBody): String {
+    override suspend fun createDeletedCall(createDeletedCallBody: CreateDeletedCallBody): String? {
         val result = api.createDeletedCall(createDeletedCallBody)
         return result.body
     }
