@@ -17,7 +17,6 @@ import com.orels.domain.system.phone_call.PhonecallReceiver
 import com.orels.domain.util.common.Logger
 import com.orels.domain.util.extension.log
 import com.orels.domain.util.extension.rawResToStringMap
-import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +26,6 @@ import javax.inject.Inject
 
 
 @HiltAndroidApp
-@AndroidEntryPoint
 class MainApplication : Application(), Configuration.Provider {
 
     @Inject

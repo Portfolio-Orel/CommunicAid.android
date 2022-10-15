@@ -22,10 +22,6 @@ object AuthModule {
     private const val DB_NAME = "Auth_DB"
 
     @Provides
-    fun provideAuthRepository(): AuthRepository =
-        AuthRepository()
-
-    @Provides
     fun provideDatabase(@ApplicationContext context: Context): AuthDatabase =
         Room.databaseBuilder(
             context,
