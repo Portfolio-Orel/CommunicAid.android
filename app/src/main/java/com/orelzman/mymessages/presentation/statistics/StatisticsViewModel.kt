@@ -31,7 +31,7 @@ class StatisticsViewModel @Inject constructor(
 
     fun init() {
         analyticsInteractor.track(AnalyticsIdentifiers.StatisticsScreenShow)
-        initData()
+        fetchData()
         observeData()
     }
 
@@ -87,15 +87,6 @@ class StatisticsViewModel @Inject constructor(
             } finally {
                 state = state.copy(isLoading = false)
             }
-        }
-    }
-
-    private fun initData() {
-        val statistics = statisticsInteractor.getStatisticsOnce()
-        if (statistics.isEmpty()) {
-            fetchData()
-        } else {
-            setStatisticsData(statistics)
         }
     }
 
