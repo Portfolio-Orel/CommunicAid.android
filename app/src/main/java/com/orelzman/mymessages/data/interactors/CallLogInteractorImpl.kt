@@ -24,12 +24,6 @@ class CallLogInteractorImpl @Inject constructor(@ApplicationContext private val 
             endDate = Date()
         )
 
-    /**
-     * Returns all the logs of calls that occurred between [startDate] and [endDate].
-     * @param startDate is the date of the first call we're looking for.
-     * @param endDate is the date of the last call we're looking for.
-     * @author Orel Zilberman
-     */
     override fun getCallLogsByDate(
         startDate: Date,
         endDate: Date
@@ -77,6 +71,43 @@ class CallLogInteractorImpl @Inject constructor(@ApplicationContext private val 
 
     override suspend fun getLastCallLog(delay: Long): CallLogEntity? {
         delay(delay)
+        var callLog: CallLogEntity? = null
+        val details = arrayOf(
+            CallLog.Calls.NUMBER,
+            CallLog.Calls.TYPE,
+            CallLog.Calls.DURATION,
+            CallLog.Calls.CACHED_NAME,
+            CallLog.Calls.DATE
+        )
+        context.contentResolver
+            ?.query(
+                CallLog.Calls.CONTENT_URI,
+                details,
+                null,
+                null,
+                CallLog.Calls._ID + " DESC"
+            )
+            ?.use {
+                if (it.moveToNext()) {
+                    val number = it.getString(0) ?: ""
+                    val type = it.getString(1) ?: ""
+                    val duration = it.getString(2) ?: ""
+                    val name = it.getString(3) ?: ""
+                    val date = it.getString(4) ?: ""
+                    val callLogType: Int = type.toInt()
+                    callLog = CallLogEntity(
+                        number = number,
+                        duration = duration.toLong(),
+                        name = name,
+                        time = date.toLong(),
+                        callLogType = CallType.fromInt(callLogType)
+                    )
+                }
+            }
+        return callLog
+    }
+
+    override fun getLastCallLog(): CallLogEntity? {
         var callLog: CallLogEntity? = null
         val details = arrayOf(
             CallLog.Calls.NUMBER,

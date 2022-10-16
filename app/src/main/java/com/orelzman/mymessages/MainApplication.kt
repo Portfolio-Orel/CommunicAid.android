@@ -1,6 +1,7 @@
 package com.orelzman.mymessages
 
 import android.app.Application
+import android.provider.CallLog
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.datadog.android.Datadog
@@ -13,6 +14,7 @@ import com.orelzman.mymessages.data.remote.EnvironmentRepository
 import com.orelzman.mymessages.di.annotation.AuthConfigFile
 import com.orelzman.mymessages.di.annotation.DatadogConfigFile
 import com.orelzman.mymessages.domain.model.entities.ConfigFile
+import com.orelzman.mymessages.domain.system.phone_call.CallLogObserver
 import com.orelzman.mymessages.domain.system.phone_call.PhonecallReceiver
 import com.orelzman.mymessages.domain.system.phone_call.SettingsPhoneCallReceiver
 import com.orelzman.mymessages.domain.util.extension.Logger
@@ -86,9 +88,13 @@ class MainApplication : Application(), Configuration.Provider {
                     if (authInteractor.isAuthorized(user)) {
                         PhonecallReceiver.enable(context = applicationContext)
                         SettingsPhoneCallReceiver.enable(context = applicationContext)
+                        contentResolver
+                            .registerContentObserver(CallLog.Calls.CONTENT_URI, true, CallLogObserver(null))
                     } else {
                         PhonecallReceiver.disable(context = applicationContext)
                         SettingsPhoneCallReceiver.disable(context = applicationContext)
+                        contentResolver
+                            .unregisterContentObserver(CallLogObserver(null))
                     }
                 } catch(e: Exception) {
                     e.log()

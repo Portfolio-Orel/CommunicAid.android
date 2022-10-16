@@ -39,7 +39,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideConnectivityObserver(connectivityObserver: ConnectivityObserverObserverImpl): ConnectivityObserver
-
+    
     @Binds
     abstract fun provideRepository(repository: APIRepository): Repository
 

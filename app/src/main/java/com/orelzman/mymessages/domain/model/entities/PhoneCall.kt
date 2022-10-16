@@ -19,7 +19,16 @@ data class PhoneCall(
     var isWaiting: Boolean = false,
     var messagesSent: List<MessageSent> = emptyList(),
     var type: String = CallType.INCOMING.name,
+    var actualDuration: Float = 0.0f
 ) : Loggable, Uploadable() {
+
+    init {
+        // Sometimes endDate is a smaller than startDate in a few milliseconds
+        // when the call is rejected/missed/blocked
+        if (endDate < startDate) {
+            endDate = startDate
+        }
+    }
 
     fun getNameOrNumber(): String {
         if (name == "") return number

@@ -20,7 +20,9 @@ interface CallLogInteractor {
         endDate: Date = Date()
     ): ArrayList<CallLogEntity>
 
-    suspend fun getLastCallLog(delay: Long = 0): CallLogEntity?
+    suspend fun getLastCallLog(delay: Long): CallLogEntity?
+
+    fun getLastCallLog(): CallLogEntity?
 
     /**
      * Updates values according to the call log

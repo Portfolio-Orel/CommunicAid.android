@@ -25,7 +25,6 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-@Suppress("MoveVariableDeclarationIntoWhen")
 @ExperimentalPermissionsApi
 class PhoneCallManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -68,6 +67,7 @@ class PhoneCallManagerImpl @Inject constructor(
         resetIfNoActiveCall()
     }
 
+    @Suppress("MoveVariableDeclarationIntoWhen")
     private fun onRingingState(number: String) {
         val previousState = dataSource.getState()
         when (previousState) {
@@ -83,6 +83,7 @@ class PhoneCallManagerImpl @Inject constructor(
         }
     }
 
+    @Suppress("MoveVariableDeclarationIntoWhen")
     private fun onOffHookState(number: String) {
         val previousState = dataSource.getState()
         when (previousState) {
