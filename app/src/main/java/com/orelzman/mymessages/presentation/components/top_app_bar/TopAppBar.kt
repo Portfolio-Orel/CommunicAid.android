@@ -1,9 +1,7 @@
 package com.orelzman.mymessages.presentation.components.top_app_bar
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.*
@@ -14,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.orelzman.mymessages.BuildConfig
 import com.orelzman.mymessages.R
 import com.orelzman.mymessages.domain.util.Screen
 
@@ -25,13 +24,25 @@ fun TopAppBar(
     val state = viewModel.state
     CenterAlignedTopAppBar(
         title = {
-            Text(
-                text = if (state.callOnTheLine?.number == "" || state.callOnTheLine == null)
-                    stringResource(R.string.no_active_call)
-                else
-                    state.callOnTheLine.getNameOrNumber(),
-                style = MaterialTheme.typography.titleSmall,
-            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = if (state.callOnTheLine?.number == "" || state.callOnTheLine == null)
+                        stringResource(R.string.no_active_call)
+                    else
+                        state.callOnTheLine.getNameOrNumber(),
+                    style = MaterialTheme.typography.titleSmall,
+                )
+                if (BuildConfig.DEBUG) {
+                    Text(
+                        text = "Debug",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
         },
         navigationIcon = {
             Box(
@@ -39,8 +50,8 @@ fun TopAppBar(
                     .padding(8.dp)
                     .size(32.dp)
                     .clickable {
-                    navController.navigate(Screen.Settings.route)
-                },
+                        navController.navigate(Screen.Settings.route)
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(

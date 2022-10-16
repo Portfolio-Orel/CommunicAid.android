@@ -8,7 +8,7 @@ class EnvironmentRepository @Inject constructor() {
         if (BuildConfig.DEBUG) Environments.Dev else Environments.Prod
 }
 
-enum class Environments {
+enum class Environments {  
     Dev,
     Prod,
     LocalEmulator
