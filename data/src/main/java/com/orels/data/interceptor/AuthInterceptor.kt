@@ -1,11 +1,12 @@
 package com.orels.data.interceptor
 
-import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.domain.interactors.AuthInteractor
 import okhttp3.Interceptor
 import okhttp3.Response
 
 class AuthInterceptor (
-    private val authInteractor: AuthInteractor) : Interceptor {
+    private val authInteractor: AuthInteractor
+) : Interceptor {
 
     private val lock = Any()
     override fun intercept(chain: Interceptor.Chain): Response =

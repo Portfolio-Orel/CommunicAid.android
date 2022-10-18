@@ -5,10 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orels.auth.domain.exception.LimitExceededException
-import com.orels.auth.domain.exception.UserNotFoundException
-import com.orels.auth.domain.interactor.AuthInteractor
-import com.orels.auth.domain.model.ResetPasswordStep
+import com.orels.domain.model.exception.LimitExceededException
+import com.orels.domain.model.exception.UserNotFoundException
+import com.orels.domain.interactors.AuthInteractor
+import com.orels.domain.model.ResetPasswordStep
 import com.orels.domain.util.extension.addUniqueIf
 import com.orels.domain.util.extension.log
 import com.orels.presentation.R

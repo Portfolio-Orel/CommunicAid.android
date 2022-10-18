@@ -97,9 +97,6 @@ dependencies {
     // Gson
     implementation 'com.google.code.gson:gson:2.6.2'
 
-    // Auth
-    implementation project(':auth')
-
     // Navigation
     implementation "com.google.accompanist:accompanist-navigation-material:0.24.11-rc"
     implementation "com.google.accompanist:accompanist-navigation-animation:0.24.11-rc"
@@ -141,8 +138,4 @@ dependencies {
 
     // Status Bar
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.23.1"
-
-
-    implementation project(':auth')
-
 }

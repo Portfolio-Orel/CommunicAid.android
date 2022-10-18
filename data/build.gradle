@@ -81,8 +81,11 @@ dependencies {
     // Gson
     implementation 'com.google.code.gson:gson:2.6.2'
 
-    // Auth
-    implementation project(':auth')
+    // AWS
+    implementation 'com.amplifyframework:core:1.36.0'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.0'
+    implementation 'com.amplifyframework:aws-auth-cognito:1.36.0'
+    implementation 'com.amplifyframework:core-kotlin:0.20.0'
 
     // Navigation
     implementation "com.google.accompanist:accompanist-navigation-material:0.24.11-rc"
@@ -127,5 +130,4 @@ dependencies {
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.23.1"
 
     implementation project(':domain')
-    implementation project(':auth')
 }

@@ -1,10 +1,14 @@
 package com.orels.domain.model.entities
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity
 data class User(
-    val userId: String = "",
-    val token: String = "",
-    val email: String = "",
-    val username: String = "",
+    @PrimaryKey var userId: String = "",
+    var token: String = "",
+    var email: String = "",
+    var username: String = "",
     var state: UserState = UserState.NotAuthorized
 ) {
 
@@ -28,7 +32,7 @@ data class User(
     }
 }
 
-enum class UserState { // ToDo: Understand if needed
+enum class UserState {
     NotAuthorized,
     Authorized,
     Blocked;

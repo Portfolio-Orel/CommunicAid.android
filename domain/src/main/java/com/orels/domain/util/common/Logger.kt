@@ -1,7 +1,7 @@
 package com.orels.domain.util.common
 
 import android.util.Log
-import com.orels.auth.domain.model.AuthLogger
+import com.orels.domain.interactors.AuthLogger
 
 /**
  * @author Orel Zilberman

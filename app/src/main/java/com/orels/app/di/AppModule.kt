@@ -1,10 +1,15 @@
 package com.orels.app.di
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
 import com.google.gson.Gson
 import com.orels.R
-import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.data.local.dao.UserDao
+import com.orels.data.local.AuthDatabase
+import com.orels.data.interactor.UserInteractorImpl
+import com.orels.domain.interactors.AuthInteractor
+import com.orels.domain.interactors.UserInteractor
 import com.orels.data.interceptor.AuthInterceptor
 import com.orels.data.interceptor.ErrorInterceptor
 import com.orels.data.interceptor.LogInterceptor
@@ -21,6 +26,7 @@ import com.orels.domain.model.entities.ConfigFile
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -30,6 +36,38 @@ import java.util.concurrent.TimeUnit
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+
+    private const val AUTH_DB_NAME = "Auth_DB"
+
+    @Provides
+    fun provideDatabase(@ApplicationContext context: Context): AuthDatabase =
+        Room.databaseBuilder(
+            context,
+            AuthDatabase::class.java,
+            AUTH_DB_NAME
+        )
+            .fallbackToDestructiveMigration()
+            .allowMainThreadQueries()
+            .build()
+
+    @Provides
+    fun provideUserDB(db: AuthDatabase): UserDao =
+        db.userDao()
+
+    @Provides
+    fun provideUserInteractor(userInteractor: UserInteractorImpl): UserInteractor = userInteractor
+
+//    @Provides
+//    @Singleton
+//    fun provideGoogleSignInClient(@ApplicationContext context: Context): GoogleSignInClient {
+//        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//            .requestIdToken("670361895848-0jildiu2ebiip55tqnkdtuhm1oq5mujc.apps.googleusercontent.com")
+//            .requestEmail()
+//            .build()
+//        return GoogleSignIn.getClient(context, gso)
+//    }
+//
     @Provides
     fun provideLocalDatabase(context: Application): LocalDatabase =
         with(context) {

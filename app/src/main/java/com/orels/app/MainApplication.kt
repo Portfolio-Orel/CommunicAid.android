@@ -8,10 +8,10 @@ import com.datadog.android.core.configuration.Credentials
 import com.datadog.android.privacy.TrackingConsent
 import com.datadog.android.rum.GlobalRum
 import com.datadog.android.rum.RumMonitor
-import com.orels.auth.domain.interactor.AuthInteractor
 import com.orels.data.remote.EnvironmentRepository
 import com.orels.domain.annotation.AuthConfigFile
 import com.orels.domain.annotation.DatadogConfigFile
+import com.orels.domain.interactors.AuthInteractor
 import com.orels.domain.model.entities.ConfigFile
 import com.orels.domain.system.phone_call.PhonecallReceiver
 import com.orels.domain.util.common.Logger

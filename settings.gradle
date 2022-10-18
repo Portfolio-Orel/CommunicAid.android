@@ -7,7 +7,6 @@ dependencyResolutionManagement {
 }
 rootProject.name = "MyMessages"
 include ':app'
-include ':auth'
 include ':data'
 include ':domain'
 include ':presentation'

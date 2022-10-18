@@ -1,51 +1,25 @@
 plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
-    id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
-    id 'com.datadoghq.dd-sdk-android-gradle-plugin' version "1.3.0"
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
-        applicationId "com.orelzman.mymessages"
         minSdk 26
-        targetSdk 26
-        versionCode 1
-        versionName "1.0"
+        targetSdk 33
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary true
-        }
+        consumerProguardFiles "consumer-rules.pro"
     }
-
-//    flavorDimensions "paid"
-//    productFlavors {
-//        free {
-//            dimension "paid"
-//            applicationIdSuffix ".free"
-//        }
-//        paid {
-//            dimension "paid"
-//            applicationIdSuffix ".paid"
-//        }
-//    }
 
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-        beta {
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-        debug {
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -53,26 +27,12 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion '1.3.0'
-        kotlinCompilerVersion '1.5.30'    }
-
     kotlinOptions {
         jvmTarget = '1.8'
     }
-
-    buildFeatures {
-        compose true
-    }
     composeOptions {
         kotlinCompilerExtensionVersion '1.3.0'
-        kotlinCompilerVersion '1.5.30'
-    }
-    packagingOptions {
-        resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
-        }
+        kotlinCompilerVersion '1.5.21'
     }
 }
 
@@ -125,9 +85,6 @@ dependencies {
     // Gson
     implementation 'com.google.code.gson:gson:2.6.2'
 
-    // Auth
-    implementation project(':auth')
-
     // Navigation
     implementation "com.google.accompanist:accompanist-navigation-material:0.24.11-rc"
     implementation "com.google.accompanist:accompanist-navigation-animation:0.24.11-rc"
@@ -170,9 +127,8 @@ dependencies {
     // Status Bar
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.23.1"
 
-    // Modules
-    implementation project(':auth')
     implementation project(':domain')
-    implementation project(':data')
     implementation project(':presentation')
+    implementation project(':data')
+
 }

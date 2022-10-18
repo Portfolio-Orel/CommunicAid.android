@@ -1,7 +1,7 @@
 package com.orels.data.interceptor
 
-import com.orels.auth.domain.exception.CouldNotRefreshTokenException
-import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.domain.model.exception.CouldNotRefreshTokenException
+import com.orels.domain.interactors.AuthInteractor
 import com.orels.domain.util.extension.log
 import kotlinx.coroutines.*
 import okhttp3.Interceptor

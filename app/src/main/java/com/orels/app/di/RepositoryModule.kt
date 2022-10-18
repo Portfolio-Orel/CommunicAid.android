@@ -1,13 +1,14 @@
 package com.orels.app.di
 
-import com.orels.auth.data.remote.AuthInteractorImpl
-import com.orels.auth.domain.interactor.AuthInteractor
-import com.orels.data.interactors.*
+import com.orels.data.interactor.AuthInteractorImpl
+import com.orels.domain.interactors.AuthInteractor
+import com.orels.data.interactor.*
 import com.orels.data.managers.phonecall.interactor.PhoneCallManagerImpl
 import com.orels.data.managers.system_service.SystemServiceManagerImpl
 import com.orels.data.managers.unhandled_calls.UnhandledCallsManagerImpl
 import com.orels.data.managers.worker.WorkerManagerImpl
 import com.orels.data.remote.repository.api.APIRepository
+import com.orels.domain.annotation.AuthRepository
 import com.orels.domain.annotation.Proximity
 import com.orels.domain.interactors.*
 import com.orels.domain.managers.SystemServiceManager
@@ -101,4 +102,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun provideWorkerManager(managerImpl: WorkerManagerImpl): WorkerManager
+
+    @Binds
+    @AuthRepository
+    abstract fun provideAuthRepository(authRepository: AuthRepository): AuthRepository
 }

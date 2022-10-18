@@ -6,11 +6,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orels.auth.domain.exception.CodeMismatchException
-import com.orels.auth.domain.exception.UserNotConfirmedException
-import com.orels.auth.domain.exception.UserNotFoundException
-import com.orels.auth.domain.exception.WrongCredentialsException
-import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.domain.model.exception.CodeMismatchException
+import com.orels.domain.model.exception.UserNotConfirmedException
+import com.orels.domain.model.exception.UserNotFoundException
+import com.orels.domain.model.exception.WrongCredentialsException
+import com.orels.domain.interactors.AuthInteractor
 import com.orels.domain.interactors.GeneralInteractor
 import com.orels.domain.model.dto.body.create.CreateUserBody
 import com.orels.domain.repository.Repository

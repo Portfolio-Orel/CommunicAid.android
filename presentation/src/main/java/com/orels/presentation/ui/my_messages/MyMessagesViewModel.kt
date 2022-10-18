@@ -5,8 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orels.auth.domain.interactor.AuthInteractor
-import com.orels.auth.domain.model.UserState
+import com.orels.domain.interactors.AuthInteractor
 import com.orels.domain.interactors.GeneralInteractor
 import com.orels.domain.interactors.SettingsInteractor
 import com.orels.domain.managers.phonecall.PhoneCallManager
@@ -14,6 +13,7 @@ import com.orels.domain.managers.phonecall.isCallStateIdle
 import com.orels.domain.managers.worker.WorkerManager
 import com.orels.domain.managers.worker.WorkerType
 import com.orels.domain.model.entities.SettingsKey
+import com.orels.domain.model.entities.UserState
 import com.orels.domain.system.connectivity.ConnectivityObserver
 import com.orels.domain.system.connectivity.NetworkState
 import com.orels.domain.util.common.Logger
