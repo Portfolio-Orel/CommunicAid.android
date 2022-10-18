@@ -17,7 +17,10 @@ import com.orelzman.mymessages.di.annotation.AuthConfigFile
 import com.orelzman.mymessages.di.annotation.BaseProjectUrl
 import com.orelzman.mymessages.di.annotation.DatadogConfigFile
 import com.orelzman.mymessages.di.annotation.MixpanelConfigFile
+import com.orelzman.mymessages.domain.interactors.CallLogInteractor
+import com.orelzman.mymessages.domain.interactors.PhoneCallsInteractor
 import com.orelzman.mymessages.domain.model.entities.ConfigFile
+import com.orelzman.mymessages.domain.system.phone_call.CallLogObserver
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -109,4 +112,14 @@ object AppModule {
             .baseUrl(url)
             .build()
             .create(API::class.java)
+
+    @Provides
+    fun providesCallLogObserver(
+        callLogInteractor: CallLogInteractor,
+        phoneCallsInteractor: PhoneCallsInteractor
+    ): CallLogObserver = CallLogObserver(
+        callLogInteractor = callLogInteractor,
+        phoneCallsInteractor = phoneCallsInteractor,
+        handler = null
+    )
 }

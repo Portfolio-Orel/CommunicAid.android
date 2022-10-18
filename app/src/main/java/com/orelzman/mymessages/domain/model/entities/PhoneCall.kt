@@ -19,7 +19,7 @@ data class PhoneCall(
     var isWaiting: Boolean = false,
     var messagesSent: List<MessageSent> = emptyList(),
     var type: String = CallType.INCOMING.name,
-    var actualDuration: Float = 0.0f
+    var actualDuration: Long = 0
 ) : Loggable, Uploadable() {
 
     init {

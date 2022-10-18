@@ -48,6 +48,9 @@ class MainApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var authInteractor: AuthInteractor
 
+    @Inject
+    lateinit var callLogObserver: CallLogObserver
+
     override fun onCreate() {
         super.onCreate()
         val configuration = com.datadog.android.core.configuration.Configuration.Builder(
@@ -89,12 +92,12 @@ class MainApplication : Application(), Configuration.Provider {
                         PhonecallReceiver.enable(context = applicationContext)
                         SettingsPhoneCallReceiver.enable(context = applicationContext)
                         contentResolver
-                            .registerContentObserver(CallLog.Calls.CONTENT_URI, true, CallLogObserver(null))
+                            .registerContentObserver(CallLog.Calls.CONTENT_URI, true, callLogObserver)
                     } else {
                         PhonecallReceiver.disable(context = applicationContext)
                         SettingsPhoneCallReceiver.disable(context = applicationContext)
                         contentResolver
-                            .unregisterContentObserver(CallLogObserver(null))
+                            .unregisterContentObserver(callLogObserver)
                     }
                 } catch(e: Exception) {
                     e.log()

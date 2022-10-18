@@ -11,7 +11,7 @@ data class CreatePhoneCallBody(
     @SerializedName("is_answered") val isAnswered: Boolean,
     @SerializedName("type") val type: String,
     @SerializedName("messages_sent") val messagesSent: List<CreateMessageSentBody>,
-    @SerializedName("actual_duration") val actualDuration: Float,
+    @SerializedName("actual_duration") val actualDuration: Long,
 )
 
 
