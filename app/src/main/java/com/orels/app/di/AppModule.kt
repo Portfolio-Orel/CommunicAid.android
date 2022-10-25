@@ -5,15 +5,13 @@ import android.content.Context
 import androidx.room.Room
 import com.google.gson.Gson
 import com.orels.R
-import com.orels.data.local.dao.UserDao
-import com.orels.data.local.AuthDatabase
 import com.orels.data.interactor.UserInteractorImpl
-import com.orels.domain.interactors.AuthInteractor
-import com.orels.domain.interactors.UserInteractor
 import com.orels.data.interceptor.AuthInterceptor
 import com.orels.data.interceptor.ErrorInterceptor
 import com.orels.data.interceptor.LogInterceptor
+import com.orels.data.local.AuthDatabase
 import com.orels.data.local.LocalDatabase
+import com.orels.data.local.dao.UserDao
 import com.orels.data.local.type_converters.Converters
 import com.orels.data.remote.EnvironmentRepository
 import com.orels.data.remote.Environments
@@ -22,6 +20,8 @@ import com.orels.domain.annotation.AuthConfigFile
 import com.orels.domain.annotation.BaseProjectUrl
 import com.orels.domain.annotation.DatadogConfigFile
 import com.orels.domain.annotation.MixpanelConfigFile
+import com.orels.domain.interactors.AuthInteractor
+import com.orels.domain.interactors.UserInteractor
 import com.orels.domain.model.entities.ConfigFile
 import dagger.Module
 import dagger.Provides
@@ -36,8 +36,6 @@ import java.util.concurrent.TimeUnit
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-
     private const val AUTH_DB_NAME = "Auth_DB"
 
     @Provides

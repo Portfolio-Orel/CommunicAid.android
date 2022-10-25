@@ -8,6 +8,7 @@ import com.datadog.android.core.configuration.Credentials
 import com.datadog.android.privacy.TrackingConsent
 import com.datadog.android.rum.GlobalRum
 import com.datadog.android.rum.RumMonitor
+import com.google.firebase.FirebaseApp
 import com.orels.data.remote.EnvironmentRepository
 import com.orels.domain.annotation.AuthConfigFile
 import com.orels.domain.annotation.DatadogConfigFile
@@ -46,6 +47,7 @@ class MainApplication : Application(), Configuration.Provider {
     lateinit var authInteractor: AuthInteractor
 
     override fun onCreate() {
+        FirebaseApp.initializeApp(this)
         super.onCreate()
         val configuration = com.datadog.android.core.configuration.Configuration.Builder(
             logsEnabled = true,

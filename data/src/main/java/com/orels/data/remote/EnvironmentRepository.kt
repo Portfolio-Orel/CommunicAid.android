@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 
 class EnvironmentRepository @Inject constructor() {
-    val currentEnvironment: Environments = Environments.Prod
+    val currentEnvironment: Environments = Environments.Dev
 }
 
 enum class Environments {
