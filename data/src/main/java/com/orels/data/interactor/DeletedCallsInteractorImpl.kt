@@ -26,7 +26,9 @@ class DeletedCallsInteractorImpl @Inject constructor(
         )
         val id: String? = repository.createDeletedCall(createDeletedCallBody)
         if (id != null) {
-            db.updateId(deletedCall.deleteDate, id)
+            db.delete(deletedCall)
+            deletedCall.id = id
+            db.insert(deletedCall)
             deletedCall.setUploadState(UploadState.Uploaded)
             deletedCall.id = id
             db.update(deletedCall)

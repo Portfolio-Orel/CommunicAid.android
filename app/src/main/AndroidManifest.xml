@@ -45,7 +45,8 @@
 
         <activity
             android:name="com.orels.app.MainActivity"
-            android:exported="true">
+            android:theme="@style/Theme.MyMessages.NoActionBar"
+        android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -2,6 +2,7 @@ package com.orels.data.interactor
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import androidx.annotation.RawRes
 import com.amazonaws.mobileconnectors.cognitoauth.util.JWTParser
 import com.amplifyframework.auth.AuthChannelEventName
@@ -58,7 +59,8 @@ class AuthInteractorImpl @Inject constructor(
 
     override fun getUserFlow(): Flow<User?> = userInteractor.getFlow()
 
-    override suspend fun isAuthorized(user: User?): Boolean {
+    override suspend fun isAuthorized(user: User?, whoCalled: String): Boolean {
+        Log.v("::TEST::", whoCalled)
         refreshUserData()
         val isLocallyAuthorized = user != null && user.token != "" && user.userId != ""
         val isRemotelyAuthorized = Amplify.Auth.fetchAuthSession().isSignedIn
@@ -242,6 +244,7 @@ class AuthInteractorImpl @Inject constructor(
 
     private suspend fun refreshUserData() {
         try {
+            Log.v("::TEST::", "Called refresh")
             val userId = Amplify.Auth.getCurrentUser()?.userId ?: return
             val token =
                 (Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession).userPoolTokens.value?.accessToken

@@ -1,0 +1,9 @@
+<resources>
+    <style name="Theme.MyMessages" parent="Theme.AppCompat.DayNight.DarkActionBar">
+    </style>
+
+    <style name="Theme.MyMessages.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+</resources>

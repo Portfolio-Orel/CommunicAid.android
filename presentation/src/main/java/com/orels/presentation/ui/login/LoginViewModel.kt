@@ -6,13 +6,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.orels.domain.interactors.AuthInteractor
+import com.orels.domain.interactors.GeneralInteractor
+import com.orels.domain.model.dto.body.create.CreateUserBody
 import com.orels.domain.model.exception.CodeMismatchException
 import com.orels.domain.model.exception.UserNotConfirmedException
 import com.orels.domain.model.exception.UserNotFoundException
 import com.orels.domain.model.exception.WrongCredentialsException
-import com.orels.domain.interactors.AuthInteractor
-import com.orels.domain.interactors.GeneralInteractor
-import com.orels.domain.model.dto.body.create.CreateUserBody
 import com.orels.domain.repository.Repository
 import com.orels.domain.util.extension.log
 import com.orels.presentation.R
@@ -36,7 +36,7 @@ class LoginViewModel @Inject constructor(
                 var isAuthorized = false
                 val user = interactor.getUser()
 
-                if (interactor.isAuthorized(user)) {
+                if (interactor.isAuthorized(user, "LoginViewModel init")) {
                     isAuthorized = true
                 }
                 if (isAuthorized) {
@@ -130,7 +130,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Main) {
             state = try {
                 val user = interactor.getUser()
-                val isAuthorized = if(user != null && interactor.isAuthorized(user)) {
+                val isAuthorized = if(user != null && interactor.isAuthorized(user, "LoginViewModelUserAuth")) {
                     confirmUserCreated(user.userId, user.email)
                 } else {
                     false

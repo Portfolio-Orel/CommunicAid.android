@@ -102,6 +102,7 @@ dependencies {
 
     // Gson
     implementation 'com.google.code.gson:gson:2.6.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
     // Navigation
     implementation "com.google.accompanist:accompanist-navigation-material:0.24.11-rc"
@@ -121,9 +122,6 @@ dependencies {
 
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-
-    // GSON
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
     // Work Manager
     implementation "androidx.work:work-runtime-ktx:$work_version"

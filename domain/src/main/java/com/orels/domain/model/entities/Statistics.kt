@@ -22,6 +22,11 @@ data class Statistics(
     var startDate: Date? = null,
     var endDate: Date? = null
 ) {
+    init {
+        startDate = startDate.getOr1970()
+        endDate = endDate.getOrNow()
+    }
+
     /**
      * Casts value to it's actual value type.
      * @return value of type [T] or the default value of the casting fails.
@@ -102,3 +107,13 @@ enum class StatisticsTypes(
         label = R.string.unknown
     );
 }
+
+/**
+ * @return this or 01.01.1970
+ */
+fun Date?.getOr1970(): Date = this ?: Date(0)
+
+/**
+ * @return this or current date
+ */
+fun Date?.getOrNow(): Date = this ?: Date()

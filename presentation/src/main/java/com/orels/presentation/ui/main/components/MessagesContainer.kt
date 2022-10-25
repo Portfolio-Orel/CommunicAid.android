@@ -70,7 +70,6 @@ fun MessagesContainer(
             items(
                 count = messages.size,
                 key = { index ->
-                    // Return a stable + unique key for the item
                     index
                 }
             ) { index ->

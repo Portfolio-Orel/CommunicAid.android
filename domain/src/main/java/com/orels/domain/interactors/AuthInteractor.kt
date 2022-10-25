@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface AuthInteractor {
 
-    suspend fun init(@RawRes configFileResourceId: Int, authLogger: com.orels.domain.interactors.AuthLogger? = null)
+    suspend fun init(@RawRes configFileResourceId: Int, authLogger: AuthLogger? = null)
     suspend fun signOut()
     suspend fun signUp(
         email: String,
@@ -50,7 +50,7 @@ interface AuthInteractor {
      * Checks if the user is authorized against the user pool.
      */
     @Throws(Exception::class)
-    suspend fun isAuthorized(user: User?): Boolean
+    suspend fun isAuthorized(user: User?, whoCalled: String): Boolean
     /**
      * Checks if the credentials entered are valid
      * according to the policy. TODO

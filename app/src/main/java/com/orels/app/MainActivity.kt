@@ -11,7 +11,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.LayoutDirection
@@ -37,14 +36,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MyMessagesTheme {
+
                 val systemUiController = rememberSystemUiController()
                 systemUiController.setStatusBarColor(
                     color = MaterialTheme.colorScheme.background,
                     darkIcons = MaterialTheme.colorScheme.background.luminance() > 0.5f
                 )
-                window.statusBarColor = MaterialTheme.colorScheme.background.toArgb()
-
-
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                     val permissionsState = rememberMultiplePermissionsState(
                         permissions = listOf(

@@ -20,7 +20,7 @@ import com.orels.domain.util.extension.log
 import com.orels.domain.util.extension.rawResToStringMap
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -76,7 +76,7 @@ class MainApplication : Application(), Configuration.Provider {
             .build()
 
     private fun observeUser() {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(SupervisorJob()).launch {
             try {
                 authInteractor.init(configFileResourceId = authConfigFile.fileResId, Logger())
             } catch (e: Exception) {
@@ -84,7 +84,7 @@ class MainApplication : Application(), Configuration.Provider {
             }
             authInteractor.getUserFlow().collectLatest { user ->
                 try {
-                    if (authInteractor.isAuthorized(user)) {
+                    if (authInteractor.isAuthorized(user, "MainApp")) {
                         PhonecallReceiver.enable(context = applicationContext)
                         SettingsPhoneCallReceiver.enable(context = applicationContext)
                     } else {

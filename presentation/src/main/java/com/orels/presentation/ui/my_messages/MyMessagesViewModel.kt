@@ -79,7 +79,7 @@ class MyMessagesViewModel @Inject constructor(
             }) { user ->
                 Logger.v("JWT: ${user?.token}")
                 val isAuthenticated =
-                    if (!authInteractor.isAuthorized(user)) {
+                    if (!authInteractor.isAuthorized(user, "MymViewModel")) {
                         false
                     } else {
                         if (loadingData) { // The data is being loaded and will return true once it's done

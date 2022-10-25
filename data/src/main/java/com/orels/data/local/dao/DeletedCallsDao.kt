@@ -38,28 +38,11 @@ interface DeletedCallsDao {
     )
     fun getAllOnce(): List<DeletedCall>
 
-    @Query(
-        """
-        SELECT COUNT(*)
-        FROM DeletedCall
-    """
-    )
-    fun getDBSize(): Int
-
     @Delete
     fun delete(deletedCall: DeletedCall)
 
     @Update
     fun update(deletedCall: DeletedCall)
-
-    @Query(
-        """
-        UPDATE DeletedCall
-        SET id = :newId
-        WHERE deleteDate = :deletedDate
-    """
-    )
-    fun updateId(deletedDate: Long, newId: String)
 
     @Query(
         """
