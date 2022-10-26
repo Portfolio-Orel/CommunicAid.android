@@ -9,6 +9,7 @@ import com.orels.data.interactor.UserInteractorImpl
 import com.orels.data.interceptor.AuthInterceptor
 import com.orels.data.interceptor.ErrorInterceptor
 import com.orels.data.interceptor.LogInterceptor
+import com.orels.data.interceptor.ResponseInterceptor
 import com.orels.data.local.AuthDatabase
 import com.orels.data.local.LocalDatabase
 import com.orels.data.local.dao.UserDao
@@ -28,10 +29,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
 import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -56,7 +60,7 @@ object AppModule {
     @Provides
     fun provideUserInteractor(userInteractor: UserInteractorImpl): UserInteractor = userInteractor
 
-//    @Provides
+    //    @Provides
 //    @Singleton
 //    fun provideGoogleSignInClient(@ApplicationContext context: Context): GoogleSignInClient {
 //        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -118,17 +122,26 @@ object AppModule {
     }
 
     @Provides
+    @Singleton
     fun provideOkHttpClient(
-        authIneractor: AuthInteractor,
-    ): OkHttpClient =
-        OkHttpClient.Builder()
-            .addInterceptor(AuthInterceptor(authIneractor))
-            .addInterceptor(ErrorInterceptor(authIneractor))
-            .addInterceptor(LogInterceptor())
-            .retryOnConnectionFailure(true)
-            .connectTimeout(30L, TimeUnit.SECONDS)
-            .readTimeout(30L, TimeUnit.SECONDS)
-            .build()
+        @ApplicationContext context: Context,
+        authInteractor: AuthInteractor,
+        gson: Gson
+    ): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(AuthInterceptor(authInteractor = authInteractor))
+        .addInterceptor(ErrorInterceptor(authInteractor = authInteractor))
+        .addInterceptor(LogInterceptor())
+        .addInterceptor(ResponseInterceptor(gson = gson))
+        .cache(
+            Cache(
+                File(context.cacheDir, "http_cache"), 50L * 1024L * 1024L // 50 MiB
+            )
+        )
+        .retryOnConnectionFailure(true)
+        .connectTimeout(30L, TimeUnit.SECONDS)
+        .readTimeout(30L, TimeUnit.SECONDS)
+        .build()
+
 
     @Provides
     fun provideGson(): Gson = Gson()
