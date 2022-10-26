@@ -17,7 +17,7 @@ interface API {
 
     // Messages
     @GET("/messages")
-    suspend fun getMessages(@Header("If-None-Match") eTag: String = ""): Response<List<GetMessagesResponse>>
+    suspend fun getMessages(@Header("If-None-Match") vararg eTags: String): Response<List<GetMessagesResponse>>
 
     @POST("/messages")
     suspend fun createMessage(@Body messageBody: CreateMessageBody): Response<List<String>>
@@ -30,7 +30,7 @@ interface API {
     suspend fun createFolder(@Body folderBody: CreateFolderBody): Response<String>
 
     @GET("/folders")
-    suspend fun getFolders(@Header("If-None-Match") eTag: String = ""): Response<List<GetFoldersResponse>>
+    suspend fun getFolders(@Header("If-None-Match") vararg eTags: String): Response<List<GetFoldersResponse>>
 
     @PATCH("/folders")
     suspend fun updateFolder(@Body folder: UpdateFolderBody)
@@ -78,14 +78,14 @@ interface API {
     suspend fun getCallsCountByType(
         @Query("start_date") startDate: Long? = null,
         @Query("end_date") endDate: Long? = null,
-        @Header("If-None-Match") eTag: String = ""
+        @Header("If-None-Match") vararg eTags: String
         ): Response<GetCallsCountResponse>
 
     @GET("/statistics/messagesSentCount")
     suspend fun getMessagesSentCount(
         @Query("start_date") startDate: Long? = null,
         @Query("end_date") endDate: Long? = null,
-        @Header("If-None-Match") eTag: String = ""
+        @Header("If-None-Match") vararg eTags: String
     ): Response<List<GetMessagesSentCountResponse>>
 
 }
