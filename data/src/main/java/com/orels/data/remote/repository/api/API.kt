@@ -17,7 +17,7 @@ interface API {
 
     // Messages
     @GET("/messages")
-    suspend fun getMessages(): Response<List<GetMessagesResponse>>
+    suspend fun getMessages(@Header("If-None-Match") eTag: String = ""): Response<List<GetMessagesResponse>>
 
     @POST("/messages")
     suspend fun createMessage(@Body messageBody: CreateMessageBody): Response<List<String>>
@@ -30,7 +30,7 @@ interface API {
     suspend fun createFolder(@Body folderBody: CreateFolderBody): Response<String>
 
     @GET("/folders")
-    suspend fun getFolders(): Response<List<GetFoldersResponse>>
+    suspend fun getFolders(@Header("If-None-Match") eTag: String = ""): Response<List<GetFoldersResponse>>
 
     @PATCH("/folders")
     suspend fun updateFolder(@Body folder: UpdateFolderBody)
@@ -63,6 +63,7 @@ interface API {
     @GET("/settings/{key}")
     suspend fun getSettings(
         @Path("key") key: String,
+        @Header("If-None-Match") eTag: String = "",
     ): Response<List<SettingsResponse>>
 
     @GET("/settings")
@@ -76,13 +77,15 @@ interface API {
     @GET("/statistics/callsCount")
     suspend fun getCallsCountByType(
         @Query("start_date") startDate: Long? = null,
-        @Query("end_date") endDate: Long? = null
-    ): Response<GetCallsCountResponse>
+        @Query("end_date") endDate: Long? = null,
+        @Header("If-None-Match") eTag: String = ""
+        ): Response<GetCallsCountResponse>
 
     @GET("/statistics/messagesSentCount")
     suspend fun getMessagesSentCount(
         @Query("start_date") startDate: Long? = null,
-        @Query("end_date") endDate: Long? = null
+        @Query("end_date") endDate: Long? = null,
+        @Header("If-None-Match") eTag: String = ""
     ): Response<List<GetMessagesSentCountResponse>>
 
 }

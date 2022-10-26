@@ -9,6 +9,7 @@ import com.orels.data.interactor.UserInteractorImpl
 import com.orels.data.interceptor.AuthInterceptor
 import com.orels.data.interceptor.ErrorInterceptor
 import com.orels.data.interceptor.LogInterceptor
+import com.orels.data.interceptor.ResponseInterceptor
 import com.orels.data.local.AuthDatabase
 import com.orels.data.local.LocalDatabase
 import com.orels.data.local.dao.UserDao
@@ -119,12 +120,14 @@ object AppModule {
 
     @Provides
     fun provideOkHttpClient(
-        authIneractor: AuthInteractor,
+        authInteractor: AuthInteractor,
+        gson: Gson
     ): OkHttpClient =
         OkHttpClient.Builder()
-            .addInterceptor(AuthInterceptor(authIneractor))
-            .addInterceptor(ErrorInterceptor(authIneractor))
+            .addInterceptor(AuthInterceptor(authInteractor = authInteractor))
+            .addInterceptor(ErrorInterceptor(authInteractor = authInteractor))
             .addInterceptor(LogInterceptor())
+            .addInterceptor(ResponseInterceptor(gson = gson))
             .retryOnConnectionFailure(true)
             .connectTimeout(30L, TimeUnit.SECONDS)
             .readTimeout(30L, TimeUnit.SECONDS)
