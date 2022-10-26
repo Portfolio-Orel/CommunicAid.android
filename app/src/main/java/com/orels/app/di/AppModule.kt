@@ -33,6 +33,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -57,7 +58,7 @@ object AppModule {
     @Provides
     fun provideUserInteractor(userInteractor: UserInteractorImpl): UserInteractor = userInteractor
 
-//    @Provides
+    //    @Provides
 //    @Singleton
 //    fun provideGoogleSignInClient(@ApplicationContext context: Context): GoogleSignInClient {
 //        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -119,19 +120,26 @@ object AppModule {
     }
 
     @Provides
+    @Singleton
     fun provideOkHttpClient(
+        @ApplicationContext context: Context,
         authInteractor: AuthInteractor,
         gson: Gson
-    ): OkHttpClient =
-        OkHttpClient.Builder()
-            .addInterceptor(AuthInterceptor(authInteractor = authInteractor))
-            .addInterceptor(ErrorInterceptor(authInteractor = authInteractor))
-            .addInterceptor(LogInterceptor())
-            .addInterceptor(ResponseInterceptor(gson = gson))
-            .retryOnConnectionFailure(true)
-            .connectTimeout(30L, TimeUnit.SECONDS)
-            .readTimeout(30L, TimeUnit.SECONDS)
-            .build()
+    ): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(AuthInterceptor(authInteractor = authInteractor))
+        .addInterceptor(ErrorInterceptor(authInteractor = authInteractor))
+        .addInterceptor(LogInterceptor())
+        .addInterceptor(ResponseInterceptor(gson = gson))
+//        .cache(
+//            Cache(
+//                File(context.cacheDir, "http_cache"), 50L * 1024L * 1024L // 50 MiB
+//            )
+//        )
+        .retryOnConnectionFailure(true)
+        .connectTimeout(30L, TimeUnit.SECONDS)
+        .readTimeout(30L, TimeUnit.SECONDS)
+        .build()
+
 
     @Provides
     fun provideGson(): Gson = Gson()

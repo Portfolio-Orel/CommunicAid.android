@@ -63,7 +63,7 @@ interface API {
     @GET("/settings/{key}")
     suspend fun getSettings(
         @Path("key") key: String,
-        @Header("If-None-Match") eTag: String = "",
+        @Header("If-None-Match") vararg eTags: String
     ): Response<List<SettingsResponse>>
 
     @GET("/settings")
