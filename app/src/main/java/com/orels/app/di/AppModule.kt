@@ -29,9 +29,11 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -130,11 +132,11 @@ object AppModule {
         .addInterceptor(ErrorInterceptor(authInteractor = authInteractor))
         .addInterceptor(LogInterceptor())
         .addInterceptor(ResponseInterceptor(gson = gson))
-//        .cache(
-//            Cache(
-//                File(context.cacheDir, "http_cache"), 50L * 1024L * 1024L // 50 MiB
-//            )
-//        )
+        .cache(
+            Cache(
+                File(context.cacheDir, "http_cache"), 50L * 1024L * 1024L // 50 MiB
+            )
+        )
         .retryOnConnectionFailure(true)
         .connectTimeout(30L, TimeUnit.SECONDS)
         .readTimeout(30L, TimeUnit.SECONDS)
