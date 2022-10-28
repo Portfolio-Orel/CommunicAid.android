@@ -71,11 +71,12 @@ class PhoneCallManagerImpl @Inject constructor(
         resetIfNoActiveCall()
     }
 
-    private fun updateActualEndDate() {
-        phoneCallInteractor.getAll().filter { it.uploadState == UploadState.NotUploaded }.forEach {
-            it.actualEndDate = Date()
-        }
-    }
+    private fun updateActualEndDate() =
+        phoneCallInteractor.getAll()
+            .filter { it.uploadState == UploadState.NotUploaded && it.actualEndDate == null }
+            .forEach {
+                it.actualEndDate = Date()
+            }
 
     private fun onRingingState(number: String) {
         val previousState = dataSource.getState()

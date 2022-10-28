@@ -14,11 +14,11 @@ data class PhoneCall(
     @PrimaryKey var id: String = UUID.randomUUID().toString(),
     var number: String = "",
     var startDate: Date, // The date the call was registered in the phone
-    var endDate: Date, // startDate + duration
+    var endDate: Date, // startDate + call duration
     var name: String = "",
     var isWaiting: Boolean = false,
     var type: String = CallType.INCOMING.name,
-    var actualEndDate: Date, // The time the call ended
+    var actualEndDate: Date? = null, // The time the call ended
     var messagesSent: List<MessageSent> = emptyList(),
 ) : Loggable, Uploadable() {
 
