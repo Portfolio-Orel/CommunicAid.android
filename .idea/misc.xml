@@ -65,6 +65,11 @@
         <entry key="app/src/main/res/drawable/missed_call.xml" value="0.1" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.152" />
         <entry key="app/src/main/res/xml/network_security_config.xml" value="0.16458333333333333" />
+        <entry key="domain/src/main/res/drawable/ic_baseline_remove_circle_24.xml" value="0.1" />
+        <entry key="domain/src/main/res/drawable/ic_empty_folder_dark.xml" value="0.1" />
+        <entry key="domain/src/main/res/drawable/ic_empty_folder_light.xml" value="0.1" />
+        <entry key="domain/src/main/res/drawable/ic_home.xml" value="0.1" />
+        <entry key="domain/src/main/res/drawable/ic_visibility_off_24.xml" value="0.1" />
       </map>
     </option>
   </component>

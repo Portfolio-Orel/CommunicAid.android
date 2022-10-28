@@ -15,67 +15,48 @@
       },
       "oauth_client": [
         {
-          "client_id": "670361895848-0jildiu2ebiip55tqnkdtuhm1oq5mujc.apps.googleusercontent.com",
+          "client_id": "670361895848-46q4uh0usq9btvtfcr0d2pds3d4ip2ce.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.mymessages",
-            "certificate_hash": "dc9f925d6eda6f7b00ab3c4107a671bedeaca836"
+            "certificate_hash": "5d38aa8ba000b31646d0e7ec0238c1d9bf21eb4f"
           }
         },
         {
-          "client_id": "670361895848-91t1pe6h3cs3p0em6btf901cqfa6bjj1.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.mymessages",
-            "certificate_hash": "b2488b24c22122bc46b94b3b04da4889b4a3b602"
-          }
-        },
+          "client_id": "670361895848-iv5voa8ltm7trq82uggbh1umo53vn2ng.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
         {
-          "client_id": "670361895848-bo5jorijamiit2tb30umup1nan21ne67.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.mymessages",
-            "certificate_hash": "e107d51cdeaa8e6f308ec0ee7e58742fc735186b"
-          }
-        },
+          "current_key": "AIzaSyDy5inIQQl7o4hRd7FZYzkyLNDQByKaGZE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "670361895848-iv5voa8ltm7trq82uggbh1umo53vn2ng.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:670361895848:android:e4271d896dca943994939d",
+        "android_client_info": {
+          "package_name": "com.orels.mymessages"
+        }
+      },
+      "oauth_client": [
         {
-          "client_id": "670361895848-e13e871i1uk4reppopclqsm0oljprc9r.apps.googleusercontent.com",
+          "client_id": "670361895848-ol9huf84u66gaf9dvkc074osfvbkupoo.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.mymessages",
-            "certificate_hash": "59e97b1dd15b689e41956b9a1b4defa22d2fae2d"
-          }
-        },
-        {
-          "client_id": "670361895848-f9dgk4s1cku363luhd1gkgh0t2qkm2c1.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.mymessages",
-            "certificate_hash": "f324263bd2f85f3a201cc587f9d67334802b323a"
-          }
-        },
-        {
-          "client_id": "670361895848-ic72r9he9c4b7ngaim4g8gu35hg6j1kd.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.mymessages",
-            "certificate_hash": "70579a7643d154ef1ea84cdfca3fcae3c3774d53"
-          }
-        },
-        {
-          "client_id": "670361895848-r05cp577v6aesgnub8brlseuvt0ck601.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.mymessages",
-            "certificate_hash": "3371ef2a6f277c8d1210bac25c29c2e19e906a27"
-          }
-        },
-        {
-          "client_id": "670361895848-vh8649s0crqn1qospq433qrnr4c3muj0.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.mymessages",
-            "certificate_hash": "2cf8a9a00426743febc79947c7f335034bd80aa8"
+            "package_name": "com.orels.mymessages",
+            "certificate_hash": "5d38aa8ba000b31646d0e7ec0238c1d9bf21eb4f"
           }
         },
         {
@@ -121,6 +102,43 @@
           "android_info": {
             "package_name": "com.orelzman.mymessages",
             "certificate_hash": "f324263bd2f85f3a201cc587f9d67334802b323a"
+          }
+        },
+        {
+          "client_id": "670361895848-iv5voa8ltm7trq82uggbh1umo53vn2ng.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDy5inIQQl7o4hRd7FZYzkyLNDQByKaGZE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "670361895848-iv5voa8ltm7trq82uggbh1umo53vn2ng.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:670361895848:android:2252f71bdfd4735e94939d",
+        "android_client_info": {
+          "package_name": "com.orelzman.mymessages.free"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "670361895848-b0ei3g8n6bnjjteeenghju3j6dpn1r2a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.orelzman.mymessages.free",
+            "certificate_hash": "5d38aa8ba000b31646d0e7ec0238c1d9bf21eb4f"
           }
         },
         {
