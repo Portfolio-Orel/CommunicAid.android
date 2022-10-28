@@ -6,20 +6,29 @@ import androidx.room.PrimaryKey
 import com.google.gson.Gson
 import com.orels.domain.interactors.CallType
 import com.orels.domain.util.common.ContactsUtil
-import com.orels.domain.util.extension.inSeconds
+import com.orels.domain.util.extension.epochTimeInSeconds
 import java.util.*
 
 @Entity
 data class PhoneCall(
     @PrimaryKey var id: String = UUID.randomUUID().toString(),
     var number: String = "",
-    var startDate: Date,
-    var endDate: Date,
+    var startDate: Date, // The date the call was registered in the phone
+    var endDate: Date, // startDate + call duration
     var name: String = "",
     var isWaiting: Boolean = false,
-    var messagesSent: List<MessageSent> = emptyList(),
     var type: String = CallType.INCOMING.name,
+    var actualEndDate: Date? = null, // The time the call ended
+    var messagesSent: List<MessageSent> = emptyList(),
 ) : Loggable, Uploadable() {
+
+    init {
+        // Sometimes endDate is a smaller than startDate in a few milliseconds
+        // when the call is rejected/missed/blocked
+        if (endDate < startDate) {
+            endDate = startDate
+        }
+    }
 
     fun getNameOrNumber(): String {
         if (name == "") return number
@@ -38,7 +47,7 @@ data class PhoneCall(
         )
 
     val isAnswered: Boolean
-        get() = (startDate.time.inSeconds != endDate.time.inSeconds)
+        get() = (startDate.time.epochTimeInSeconds != endDate.time.epochTimeInSeconds)
 
     fun getName(context: Context): String =
         ContactsUtil.getContactName(number, context)
@@ -66,7 +75,8 @@ data class PhoneCall(
                 isWaiting = true,
                 type = CallType.INCOMING.name,
                 startDate = Date(),
-                endDate = Date()
+                endDate = Date(),
+                actualEndDate = Date()
             )
 
         fun incoming(number: String) =
@@ -75,7 +85,8 @@ data class PhoneCall(
                 isWaiting = false,
                 type = CallType.INCOMING.name,
                 startDate = Date(),
-                endDate = Date()
+                endDate = Date(),
+                actualEndDate = Date()
             )
 
         fun outgoing(number: String) =
@@ -84,7 +95,8 @@ data class PhoneCall(
                 isWaiting = false,
                 type = CallType.OUTGOING.name,
                 startDate = Date(),
-                endDate = Date()
+                endDate = Date(),
+                actualEndDate = Date()
             )
     }
 }

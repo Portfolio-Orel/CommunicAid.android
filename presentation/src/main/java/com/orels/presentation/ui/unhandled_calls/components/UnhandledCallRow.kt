@@ -88,6 +88,7 @@ fun DefaultPreview2() {
                 number = "0543056286",
                 startDate = Date(),
                 endDate = Date(),
+                actualEndDate = Date(),
                 isWaiting = false,
                 messagesSent = listOf()
             )

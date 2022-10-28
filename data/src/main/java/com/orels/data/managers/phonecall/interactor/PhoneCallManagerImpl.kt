@@ -15,14 +15,16 @@ import com.orels.domain.managers.phonecall.CallState
 import com.orels.domain.managers.phonecall.PhoneCallManager
 import com.orels.domain.model.entities.CallLogEntity
 import com.orels.domain.model.entities.PhoneCall
+import com.orels.domain.model.entities.UploadState
 import com.orels.domain.util.common.Constants.TIME_TO_ADD_CALL_TO_CALL_LOG
 import com.orels.domain.util.common.Logger
 import com.orels.domain.util.extension.compareNumberTo
-import com.orels.domain.util.extension.inSeconds
+import com.orels.domain.util.extension.epochTimeInSeconds
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 
@@ -65,8 +67,16 @@ class PhoneCallManagerImpl @Inject constructor(
     }
 
     private fun onIdleState() {
+        updateActualEndDate()
         resetIfNoActiveCall()
     }
+
+    private fun updateActualEndDate() =
+        phoneCallInteractor.getAll()
+            .filter { it.uploadState == UploadState.NotUploaded && it.actualEndDate == null }
+            .forEach {
+                it.actualEndDate = Date()
+            }
 
     private fun onRingingState(number: String) {
         val previousState = dataSource.getState()
@@ -206,5 +216,5 @@ fun PhoneCall.isEqualsToCallLog(callLog: CallLogEntity?): Boolean =
     callLog != null &&
             callLog.number.compareNumberTo(number)
             && (
-            callLog.time.inSeconds < startDate.time.inSeconds + 6 && callLog.time.inSeconds > startDate.time.inSeconds - 6
+            callLog.time.epochTimeInSeconds < startDate.time.epochTimeInSeconds + 6 && callLog.time.epochTimeInSeconds > startDate.time.epochTimeInSeconds - 6
             )

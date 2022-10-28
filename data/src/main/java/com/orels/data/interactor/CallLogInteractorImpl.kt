@@ -8,7 +8,7 @@ import com.orels.domain.model.entities.CallLogEntity
 import com.orels.domain.model.entities.PhoneCall
 import com.orels.domain.util.common.DateUtils
 import com.orels.domain.util.extension.compareToBallPark
-import com.orels.domain.util.extension.inSeconds
+import com.orels.domain.util.extension.epochTimeInSeconds
 import com.orels.domain.util.extension.toDate
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
@@ -24,12 +24,6 @@ class CallLogInteractorImpl @Inject constructor(@ApplicationContext private val 
             endDate = Date()
         )
 
-    /**
-     * Returns all the logs of calls that occurred between [startDate] and [endDate].
-     * @param startDate is the date of the first call we're looking for.
-     * @param endDate is the date of the last call we're looking for.
-     * @author Orel Zilberman
-     */
     override fun getCallLogsByDate(
         startDate: Date,
         endDate: Date
@@ -113,6 +107,43 @@ class CallLogInteractorImpl @Inject constructor(@ApplicationContext private val 
         return callLog
     }
 
+    override fun getLastCallLog(): CallLogEntity? {
+        var callLog: CallLogEntity? = null
+        val details = arrayOf(
+            CallLog.Calls.NUMBER,
+            CallLog.Calls.TYPE,
+            CallLog.Calls.DURATION,
+            CallLog.Calls.CACHED_NAME,
+            CallLog.Calls.DATE
+        )
+        context.contentResolver
+            ?.query(
+                CallLog.Calls.CONTENT_URI,
+                details,
+                null,
+                null,
+                CallLog.Calls._ID + " DESC"
+            )
+            ?.use {
+                if (it.moveToNext()) {
+                    val number = it.getString(0) ?: ""
+                    val type = it.getString(1) ?: ""
+                    val duration = it.getString(2) ?: ""
+                    val name = it.getString(3) ?: ""
+                    val date = it.getString(4) ?: ""
+                    val callLogType: Int = type.toInt()
+                    callLog = CallLogEntity(
+                        number = number,
+                        duration = duration.toLong(),
+                        name = name,
+                        time = date.toLong(),
+                        callLogType = CallType.fromInt(callLogType)
+                    )
+                }
+            }
+        return callLog
+    }
+
     /**
      * Updates values according to the call log
      */
@@ -143,7 +174,7 @@ class CallLogInteractorImpl @Inject constructor(@ApplicationContext private val 
                     val duration = it.getString(2).toLong()
                     phoneCall.name = it.getString(3) ?: ""
                     phoneCall.startDate = logStartDate
-                    phoneCall.endDate = (phoneCall.startDate.time.inSeconds + duration).toDate()
+                    phoneCall.endDate = (phoneCall.startDate.time.epochTimeInSeconds + duration).toDate()
                     when (type.toInt()) {
                         CallLog.Calls.MISSED_TYPE -> phoneCall.missed()
                         CallLog.Calls.REJECTED_TYPE -> phoneCall.rejected()

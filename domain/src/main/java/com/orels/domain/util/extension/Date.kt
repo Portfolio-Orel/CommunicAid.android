@@ -7,8 +7,8 @@ import com.orels.domain.R
 import com.orels.domain.util.common.DateUtils
 import java.util.*
 
-fun Date.compareToBallPark(date: Date): Boolean = time.inSeconds > date.time.inSeconds - 10
-        && time.inSeconds < date.time.inSeconds + 10
+fun Date.compareToBallPark(date: Date): Boolean = time.epochTimeInSeconds > date.time.epochTimeInSeconds - 10
+        && time.epochTimeInSeconds < date.time.epochTimeInSeconds + 10
 
 fun Date.seconds(): Int {
     val cal = Calendar.getInstance()

@@ -18,6 +18,8 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.*
 import java.util.*
 
+typealias PhoneCalls = List<PhoneCall>
+
 @HiltWorker
 class UploadPhoneCallsWorker @AssistedInject constructor(
     @Assisted private val context: Context,
@@ -88,7 +90,7 @@ class UploadPhoneCallsWorker @AssistedInject constructor(
         }
     }
 
-    private suspend fun checkCallsNotRecorded(): List<PhoneCall> {
+    private suspend fun checkCallsNotRecorded(): PhoneCalls {
         val phoneCalls = ArrayList<PhoneCall>()
         val lastUpdateAt = settingsInteractor.getSettings(SettingsKey.CallsUpdateAt).value
         val date = Date(lastUpdateAt.toLongOrNull() ?: Date().time)
@@ -108,12 +110,17 @@ class UploadPhoneCallsWorker @AssistedInject constructor(
         return phoneCalls
     }
 
+//    private fun updatePhoneCallsActualTime(phoneCall: PhoneCall) {
+//        phoneCall.actualEndDate = Date()
+//        phoneCallsInteractor.updateCall(phoneCall = phoneCall)
+//    }
+
     private suspend fun updateCallsUpdateTime() {
         settingsInteractor.createOrUpdate(
             listOf(
                 Settings(
-                key = SettingsKey.CallsUpdateAt, value = Date().time.toString()
-            )
+                    key = SettingsKey.CallsUpdateAt, value = Date().time.toString()
+                )
             )
         )
     }

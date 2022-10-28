@@ -46,7 +46,6 @@ private fun Content(
     val spaceBetweenMessages = 18
     val messageWidth =
         getMessageWidth(screenWidth = screen.screenWidthDp, spaceBetween = spaceBetweenMessages)
-
     val messageHeight = (messageWidth * 1.5f)
 
     LaunchedEffect(key1 = state.screenToShow) {

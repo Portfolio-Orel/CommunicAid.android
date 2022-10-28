@@ -2,7 +2,7 @@ package com.orels.domain.util.extension
 
 import java.util.*
 
-val Long.inSeconds: Long
+val Long.epochTimeInSeconds: Long
     get() =
         if ("$this".length > 10) {
             this / 1000
@@ -10,7 +10,7 @@ val Long.inSeconds: Long
             this
         }
 
-val Long.inMilliseconds: Long
+val Long.epochTimeInMilliseconds: Long
     get() =
         if ("$this".length > 10) {
             this

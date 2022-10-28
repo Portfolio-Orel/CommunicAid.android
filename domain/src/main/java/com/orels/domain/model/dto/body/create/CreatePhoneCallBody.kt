@@ -11,6 +11,7 @@ data class CreatePhoneCallBody(
     @SerializedName("is_answered") val isAnswered: Boolean,
     @SerializedName("type") val type: String,
     @SerializedName("messages_sent") val messagesSent: List<CreateMessageSentBody>,
+    @SerializedName("actual_end_date") val actualEndDate: Long?,
 )
 
 
@@ -26,7 +27,8 @@ fun List<PhoneCall>.createPhoneCallBodyList(): List<CreatePhoneCallBody> {
                     endDate = endDate.time,
                     isAnswered = isAnswered,
                     type = type,
-                    messagesSent = messagesSent.map { messageSent -> messageSent.createMessageSentBody }
+                    messagesSent = messagesSent.map { messageSent -> messageSent.createMessageSentBody },
+                    actualEndDate = actualEndDate?.time
                 )
             )
         }
