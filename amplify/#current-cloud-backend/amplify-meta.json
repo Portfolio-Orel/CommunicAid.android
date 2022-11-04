@@ -11,5 +11,48 @@
       "StackId": "arn:aws:cloudformation:us-east-1:680454469637:stack/amplify-mymessages2-prod-180737/89836e80-02bd-11ed-af0c-1258be70a299",
       "AmplifyAppId": "d2etiknc5otx7y"
     }
+  },
+  "auth": {
+    "mymessages2ce1b3aac": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false,
+      "frontendAuthConfig": {
+        "socialProviders": [],
+        "usernameAttributes": [],
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyMinLength": 8,
+          "passwordPolicyCharacters": []
+        },
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-mymessages2-prod-180737-deployment/amplify-cfn-templates/auth/mymessages2ce1b3aac-cloudformation-template.json",
+        "logicalId": "authmymessages2ce1b3aac"
+      },
+      "lastPushTimeStamp": "2022-11-04T17:55:34.975Z",
+      "output": {
+        "UserPoolId": "us-east-1_BWWCKSDp7",
+        "AppClientIDWeb": "21409hp3frsd7ui381plr13tv4",
+        "AppClientID": "7bob695j1kb72kfnhksvjko0hh",
+        "HostedUIDomain": "mymessages2ce1b3aac-ce1b3aac-prod",
+        "IdentityPoolId": "us-east-1:8b0f1bb6-aef8-4c22-83a7-60316c742db0",
+        "UserPoolArn": "arn:aws:cognito-idp:us-east-1:680454469637:userpool/us-east-1_BWWCKSDp7",
+        "IdentityPoolName": "mymessages2ce1b3aac_identitypool_ce1b3aac__prod",
+        "OAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"myapp://callback/\"],\"LogoutURLs\":[\"myapp://signout/\"]}",
+        "UserPoolName": "mymessages2ce1b3aac_userpool_ce1b3aac"
+      },
+      "lastPushDirHash": "LtIxUGP90UfeQWrTtlGpfjGawks="
+    }
   }
 }
