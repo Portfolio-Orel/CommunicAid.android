@@ -87,6 +87,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+
     fun onLoginClick() {
         state = state.copy(error = null)
     }
