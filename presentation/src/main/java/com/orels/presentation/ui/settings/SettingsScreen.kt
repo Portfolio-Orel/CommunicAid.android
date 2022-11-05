@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -125,15 +126,25 @@ fun SettingsScreen(
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                modifier = Modifier
-                    .clickable {
-                        viewModel.signOut()
-                    },
-                text = stringResource(id = R.string.logout),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.error
-            )
+            if(state.isLoadingSignOut) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .height(32.dp)
+                        .width(32.dp),
+                    strokeWidth = 1.dp,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            } else {
+                Text(
+                    modifier = Modifier
+                        .clickable {
+                            viewModel.signOut()
+                        },
+                    text = stringResource(id = R.string.logout),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
         }
     }
 }

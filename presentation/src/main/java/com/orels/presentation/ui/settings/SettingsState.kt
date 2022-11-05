@@ -11,7 +11,7 @@ data class SettingsState(
     val loadingSettings: List<SettingsKey> = emptyList(),
     val settingsWaitingForPermissions: List<Settings> = emptyList(),
 
-    val isLoading: Boolean = false
+    val isLoadingSignOut: Boolean = false
 )
 
 enum class EventsSettings {

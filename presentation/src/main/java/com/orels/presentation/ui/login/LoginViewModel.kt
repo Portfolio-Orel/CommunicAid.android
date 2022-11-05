@@ -20,6 +20,7 @@ import com.orels.presentation.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.security.InvalidParameterException
 import javax.inject.Inject
@@ -35,13 +36,7 @@ class LoginViewModel @Inject constructor(
     init {
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                var isAuthorized = false
-                val user = interactor.getUser()
-
-                if (interactor.isAuthorized(user, "LoginViewModel init")) {
-                    isAuthorized = true
-                }
-                if (isAuthorized) {
+                if (interactor.isAuthorized(interactor.getUser(), "LoginViewModel init")) {
                     onUserAuthorizedSuccessfully()
                 } else {
                     state = state.copy(isAuthorized = false, isLoading = false)
@@ -82,8 +77,16 @@ class LoginViewModel @Inject constructor(
     }
 
     fun googleAuth(activity: Activity) {
-        CoroutineScope(Dispatchers.Main).launch {
+        val googleAuthJob = viewModelScope.async {
             interactor.googleAuth(activity = activity)
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                googleAuthJob.await()
+                onEvent(LoginEvents.OnLoginCompleted(isAuthorized = true, exception = null))
+            } catch (e: Exception) {
+                onEvent(LoginEvents.OnLoginCompleted(isAuthorized = false, exception = e))
+            }
         }
     }
 
@@ -93,10 +96,6 @@ class LoginViewModel @Inject constructor(
 
     fun hideRegistrationConfirmation() {
         state = state.copy(showCodeConfirmation = false)
-    }
-
-    fun onRegisterClick() {
-        state = state.copy(isRegister = true)
     }
 
     fun onPasswordChange(value: String) {
@@ -118,7 +117,6 @@ class LoginViewModel @Inject constructor(
             }
             is UserNotConfirmedException -> {
                 state.copy(showCodeConfirmation = true)
-//                state.copy(error = R.string.error_user_not_confirmed)
             }
             is UserNotFoundException -> {
                 state.copy(error = R.string.error_user_not_signed_in)

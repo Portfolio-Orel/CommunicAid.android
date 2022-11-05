@@ -5,10 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orels.domain.interactors.AuthInteractor
-import com.orels.domain.interactors.AnalyticsIdentifiers
-import com.orels.domain.interactors.AnalyticsInteractor
-import com.orels.domain.interactors.SettingsInteractor
+import com.orels.domain.interactors.*
 import com.orels.domain.model.entities.Settings
 import com.orels.domain.model.entities.SettingsType
 import com.orels.domain.util.common.Logger
@@ -27,6 +24,7 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val settingsInteractor: SettingsInteractor,
     private val authInteractor: AuthInteractor,
+    private val generalInteractor: GeneralInteractor,
     analyticsInteractor: AnalyticsInteractor
 ) :
     ViewModel() {
@@ -43,8 +41,10 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun signOut() {
+        state = state.copy(isLoadingSignOut = true)
         viewModelScope.launchCatching(Dispatchers.Main) {
             authInteractor.signOut()
+            generalInteractor.clearAllDatabases()
         }
     }
 
@@ -69,8 +69,6 @@ class SettingsViewModel @Inject constructor(
                 fetchSettingsJob.await()
             } catch (e: Exception) {
                 e.log()
-            } finally {
-                state = state.copy(isLoading = false)
             }
         }
     }
