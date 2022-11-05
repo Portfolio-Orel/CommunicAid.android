@@ -5,7 +5,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.telephony.SmsManager
 import android.telephony.TelephonyManager
 import com.orels.domain.annotation.Proximity
@@ -73,11 +72,7 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
                 text?.let { textToSend ->
                     phoneCallManager.callsData.callInTheBackground?.let { callInBackgroundNumber ->
                         val smsManager: SmsManager? =
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                context.getSystemService(SmsManager::class.java)
-                            } else {
-                                SmsManager.getDefault()
-                            }
+                            context.getSystemService(SmsManager::class.java)
                         smsManager?.sendTextMessage(
                             callInBackgroundNumber,
                             null,
@@ -110,7 +105,7 @@ class SettingsPhoneCallReceiver : BroadcastReceiver() {
         if (state == TelephonyManager.EXTRA_STATE_OFFHOOK) {
             proximityManager.enable()
         } else {
-            proximityManager.enable()
+            proximityManager.disable()
         }
     }
 

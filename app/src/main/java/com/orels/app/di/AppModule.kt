@@ -58,18 +58,9 @@ object AppModule {
         db.userDao()
 
     @Provides
+    @Singleton
     fun provideUserInteractor(userInteractor: UserInteractorImpl): UserInteractor = userInteractor
 
-    //    @Provides
-//    @Singleton
-//    fun provideGoogleSignInClient(@ApplicationContext context: Context): GoogleSignInClient {
-//        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//            .requestIdToken("670361895848-0jildiu2ebiip55tqnkdtuhm1oq5mujc.apps.googleusercontent.com")
-//            .requestEmail()
-//            .build()
-//        return GoogleSignIn.getClient(context, gso)
-//    }
-//
     @Provides
     fun provideLocalDatabase(context: Application): LocalDatabase =
         with(context) {

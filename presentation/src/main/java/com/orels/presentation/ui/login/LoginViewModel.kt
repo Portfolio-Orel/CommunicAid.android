@@ -1,5 +1,6 @@
 package com.orels.presentation.ui.login
 
+import android.app.Activity
 import android.security.keystore.UserNotAuthenticatedException
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,6 +18,7 @@ import com.orels.domain.repository.Repository
 import com.orels.domain.util.extension.log
 import com.orels.presentation.R
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.security.InvalidParameterException
@@ -76,6 +78,12 @@ class LoginViewModel @Inject constructor(
                 username = state.username,
                 code = event.code
             )
+        }
+    }
+
+    fun googleAuth(activity: Activity) {
+        CoroutineScope(Dispatchers.Main).launch {
+            interactor.googleAuth(activity = activity)
         }
     }
 

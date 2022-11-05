@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.orels.domain.interactors.AuthInteractor
 import com.orels.domain.interactors.GeneralInteractor
 import com.orels.domain.interactors.SettingsInteractor
+import com.orels.domain.interactors.UserInteractor
 import com.orels.domain.managers.phonecall.PhoneCallManager
 import com.orels.domain.managers.phonecall.isCallStateIdle
 import com.orels.domain.managers.worker.WorkerManager
@@ -27,6 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MyMessagesViewModel @Inject constructor(
     private val authInteractor: AuthInteractor,
+    private val userInteractor: UserInteractor,
     private val generalInteractor: GeneralInteractor,
     private val settingsInteractor: SettingsInteractor,
     private val phoneCallManager: PhoneCallManager,
@@ -73,7 +75,7 @@ class MyMessagesViewModel @Inject constructor(
 
     private fun observeUser() {
         viewModelScope.launch(SupervisorJob()) {
-            authInteractor.getUserFlow().safeCollectLatest({
+            userInteractor.getFlow().safeCollectLatest({
                 loadingData = false
                 it.log()
             }) { user ->

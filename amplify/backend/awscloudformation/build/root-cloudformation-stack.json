@@ -152,15 +152,15 @@
         }
       }
     },
-    "authmymessages27a643bba": {
+    "authmymessages2ce1b3aac": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
-        "TemplateURL": "https://s3.amazonaws.com/amplify-mymessages2-dev-180617-deployment/amplify-cfn-templates/auth/mymessages27a643bba-cloudformation-template.json",
+        "TemplateURL": "https://s3.amazonaws.com/amplify-mymessages2-prod-180737-deployment/amplify-cfn-templates/auth/mymessages2ce1b3aac-cloudformation-template.json",
         "Parameters": {
-          "identityPoolName": "mymessages27a643bba_identitypool_7a643bba",
+          "identityPoolName": "mymessages2ce1b3aac_identitypool_ce1b3aac",
           "allowUnauthenticatedIdentities": false,
-          "resourceNameTruncated": "mymess7a643bba",
-          "userPoolName": "mymessages27a643bba_userpool_7a643bba",
+          "resourceNameTruncated": "mymessce1b3aac",
+          "userPoolName": "mymessages2ce1b3aac_userpool_ce1b3aac",
           "autoVerifiedAttributes": "email",
           "mfaConfiguration": "OFF",
           "mfaTypes": "SMS Text Message",
@@ -177,12 +177,17 @@
           "userpoolClientRefreshTokenValidity": 30,
           "userpoolClientWriteAttributes": "email",
           "userpoolClientReadAttributes": "email",
-          "userpoolClientLambdaRole": "mymess7a643bba_userpoolclient_lambda_role",
+          "userpoolClientLambdaRole": "mymessce1b3aac_userpoolclient_lambda_role",
           "userpoolClientSetAttributes": false,
-          "sharedId": "7a643bba",
-          "resourceName": "mymessages27a643bba",
+          "sharedId": "ce1b3aac",
+          "resourceName": "mymessages2ce1b3aac",
           "authSelections": "identityPoolAndUserPool",
-          "useDefault": "default",
+          "useDefault": "defaultSocial",
+          "hostedUI": true,
+          "hostedUIDomainName": "mymessages2ce1b3aac-ce1b3aac",
+          "authProvidersUserPool": "",
+          "hostedUIProviderMeta": "[]",
+          "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"myapp://callback/\"],\"LogoutURLs\":[\"myapp://signout/\"]}",
           "userPoolGroupList": "",
           "serviceName": "Cognito",
           "usernameCaseSensitive": false,
@@ -201,7 +206,8 @@
           },
           "breakCircularDependency": true,
           "dependsOn": "",
-          "env": "dev"
+          "hostedUIProviderCreds": "[]",
+          "env": "prod"
         }
       }
     },
@@ -209,7 +215,7 @@
       "DependsOn": [
         "AuthRole",
         "UnauthRole",
-        "authmymessages27a643bba"
+        "authmymessages2ce1b3aac"
       ],
       "Type": "AWS::Lambda::Function",
       "Properties": {
@@ -304,7 +310,7 @@
         },
         "idpId": {
           "Fn::GetAtt": [
-            "authmymessages27a643bba",
+            "authmymessages2ce1b3aac",
             "Outputs.IdentityPoolId"
           ]
         },

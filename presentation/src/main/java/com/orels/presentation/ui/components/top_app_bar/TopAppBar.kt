@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.orels.domain.util.Screen
-import com.orels.presentation.BuildConfig
 import com.orels.presentation.R
 
 @Composable
@@ -35,13 +34,13 @@ fun TopAppBar(
                         state.callOnTheLine.getNameOrNumber(),
                     style = MaterialTheme.typography.titleSmall,
                 )
-                if (BuildConfig.DEBUG) {
-                    Text(
-                        text = "Debug",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
+//                if (BuildConfig.DEBUG) {
+//                    Text(
+//                        text = "Debug_new",
+//                        style = MaterialTheme.typography.bodySmall,
+//                        color = MaterialTheme.colorScheme.error
+//                    )
+//                }
             }
         },
         navigationIcon = {

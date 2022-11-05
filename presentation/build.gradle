@@ -96,9 +96,9 @@ dependencies {
     kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
 
     // Room
-    kapt "androidx.room:room-compiler:2.4.2"
-    implementation "androidx.room:room-runtime:2.4.2"
-    implementation "androidx.room:room-ktx:2.4.2"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
 
     // Gson
     implementation 'com.google.code.gson:gson:2.6.2'

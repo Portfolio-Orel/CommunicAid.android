@@ -1,7 +1,5 @@
 package com.orels.app.di
 
-import com.orels.data.interactor.AuthInteractorImpl
-import com.orels.domain.interactors.AuthInteractor
 import com.orels.data.interactor.*
 import com.orels.data.managers.phonecall.interactor.PhoneCallManagerImpl
 import com.orels.data.managers.system_service.SystemServiceManagerImpl
@@ -36,9 +34,6 @@ abstract class RepositoryModule {
         authInteractorImpl: AuthInteractorImpl
     ): AuthInteractor
 
-//    @Binds
-//    abstract fun provideUserInteractor(userInteractor: UserInteractorImpl): UserInteractor
-//
     @Binds
     abstract fun provideConnectivityObserver(connectivityObserver: ConnectivityObserverObserverImpl): ConnectivityObserver
     

@@ -2,11 +2,11 @@ package com.orels.data.interactor
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import androidx.annotation.RawRes
 import com.amazonaws.mobileconnectors.cognitoauth.util.JWTParser
 import com.amplifyframework.auth.AuthChannelEventName
 import com.amplifyframework.auth.AuthException
+import com.amplifyframework.auth.AuthProvider
 import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
@@ -60,7 +60,6 @@ class AuthInteractorImpl @Inject constructor(
     override fun getUserFlow(): Flow<User?> = userInteractor.getFlow()
 
     override suspend fun isAuthorized(user: User?, whoCalled: String): Boolean {
-        Log.v("::TEST::", whoCalled)
         refreshUserData()
         val isLocallyAuthorized = user != null && user.token != "" && user.userId != ""
         val isRemotelyAuthorized = Amplify.Auth.fetchAuthSession().isSignedIn
@@ -137,7 +136,7 @@ class AuthInteractorImpl @Inject constructor(
             throw LimitExceededException()
         } catch (e: AuthException.UserNotFoundException) {
             throw UserNotFoundException()
-        }  catch (e: Exception) {
+        } catch (e: Exception) {
             throw e
         }
     }
@@ -147,14 +146,14 @@ class AuthInteractorImpl @Inject constructor(
     }
 
     override suspend fun googleAuth(activity: Activity) {
-//        try {
-//            val result = Amplify.Auth.signInWithSocialWebUI(AuthProvider.google(), activity)
-//            refreshUserData()
-//            authLogger?.info(TAG, "Sign in OK: $result")
-//        } catch (e: AuthException) {
-//            authLogger?.error(TAG, "Sign in failed", e)
-//            throw e
-//        }
+        try {
+            val result = Amplify.Auth.signInWithSocialWebUI(AuthProvider.google(), activity)
+            refreshUserData()
+            authLogger?.info(TAG, "Sign in OK: $result")
+        } catch (e: AuthException) {
+            authLogger?.error(TAG, "Sign in failed", e)
+            throw e
+        }
     }
 
     override suspend fun signIn(
@@ -198,7 +197,10 @@ class AuthInteractorImpl @Inject constructor(
 
     override suspend fun signOut() {
         try {
+            if(userInteractor.get() == null) return
             Amplify.Auth.signOut()
+        } catch(e: Exception) {
+            throw e
         } finally {
             userInteractor.clear()
         }
@@ -218,9 +220,9 @@ class AuthInteractorImpl @Inject constructor(
                         authLogger?.info(TAG, "Auth failed to succeed")
                     else -> when (AuthChannelEventName.valueOf(it.name)) {
                         AuthChannelEventName.SIGNED_IN ->
-                            authLogger?.info(TAG, "Auth just became signed in.")
+                            refreshUserData()
                         AuthChannelEventName.SIGNED_OUT ->
-                            authLogger?.info(TAG, "Auth just became signed out.")
+                            userInteractor.clear()
                         AuthChannelEventName.SESSION_EXPIRED ->
                             try {
                                 refreshToken()
@@ -244,11 +246,13 @@ class AuthInteractorImpl @Inject constructor(
 
     private suspend fun refreshUserData() {
         try {
-            Log.v("::TEST::", "Called refresh")
-            val userId = Amplify.Auth.getCurrentUser()?.userId ?: return
+            val userId = Amplify.Auth.getCurrentUser()?.userId
             val token =
                 (Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession).userPoolTokens.value?.accessToken
-                    ?: return
+            if (userId == null || token == null) {
+                signOut()
+                return
+            }
             var email = userInteractor.get()?.email ?: ""
             runCatching {
                 email = Amplify.Auth.fetchUserAttributes()

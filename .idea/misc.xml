@@ -70,6 +70,7 @@
         <entry key="domain/src/main/res/drawable/ic_empty_folder_light.xml" value="0.1" />
         <entry key="domain/src/main/res/drawable/ic_home.xml" value="0.1" />
         <entry key="domain/src/main/res/drawable/ic_visibility_off_24.xml" value="0.1" />
+        <entry key="presentation/src/main/res/drawable/ic_logo_google.xml" value="0.1" />
       </map>
     </option>
   </component>

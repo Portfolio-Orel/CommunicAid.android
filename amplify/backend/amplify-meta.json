@@ -13,26 +13,13 @@
     }
   },
   "auth": {
-    "mymessages27ea49d97": {
+    "mymessages2ce1b3aac": {
       "service": "Cognito",
-      "serviceType": "imported",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
       "customAuth": false,
-      "output": {
-        "UserPoolId": "us-east-1_3ACm3Ah7S",
-        "UserPoolName": "mymessages203df3f96_userpool_03df3f96-dev",
-        "AppClientID": "4hvncqi9f4hl5o9snhdnc69r8q",
-        "AppClientIDWeb": "4hvncqi9f4hl5o9snhdnc69r8q",
-        "HostedUIDomain": "mymessages286a0ebc8-86a0ebc8-dev",
-        "IdentityPoolId": "us-east-1:dd6946a2-db73-451c-b5e1-5208e4c83f9f",
-        "IdentityPoolName": "mymessages203df3f96_identitypool_03df3f96__dev",
-        "OAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"aws.cognito.signin.user.admin\",\"email\",\"openid\",\"phone\",\"profile\"],\"CallbackURLs\":[\"myapp://callback/\"],\"LogoutURLs\":[\"myapp://signout/\"]}"
-      },
       "frontendAuthConfig": {
-        "socialProviders": [
-          "GOOGLE"
-        ],
+        "socialProviders": [],
         "usernameAttributes": [],
         "signupAttributes": [
           "EMAIL"
@@ -42,11 +29,30 @@
           "passwordPolicyCharacters": []
         },
         "mfaConfiguration": "OFF",
-        "mfaTypes": [],
+        "mfaTypes": [
+          "SMS"
+        ],
         "verificationMechanisms": [
           "EMAIL"
         ]
-      }
+      },
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-mymessages2-prod-180737-deployment/amplify-cfn-templates/auth/mymessages2ce1b3aac-cloudformation-template.json",
+        "logicalId": "authmymessages2ce1b3aac"
+      },
+      "lastPushTimeStamp": "2022-11-04T17:55:34.975Z",
+      "output": {
+        "UserPoolId": "us-east-1_BWWCKSDp7",
+        "AppClientIDWeb": "21409hp3frsd7ui381plr13tv4",
+        "AppClientID": "7bob695j1kb72kfnhksvjko0hh",
+        "HostedUIDomain": "mymessages2ce1b3aac-ce1b3aac-prod",
+        "IdentityPoolId": "us-east-1:8b0f1bb6-aef8-4c22-83a7-60316c742db0",
+        "UserPoolArn": "arn:aws:cognito-idp:us-east-1:680454469637:userpool/us-east-1_BWWCKSDp7",
+        "IdentityPoolName": "mymessages2ce1b3aac_identitypool_ce1b3aac__prod",
+        "OAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"myapp://callback/\"],\"LogoutURLs\":[\"myapp://signout/\"]}",
+        "UserPoolName": "mymessages2ce1b3aac_userpool_ce1b3aac"
+      },
+      "lastPushDirHash": "LtIxUGP90UfeQWrTtlGpfjGawks="
     }
   }
 }

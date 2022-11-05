@@ -1,7 +1,10 @@
 package com.orels.presentation.ui.login
 
+import android.app.Activity
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
@@ -9,6 +12,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,6 +56,7 @@ fun LoginScreen(
 @Composable
 private fun ContentView(viewModel: LoginViewModel) {
     val state = viewModel.state
+    val context = LocalContext.current
 
     if (state.showCodeConfirmation) {
         Column(
@@ -140,10 +146,35 @@ private fun ContentView(viewModel: LoginViewModel) {
                 },
                 onLoginClick = { viewModel.onLoginClick() }
             )
+            if ((context as? Activity) != null) {
+                GoogleButton(onClick = { viewModel.googleAuth(activity = context) })
+            }
             Text(
                 text = stringResource(state.error ?: R.string.empty_string),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error
+            )
+        }
+    }
+}
+
+@Composable
+fun GoogleButton(onClick: () -> Unit) {
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center)
+    {
+        Button(
+            onClick = onClick,
+            modifier = Modifier.size(75.dp),
+            shape = CircleShape,
+            contentPadding = PaddingValues(),
+            colors = ButtonDefaults.buttonColors(
+                contentColor = MaterialTheme.colorScheme.background,
+                containerColor = MaterialTheme.colorScheme.onBackground
+            )
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_logo_google),
+                contentDescription = ""
             )
         }
     }

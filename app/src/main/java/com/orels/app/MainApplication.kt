@@ -13,15 +13,16 @@ import com.orels.data.remote.EnvironmentRepository
 import com.orels.domain.annotation.AuthConfigFile
 import com.orels.domain.annotation.DatadogConfigFile
 import com.orels.domain.interactors.AuthInteractor
+import com.orels.domain.interactors.UserInteractor
 import com.orels.domain.model.entities.ConfigFile
 import com.orels.domain.system.phone_call.PhonecallReceiver
 import com.orels.domain.util.common.Logger
 import com.orels.domain.util.extension.log
 import com.orels.domain.util.extension.rawResToStringMap
+import com.orels.domain.util.extension.safeCollectLatest
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -46,7 +47,11 @@ class MainApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var authInteractor: AuthInteractor
 
+    @Inject
+    lateinit var userInteractor: UserInteractor
+
     override fun onCreate() {
+
         FirebaseApp.initializeApp(this)
         super.onCreate()
         val configuration = com.datadog.android.core.configuration.Configuration.Builder(
@@ -82,7 +87,7 @@ class MainApplication : Application(), Configuration.Provider {
             } catch (e: Exception) {
                 e.log()
             }
-            authInteractor.getUserFlow().collectLatest { user ->
+            userInteractor.getFlow().safeCollectLatest { user ->
                 try {
                     if (authInteractor.isAuthorized(user, "MainApp")) {
                         PhonecallReceiver.enable(context = applicationContext)

@@ -25,13 +25,7 @@ fun MainScreen(
     navController: NavController,
     viewModel: MainViewModel = hiltViewModel(),
 ) {
-    /*
-        Images.NoMessagesInFolder { icon ->
-        Box(modifier = Modifier.fillMaxSize()) {
-            icon()
-        }
-    }
-     */
+//    rememberLauncherForActivityResult(contract = , onResult = )
     Content(navController = navController, viewModel = viewModel)
 }
 
