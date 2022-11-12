@@ -9,23 +9,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orels.presentation.R
-import com.orels.presentation.theme.MyMessagesTheme
 import com.orels.presentation.ui.components.confirmation_pop_up.ConfirmationScreen
 import com.orels.presentation.ui.components.login_button.LoginButton
 import com.orels.presentation.ui.components.register_button.RegisterButton
 import com.orels.presentation.ui.login.components.Input
 import com.orels.presentation.ui.login.components.forgot_password.ForgotPasswordComponent
+import com.orels.presentation.ui.main.components.ActionButton
 
 @ExperimentalMaterial3Api
 @Composable
@@ -48,7 +47,16 @@ fun LoginScreen(
             )
         }
     } else {
-        ContentView(viewModel = viewModel)
+        when (state.event) {
+            Event.NotAuthorized -> ContentView(viewModel = viewModel)
+            Event.RegistrationRequired -> RegistrationScreen(onRegister = { firstName, lastName ->
+                viewModel.createUser(
+                    firstName = firstName,
+                    lastName = lastName
+                )
+            })
+            Event.Authorized -> {}
+        }
     }
 }
 
@@ -180,11 +188,60 @@ fun GoogleButton(onClick: () -> Unit) {
     }
 }
 
-@ExperimentalMaterial3Api
-@Preview(showBackground = true)
 @Composable
-fun LoginScreenPreview() {
-    MyMessagesTheme {
-        LoginScreen()
+fun RegistrationScreen(
+    onRegister: (firstName: String, lastName: String) -> Unit
+) {
+    var firstName by remember { mutableStateOf("") }
+    var firstNameError by remember { mutableStateOf(false) }
+    var lastName by remember { mutableStateOf("") }
+    var lastNameError by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .background(MaterialTheme.colorScheme.background),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top)
+    ) {
+        Text(
+            text = stringResource(R.string.what_is_your_name),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        Input(
+            title = stringResource(R.string.first_name),
+            minLines = 1,
+            maxLines = 1,
+            isError = firstNameError,
+            isPassword = false,
+            onTextChange = {
+                firstName = it
+                firstNameError = false
+            }
+        )
+        Input(
+            title = stringResource(R.string.last_name),
+            minLines = 1,
+            maxLines = 1,
+            isError = lastNameError,
+            isPassword = false,
+            onTextChange = {
+                lastName = it
+                lastNameError = false
+            }
+        )
+        Spacer(modifier = Modifier.height(32.dp))
+        ActionButton(
+            onClick = {
+                if (firstName.isNotBlank() && lastName.isNotBlank()) {
+                    onRegister(firstName, lastName)
+                } else {
+                    firstNameError = firstName.isBlank()
+                    lastNameError = lastName.isBlank()
+                }
+            }, text = stringResource(R.string.finish)
+        )
     }
 }

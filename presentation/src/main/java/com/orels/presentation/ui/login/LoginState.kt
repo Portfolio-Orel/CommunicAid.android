@@ -9,6 +9,12 @@ data class LoginState(
     var email: String = "",
     var isRegister: Boolean = false,
     var showCodeConfirmation: Boolean = false,
-    var isAuthorized: Boolean = false,
+    var event: Event = Event.NotAuthorized,
     @StringRes var error: Int? = null,
 )
+
+enum class Event {
+    NotAuthorized,
+    RegistrationRequired,
+    Authorized;
+}

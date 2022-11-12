@@ -39,7 +39,7 @@ class LoginViewModel @Inject constructor(
                 if (interactor.isAuthorized(interactor.getUser(), "LoginViewModel init")) {
                     onUserAuthorizedSuccessfully()
                 } else {
-                    state = state.copy(isAuthorized = false, isLoading = false)
+                    state = state.copy(event = Event.NotAuthorized, isLoading = false)
                 }
             } catch (e: Exception) {
                 when (e) {
@@ -51,7 +51,7 @@ class LoginViewModel @Inject constructor(
                     }
                 }
                 e.log()
-                state = state.copy(isLoading = false, isAuthorized = false)
+                state = state.copy(isLoading = false, event = Event.NotAuthorized)
             }
         }
     }
@@ -134,17 +134,34 @@ class LoginViewModel @Inject constructor(
 
     private fun onUserAuthorizedSuccessfully() {
         viewModelScope.launch(Dispatchers.Main) {
-            state = try {
+            try {
                 val user = interactor.getUser()
-                val isAuthorized = if(user != null && interactor.isAuthorized(user, "LoginViewModelUserAuth")) {
-                    confirmUserCreated(user.userId, user.email)
-                } else {
-                    false
+                if (user != null && interactor.isAuthorized(
+                        user,
+                        "LoginViewModelUserAuth"
+                    )
+                ) { // User is authorized
+                    state = if (isUserRegistered(
+                            userId = user.userId,
+                            email = user.email
+                        )
+                    ) { // User is registered
+                        state.copy(
+                            event = Event.Authorized,
+                            error = R.string.empty_string
+                        )
+                    } else { // User is not registered
+                        state.copy(
+                            event = Event.RegistrationRequired,
+                            error = R.string.empty_string
+                        )
+                    }
+                } else { // User is not authorized
+                    state = state.copy(
+                        event = Event.NotAuthorized,
+                        error = R.string.error_unknown
+                    )
                 }
-                state.copy(
-                    isAuthorized = isAuthorized,
-                    error = if (!isAuthorized) R.string.error_unknown else R.string.empty_string
-                )
             } catch (e: Exception) {
                 e.log()
                 state.copy(isLoading = false)
@@ -178,34 +195,40 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private suspend fun confirmUserCreated(userId: String, email: String): Boolean {
+    private suspend fun isUserRegistered(userId: String, email: String): Boolean {
         return try {
-            val user = repository.getUser()
-            if (user?.userId == null) {
-                createUser(userId, email)
-            }
-            true
+            repository.getUser()?.userId != null
         } catch (e: Exception) {
             e.log()
             false
         }
     }
 
-    private suspend fun createUser(userId: String, email: String) {
-        try {
-            repository.createUser(
-                CreateUserBody(
-                    firstName = "Orel",
-                    lastName = "Zilberman",
-                    gender = "male",
-                    email = email,
-                    number = "0543056286",
-                    userId = userId
-                )
-            )
-        } catch (e: Exception) {
-            e.log()
-        }
+    fun createUser(firstName: String, lastName: String, gender: String = "male", phoneNumber: String = "0543506286") {
+            val user = interactor.getUser()
+            user?.userId?.let { userId ->
+                val createUserJob = viewModelScope.async {
+                    repository.createUser(
+                        CreateUserBody(
+                            firstName = firstName,
+                            lastName = lastName,
+                            gender = gender,
+                            email = user.email,
+                            number = phoneNumber,
+                            userId = userId
+                        )
+                    )
+                }
+                viewModelScope.launch(Dispatchers.IO) {
+                    try {
+                        createUserJob.await()
+                         state = state.copy(event = Event.Authorized)
+                    } catch (e: Exception){
+                        e.log()
+                        state = state.copy(error = R.string.error_unknown, event = Event.NotAuthorized)
+                    }
+                }
+            }
     }
 
 }
