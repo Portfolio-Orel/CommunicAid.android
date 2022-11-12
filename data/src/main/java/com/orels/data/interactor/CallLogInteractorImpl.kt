@@ -1,7 +1,10 @@
 package com.orels.data.interactor
 
 import android.content.Context
+import android.database.Cursor
+import android.net.Uri
 import android.provider.CallLog
+import android.provider.ContactsContract
 import com.orels.domain.interactors.CallLogInteractor
 import com.orels.domain.interactors.CallType
 import com.orels.domain.model.entities.CallLogEntity
@@ -9,6 +12,7 @@ import com.orels.domain.model.entities.PhoneCall
 import com.orels.domain.util.common.DateUtils
 import com.orels.domain.util.extension.compareToBallPark
 import com.orels.domain.util.extension.epochTimeInSeconds
+import com.orels.domain.util.extension.log
 import com.orels.domain.util.extension.toDate
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
@@ -183,6 +187,34 @@ class CallLogInteractorImpl @Inject constructor(@ApplicationContext private val 
                 }
             }
         return null
+    }
+
+    override fun getContactName(number: String): String {
+        val uri = Uri.withAppendedPath(
+            ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
+            Uri.encode(number)
+        )
+
+        val projection = arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME)
+
+        var contactName = number
+        try {
+            val cursor: Cursor? = context.contentResolver.query(uri, projection, null, null, null)
+
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    contactName = cursor.getString(0)
+                }
+                cursor.close()
+            }
+            return contactName
+        } catch(e: IllegalArgumentException) {
+            e.log()
+            return number
+        } catch (e: Exception) {
+            e.log()
+            return number
+        }
     }
 
 }

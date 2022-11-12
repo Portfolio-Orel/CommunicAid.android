@@ -1,8 +1,13 @@
 package com.orels.domain.interactors
 
+import android.content.Context
+import android.database.Cursor
+import android.net.Uri
 import android.provider.CallLog
+import android.provider.ContactsContract
 import com.orels.domain.model.entities.CallLogEntity
 import com.orels.domain.model.entities.PhoneCall
+import com.orels.domain.util.extension.log
 import java.util.*
 
 interface CallLogInteractor {
@@ -30,6 +35,8 @@ interface CallLogInteractor {
      * This has to go to the service because the log is added async.
      */
     fun update(phoneCall: PhoneCall): PhoneCall?
+
+    fun getContactName(number: String): String
 }
 
 enum class CallType(val value: Int) {

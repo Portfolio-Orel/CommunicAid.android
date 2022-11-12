@@ -32,7 +32,6 @@ data class PhoneCall(
 
     fun getNameOrNumber(): String = name ?: number
 
-
     override val data: Map<String, Any>
         get() = mapOf(
             "number" to number,
@@ -46,10 +45,6 @@ data class PhoneCall(
 
     val isAnswered: Boolean
         get() = (startDate.time.epochTimeInSeconds != endDate.time.epochTimeInSeconds)
-
-    fun getName(context: Context): String =
-        ContactsUtil.getContactName(number, context)
-
 
     fun missed() {
         type = CallType.MISSED.name

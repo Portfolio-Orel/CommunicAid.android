@@ -107,7 +107,10 @@ class UnhandledCallsViewModel @Inject constructor(
             deletedCalls = deletedCallsInteractor.getAllOnce(getStartOfDay()),
             callLogs = getCallsFromCallLog(),
             countRejectedAsUnhandled = isCountRejectedAsUnhandled()
-        )
+        ).map {
+            callLogInteractor.getContactName(it.number)
+            it
+        }
         state = state.copy(
             callsToHandle = callsToHandle,
             canDeleteCalls = canDeleteCalls,

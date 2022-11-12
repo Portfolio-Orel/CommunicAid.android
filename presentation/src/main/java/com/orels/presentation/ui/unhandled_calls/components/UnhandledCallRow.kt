@@ -51,7 +51,7 @@ fun UnhandledCallRow(
         Column(modifier = Modifier
             .clickable { onClick(phoneCall) }) {
             Text(
-                text = phoneCall.getName(LocalContext.current),
+                text = phoneCall.getNameOrNumber(),
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.titleSmall
             )
