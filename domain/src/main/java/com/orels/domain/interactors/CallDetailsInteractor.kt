@@ -1,16 +1,11 @@
 package com.orels.domain.interactors
 
-import android.content.Context
-import android.database.Cursor
-import android.net.Uri
 import android.provider.CallLog
-import android.provider.ContactsContract
 import com.orels.domain.model.entities.CallLogEntity
 import com.orels.domain.model.entities.PhoneCall
-import com.orels.domain.util.extension.log
 import java.util.*
 
-interface CallLogInteractor {
+interface CallDetailsInteractor {
 
     fun getTodaysCallLog(): ArrayList<CallLogEntity>
 

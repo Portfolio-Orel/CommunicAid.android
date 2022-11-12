@@ -30,7 +30,7 @@ import javax.inject.Inject
 @HiltViewModel
 class UnhandledCallsViewModel @Inject constructor(
     application: Application,
-    private val callLogInteractor: CallLogInteractor,
+    private val callLogInteractor: CallDetailsInteractor,
     private val deletedCallsInteractor: DeletedCallsInteractor,
     private val settingsInteractor: SettingsInteractor,
     private val unhandledCallsManager: UnhandledCallsManager,
@@ -108,7 +108,7 @@ class UnhandledCallsViewModel @Inject constructor(
             callLogs = getCallsFromCallLog(),
             countRejectedAsUnhandled = isCountRejectedAsUnhandled()
         ).map {
-            callLogInteractor.getContactName(it.number)
+            it.name = callLogInteractor.getContactName(it.number)
             it
         }
         state = state.copy(
