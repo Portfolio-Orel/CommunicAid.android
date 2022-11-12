@@ -53,7 +53,7 @@ fun ForgotPasswordComponent(
             )
             if (shouldShowDialog) {
                 Dialog(
-                    onDismissRequest = { },
+                    onDismissRequest = { shouldShowDialog = false },
                     properties = DialogProperties(
                         dismissOnBackPress = true,
                         dismissOnClickOutside = false
