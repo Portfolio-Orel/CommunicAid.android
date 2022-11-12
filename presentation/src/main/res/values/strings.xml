@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sign_in_with_google">התחבר עם גוגל</string>
+    <string name="first_name">שם פרטי</string>
+    <string name="what_is_your_name">מה השם שלך?</string>
+    <string name="finish">סיים</string>
+    <string name="last_name">שם משפחה</string>
+</resources>

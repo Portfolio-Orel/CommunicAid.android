@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.orelzman.mymessages">
+    package="com.orels">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <!--  For Mixpanel  -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <!--  For Mixpanel  -->
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <queries>
         <intent>
@@ -24,16 +26,16 @@
         <intent>
             <action android:name="android.support.customtabs.action.CustomTabsService" />
         </intent>
+
     </queries>
     <application
-        android:name=".MainApplication"
+        android:name=".app.MainApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher_foreground"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.MyMessages">
+        android:roundIcon="@mipmap/ic_launcher"
+        android:supportsRtl="true">
 
         <provider
             android:name="androidx.startup.InitializationProvider"
@@ -42,9 +44,9 @@
         </provider>
 
         <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:theme="@style/Theme.MyMessages.NoActionBar">
+            android:name="com.orels.app.MainActivity"
+            android:theme="@style/Theme.MyMessages.NoActionBar"
+        android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -54,7 +56,8 @@
 
         <receiver
             android:name=".domain.system.phone_call.PhonecallReceiver"
-            android:exported="false">
+            android:exported="false"
+            android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
@@ -62,24 +65,27 @@
             </intent-filter>
         </receiver>
 
-        <service
-            android:name=".domain.service.CallsService"
-            android:enabled="true"
-            android:exported="false" />
+        <receiver
+            android:name=".app.SettingsPhoneCallReceiver"
+            android:exported="false"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name="com.amplifyframework.auth.cognito.activities.HostedUIRedirectActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data android:scheme="myapp" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>

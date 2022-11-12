@@ -31,7 +31,9 @@ amplifyconfiguration.dart
 amplify-build-config.json
 amplify-gradle-config.json
 amplifytools.xcconfig
-datadog_config.json
+
+*_datadog_config.json
+*_mixpanel_config.json
 
 .secret-*
 *_secrets.json
