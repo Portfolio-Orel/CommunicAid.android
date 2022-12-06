@@ -1,5 +1,7 @@
 package com.orels.app.di
 
+import com.orels.auth.data.local.interactor.AuthInteractorImpl
+import com.orels.auth.domain.interactor.AuthInteractor
 import com.orels.data.interactor.*
 import com.orels.data.managers.phonecall.interactor.PhoneCallManagerImpl
 import com.orels.data.managers.system_service.SystemServiceManagerImpl

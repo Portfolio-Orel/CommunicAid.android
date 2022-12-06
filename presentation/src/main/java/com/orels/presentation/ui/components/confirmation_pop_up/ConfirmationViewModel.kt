@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.orels.domain.model.exception.CodeExpiredException
 import com.orels.domain.model.exception.CodeMismatchException
 import com.orels.domain.model.exception.NotAuthorizedException
-import com.orels.domain.interactors.AuthInteractor
+import com.orels.auth.domain.interactor.AuthInteractor
 import com.orels.domain.util.extension.log
 import com.orels.presentation.R
 import dagger.hilt.android.lifecycle.HiltViewModel

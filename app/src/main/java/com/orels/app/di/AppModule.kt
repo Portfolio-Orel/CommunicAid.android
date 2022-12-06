@@ -5,14 +5,15 @@ import android.content.Context
 import androidx.room.Room
 import com.google.gson.Gson
 import com.orels.R
+import com.orels.auth.data.local.AuthDatabase
+import com.orels.auth.data.local.dao.UserDao
+import com.orels.auth.domain.interactor.AuthInteractor
 import com.orels.data.interactor.UserInteractorImpl
 import com.orels.data.interceptor.AuthInterceptor
 import com.orels.data.interceptor.ErrorInterceptor
 import com.orels.data.interceptor.LogInterceptor
 import com.orels.data.interceptor.ResponseInterceptor
-import com.orels.data.local.AuthDatabase
 import com.orels.data.local.LocalDatabase
-import com.orels.data.local.dao.UserDao
 import com.orels.data.local.type_converters.Converters
 import com.orels.data.remote.EnvironmentRepository
 import com.orels.data.remote.Environments
@@ -21,7 +22,6 @@ import com.orels.domain.annotation.AuthConfigFile
 import com.orels.domain.annotation.BaseProjectUrl
 import com.orels.domain.annotation.DatadogConfigFile
 import com.orels.domain.annotation.MixpanelConfigFile
-import com.orels.domain.interactors.AuthInteractor
 import com.orels.domain.interactors.UserInteractor
 import com.orels.domain.model.entities.ConfigFile
 import dagger.Module

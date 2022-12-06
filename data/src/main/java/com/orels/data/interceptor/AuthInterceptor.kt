@@ -1,6 +1,6 @@
 package com.orels.data.interceptor
 
-import com.orels.domain.interactors.AuthInteractor
+import com.orels.auth.domain.interactor.AuthInteractor
 import okhttp3.Interceptor
 import okhttp3.Response
 

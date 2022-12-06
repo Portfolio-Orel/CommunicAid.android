@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orels.domain.model.exception.LimitExceededException
 import com.orels.domain.model.exception.UserNotFoundException
-import com.orels.domain.interactors.AuthInteractor
+import com.orels.auth.domain.interactor.AuthInteractor
 import com.orels.domain.model.ResetPasswordStep
 import com.orels.domain.util.extension.addUniqueIf
 import com.orels.domain.util.extension.log

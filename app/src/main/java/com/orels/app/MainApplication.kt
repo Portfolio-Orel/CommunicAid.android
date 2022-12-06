@@ -12,7 +12,7 @@ import com.google.firebase.FirebaseApp
 import com.orels.data.remote.EnvironmentRepository
 import com.orels.domain.annotation.AuthConfigFile
 import com.orels.domain.annotation.DatadogConfigFile
-import com.orels.domain.interactors.AuthInteractor
+import com.orels.auth.domain.interactor.AuthInteractor
 import com.orels.domain.interactors.UserInteractor
 import com.orels.domain.model.entities.ConfigFile
 import com.orels.domain.system.phone_call.PhonecallReceiver
