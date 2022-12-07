@@ -72,6 +72,8 @@ interface AuthInteractor {
      */
     suspend fun getToken(): String?
 
-    fun getUser(): User?
+    suspend fun refreshToken(): String?
+
+    suspend fun getUser(): User?
 
 }

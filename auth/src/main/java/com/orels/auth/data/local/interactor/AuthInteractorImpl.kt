@@ -20,23 +20,22 @@ import javax.inject.Inject
  * 06/12/2022
  */
 class AuthInteractorImpl @Inject constructor(
-    private val authService: AuthService,
+    private val service: AuthService,
     localDatabase: AuthDatabase,
 ) : AuthInteractor {
 
     val db = localDatabase.userDao()
 
     override suspend fun initialize(@RawRes configFileResourceId: Int) {
-        authService.initialize(configFileResourceId = configFileResourceId)
-        db.insert(authService.getUser())
+        service.initialize(configFileResourceId = configFileResourceId)
+        db.insert(service.getUser())
     }
-
 
     override suspend fun login(username: String, password: String): SignInStep {
         try {
-            val loginResult = authService.login(username = username, password = password)
+            val loginResult = service.login(username = username, password = password)
             return when (loginResult.nextStep.signInStep) {
-                AuthSignInStep.DONE -> SignInStep.Done(user = authService.getUser())
+                AuthSignInStep.DONE -> SignInStep.Done(user = service.getUser())
                 AuthSignInStep.CONFIRM_SIGN_IN_WITH_NEW_PASSWORD -> SignInStep.ConfirmSignInWithNewPassword
                 AuthSignInStep.CONFIRM_SIGN_UP -> SignInStep.ConfirmSignUp
                 else -> SignInStep.Error
@@ -54,7 +53,7 @@ class AuthInteractorImpl @Inject constructor(
         }
     }
 
-    override suspend fun logout() = authService.logout()
+    override suspend fun logout() = service.logout()
 
     override suspend fun register(
         username: String,
@@ -64,7 +63,7 @@ class AuthInteractorImpl @Inject constructor(
         lastName: String,
     ): SignUpStep {
         try {
-            val registrationResult = authService.register(
+            val registrationResult = service.register(
                 username = username,
                 password = password,
                 email = email,
@@ -73,7 +72,7 @@ class AuthInteractorImpl @Inject constructor(
             )
             return when (registrationResult.nextStep.signUpStep) {
                 AuthSignUpStep.CONFIRM_SIGN_UP_STEP -> SignUpStep.ConfirmSignUpWithNewPassword
-                AuthSignUpStep.DONE -> SignUpStep.Done(user = authService.getUser())
+                AuthSignUpStep.DONE -> SignUpStep.Done(user = service.getUser())
                 else -> SignUpStep.Error
             }
         } catch (e: Exception) {
@@ -89,12 +88,12 @@ class AuthInteractorImpl @Inject constructor(
 
     override suspend fun confirmUser(username: String, password: String, code: String): SignUpStep {
         try {
-            val registrationResult = authService.confirmUserRegistration(username = username,
+            val registrationResult = service.confirmUserRegistration(username = username,
                 password = password,
                 code = code)
             return when (registrationResult.nextStep.signUpStep) {
                 AuthSignUpStep.CONFIRM_SIGN_UP_STEP -> SignUpStep.ConfirmSignUpWithNewPassword
-                AuthSignUpStep.DONE -> SignUpStep.Done(user = authService.getUser())
+                AuthSignUpStep.DONE -> SignUpStep.Done(user = service.getUser())
                 else -> SignUpStep.Error
             }
         } catch (e: AuthException) {
@@ -109,10 +108,10 @@ class AuthInteractorImpl @Inject constructor(
 
     override suspend fun forgotPassword(username: String): ResetPasswordStep {
         try {
-            val resetPasswordResult = authService.forgotPassword(username = username)
+            val resetPasswordResult = service.forgotPassword(username = username)
             return when (resetPasswordResult.nextStep.resetPasswordStep) {
                 AuthResetPasswordStep.CONFIRM_RESET_PASSWORD_WITH_CODE -> ResetPasswordStep.ConfirmSignUpWithNewPassword
-                AuthResetPasswordStep.DONE -> ResetPasswordStep.Done(user = authService.getUser())
+                AuthResetPasswordStep.DONE -> ResetPasswordStep.Done(user = service.getUser())
                 else -> ResetPasswordStep.Error
             }
         } catch (e: AuthException) {
@@ -127,13 +126,19 @@ class AuthInteractorImpl @Inject constructor(
     }
 
     override suspend fun resetPassword(username: String, code: String, newPassword: String) =
-        authService.resetPassword(username = username, code = code, newPassword = newPassword)
+        service.resetPassword(username = username, code = code, newPassword = newPassword)
 
-    override suspend fun getToken(): String? = authService.getToken()
+    override suspend fun getToken(): String? = service.getToken()
+
+    override suspend fun refreshToken(): String? {
+        val token = service.getToken() ?: throw CouldNotRefreshTokenException()
+        db.updateToken(token = token)
+        return token
+    }
 
     private suspend fun resendConfirmationCode(username: String) {
         try {
-            authService.resendConfirmationCode(username = username)
+            service.resendConfirmationCode(username = username)
         } catch (e: AuthException.LimitExceededException) {
             throw LimitExceededException()
         } catch (e: AuthException.UserNotFoundException) {
@@ -143,5 +148,5 @@ class AuthInteractorImpl @Inject constructor(
         }
     }
 
-    override fun getUser(): User? = db.get()
+    override suspend fun getUser(): User? = db.get()
 }

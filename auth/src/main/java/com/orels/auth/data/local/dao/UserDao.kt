@@ -13,13 +13,13 @@ interface UserDao {
         FROM User
     """
     )
-    fun get(): User?
+    suspend fun get(): User?
 
     @Update
-    fun update(user: User)
+    suspend fun update(user: User)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(user: User?)
+    suspend fun insert(user: User?)
 
     @Query(
         """
@@ -27,5 +27,13 @@ interface UserDao {
         FROM User
     """
     )
-    fun clear()
+    suspend fun clear()
+    // A function that updates token field in user table
+    @Query(
+        """
+        UPDATE User
+        SET token = :token
+    """
+    )
+    suspend fun updateToken(token: String?)
 }

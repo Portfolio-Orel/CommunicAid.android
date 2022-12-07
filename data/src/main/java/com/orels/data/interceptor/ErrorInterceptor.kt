@@ -15,13 +15,15 @@ class ErrorInterceptor(
         var response = chain.proceed(chain.request())
         when (response.code()) {
             401 -> {
+                runBlocking {
+                    authInteractor.refreshToken()
+                }
                 val job = GlobalScope.async { authInteractor.refreshToken() }
                 CoroutineScope(SupervisorJob()).launch {
                     try {
                         job.join()
                     } catch (e: CouldNotRefreshTokenException) {
                         e.log()
-                        authInteractor.signOut()
                     }
                 }
                 response.close()
