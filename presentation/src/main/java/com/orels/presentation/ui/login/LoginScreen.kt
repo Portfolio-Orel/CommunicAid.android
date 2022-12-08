@@ -1,4 +1,4 @@
-package com.orels.presentation.ui.login.main
+package com.orels.presentation.ui.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,7 +18,6 @@ import com.orels.domain.util.Screen
 import com.orels.presentation.R
 import com.orels.presentation.theme.fontsVarelaround
 import com.orels.presentation.theme.noRippleClickable
-import com.orels.presentation.ui.login.AuthenticationInput
 
 @Composable
 fun LoginScreen(
@@ -97,11 +96,15 @@ fun LoginScreen(
                 contentColor = MaterialTheme.colorScheme.background,
             ),
         ) {
-            Text(
-                text = stringResource(R.string.login),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Normal,
-            )
+            if (state.isLoading) {
+                Loading(size = 24.dp, color = MaterialTheme.colorScheme.background, width = 1.dp)
+            } else {
+                Text(
+                    text = stringResource(R.string.login),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Normal,
+                )
+            }
         }
     }
 }

@@ -15,7 +15,8 @@ import com.orels.auth.domain.model.User
 import com.orels.auth.domain.model.exception.*
 import com.orels.auth.domain.service.AuthService
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 /**
@@ -28,22 +29,43 @@ class AuthInteractorImpl @Inject constructor(
 ) : AuthInteractor {
 
     val db = localDatabase.userDao()
+    private val _userStateFlow = MutableStateFlow(UserState.Loading)
+    private val userStateFlow = _userStateFlow.asStateFlow()
 
-
+    private val _userFlow = MutableStateFlow<User?>(null)
+    private val userFlow = _userFlow.asStateFlow()
 
     override suspend fun initialize(@RawRes configFileResourceId: Int) {
         service.initialize(configFileResourceId = configFileResourceId)
-        db.insert(service.getUser())
+        val user = db.get()
+        service.isLoggedIn().let { isLoggedIn ->
+            _userStateFlow.value = if (isLoggedIn) UserState.LoggedIn else UserState.LoggedOut
+            _userFlow.value = user
+        }
+        val userFromService = service.getUser() ?: User.LOGGED_OUT_USER
+        if (userFromService != user) {
+            db.insert(userFromService)
+            _userFlow.value = userFromService
+        }
     }
 
     override suspend fun login(username: String, password: String): SignInStep {
         try {
             val loginResult = service.login(username = username, password = password)
             return when (loginResult.nextStep.signInStep) {
-                AuthSignInStep.DONE -> SignInStep.Done(user = service.getUser())
+                AuthSignInStep.DONE -> {
+                    val user = service.getUser()
+                    if (user != null) {
+                        db.insert(user)
+                        _userStateFlow.value = UserState.LoggedIn
+                        SignInStep.Done(user = user)
+                    } else {
+                        SignInStep.Error(AuthException("Unknown exception", "Try to login again"))
+                    }
+                }
                 AuthSignInStep.CONFIRM_SIGN_IN_WITH_NEW_PASSWORD -> SignInStep.ConfirmSignInWithNewPassword
                 AuthSignInStep.CONFIRM_SIGN_UP -> SignInStep.ConfirmSignUp
-                else -> SignInStep.Error
+                else -> SignInStep.Error(AuthException("Unknown exception", "Try to login again"))
             }
         } catch (e: Exception) {
             when (e) {
@@ -58,7 +80,15 @@ class AuthInteractorImpl @Inject constructor(
         }
     }
 
-    override suspend fun logout() = service.logout()
+    override suspend fun logout() {
+        try {
+            service.logout()
+            db.insert(User.LOGGED_OUT_USER)
+            _userStateFlow.value = UserState.LoggedOut
+        } catch (e: Exception) {
+            println()
+        }
+    }
 
     override suspend fun register(
         username: String,
@@ -153,15 +183,9 @@ class AuthInteractorImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUser(): User? = db.get()
-
+    override fun getUser(): User? = _userFlow.value
     override suspend fun isLoggedIn(): Boolean = service.isLoggedIn()
+
     // Checks if user in db is not null. If not null, returns as flow of UserState.LoggedIn else returns as flow of UserState.LoggedOut
-    override suspend fun getUserState(): Flow<UserState> = db.getFlow().map { user ->
-        if (user != null) {
-            UserState.LoggedIn
-        } else {
-            UserState.LoggedOut
-        }
-    }
+    override suspend fun getUserState(): Flow<UserState> = userStateFlow
 }

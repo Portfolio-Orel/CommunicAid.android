@@ -127,7 +127,7 @@ private fun <T : DropdownItem> DropdownDecoratorText(
     Text(
         modifier = modifier.clickable { onClick() },
         text = selected?.getValue() ?: stringResource(id = defaultTitle),
-        style = MaterialTheme.typography.labelLarge,
+        style = MaterialTheme.typography.headlineSmall,
         color = if (isError) MaterialTheme.colorScheme.error
         else color
     )
@@ -167,7 +167,7 @@ private fun <T : DropdownItem> DropdownDecoratorDefault(
             text = selected?.getValue() ?: stringResource(id = defaultTitle),
             modifier = Modifier
                 .padding(horizontal = 18.dp),
-            style = MaterialTheme.typography.labelMedium,
+            style = MaterialTheme.typography.titleMedium,
             color = color
         )
         Spacer(Modifier.weight(1f))

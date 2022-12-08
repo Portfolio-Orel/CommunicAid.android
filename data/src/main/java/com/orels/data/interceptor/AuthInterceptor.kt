@@ -1,7 +1,6 @@
 package com.orels.data.interceptor
 
 import com.orels.auth.domain.interactor.AuthInteractor
-import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -10,15 +9,12 @@ class AuthInterceptor(
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response =
-        runBlocking {
-            authInteractor.getUser()
-        }.let { user ->
+        with(authInteractor.getUser()) {
             chain.request()
                 .newBuilder()
-                .addHeader("Authorization", user?.token ?: "")
-                .addHeader("UserId", user?.userId ?: "")
+                .addHeader("Authorization", this?.token ?: "")
+                .addHeader("UserId", this?.userId ?: "")
                 .build()
                 .run { chain.proceed(this) }
         }
-
 }

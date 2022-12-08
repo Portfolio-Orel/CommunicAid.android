@@ -6,6 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.auth.domain.interactor.UserState
+import com.orels.domain.interactors.GeneralInteractor
 import com.orels.domain.interactors.SettingsInteractor
 import com.orels.domain.managers.phonecall.PhoneCallManager
 import com.orels.domain.managers.phonecall.isCallStateIdle
@@ -15,11 +17,8 @@ import com.orels.domain.system.connectivity.ConnectivityObserver
 import com.orels.domain.system.connectivity.NetworkState
 import com.orels.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,17 +28,23 @@ class MyMessagesViewModel @Inject constructor(
     private val phoneCallManager: PhoneCallManager,
     private val workerManager: WorkerManager,
     private val connectivityObserver: ConnectivityObserver,
+    private val generalInteractor: GeneralInteractor,
 ) : ViewModel() {
     var state by mutableStateOf(MyMessagesState())
         private set
 
     init {
-        isUserAuthenticated()
+        observeUserAuthentication()
     }
 
-    private fun isUserAuthenticated() {
+    private fun observeUserAuthentication() {
+        state = state.copy(isLoading = true)
         val userAuthenticatedJob = viewModelScope.async {
-            userAuthenticated(authInteractor.isLoggedIn())
+            authInteractor.getUserState().collectLatest { userState ->
+                withContext(Dispatchers.Main) {
+                    userAuthenticated(userState = userState)
+                }
+            }
         }
         viewModelScope.launch {
             try {
@@ -56,7 +61,7 @@ class MyMessagesViewModel @Inject constructor(
      */
     private fun initSettings() {
         val fetchSettingsJob = viewModelScope.async { settingsInteractor.init() }
-        CoroutineScope(SupervisorJob()).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             try {
                 fetchSettingsJob.await()
             } catch (e: Exception) {
@@ -90,13 +95,23 @@ class MyMessagesViewModel @Inject constructor(
         }
     }
 
-    private fun userAuthenticated(isAuthenticated: Boolean = false) {
-        if (isAuthenticated) {
+    private fun userAuthenticated(userState: UserState) {
+        if (userState == UserState.Loading) return
+        if (userState == UserState.LoggedIn) {
             observeCallState()
             observeInternetConnectivity()
-        } else {
+            val initDataJob = viewModelScope.async { generalInteractor.initData() }
+            viewModelScope.launch {
+                try {
+                    initDataJob.await()
+                } catch (e: Exception) {
+                    e.log()
+                }
+            }
+        } else if (userState == UserState.LoggedOut) {
             workerManager.clearAll()
+            generalInteractor.clearAllDatabases()
         }
-        state = state.copy(isAuthenticated = isAuthenticated)
+        state = state.copy(authState = userState, isLoading = false)
     }
 }

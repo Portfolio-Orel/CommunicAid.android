@@ -13,7 +13,7 @@ interface UserDao {
         FROM User
     """
     )
-    suspend fun get(): User?
+    suspend fun get(): User
 
     @Query(
         """
@@ -21,13 +21,13 @@ interface UserDao {
         FROM User
     """
     )
-    fun getFlow(): Flow<User?>
+    fun getFlow(): Flow<User>
 
     @Update
     suspend fun update(user: User)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(user: User?)
+    suspend fun insert(user: User)
 
     @Query(
         """

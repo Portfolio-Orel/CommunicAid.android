@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -22,19 +23,21 @@ fun TopAppBar(
     viewModel: TopAppBarViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
-    CenterAlignedTopAppBar(
-        title = {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = if (state.callOnTheLine?.number == "" || state.callOnTheLine == null)
-                        stringResource(R.string.no_active_call)
-                    else
-                        state.callOnTheLine.getNameOrNumber(),
-                    style = MaterialTheme.typography.titleSmall,
-                )
+    Box(modifier = Modifier.padding(vertical = 12.dp)) {
+        CenterAlignedTopAppBar(
+            title = {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = if (state.callOnTheLine?.number == "" || state.callOnTheLine == null)
+                            stringResource(R.string.no_active_call)
+                        else
+                            state.callOnTheLine.getNameOrNumber(),
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                    )
 //                if (BuildConfig.DEBUG) {
 //                    Text(
 //                        text = "Debug_new",
@@ -42,30 +45,32 @@ fun TopAppBar(
 //                        color = MaterialTheme.colorScheme.error
 //                    )
 //                }
-            }
-        },
-        navigationIcon = {
-            Box(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .size(32.dp)
-                    .clickable {
-                        navController.navigate(Screen.Settings.route)
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Person,
-                    contentDescription = stringResource(R.string.icon_settings),
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-        },
-        actions = {},
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.background,
-            titleContentColor = MaterialTheme.colorScheme.onBackground,
-        ),
-        scrollBehavior = null
-    )
+                }
+            },
+            navigationIcon = {
+                Box(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .size(32.dp)
+                        .clickable {
+                            navController.navigate(Screen.Settings.route)
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        imageVector = Icons.Rounded.Person,
+                        contentDescription = stringResource(R.string.icon_settings),
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            },
+            actions = {},
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background,
+                titleContentColor = MaterialTheme.colorScheme.onBackground,
+            ),
+            scrollBehavior = null
+        )
+    }
 }

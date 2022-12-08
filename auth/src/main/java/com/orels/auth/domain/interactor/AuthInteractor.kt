@@ -75,7 +75,7 @@ interface AuthInteractor {
 
     suspend fun refreshToken(): String?
 
-    suspend fun getUser(): User?
+    fun getUser(): User?
 
     suspend fun isLoggedIn(): Boolean
 
@@ -83,6 +83,7 @@ interface AuthInteractor {
 }
 
 enum class UserState {
+    Loading,
     LoggedIn,
     LoggedOut,
     Blocked;

@@ -84,7 +84,7 @@ private fun Content(
                 onDropdownClick = viewModel::onFoldersDropdownClick,
                 addNewFolder = { navController.navigate(Screen.DetailsFolder.route) },
                 selected = state.selectedFolder,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.onBackground
             )
             if (state.folders.isNotEmpty()) {
                 MessagesContainer(
@@ -102,7 +102,7 @@ private fun Content(
                     spaceBetweenMessages = spaceBetweenMessages.dp,
                     height = messageHeight,
                     width = messageWidth,
-                    borderColor = MaterialTheme.colorScheme.primary
+                    borderColor = MaterialTheme.colorScheme.onBackground
                 )
             }
         }

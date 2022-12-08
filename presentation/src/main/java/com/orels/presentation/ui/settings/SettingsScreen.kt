@@ -138,7 +138,7 @@ fun SettingsScreen(
                 Text(
                     modifier = Modifier
                         .clickable {
-                            viewModel.signOut()
+                            viewModel.logout()
                         },
                     text = stringResource(id = R.string.logout),
                     style = MaterialTheme.typography.labelMedium,

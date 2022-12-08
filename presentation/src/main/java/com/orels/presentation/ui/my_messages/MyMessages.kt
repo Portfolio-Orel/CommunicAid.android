@@ -1,5 +1,8 @@
 package com.orels.presentation.ui.my_messages
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.layout.*
@@ -19,15 +22,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.orels.auth.domain.interactor.UserState
 import com.orels.domain.util.Screen
 import com.orels.presentation.ui.components.CustomScaffold
-import com.orels.presentation.ui.components.OnLifecycleEvent
 import com.orels.presentation.ui.components.bottom_bar.BottomBar
 import com.orels.presentation.ui.components.top_app_bar.TopAppBar
 import com.orels.presentation.ui.details_folder.DetailsFolderScreen
 import com.orels.presentation.ui.details_message.DetailsMessageScreen
 import com.orels.presentation.ui.login.forgot_password.ForgotPasswordScreen
-import com.orels.presentation.ui.login.main.LoginScreen
+import com.orels.presentation.ui.login.LoginScreen
 import com.orels.presentation.ui.main.MainScreen
 import com.orels.presentation.ui.settings.SettingsScreen
 import com.orels.presentation.ui.statistics.StatisticsScreen
@@ -62,9 +65,18 @@ fun MyMessagesApp(
                 )
             }
         } else {
-            if (!state.isAuthenticated) {
+            AnimatedVisibility(
+                visible = (state.authState != UserState.LoggedIn),
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
                 LoginScreen(navController = navController)
-            } else {
+            }
+            AnimatedVisibility(
+                visible = state.authState == UserState.LoggedIn,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
                 CustomScaffold(
                     navController = navHostController,
                     topBar = { TopAppBar(navController = navController) },

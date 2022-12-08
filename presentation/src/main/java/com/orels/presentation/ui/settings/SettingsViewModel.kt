@@ -25,7 +25,6 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val settingsInteractor: SettingsInteractor,
     private val authInteractor: AuthInteractor,
-    private val generalInteractor: GeneralInteractor,
     analyticsInteractor: AnalyticsInteractor
 ) :
     ViewModel() {
@@ -41,11 +40,10 @@ class SettingsViewModel @Inject constructor(
         initData()
     }
 
-    fun signOut() {
+    fun logout() {
         state = state.copy(isLoadingSignOut = true)
         viewModelScope.launchCatching(Dispatchers.Main) {
             authInteractor.logout()
-            generalInteractor.clearAllDatabases()
         }
     }
 
@@ -65,7 +63,7 @@ class SettingsViewModel @Inject constructor(
         setSettings(settingsList)
 
         val fetchSettingsJob = viewModelScope.async { settingsInteractor.init() }
-        viewModelScope.launch(SupervisorJob()) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 fetchSettingsJob.await()
             } catch (e: Exception) {

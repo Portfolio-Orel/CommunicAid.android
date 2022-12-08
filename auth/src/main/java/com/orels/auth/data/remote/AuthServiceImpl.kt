@@ -38,8 +38,13 @@ class AuthServiceImpl @Inject constructor(
     override suspend fun login(username: String, password: String): AuthSignInResult =
         Amplify.Auth.signIn(username, password)
 
-    override suspend fun logout() =
-        Amplify.Auth.signOut()
+    override suspend fun logout() {
+        try {
+            Amplify.Auth.signOut()
+        } catch(e: Exception){
+            println()
+        }
+    }
 
     override suspend fun register(
         email: String,

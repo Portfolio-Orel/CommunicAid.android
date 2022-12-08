@@ -1,4 +1,4 @@
-package com.orels.presentation.ui.login.main
+package com.orels.presentation.ui.login
 
 import androidx.annotation.StringRes
 import com.orels.auth.domain.model.SignInStep
@@ -15,12 +15,4 @@ data class LoginState(
 
     val isLoading: Boolean = false,
     @StringRes val error: Int? = null,
-
-    val authState: AuthState = AuthState.SignedOut
-
 )
-
-enum class AuthState {
-    SignedOut,
-    SignedIn
-}

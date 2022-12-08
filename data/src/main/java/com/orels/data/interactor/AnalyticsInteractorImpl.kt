@@ -9,9 +9,6 @@ import com.orels.domain.interactors.AnalyticsInteractor
 import com.orels.domain.model.entities.ConfigFile
 import com.orels.domain.util.extension.rawResToStringMap
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.json.JSONObject
 import javax.inject.Inject
 
@@ -38,16 +35,14 @@ class AnalyticsInteractorImpl @Inject constructor(
         identifier: AnalyticsIdentifiers,
         values: List<Map<String, Any>>,
     ) {
-        CoroutineScope(Dispatchers.IO).launch {
-            mixpanel.track(
-                identifier.identifier,
-                values.asJson(
-                    extras = mapOf(
-                        "username" to ((authInteractor.getUser()?.username) ?: "")
-                    )
+        mixpanel.track(
+            identifier.identifier,
+            values.asJson(
+                extras = mapOf(
+                    "username" to (authInteractor.getUser()?.username ?: "")
                 )
             )
-        }
+        )
     }
 }
 
