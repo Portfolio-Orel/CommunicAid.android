@@ -1,4 +1,4 @@
-package com.orels.presentation.ui.login.components
+package com.orels.presentation.ui.components
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.orels.presentation.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Input(
     modifier: Modifier = Modifier,

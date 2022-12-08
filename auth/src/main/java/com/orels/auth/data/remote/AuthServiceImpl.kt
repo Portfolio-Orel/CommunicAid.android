@@ -108,4 +108,6 @@ class AuthServiceImpl @Inject constructor(
 
     override suspend fun resendConfirmationCode(username: String): AuthSignUpResult =
         Amplify.Auth.resendSignUpCode(username)
+
+    override suspend fun isLoggedIn(): Boolean = Amplify.Auth.getCurrentUser() != null
 }

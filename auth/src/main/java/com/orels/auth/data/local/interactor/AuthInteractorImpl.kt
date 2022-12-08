@@ -7,12 +7,15 @@ import com.amplifyframework.auth.result.step.AuthSignInStep
 import com.amplifyframework.auth.result.step.AuthSignUpStep
 import com.orels.auth.data.local.AuthDatabase
 import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.auth.domain.interactor.UserState
 import com.orels.auth.domain.model.ResetPasswordStep
 import com.orels.auth.domain.model.SignInStep
 import com.orels.auth.domain.model.SignUpStep
 import com.orels.auth.domain.model.User
 import com.orels.auth.domain.model.exception.*
 import com.orels.auth.domain.service.AuthService
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 /**
@@ -25,6 +28,8 @@ class AuthInteractorImpl @Inject constructor(
 ) : AuthInteractor {
 
     val db = localDatabase.userDao()
+
+
 
     override suspend fun initialize(@RawRes configFileResourceId: Int) {
         service.initialize(configFileResourceId = configFileResourceId)
@@ -130,7 +135,7 @@ class AuthInteractorImpl @Inject constructor(
 
     override suspend fun getToken(): String? = service.getToken()
 
-    override suspend fun refreshToken(): String? {
+    override suspend fun refreshToken(): String {
         val token = service.getToken() ?: throw CouldNotRefreshTokenException()
         db.updateToken(token = token)
         return token
@@ -149,4 +154,14 @@ class AuthInteractorImpl @Inject constructor(
     }
 
     override suspend fun getUser(): User? = db.get()
+
+    override suspend fun isLoggedIn(): Boolean = service.isLoggedIn()
+    // Checks if user in db is not null. If not null, returns as flow of UserState.LoggedIn else returns as flow of UserState.LoggedOut
+    override suspend fun getUserState(): Flow<UserState> = db.getFlow().map { user ->
+        if (user != null) {
+            UserState.LoggedIn
+        } else {
+            UserState.LoggedOut
+        }
+    }
 }

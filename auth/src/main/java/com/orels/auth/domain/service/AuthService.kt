@@ -78,4 +78,10 @@ interface AuthService {
      * @param username The username of the user.
      */
     suspend fun resendConfirmationCode(username: String): AuthSignUpResult
+
+    /**
+     * Checks if the user the user is logged in.
+     * @return True if the user is logged in, false otherwise.
+     */
+    suspend fun isLoggedIn(): Boolean
 }

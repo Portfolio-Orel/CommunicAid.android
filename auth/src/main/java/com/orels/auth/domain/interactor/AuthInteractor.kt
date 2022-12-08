@@ -5,6 +5,7 @@ import com.orels.auth.domain.model.ResetPasswordStep
 import com.orels.auth.domain.model.SignInStep
 import com.orels.auth.domain.model.SignUpStep
 import com.orels.auth.domain.model.User
+import kotlinx.coroutines.flow.Flow
 
 /**
  * @author Orel Zilberman
@@ -76,4 +77,13 @@ interface AuthInteractor {
 
     suspend fun getUser(): User?
 
+    suspend fun isLoggedIn(): Boolean
+
+    suspend fun getUserState(): Flow<UserState>
+}
+
+enum class UserState {
+    LoggedIn,
+    LoggedOut,
+    Blocked;
 }

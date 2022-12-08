@@ -26,7 +26,8 @@ import com.orels.presentation.ui.components.bottom_bar.BottomBar
 import com.orels.presentation.ui.components.top_app_bar.TopAppBar
 import com.orels.presentation.ui.details_folder.DetailsFolderScreen
 import com.orels.presentation.ui.details_message.DetailsMessageScreen
-import com.orels.presentation.ui.login.LoginScreen
+import com.orels.presentation.ui.login.forgot_password.ForgotPasswordScreen
+import com.orels.presentation.ui.login.main.LoginScreen
 import com.orels.presentation.ui.main.MainScreen
 import com.orels.presentation.ui.settings.SettingsScreen
 import com.orels.presentation.ui.statistics.StatisticsScreen
@@ -37,15 +38,11 @@ import com.orels.presentation.ui.unhandled_calls.UnhandledCallsScreen
 )
 @Composable
 fun MyMessagesApp(
-    viewModel: MyMessagesViewModel = hiltViewModel()
+    viewModel: MyMessagesViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state
     val navHostController = rememberNavController()
     val navController = navHostController as NavController
-
-    OnLifecycleEvent(
-        onResume = viewModel::onResume,
-    )
 
     CompositionLocalProvider(
         LocalOverscrollConfiguration provides null
@@ -66,7 +63,7 @@ fun MyMessagesApp(
             }
         } else {
             if (!state.isAuthenticated) {
-                LoginScreen()
+                LoginScreen(navController = navController)
             } else {
                 CustomScaffold(
                     navController = navHostController,
@@ -83,10 +80,13 @@ fun MyMessagesApp(
                         navController = navHostController, startDestination = Screen.Main.route
                     ) {
                         composable(route = Screen.Main.route) { MainScreen(navController = navHostController) }
-                        composable(route = Screen.Login.route) { LoginScreen() }
+                        composable(route = Screen.Login.route) { LoginScreen(navController = navController) }
                         composable(route = Screen.UnhandledCalls.route) { UnhandledCallsScreen() }
                         composable(route = Screen.Statistics.route) { StatisticsScreen() }
                         composable(route = Screen.Settings.route) { SettingsScreen() }
+                        composable(route = Screen.ForgotPassword.route) {
+                            ForgotPasswordScreen(navController = navHostController)
+                        }
                         composable(route = Screen.DetailsMessage.route) {
                             DetailsMessageScreen(
                                 navController = navHostController

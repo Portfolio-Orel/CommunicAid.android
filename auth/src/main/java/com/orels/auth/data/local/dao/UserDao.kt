@@ -15,6 +15,14 @@ interface UserDao {
     )
     suspend fun get(): User?
 
+    @Query(
+        """
+        SELECT *
+        FROM User
+    """
+    )
+    fun getFlow(): Flow<User?>
+
     @Update
     suspend fun update(user: User)
 
@@ -28,6 +36,7 @@ interface UserDao {
     """
     )
     suspend fun clear()
+
     // A function that updates token field in user table
     @Query(
         """

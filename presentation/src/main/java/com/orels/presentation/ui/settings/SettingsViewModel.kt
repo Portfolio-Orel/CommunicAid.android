@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.orels.auth.domain.interactor.AuthInteractor
 import com.orels.domain.interactors.*
 import com.orels.domain.model.entities.Settings
 import com.orels.domain.model.entities.SettingsType
@@ -43,7 +44,7 @@ class SettingsViewModel @Inject constructor(
     fun signOut() {
         state = state.copy(isLoadingSignOut = true)
         viewModelScope.launchCatching(Dispatchers.Main) {
-            authInteractor.signOut()
+            authInteractor.logout()
             generalInteractor.clearAllDatabases()
         }
     }

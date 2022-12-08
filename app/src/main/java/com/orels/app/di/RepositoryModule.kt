@@ -1,7 +1,9 @@
 package com.orels.app.di
 
 import com.orels.auth.data.local.interactor.AuthInteractorImpl
+import com.orels.auth.data.remote.AuthServiceImpl
 import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.auth.domain.service.AuthService
 import com.orels.data.interactor.*
 import com.orels.data.managers.phonecall.interactor.PhoneCallManagerImpl
 import com.orels.data.managers.system_service.SystemServiceManagerImpl
@@ -103,4 +105,8 @@ abstract class RepositoryModule {
     @Binds
     @AuthRepository
     abstract fun provideAuthRepository(authRepository: AuthRepository): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun provideAuthService(authService: AuthServiceImpl): AuthService
 }

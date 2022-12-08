@@ -8,7 +8,6 @@ import com.orels.R
 import com.orels.auth.data.local.AuthDatabase
 import com.orels.auth.data.local.dao.UserDao
 import com.orels.auth.domain.interactor.AuthInteractor
-import com.orels.data.interactor.UserInteractorImpl
 import com.orels.data.interceptor.AuthInterceptor
 import com.orels.data.interceptor.ErrorInterceptor
 import com.orels.data.interceptor.LogInterceptor
@@ -22,7 +21,6 @@ import com.orels.domain.annotation.AuthConfigFile
 import com.orels.domain.annotation.BaseProjectUrl
 import com.orels.domain.annotation.DatadogConfigFile
 import com.orels.domain.annotation.MixpanelConfigFile
-import com.orels.domain.interactors.UserInteractor
 import com.orels.domain.model.entities.ConfigFile
 import dagger.Module
 import dagger.Provides
@@ -56,10 +54,6 @@ object AppModule {
     @Provides
     fun provideUserDB(db: AuthDatabase): UserDao =
         db.userDao()
-
-    @Provides
-    @Singleton
-    fun provideUserInteractor(userInteractor: UserInteractorImpl): UserInteractor = userInteractor
 
     @Provides
     fun provideLocalDatabase(context: Application): LocalDatabase =

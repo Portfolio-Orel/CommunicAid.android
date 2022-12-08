@@ -15,6 +15,7 @@ import androidx.navigation.NavController
 import com.orels.domain.util.Screen
 import com.orels.presentation.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBar(
     navController: NavController,

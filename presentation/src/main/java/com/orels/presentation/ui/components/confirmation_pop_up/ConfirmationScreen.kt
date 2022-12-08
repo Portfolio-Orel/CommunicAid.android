@@ -1,5 +1,6 @@
 package com.orels.presentation.ui.components.confirmation_pop_up
 
+import android.renderscript.ScriptGroup
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -15,7 +16,8 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orels.presentation.R
 import com.orels.presentation.theme.MyMessagesTheme
-import com.orels.presentation.ui.login.components.Input
+import com.orels.presentation.ui.components.Input
+import com.orels.presentation.ui.login.AuthenticationInput
 
 @ExperimentalMaterial3Api
 @Composable
