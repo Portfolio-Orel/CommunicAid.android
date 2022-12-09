@@ -53,7 +53,7 @@ fun UnhandledCallRow(
             Text(
                 text = phoneCall.getNameOrNumber(),
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.titleLarge
             )
             Text(
                 phoneCall.startDate.formatDayAndHours(context),
