@@ -78,7 +78,7 @@ fun RestoreButton(
                 RestoreType.Message -> stringResource(R.string.restore_message)
                 RestoreType.Folder -> stringResource(R.string.restore_folder)
             },
-            style = MaterialTheme.typography.labelLarge,
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary
         )
     }

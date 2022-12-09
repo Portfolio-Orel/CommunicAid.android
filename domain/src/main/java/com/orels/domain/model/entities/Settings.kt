@@ -84,14 +84,16 @@ enum class SettingsKey(
     val defaultValue: String,
     val defaultEditEnabled: Boolean = true,
     val requiredPermissions: List<RequiredPermission> = emptyList(),
-    @StringRes val title: Int? = null
+    @StringRes val title: Int? = null,
+    val visibleToUser: Boolean = true
 ) {
     CallsUpdateAt(
         keyInServer = "calls_update_at",
         type = SettingsType.Data,
         valueType = Long::class,
         defaultValue = Date().time.toString(),
-        title = R.string.last_calls_update
+        title = R.string.last_calls_update,
+        visibleToUser = false,
     ),
     IsDataInit(
         keyInServer = "is_data_init",

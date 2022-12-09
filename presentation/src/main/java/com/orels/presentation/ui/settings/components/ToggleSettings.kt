@@ -60,7 +60,7 @@ fun ToggleSettings(
         Text(
             modifier = Modifier.fillMaxWidth(0.85f),
             text = stringResource(id = settings.key.title ?: R.string.empty_string),
-            style = MaterialTheme.typography.labelLarge,
+            style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground,
             overflow = TextOverflow.Ellipsis
         )
@@ -93,7 +93,7 @@ fun ToggleSettings(
                     .noRippleClickable {
                         onDisabledClick(settings)
                     },
-                painter = painterResource(id = R.drawable.ic_round_lock_open),
+                painter = painterResource(id = R.drawable.ic_lock),
                 contentDescription = stringResource(
                     R.string.ask_permissions
                 ),

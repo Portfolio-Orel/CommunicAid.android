@@ -44,7 +44,7 @@ fun SaveButton(
                         onClick()
                     },
                 text = stringResource(id = R.string.save),
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )
         }

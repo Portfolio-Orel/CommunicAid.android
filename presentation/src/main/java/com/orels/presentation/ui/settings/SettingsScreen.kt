@@ -30,7 +30,7 @@ import com.orels.presentation.ui.settings.components.send_sms_settings.SendSMSSe
 
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsViewModel = hiltViewModel()
+    viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state
     val context = LocalContext.current
@@ -68,7 +68,7 @@ fun SettingsScreen(
         Text(
             text = stringResource(id = R.string.settings),
             modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 24.dp),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground
         )
         Column(
@@ -76,49 +76,52 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            state.settingsList.forEach { settings ->
-                when (settings.key.type) {
-                    SettingsType.Toggle -> ToggleSettings(
-                        modifier = Modifier.padding(horizontal = 8.dp),
-                        settings = settings,
-                        onChecked = viewModel::settingsChanged,
-                        isLoading = state.loadingSettings.contains(settings.key),
-                        checked = settings.getRealValue() ?: false,
-                        enabled = {
-                            settings.isEnabled() && settings.getPermissionsNotGranted(context = context)
-                                .isEmpty()
-                        },
-                        contentIfCheck = if (settings.key == SettingsKey.SendSMSToBackgroundCall) {
-                            {
-                                SendSMSSettings()
-                            }
-                        } else {
-                            null
-                        },
-                        onDisabledClick = {
-                            it.getPermissionsNotGranted(context = context).forEach { permission ->
-                                val permissionState = permission.isGranted(context = context)
-                                if (permissionState == RequiredPermission.PermissionState.DeniedPermanently) {
-                                    Logger.v("Permanently not allowed") // ToDo
-                                } else {
-                                    permission.requestPermission(context = context)
+            state.settingsList.filter { it.key.visibleToUser }
+                .forEach { settings ->
+                    when (settings.key.type) {
+                        SettingsType.Toggle -> ToggleSettings(
+                            modifier = Modifier.padding(horizontal = 8.dp),
+                            settings = settings,
+                            onChecked = viewModel::settingsChanged,
+                            isLoading = state.loadingSettings.contains(settings.key),
+                            checked = settings.getRealValue() ?: false,
+                            enabled = {
+                                settings.isEnabled() && settings.getPermissionsNotGranted(context = context)
+                                    .isEmpty()
+                            },
+                            contentIfCheck = if (settings.key == SettingsKey.SendSMSToBackgroundCall) {
+                                {
+                                    SendSMSSettings()
                                 }
+                            } else {
+                                null
+                            },
+                            onDisabledClick = {
+                                it.getPermissionsNotGranted(context = context)
+                                    .forEach { permission ->
+                                        val permissionState =
+                                            permission.isGranted(context = context)
+                                        if (permissionState == RequiredPermission.PermissionState.DeniedPermanently) {
+                                            Logger.v("Permanently not allowed") // ToDo
+                                        } else {
+                                            permission.requestPermission(context = context)
+                                        }
+                                    }
                             }
-                        }
-                    )
-                    SettingsType.Data -> {
-                        DataSettings(
-                            title = stringResource(settings.key.title ?: R.string.empty_string),
-                            body = settings.getRealValue<String>().toString(),
-                            modifier = Modifier.padding(horizontal = 8.dp)
                         )
-                    }
-                    SettingsType.PopUp -> {
+                        SettingsType.Data -> {
+                            DataSettings(
+                                title = stringResource(settings.key.title ?: R.string.empty_string),
+                                body = settings.getRealValue<String>().toString(),
+                                modifier = Modifier.padding(horizontal = 8.dp)
+                            )
+                        }
+                        SettingsType.PopUp -> {
 
+                        }
+                        else -> {}
                     }
-                    else -> {}
                 }
-            }
         }
         Spacer(Modifier.weight(1f))
         Box(
@@ -126,7 +129,7 @@ fun SettingsScreen(
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            if(state.isLoadingSignOut) {
+            if (state.isLoadingSignOut) {
                 CircularProgressIndicator(
                     modifier = Modifier
                         .height(32.dp)
@@ -141,7 +144,7 @@ fun SettingsScreen(
                             viewModel.logout()
                         },
                     text = stringResource(id = R.string.logout),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.error
                 )
             }

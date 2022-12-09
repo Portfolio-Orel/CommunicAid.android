@@ -54,7 +54,7 @@ fun MessageView(
         ) {
             Text(
                 text = message.shortTitle,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
