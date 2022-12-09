@@ -17,7 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.security.InvalidParameterException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,8 +25,21 @@ class LoginViewModel @Inject constructor(private val authInteractor: AuthInterac
         private set
 
     fun login() {
-        state = state.copy(isLoading = true)
         @StringRes var error: Int? = null
+        val isPasswordValid = authInteractor.isPasswordValid(state.password)
+        val isUsernameValid = state.username.isNotBlank()
+
+        if (!isPasswordValid || !isUsernameValid) {
+            state = state.copy(
+                passwordField = Fields.Password(!isPasswordValid),
+                usernameField = Fields.Username(!isUsernameValid),
+                isLoading = false,
+            )
+            return
+        }
+
+        state = state.copy(isLoading = true)
+
         val loginJob = viewModelScope.async {
             authInteractor.login(state.username, state.password)
         }

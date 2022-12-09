@@ -10,9 +10,17 @@ data class LoginState(
     val signUpStep: SignUpStep? = null,
     val resetPasswordStep: ResetPasswordStep? = null,
 
+    val usernameField: Fields = Fields.Username(),
+    val passwordField: Fields = Fields.Password(),
+
     val username: String = "",
     val password: String = "",
 
     val isLoading: Boolean = false,
     @StringRes val error: Int? = null,
 )
+
+sealed class Fields(val isError: Boolean) {
+    class Username(isError: Boolean = false) : Fields(isError = isError)
+    class Password(isError: Boolean = false) : Fields(isError = isError)
+}

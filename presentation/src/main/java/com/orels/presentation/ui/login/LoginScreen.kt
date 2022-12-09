@@ -59,6 +59,7 @@ fun LoginScreen(
             onValueChange = viewModel::onUsernameChange,
             imeAction = ImeAction.Next,
             onImeAction = { passwordFocusRequester.requestFocus() },
+            isError = state.usernameField.isError,
             )
         AuthenticationInput(
             modifier = Modifier
@@ -74,6 +75,7 @@ fun LoginScreen(
             imeAction = ImeAction.Done,
             isPassword = true,
             focusRequester = passwordFocusRequester,
+            isError = state.passwordField.isError,
         )
         Text(
             modifier = Modifier

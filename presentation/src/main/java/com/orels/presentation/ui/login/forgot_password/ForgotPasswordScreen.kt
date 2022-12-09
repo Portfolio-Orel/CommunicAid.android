@@ -56,7 +56,8 @@ fun ForgotPasswordScreen(
                 isLoading = state.state.isLoading,
                 username = username,
                 onUsernameChange = { username = it },
-                onForgotPassword = viewModel::onForgotPassword
+                onForgotPassword = viewModel::onForgotPassword,
+                isError = state.usernameField.isError
             )
         }
 
@@ -79,7 +80,10 @@ fun ForgotPasswordScreen(
                 onPasswordChange = { password = it },
                 onConfirmPasswordChange = { confirmPassword = it },
                 isLoading = state.state.isLoading,
-                onResetPassword = viewModel::onResetPassword
+                onResetPassword = viewModel::onResetPassword,
+                isPasswordError = state.passwordField.isError,
+                isConfirmPasswordError = state.confirmPasswordField.isError,
+                isCodeError = state.codeField.isError,
             )
         }
 
@@ -118,6 +122,7 @@ fun ForgotPasswordContent(
     username: String,
     onUsernameChange: (String) -> Unit,
     onForgotPassword: (String) -> Unit,
+    isError: Boolean = false,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -153,6 +158,7 @@ fun ForgotPasswordContent(
                 if (!isLoading) onForgotPassword(username)
             },
             onValueChange = { onUsernameChange(it) },
+            isError = isError,
         )
         Button(
             modifier = Modifier
@@ -189,6 +195,9 @@ fun ResetPasswordContent(
     onConfirmPasswordChange: (String) -> Unit,
     isLoading: Boolean,
     onResetPassword: ((code: String, password: String, confirmPassword: String) -> Unit)? = null,
+    isCodeError: Boolean = false,
+    isPasswordError: Boolean = false,
+    isConfirmPasswordError: Boolean = false,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -226,7 +235,8 @@ fun ResetPasswordContent(
             onImeAction = {
                 passwordFocusRequest.requestFocus()
             },
-            onValueChange = { if (!isLoading) onCodeChange(it) }
+            onValueChange = { if (!isLoading) onCodeChange(it) },
+            isError = isCodeError,
         )
 
         AuthenticationInput(
@@ -241,6 +251,7 @@ fun ResetPasswordContent(
                 confirmPasswordFocusRequest.requestFocus()
             },
             focusRequester = passwordFocusRequest,
+            isError = isPasswordError,
         )
         AuthenticationInput(
             modifier = Modifier
@@ -255,6 +266,7 @@ fun ResetPasswordContent(
             },
             isPassword = true,
             focusRequester = confirmPasswordFocusRequest,
+            isError = isConfirmPasswordError,
         )
         Button(
             modifier = Modifier

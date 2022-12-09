@@ -8,13 +8,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -39,6 +37,7 @@ fun AuthenticationInput(
     keyboardType: KeyboardType = KeyboardType.Text,
     isPassword: Boolean = false,
     focusRequester: FocusRequester = FocusRequester(),
+    isError: Boolean = false,
 ) {
     var text by remember { mutableStateOf(value) }
     val passwordVisible = rememberSaveable { mutableStateOf(false) }
@@ -68,7 +67,7 @@ fun AuthenticationInput(
                 onSearch = onImeAction,
                 onSend = onImeAction,
 
-            ),
+                ),
             visualTransformation = if (isPassword && !passwordVisible.value) PasswordVisualTransformation() else VisualTransformation.None,
             keyboardOptions = if (isPassword) KeyboardOptions(
                 imeAction = imeAction,
@@ -106,6 +105,7 @@ fun AuthenticationInput(
                     trailingIcon?.invoke()
                 }
             },
+            isError = isError,
         )
     }
 }

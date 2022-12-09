@@ -28,6 +28,14 @@ class ForgotPasswordViewModel @Inject constructor(
         state = state.copy(state = State.ForgotPassword(true))
         @StringRes var error: Int? = null
 
+        if (username.isBlank()) {
+            state = state.copy(
+                state = State.ForgotPassword(false),
+                usernameField = Fields.Username(true),
+            )
+            return
+        }
+
         val forgotPasswordJob: Deferred<ResetPasswordStep> = viewModelScope.async {
             return@async authInteractor.forgotPassword(username)
         }
@@ -70,9 +78,17 @@ class ForgotPasswordViewModel @Inject constructor(
         state = state.copy(state = State.ResetPassword(true))
         @StringRes var error: Int? = null
 
-        if (password.isPasswordNotValid() || confirmPassword.isPasswordNotValid()) {
+        val isCodeValid = code.isNotBlank()
+        val isPasswordValid = password.isPasswordValid()
+        val isConfirmPasswordValid = confirmPassword.isPasswordValid()
+
+        if (!isCodeValid || !isPasswordValid || !isConfirmPasswordValid) {
             state = state.copy(state = State.ResetPassword(false),
-                error = R.string.error_invalid_passwords)
+                error = R.string.error_invalid_passwords,
+                codeField = Fields.Code(isError = !isCodeValid),
+                passwordField = Fields.Password(isError = !isPasswordValid),
+                confirmPasswordField = Fields.ConfirmPassword(isError = !isConfirmPasswordValid)
+            )
             return
         }
         if (password != confirmPassword) {
@@ -102,7 +118,7 @@ class ForgotPasswordViewModel @Inject constructor(
                 e.log()
             } finally {
                 withContext(Dispatchers.Main) {
-                    if(error != null) {
+                    if (error != null) {
                         state = state.copy(state = State.ResetPassword(false), error = error)
                     }
                 }
@@ -110,5 +126,5 @@ class ForgotPasswordViewModel @Inject constructor(
         }
     }
 
-    private fun String.isPasswordNotValid() = !authInteractor.isPasswordValid(password = this)
+    private fun String.isPasswordValid() = authInteractor.isPasswordValid(password = this)
 }
