@@ -37,7 +37,7 @@ fun <T : DropdownItem> Dropdown(
     isError: Boolean = false,
     selected: T? = null,
     onClick: () -> Unit = {},
-    dropdownDecoratorStyle: DropdownDecoratorStyle = DropdownDecoratorStyle.Default
+    dropdownDecoratorStyle: DropdownDecoratorStyle = DropdownDecoratorStyle.Default,
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedItem by remember {
@@ -55,16 +55,16 @@ fun <T : DropdownItem> Dropdown(
         horizontalArrangement = Arrangement.Center
     ) {
         when (dropdownDecoratorStyle) {
-            DropdownDecoratorStyle.Default -> DropdownDecoratorDefault(
-                selected = selectedItem,
-                onClick = { expanded = expanded != true },
-                defaultTitle = defaultTitle
-            )
             DropdownDecoratorStyle.Text -> DropdownDecoratorText(
                 selected = selectedItem,
                 onClick = { expanded = expanded != true },
                 defaultTitle = defaultTitle,
                 color = color
+            )
+            else -> DropdownDecoratorDefault(
+                selected = selectedItem,
+                onClick = { expanded = expanded != true },
+                defaultTitle = defaultTitle
             )
         }
 
@@ -87,7 +87,7 @@ fun <T : DropdownItem> Dropdown(
                     text = {
                         Text(
                             text = it.getValue(),
-                            style = MaterialTheme.typography.labelLarge,
+                            style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onBackground
                         )
                     },
@@ -122,7 +122,7 @@ private fun <T : DropdownItem> DropdownDecoratorText(
     @StringRes defaultTitle: Int,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onBackground,
-    isError: Boolean = false
+    isError: Boolean = false,
 ) {
     Text(
         modifier = modifier.clickable { onClick() },
@@ -141,7 +141,7 @@ private fun <T : DropdownItem> DropdownDecoratorDefault(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onPrimaryContainer,
     expanded: Boolean = false,
-    isError: Boolean = false
+    isError: Boolean = false,
 ) {
 
     val icon = if (expanded)
@@ -164,11 +164,12 @@ private fun <T : DropdownItem> DropdownDecoratorDefault(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = selected?.getValue() ?: stringResource(id = defaultTitle),
             modifier = Modifier
-                .padding(horizontal = 18.dp),
-            style = MaterialTheme.typography.titleMedium,
-            color = color
+                .padding(horizontal = 18.dp)
+                .weight(1f),
+            text = selected?.getValue() ?: stringResource(id = defaultTitle),
+            style = MaterialTheme.typography.headlineSmall,
+            color = if (isError) MaterialTheme.colorScheme.error else color
         )
         Spacer(Modifier.weight(1f))
         Icon(

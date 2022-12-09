@@ -105,7 +105,7 @@ private fun CallTypesStatistics(
                 title = {
                     Text(
                         text = stringResource(id = StatisticsTypes.IncomingCount.label),
-                        style = MaterialTheme.typography.titleSmall,
+                        style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 },
@@ -186,7 +186,7 @@ private fun Dates(startDate: Date?, endDate: Date?) {
     val spacer = if (startDate == null || endDate == null) {
         ""
     } else {
-        "-"
+        " - "
     }
 
     LtrView {
@@ -196,17 +196,17 @@ private fun Dates(startDate: Date?, endDate: Date?) {
         ) {
             Text(
                 text = startDate?.getDayFormatted(withYear = false) ?: "",
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
             Text(
                 text = spacer,
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
             Text(
                 text = endDate?.getDayFormatted(withYear = false) ?: "",
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
@@ -238,7 +238,7 @@ fun DonutText(text: String, isLoading: Boolean = false) {
     } else {
         Text(
             text = text,
-            style = MaterialTheme.typography.titleSmall,
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onBackground
         )
     }
