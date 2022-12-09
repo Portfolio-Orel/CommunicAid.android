@@ -78,7 +78,7 @@ abstract class RepositoryModule {
     abstract fun provideDataSourceCallsInteractor(interactorImpl: DataSourceCallsInteractorImpl): DataSourceCallsInteractor
 
     @Binds
-    abstract fun provideCallLogInteractor(interactorImpl: CallLogInteractorImpl): CallLogInteractor
+    abstract fun provideCallDetailsInteractor(interactorImpl: CallDetailsInteractorImpl): CallDetailsInteractor
 
     @Binds
     @Singleton

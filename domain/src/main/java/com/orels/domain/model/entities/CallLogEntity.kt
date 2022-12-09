@@ -20,6 +20,7 @@ class CallLogEntity(
         get() =
             PhoneCall(
                 number = number,
+                name = name,
                 startDate = time.toDate(),
                 endDate = (time + duration).toDate(),
                 actualEndDate = (time + duration).toDate(),

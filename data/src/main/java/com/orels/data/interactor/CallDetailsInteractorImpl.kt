@@ -1,22 +1,26 @@
 package com.orels.data.interactor
 
 import android.content.Context
+import android.database.Cursor
+import android.net.Uri
 import android.provider.CallLog
-import com.orels.domain.interactors.CallLogInteractor
+import android.provider.ContactsContract
+import com.orels.domain.interactors.CallDetailsInteractor
 import com.orels.domain.interactors.CallType
 import com.orels.domain.model.entities.CallLogEntity
 import com.orels.domain.model.entities.PhoneCall
 import com.orels.domain.util.common.DateUtils
 import com.orels.domain.util.extension.compareToBallPark
 import com.orels.domain.util.extension.epochTimeInSeconds
+import com.orels.domain.util.extension.log
 import com.orels.domain.util.extension.toDate
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import java.util.*
 import javax.inject.Inject
 
-class CallLogInteractorImpl @Inject constructor(@ApplicationContext private val context: Context) :
-    CallLogInteractor {
+class CallDetailsInteractorImpl @Inject constructor(@ApplicationContext private val context: Context) :
+    CallDetailsInteractor {
 
     override fun getTodaysCallLog(): ArrayList<CallLogEntity> =
         getCallLogsByDate(
@@ -174,7 +178,8 @@ class CallLogInteractorImpl @Inject constructor(@ApplicationContext private val 
                     val duration = it.getString(2).toLong()
                     phoneCall.name = it.getString(3) ?: ""
                     phoneCall.startDate = logStartDate
-                    phoneCall.endDate = (phoneCall.startDate.time.epochTimeInSeconds + duration).toDate()
+                    phoneCall.endDate =
+                        (phoneCall.startDate.time.epochTimeInSeconds + duration).toDate()
                     when (type.toInt()) {
                         CallLog.Calls.MISSED_TYPE -> phoneCall.missed()
                         CallLog.Calls.REJECTED_TYPE -> phoneCall.rejected()
@@ -183,6 +188,34 @@ class CallLogInteractorImpl @Inject constructor(@ApplicationContext private val 
                 }
             }
         return null
+    }
+
+    override fun getContactName(number: String): String {
+        try {
+            val uri = Uri.withAppendedPath(
+                ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
+                Uri.encode(number)
+            )
+
+            val projection = arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME)
+
+            var contactName = number
+            val cursor: Cursor? = context.contentResolver.query(uri, projection, null, null, null)
+
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    contactName = cursor.getString(0)
+                }
+                cursor.close()
+            }
+            return contactName
+        } catch (e: IllegalArgumentException) {
+            e.log()
+            return number
+        } catch (e: Exception) {
+            e.log()
+            return number
+        }
     }
 
 }
