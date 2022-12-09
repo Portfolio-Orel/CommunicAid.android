@@ -22,7 +22,7 @@ fun List<PhoneCall>.createPhoneCallBodyList(): List<CreatePhoneCallBody> {
             array.add(
                 CreatePhoneCallBody(
                     number = number,
-                    contactName = name,
+                    contactName = name ?: "",
                     startDate = startDate.time,
                     endDate = endDate.time,
                     isAnswered = isAnswered,

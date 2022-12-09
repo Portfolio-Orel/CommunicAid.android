@@ -5,7 +5,7 @@ import com.orels.domain.model.entities.CallLogEntity
 import com.orels.domain.model.entities.PhoneCall
 import java.util.*
 
-interface CallLogInteractor {
+interface CallDetailsInteractor {
 
     fun getTodaysCallLog(): ArrayList<CallLogEntity>
 
@@ -30,6 +30,8 @@ interface CallLogInteractor {
      * This has to go to the service because the log is added async.
      */
     fun update(phoneCall: PhoneCall): PhoneCall?
+
+    fun getContactName(number: String): String
 }
 
 enum class CallType(val value: Int) {

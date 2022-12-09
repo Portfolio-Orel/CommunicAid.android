@@ -7,7 +7,7 @@ import android.media.AudioManager.*
 import android.os.Build
 import android.telephony.TelephonyManager
 import androidx.annotation.RequiresApi
-import com.orels.domain.interactors.CallLogInteractor
+import com.orels.domain.interactors.CallDetailsInteractor
 import com.orels.domain.interactors.CallPreferences
 import com.orels.domain.interactors.DataSourceCallsInteractor
 import com.orels.domain.interactors.PhoneCallsInteractor
@@ -33,7 +33,7 @@ class PhoneCallManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val phoneCallInteractor: PhoneCallsInteractor,
     private val dataSource: DataSourceCallsInteractor,
-    private val callLogInteractor: CallLogInteractor
+    private val callLogInteractor: CallDetailsInteractor
 ) : PhoneCallManager {
 
     override val callsDataFlow
