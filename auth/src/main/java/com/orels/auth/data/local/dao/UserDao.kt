@@ -11,9 +11,10 @@ interface UserDao {
         """
         SELECT *
         FROM User
+        WHERE userid != ""
     """
     )
-    suspend fun get(): User
+    fun get(): User?
 
     @Query(
         """
@@ -28,6 +29,14 @@ interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(user: User)
+
+    suspend fun upsert(user: User) {
+        if (get() == null) {
+            insert(user)
+        } else {
+            update(user)
+        }
+    }
 
     @Query(
         """

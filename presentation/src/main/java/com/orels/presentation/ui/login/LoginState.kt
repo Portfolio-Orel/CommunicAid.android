@@ -1,9 +1,9 @@
 package com.orels.presentation.ui.login
 
 import androidx.annotation.StringRes
+import com.orels.auth.domain.model.ResetPasswordStep
 import com.orels.auth.domain.model.SignInStep
 import com.orels.auth.domain.model.SignUpStep
-import com.orels.domain.model.ResetPasswordStep
 
 data class LoginState(
     val signInStep: SignInStep? = null,

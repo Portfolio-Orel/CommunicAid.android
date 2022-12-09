@@ -1,8 +1,7 @@
 package com.orels.presentation.ui.login.forgot_password
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.FastOutLinearInEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -12,21 +11,22 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.orels.presentation.R
-import com.orels.presentation.ui.login.AuthenticationInput
 import com.orels.presentation.ui.login.Loading
+import com.orels.presentation.ui.login.components.AuthenticationInput
 
 @Composable
 fun ForgotPasswordScreen(
@@ -40,68 +40,78 @@ fun ForgotPasswordScreen(
     var code by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var confirmPassword by rememberSaveable { mutableStateOf("") }
+    Column {
+        AnimatedVisibility(
+            visible = (state.state is State.ForgotPassword),
+            enter = slideInHorizontally(
+                initialOffsetX = { fullWidth -> -fullWidth },
+                animationSpec = tween(durationMillis = 250, easing = EaseInOut)
+            ),
+            exit = slideOutHorizontally(
+                targetOffsetX = { fullWidth -> 2 * fullWidth },
+                animationSpec = tween(durationMillis = 150, easing = EaseInOut)
+            )
+        ) {
+            ForgotPasswordContent(
+                isLoading = state.state.isLoading,
+                username = username,
+                onUsernameChange = { username = it },
+                onForgotPassword = viewModel::onForgotPassword
+            )
+        }
 
-    AnimatedVisibility(
-        visible = (state.state is State.ForgotPassword),
-        enter = slideInHorizontally(
-            initialOffsetX = { fullWidth -> -fullWidth },
-            animationSpec = tween(durationMillis = 250, easing = LinearOutSlowInEasing)
-        ),
-        exit = slideOutHorizontally(
-            targetOffsetX = { fullWidth -> 2 * fullWidth },
-            animationSpec = tween(durationMillis = 150, easing = FastOutLinearInEasing)
-        )
-    ) {
-        ForgotPasswordContent(
-            isLoading = state.state.isLoading,
-            username = username,
-            onUsernameChange = { username = it },
-            onForgotPassword = viewModel::onForgotPassword
-        )
-    }
+        AnimatedVisibility(
+            visible = (state.state is State.ResetPassword),
+            enter = slideInHorizontally(
+                initialOffsetX = { fullWidth -> -fullWidth },
+                animationSpec = tween(durationMillis = 250, easing = EaseInOut)
+            ),
+            exit = slideOutHorizontally(
+                targetOffsetX = { fullWidth -> 2 * fullWidth },
+                animationSpec = tween(durationMillis = 150, easing = EaseInOut)
+            )
+        ) {
+            ResetPasswordContent(
+                code = code,
+                password = password,
+                confirmPassword = confirmPassword,
+                onCodeChange = { code = it },
+                onPasswordChange = { password = it },
+                onConfirmPasswordChange = { confirmPassword = it },
+                isLoading = state.state.isLoading,
+                onResetPassword = viewModel::onResetPassword
+            )
+        }
 
-    AnimatedVisibility(
-        visible = (state.state is State.ResetPassword),
-        enter = slideInHorizontally(
-            initialOffsetX = { fullWidth -> -fullWidth },
-            animationSpec = tween(durationMillis = 250, easing = LinearOutSlowInEasing)
-        ),
-        exit = slideOutHorizontally(
-            targetOffsetX = { fullWidth -> 2 * fullWidth },
-            animationSpec = tween(durationMillis = 150, easing = FastOutLinearInEasing)
-        )
-    ) {
-        ResetPasswordContent(
-            code = code,
-            password = password,
-            confirmPassword = confirmPassword,
-            onCodeChange = { code = it },
-            onPasswordChange = { password = it },
-            onConfirmPasswordChange = { confirmPassword = it },
-            isLoading = state.state.isLoading,
-            onResetPassword = viewModel::onResetPassword
-        )
-    }
-
-    AnimatedVisibility(
-        visible = (state.state is State.Done),
-        enter = slideInHorizontally(
-            initialOffsetX = { fullWidth -> -fullWidth },
-            animationSpec = tween(durationMillis = 250, easing = LinearOutSlowInEasing)
-        ),
-        exit = slideOutHorizontally(
-            targetOffsetX = { fullWidth -> 2 * fullWidth },
-            animationSpec = tween(durationMillis = 150, easing = FastOutLinearInEasing)
-        )
-    ) {
-        DoneContent(
-            onDone = {
-                navController.popBackStack()
-            }
-        )
+        AnimatedVisibility(
+            visible = (state.state is State.Done),
+            enter = slideInHorizontally(
+                initialOffsetX = { fullWidth -> -fullWidth },
+                animationSpec = tween(durationMillis = 250, easing = EaseInOut)
+            ),
+            exit = slideOutHorizontally(
+                targetOffsetX = { fullWidth -> 2 * fullWidth },
+                animationSpec = tween(durationMillis = 150, easing = EaseInOut)
+            )
+        ) {
+            DoneContent(
+                onDone = {
+                    navController.popBackStack()
+                }
+            )
+        }
+        state.error?.let {
+            Text(
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
+                text = stringResource(it),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ForgotPasswordContent(
     isLoading: Boolean,
@@ -109,10 +119,11 @@ fun ForgotPasswordContent(
     onUsernameChange: (String) -> Unit,
     onForgotPassword: (String) -> Unit,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(top = 16.dp)
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.Start,
@@ -136,7 +147,12 @@ fun ForgotPasswordContent(
                 .padding(horizontal = 16.dp, vertical = 24.dp),
             placeholder = stringResource(R.string.username),
             value = username,
-            onValueChange = { if (!isLoading) onUsernameChange(it) },
+            imeAction = ImeAction.Done,
+            onImeAction = {
+                keyboardController?.hide()
+                if (!isLoading) onForgotPassword(username)
+            },
+            onValueChange = { onUsernameChange(it) },
         )
         Button(
             modifier = Modifier
@@ -162,6 +178,7 @@ fun ForgotPasswordContent(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ResetPasswordContent(
     code: String,
@@ -173,14 +190,20 @@ fun ResetPasswordContent(
     isLoading: Boolean,
     onResetPassword: ((code: String, password: String, confirmPassword: String) -> Unit)? = null,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    val passwordFocusRequest = remember { FocusRequester() }
+    val confirmPasswordFocusRequest = remember { FocusRequester() }
+
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(top = 16.dp)
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top,
     ) {
+
         Text(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
             text = stringResource(R.string.change_the_password),
@@ -189,7 +212,7 @@ fun ResetPasswordContent(
         )
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
-            text = "Insert the code sent to your email and create a new password",
+            text = stringResource(R.string.insert_code_and_create_password),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Thin,
         )
@@ -199,6 +222,10 @@ fun ResetPasswordContent(
                 .padding(horizontal = 16.dp, vertical = 24.dp),
             placeholder = stringResource(R.string.code),
             value = code,
+            imeAction = ImeAction.Next,
+            onImeAction = {
+                passwordFocusRequest.requestFocus()
+            },
             onValueChange = { if (!isLoading) onCodeChange(it) }
         )
 
@@ -208,7 +235,12 @@ fun ResetPasswordContent(
             placeholder = stringResource(R.string.password),
             value = password,
             onValueChange = { if (!isLoading) onPasswordChange(it) },
-            isPassword = true
+            isPassword = true,
+            imeAction = ImeAction.Next,
+            onImeAction = {
+                confirmPasswordFocusRequest.requestFocus()
+            },
+            focusRequester = passwordFocusRequest,
         )
         AuthenticationInput(
             modifier = Modifier
@@ -216,7 +248,13 @@ fun ResetPasswordContent(
             placeholder = stringResource(R.string.confirm_password),
             value = confirmPassword,
             onValueChange = { if (!isLoading) onConfirmPasswordChange(it) },
-            isPassword = true
+            imeAction = ImeAction.Done,
+            onImeAction = {
+                keyboardController?.hide()
+                if (!isLoading) onResetPassword?.invoke(code, password, confirmPassword)
+            },
+            isPassword = true,
+            focusRequester = confirmPasswordFocusRequest,
         )
         Button(
             modifier = Modifier

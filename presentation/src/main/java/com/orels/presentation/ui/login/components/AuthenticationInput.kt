@@ -1,4 +1,4 @@
-package com.orels.presentation.ui.login
+package com.orels.presentation.ui.login.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,11 +8,16 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -29,8 +34,11 @@ fun AuthenticationInput(
     value: String = "",
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
-    onDone: KeyboardActionScope.() -> Unit = {},
+    onImeAction: (KeyboardActionScope.() -> Unit)? = null,
+    imeAction: ImeAction = ImeAction.Done,
+    keyboardType: KeyboardType = KeyboardType.Text,
     isPassword: Boolean = false,
+    focusRequester: FocusRequester = FocusRequester(),
 ) {
     var text by remember { mutableStateOf(value) }
     val passwordVisible = rememberSaveable { mutableStateOf(false) }
@@ -38,6 +46,7 @@ fun AuthenticationInput(
     Row(modifier = modifier) {
         OutlinedTextField(
             modifier = Modifier
+                .focusRequester(focusRequester)
                 .fillMaxWidth()
                 .drawBehind {
                     drawRect(
@@ -51,10 +60,22 @@ fun AuthenticationInput(
                 text = strippedText
                 onValueChange(strippedText)
             },
-            keyboardActions = KeyboardActions(onDone = onDone),
+            keyboardActions = KeyboardActions(
+                onDone = onImeAction,
+                onGo = onImeAction,
+                onNext = onImeAction,
+                onPrevious = onImeAction,
+                onSearch = onImeAction,
+                onSend = onImeAction,
+
+            ),
             visualTransformation = if (isPassword && !passwordVisible.value) PasswordVisualTransformation() else VisualTransformation.None,
-            keyboardOptions = if (isPassword) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions(
-                keyboardType = KeyboardType.Text
+            keyboardOptions = if (isPassword) KeyboardOptions(
+                imeAction = imeAction,
+                keyboardType = KeyboardType.Password
+            ) else KeyboardOptions(
+                imeAction = imeAction,
+                keyboardType = keyboardType
             ),
             placeholder = {
                 Text(

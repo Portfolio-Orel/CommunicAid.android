@@ -32,20 +32,15 @@ class AuthInteractorImpl @Inject constructor(
     private val _userStateFlow = MutableStateFlow(UserState.Loading)
     private val userStateFlow = _userStateFlow.asStateFlow()
 
-    private val _userFlow = MutableStateFlow<User?>(null)
-    private val userFlow = _userFlow.asStateFlow()
-
     override suspend fun initialize(@RawRes configFileResourceId: Int) {
         service.initialize(configFileResourceId = configFileResourceId)
         val user = db.get()
         service.isLoggedIn().let { isLoggedIn ->
             _userStateFlow.value = if (isLoggedIn) UserState.LoggedIn else UserState.LoggedOut
-            _userFlow.value = user
         }
         val userFromService = service.getUser() ?: User.LOGGED_OUT_USER
         if (userFromService != user) {
-            db.insert(userFromService)
-            _userFlow.value = userFromService
+            db.upsert(userFromService)
         }
     }
 
@@ -56,7 +51,7 @@ class AuthInteractorImpl @Inject constructor(
                 AuthSignInStep.DONE -> {
                     val user = service.getUser()
                     if (user != null) {
-                        db.insert(user)
+                        db.upsert(user)
                         _userStateFlow.value = UserState.LoggedIn
                         SignInStep.Done(user = user)
                     } else {
@@ -150,18 +145,31 @@ class AuthInteractorImpl @Inject constructor(
                 else -> ResetPasswordStep.Error
             }
         } catch (e: AuthException) {
-            throw UserNotFoundException()
+            when (e) {
+                is AuthException.UserNotFoundException -> throw UserNotFoundException()
+                is AuthException.NotAuthorizedException -> throw NotAuthorizedException()
+                is AuthException.LimitExceededException -> throw LimitExceededException()
+                else -> throw e
+            }
         } catch (e: LimitExceededException) {
             throw LimitExceededException()
-        } catch (e: AuthException.UserNotFoundException) {
-            throw UserNotFoundException()
         } catch (e: Exception) {
             throw e
         }
     }
 
-    override suspend fun resetPassword(username: String, code: String, newPassword: String) =
-        service.resetPassword(username = username, code = code, newPassword = newPassword)
+    override suspend fun resetPassword(code: String, newPassword: String) {
+        try {
+            service.resetPassword(code = code, newPassword = newPassword)
+        } catch (e: AuthException) {
+            when (e) {
+                is AuthException.CodeMismatchException -> throw CodeMismatchException()
+                is AuthException.CodeExpiredException -> throw CodeExpiredException()
+                is AuthException.NotAuthorizedException -> throw NotAuthorizedException()
+                else -> throw e
+            }
+        }
+    }
 
     override suspend fun getToken(): String? = service.getToken()
 
@@ -183,9 +191,10 @@ class AuthInteractorImpl @Inject constructor(
         }
     }
 
-    override fun getUser(): User? = _userFlow.value
+    override fun getUser(): User? = db.get()
+
     override suspend fun isLoggedIn(): Boolean = service.isLoggedIn()
 
-    // Checks if user in db is not null. If not null, returns as flow of UserState.LoggedIn else returns as flow of UserState.LoggedOut
     override suspend fun getUserState(): Flow<UserState> = userStateFlow
+    override fun isPasswordValid(password: String): Boolean = password.isNotBlank()
 }

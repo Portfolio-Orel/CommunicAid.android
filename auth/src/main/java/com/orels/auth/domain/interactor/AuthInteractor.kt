@@ -5,7 +5,9 @@ import com.orels.auth.domain.model.ResetPasswordStep
 import com.orels.auth.domain.model.SignInStep
 import com.orels.auth.domain.model.SignUpStep
 import com.orels.auth.domain.model.User
+import com.orels.auth.domain.model.exception.*
 import kotlinx.coroutines.flow.Flow
+import java.security.InvalidParameterException
 
 /**
  * @author Orel Zilberman
@@ -24,8 +26,20 @@ interface AuthInteractor {
      * Should be called to login a user.
      * @param username The username of the user.
      * @param password The password of the user.
+     * @throws [UserNotConfirmedException] if the user is not confirmed.
+     * @throws [UserNotFoundException] if the user is not found.
+     * @throws [InvalidParameterException] if the username or password is invalid.
+     * @throws [WrongCredentialsException] if the username or password is wrong.
+     * @throws [Exception] if an unknown exception occurred.
      * @return The user.
      */
+    @Throws(
+        UserNotConfirmedException::class,
+        UserNotFoundException::class,
+        InvalidParameterException::class,
+        WrongCredentialsException::class,
+        Exception::class
+    )
     suspend fun login(username: String, password: String): SignInStep
 
     /**
@@ -56,7 +70,17 @@ interface AuthInteractor {
     /**
      * Should be called to restore the user's password with a code in the email.
      * @param username The username of the user.
+     * @throws [UserNotFoundException] if the user is not found.
+     * @throws [LimitExceededException] if the limit of sending emails was exceeded.
+     * @throws [NotAuthorizedException] if the user is not authorized.
+     * @throws [Exception] if an unknown exception occurred.
      */
+    @Throws(
+        LimitExceededException::class,
+        UserNotFoundException::class,
+        NotAuthorizedException::class,
+        Exception::class
+    )
     suspend fun forgotPassword(username: String): ResetPasswordStep
 
     /**
@@ -65,7 +89,7 @@ interface AuthInteractor {
      * @param code The code sent to the user's email.
      * @param newPassword The new password.
      */
-    suspend fun resetPassword(username: String, code: String, newPassword: String)
+    suspend fun resetPassword(code: String, newPassword: String)
 
     /**
      * Should be called to get the user's token.
@@ -79,7 +103,14 @@ interface AuthInteractor {
 
     suspend fun isLoggedIn(): Boolean
 
+    /**
+     *  Checks if user in db is not null.
+     *  If not null, returns as flow of [UserState.LoggedIn] else returns as flow of [UserState.LoggedOut]
+     *  @return Flow of UserState
+     */
     suspend fun getUserState(): Flow<UserState>
+
+    fun isPasswordValid(password: String): Boolean
 }
 
 enum class UserState {

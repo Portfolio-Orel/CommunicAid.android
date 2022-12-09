@@ -7,10 +7,15 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -18,13 +23,18 @@ import com.orels.domain.util.Screen
 import com.orels.presentation.R
 import com.orels.presentation.theme.fontsVarelaround
 import com.orels.presentation.theme.noRippleClickable
+import com.orels.presentation.ui.login.components.AuthenticationInput
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginScreen(
     navController: NavController,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    val passwordFocusRequester = remember { FocusRequester() }
 
     Column(
         modifier = Modifier
@@ -47,7 +57,9 @@ fun LoginScreen(
             placeholder = stringResource(R.string.username),
             value = state.username,
             onValueChange = viewModel::onUsernameChange,
-        )
+            imeAction = ImeAction.Next,
+            onImeAction = { passwordFocusRequester.requestFocus() },
+            )
         AuthenticationInput(
             modifier = Modifier
                 .fillMaxWidth()
@@ -55,17 +67,36 @@ fun LoginScreen(
             placeholder = stringResource(R.string.password),
             value = state.password,
             onValueChange = viewModel::onPasswordChange,
+            onImeAction = {
+                keyboardController?.hide()
+                viewModel.login()
+            },
+            imeAction = ImeAction.Done,
             isPassword = true,
+            focusRequester = passwordFocusRequester,
         )
         Text(
             modifier = Modifier
                 .padding(horizontal = 20.dp)
-                .noRippleClickable { navController.navigate(Screen.ForgotPassword.route) },
+                .noRippleClickable {
+                    navController.navigate(Screen.ForgotPassword.route)
+                },
             text = stringResource(R.string.did_forget_password),
             style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.SemiBold,
         )
+
+        state.error?.let {
+            Text(
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
+                text = stringResource(it),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
+
         Spacer(modifier = Modifier.weight(1f))
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,

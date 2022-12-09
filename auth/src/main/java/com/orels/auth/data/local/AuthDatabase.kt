@@ -9,7 +9,7 @@ import com.orels.auth.domain.model.User
     entities = [
         User::class
     ],
-    version = 1, exportSchema = false
+    version = 2, exportSchema = false
 )
 
 abstract class AuthDatabase : RoomDatabase() {

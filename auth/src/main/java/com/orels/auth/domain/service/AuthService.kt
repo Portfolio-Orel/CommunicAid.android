@@ -63,7 +63,7 @@ interface AuthService {
      * @param code The code sent to the user's email.
      * @param newPassword The new password.
      */
-    suspend fun resetPassword(username: String, code: String, newPassword: String)
+    suspend fun resetPassword(code: String, newPassword: String)
 
     /**
      * Should be called to get the user's token.

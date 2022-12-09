@@ -1,17 +1,23 @@
 package com.orels.presentation.ui.login
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.auth.domain.model.exception.UserNotConfirmedException
+import com.orels.auth.domain.model.exception.UserNotFoundException
+import com.orels.auth.domain.model.exception.WrongCredentialsException
+import com.orels.domain.util.extension.log
 import com.orels.presentation.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.security.InvalidParameterException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,16 +27,28 @@ class LoginViewModel @Inject constructor(private val authInteractor: AuthInterac
 
     fun login() {
         state = state.copy(isLoading = true)
+        @StringRes var error: Int? = null
         val loginJob = viewModelScope.async {
             authInteractor.login(state.username, state.password)
         }
         viewModelScope.launch {
-            loginJob.await()
-            withContext(Dispatchers.Main) {
-                state = try {
-                    state.copy(isLoading = false)
-                } catch (e: Exception) {
-                    state.copy(isLoading = false, error = R.string.error)
+            try {
+                loginJob.await()
+                withContext(Dispatchers.Main) {
+                    state = state.copy(isLoading = false)
+                }
+            } catch (e: UserNotConfirmedException) {
+                error = R.string.error_user_not_confirmed
+            } catch (e: UserNotFoundException) {
+                error = R.string.error_username_does_not_exist
+            } catch (e: WrongCredentialsException) {
+                error = R.string.error_wrong_credentials_inserted
+            } catch (e: Exception) {
+                error = R.string.error_unknown
+                e.log()
+            } finally {
+                withContext(Dispatchers.Main) {
+                    state = state.copy(isLoading = false, error = error)
                 }
             }
         }

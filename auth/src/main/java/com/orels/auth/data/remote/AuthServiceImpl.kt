@@ -73,10 +73,10 @@ class AuthServiceImpl @Inject constructor(
 
     override suspend fun forgotPassword(username: String) = Amplify.Auth.resetPassword(username)
 
-    override suspend fun resetPassword(username: String, code: String, newPassword: String) =
+    override suspend fun resetPassword(code: String, newPassword: String) =
         Amplify.Auth.confirmResetPassword(
-            newPassword,
-            code
+            newPassword = newPassword,
+            confirmationCode = code
         )
 
     override suspend fun getToken(): String? = runCatching {

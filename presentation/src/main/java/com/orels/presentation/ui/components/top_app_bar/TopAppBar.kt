@@ -38,13 +38,6 @@ fun TopAppBar(
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                     )
-//                if (BuildConfig.DEBUG) {
-//                    Text(
-//                        text = "Debug_new",
-//                        style = MaterialTheme.typography.bodySmall,
-//                        color = MaterialTheme.colorScheme.error
-//                    )
-//                }
                 }
             },
             navigationIcon = {
