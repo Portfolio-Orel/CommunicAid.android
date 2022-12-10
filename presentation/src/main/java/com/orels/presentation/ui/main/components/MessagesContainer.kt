@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -20,8 +21,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -29,6 +32,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.orels.domain.model.entities.Message
 import com.orels.presentation.R
+import com.orels.presentation.ui.components.ShimmeringComponent
 
 /**
  * @author Orel Zilberman
@@ -44,54 +48,99 @@ fun MessagesContainer(
     addNewMessage: () -> Unit,
     spaceBetweenMessages: Dp,
     borderColor: Color,
-    height: Dp,
-    width: Dp
+    messageHeight: Dp,
+    messageWidth: Dp,
+    isLoading: Boolean = false,
 ) {
 
     val listState = rememberLazyGridState()
-    val fabVisibility by derivedStateOf {
-        listState.firstVisibleItemIndex == 0
+    val fabVisibility by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex == 0
+        }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize(),
-    ) {
+    if (isLoading) {
         LazyVerticalGrid(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth(1F)
                 .heightIn(max = 2000.dp),
             columns = GridCells.Fixed(4),
-            state = listState,
             horizontalArrangement = Arrangement.spacedBy(spaceBetweenMessages),
             verticalArrangement = Arrangement.spacedBy(spaceBetweenMessages)
         ) {
-            items(
-                count = messages.size,
-                key = { index ->
-                    index
+            items(12) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    ShimmeringComponent(
+                        modifier = Modifier
+                            .border(
+                                shape = MaterialTheme.shapes.medium,
+                                width = 1.dp,
+                                color = Color.Transparent
+                            )
+                            .clip(MaterialTheme.shapes.medium)
+                            .padding(0.dp),
+                        height = messageHeight * 0.7f,
+                        width = messageWidth
+                    )
+                    ShimmeringComponent(
+                        modifier = Modifier
+                            .border(
+                                shape = MaterialTheme.shapes.medium,
+                                width = 1.dp,
+                                color = Color.Transparent
+                            )
+                            .clip(MaterialTheme.shapes.medium),
+                        height = messageHeight * 0.1f,
+                        width = messageWidth * 0.95f
+                    )
                 }
-            ) { index ->
-                MessageView(
-                    message = messages[index],
-                    modifier = Modifier
-                        .height(height)
-                        .width(width)
-                        .padding(0.dp),
-                    borderColor = borderColor,
-                    onClick = onClick,
-                    onLongClick = onLongClick
-                )
             }
         }
-        AddNewMessageFab(
+    } else {
+        Box(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 40.dp),
-            onClick = addNewMessage,
-            visible = fabVisibility
-        )
+                .fillMaxSize(),
+        ) {
+            LazyVerticalGrid(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(1F)
+                    .heightIn(max = 2000.dp),
+                columns = GridCells.Fixed(4),
+                state = listState,
+                horizontalArrangement = Arrangement.spacedBy(spaceBetweenMessages),
+                verticalArrangement = Arrangement.spacedBy(spaceBetweenMessages)
+            ) {
+                items(
+                    count = messages.size,
+                    key = { index ->
+                        index
+                    }
+                ) { index ->
+                    MessageView(
+                        message = messages[index],
+                        modifier = Modifier
+                            .height(messageHeight)
+                            .width(messageWidth)
+                            .padding(0.dp),
+                        borderColor = borderColor,
+                        onClick = onClick,
+                        onLongClick = onLongClick
+                    )
+                }
+            }
+            AddNewMessageFab(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 40.dp),
+                onClick = addNewMessage,
+                visible = fabVisibility
+            )
+        }
     }
 }
 

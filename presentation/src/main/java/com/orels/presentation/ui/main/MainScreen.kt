@@ -1,8 +1,9 @@
 package com.orels.presentation.ui.main
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,7 +26,6 @@ fun MainScreen(
     navController: NavController,
     viewModel: MainViewModel = hiltViewModel(),
 ) {
-//    rememberLauncherForActivityResult(contract = , onResult = )
     Content(navController = navController, viewModel = viewModel)
 }
 
@@ -33,7 +33,7 @@ fun MainScreen(
 private fun Content(
     navController: NavController,
     viewModel: MainViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val state = viewModel.state
     val screen = LocalConfiguration.current
@@ -56,55 +56,41 @@ private fun Content(
     }
 
     OnLifecycleEvent(onResume = viewModel::onResume)
-
-    if (state.isLoading) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center,
-        ) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .height(32.dp)
-                    .width(32.dp),
-                strokeWidth = 1.dp,
-                color = MaterialTheme.colorScheme.primary,
+    Column(
+        modifier = modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        FoldersContainer(
+            folders = state.folders,
+            onClick = { viewModel.onFolderClick(it) },
+            onEditClick = { viewModel.editFolder(it) },
+            onDropdownClick = viewModel::onFoldersDropdownClick,
+            addNewFolder = { navController.navigate(Screen.DetailsFolder.route) },
+            selected = state.selectedFolder,
+            color = MaterialTheme.colorScheme.onBackground,
+            isLoading = state.isLoading
+        )
+        if (state.folders.isNotEmpty()) {
+            MessagesContainer(
+                messages = state.selectedFoldersMessages,
+                onClick = { viewModel.onMessageClick(it) },
+                onLongClick = { message, context ->
+                    viewModel.onMessageLongClick(
+                        message,
+                        context
+                    )
+                },
+                addNewMessage = {
+                    navController.navigate(Screen.DetailsMessage.route)
+                },
+                spaceBetweenMessages = spaceBetweenMessages.dp,
+                messageHeight = messageHeight,
+                messageWidth = messageWidth,
+                borderColor = MaterialTheme.colorScheme.onBackground,
+                isLoading = state.isLoading
             )
-        }
-    } else {
-        Column(
-            modifier = modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            FoldersContainer(
-                folders = state.folders,
-                onClick = { viewModel.onFolderClick(it) },
-                onEditClick = { viewModel.editFolder(it) },
-                onDropdownClick = viewModel::onFoldersDropdownClick,
-                addNewFolder = { navController.navigate(Screen.DetailsFolder.route) },
-                selected = state.selectedFolder,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            if (state.folders.isNotEmpty()) {
-                MessagesContainer(
-                    messages = state.selectedFoldersMessages,
-                    onClick = { viewModel.onMessageClick(it) },
-                    onLongClick = { message, context ->
-                        viewModel.onMessageLongClick(
-                            message,
-                            context
-                        )
-                    },
-                    addNewMessage = {
-                        navController.navigate(Screen.DetailsMessage.route)
-                    },
-                    spaceBetweenMessages = spaceBetweenMessages.dp,
-                    height = messageHeight,
-                    width = messageWidth,
-                    borderColor = MaterialTheme.colorScheme.onBackground
-                )
-            }
         }
     }
 }
@@ -112,7 +98,7 @@ private fun Content(
 private fun getMessageWidth(
     screenWidth: Int,
     messagesInRow: Int = 4,
-    spaceBetween: Int = 4
+    spaceBetween: Int = 4,
 ): Dp {
     if (messagesInRow == 0) return 0.dp
     val spacesCount = messagesInRow + 1 // Amount of spaces between each message

@@ -40,13 +40,18 @@ class MainViewModel @Inject constructor(
 
     /* States */
     init {
+        state = state.copy(isLoading = true)
         analyticsInteractor.track(AnalyticsIdentifiers.ShowMainScreen)
-        viewModelScope.launch(SupervisorJob()) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 fetchDataJob.await()
             } catch (e: Exception) {
                 if (e !is CancellationException) {
                     e.log()
+                }
+            } finally {
+                withContext(Dispatchers.Main) {
+                    setState(newState = state.copy(isLoading = false))
                 }
             }
         }
@@ -194,22 +199,22 @@ class MainViewModel @Inject constructor(
                 try {
                     phoneCallManagerInteractor.callsDataFlow.collectLatest {
                         val call = it.callOnTheLine?.toPhoneCall()
-                        state = state.copy(callInBackground = call)
+                        setState(newState = state.copy(callInBackground = call))
                     }
-                } catch (e: CancellationException) {
-
                 } catch (e: Exception) {
-                    e.log()
-                    Logger.e("observeNumberInBackground stopped")
+                    if (e !is CancellationException) {
+                        e.log()
+                        Logger.e("observeNumberInBackground stopped")
+                    }
                 }
             }
         viewModelScope.launch(SupervisorJob()) {
             try {
                 callInTheBackgroundJob?.await()
-            } catch (e: CancellationException) {
-
             } catch (e: Exception) {
-                e.log()
+                if (e !is CancellationException) {
+                    e.log()
+                }
             }
         }
     }
@@ -217,8 +222,7 @@ class MainViewModel @Inject constructor(
     private fun observeFolders() {
         viewModelScope.launch {
             folderInteractor.getFolders(isActive = true).collectLatest {
-                state = state.copy(folders = it)
-                initData()
+                setState(newState = state.copy(folders = it))
             }
         }
     }
@@ -226,8 +230,7 @@ class MainViewModel @Inject constructor(
     private fun observeMessages() {
         viewModelScope.launch {
             messageInteractor.getMessages(isActive = true).collectLatest {
-                state = state.copy(messages = it)
-                initData()
+                setState(newState = state.copy(messages = it))
             }
         }
     }
@@ -245,11 +248,17 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch(SupervisorJob()) {
             try {
                 callOnTheLineJob?.await()
-            } catch (e: CancellationException) {
-
             } catch (e: Exception) {
-                e.log()
+                if (e !is CancellationException) {
+                    e.log()
+                }
             }
+        }
+    }
+
+    private suspend fun setState(newState: MainState) {
+        withContext(Dispatchers.Main) {
+            state = newState
         }
     }
 
