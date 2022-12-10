@@ -83,7 +83,7 @@ fun ToggleSettings(
                         Spacer(modifier = Modifier)
                     }
                 },
-                enabled = !disabled
+                enabled = true
             )
         } else {
             Icon(

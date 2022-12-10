@@ -24,7 +24,7 @@ private val Context.callsDataStore by preferencesDataStore(
     name = "sp_calls_data_store"
 )
 
-private val Context.callsSharedPrefrences: SharedPreferences
+private val Context.callsSharedPreferences: SharedPreferences
     get() = getSharedPreferences(
         "sp_calls", Context.MODE_PRIVATE
     )
@@ -54,7 +54,7 @@ class DataSourceCallsInteractorImpl @Inject constructor(
             }
 
     override fun callsPrefrences(): SharedPreferences =
-        context.callsSharedPrefrences
+        context.callsSharedPreferences
 
     override suspend fun init() {
         updateCallOnTheLine(null)
@@ -93,20 +93,20 @@ class DataSourceCallsInteractorImpl @Inject constructor(
     }
 
     override fun getState(): CallState? =
-        (context.callsSharedPrefrences.getString(PreferencesKeys.STATE.name, null) ?: "").toState()
+        (context.callsSharedPreferences.getString(PreferencesKeys.STATE.name, null) ?: "").toState()
 
     override fun getCallOnTheLine(): PhoneCall? =
-        context.callsSharedPrefrences.getString(PreferencesKeys.CALL_ON_LINE.name, null)
+        context.callsSharedPreferences.getString(PreferencesKeys.CALL_ON_LINE.name, null)
             ?.toPhoneCall()
 
     override fun getCallInTheBackground(): PhoneCall? =
-        (context.callsSharedPrefrences.getString(
+        (context.callsSharedPreferences.getString(
             PreferencesKeys.CALL_IN_BACKGROUND.name,
             null
         ))?.toPhoneCall()
 
     private fun updateSharedPrefrences(key: String, value: String?) {
-        with(context.callsSharedPrefrences.edit()) {
+        with(context.callsSharedPreferences.edit()) {
             putString(key, value)
             apply()
         }

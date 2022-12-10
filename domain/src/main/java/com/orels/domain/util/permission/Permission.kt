@@ -9,6 +9,9 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.orels.domain.util.permission.PermissionMetaData
+import com.orels.domain.util.permission.PermissionPriority
+import com.orels.domain.util.permission.PermissionState
 
 /**
  * @author Orel Zilberman
@@ -17,7 +20,7 @@ import androidx.core.content.ContextCompat
 enum class RequiredPermission(val permissionName: String, priority: PermissionPriority) {
     ReadPhoneState(
         permissionName = Manifest.permission.READ_PHONE_STATE,
-        priority = PermissionPriority.Critical
+        priority = PermissionPriority.Critical,
     ),
     ReadCallLog(
         permissionName = Manifest.permission.READ_CALL_LOG,
@@ -47,7 +50,7 @@ enum class RequiredPermission(val permissionName: String, priority: PermissionPr
             ) == PackageManager.PERMISSION_GRANTED
     }
 
-    fun isGranted(context: Context): PermissionState {
+    fun getPermissionState(context: Context): PermissionState {
         if (permissionName == Manifest.permission.SYSTEM_ALERT_WINDOW) {
             return if (PermissionsUtils.canDrawOverlays(context)) {
                 PermissionState.Granted
@@ -56,24 +59,36 @@ enum class RequiredPermission(val permissionName: String, priority: PermissionPr
             }
         }
         if (PermissionsUtils.checkPermission(context = context, this)) {
+            PermissionMetaData.setPermissionState(permissionName, PermissionState.Granted, context)
             return PermissionState.Granted
         }
         if (context as? Activity != null) {
             if (!ActivityCompat.shouldShowRequestPermissionRationale(context, permissionName)) {
+                val state = PermissionMetaData.getPermissionState(permissionName,
+                    context)
+                // It's possible that the permission was granted but denied from settings
+                if (state == PermissionState.NotAsked || state == PermissionState.Granted) {
+                    PermissionMetaData.setPermissionState(permissionName,
+                        PermissionState.NotAsked,
+                        context)
+                    return PermissionState.NotAsked
+                }
                 return PermissionState.DeniedPermanently
             }
         }
+        PermissionMetaData.setPermissionState(permissionName, PermissionState.DeniedOnce, context)
         return PermissionState.DeniedOnce
     }
 
-    fun isNotGranted(context: Context) = isGranted(context = context) != PermissionState.Granted
+    fun isNotGranted(context: Context) =
+        getPermissionState(context = context) != PermissionState.Granted
 
     fun requestPermission(context: Context) {
         if (context as? Activity == null) {
             // ToDo: Do something
             return
         }
-        if (isGranted(context = context) == PermissionState.Granted) return
+        if (getPermissionState(context = context) == PermissionState.Granted) return
         if (permissionName == Manifest.permission.SYSTEM_ALERT_WINDOW) {
             context.startActivity(
                 Intent(
@@ -81,29 +96,24 @@ enum class RequiredPermission(val permissionName: String, priority: PermissionPr
                     Uri.parse("package:${context.packageName}")
                 )
             )
-        } else {
+        } else if (getPermissionState(context = context) != PermissionState.DeniedPermanently) {
             ActivityCompat.requestPermissions(
                 context,
                 listOf(permissionName).toTypedArray(),
                 REQUEST_PERMISSION_CODE
             )
+        } else {
+            context.startActivity(
+                Intent(
+                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.parse("package:${context.packageName}")
+                )
+            )
         }
     }
 
+
     companion object {
         const val REQUEST_PERMISSION_CODE = 443
-    }
-
-    enum class PermissionPriority {
-        Low, // Required for some convinient settings. Example: Send sms to call in background.
-        Medium, // Required for some important ux stuff. Example: Fetching caller's name.
-        High, // Required for data coherent data saving. Example: Read call log to make sure all calls are saved.
-        Critical; // Required for the app to function properly. Example: Reading phone's state.
-    }
-
-    enum class PermissionState {
-        Granted,
-        DeniedOnce,
-        DeniedPermanently;
     }
 }

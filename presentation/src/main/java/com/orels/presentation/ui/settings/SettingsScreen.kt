@@ -20,8 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orels.domain.model.entities.SettingsKey
 import com.orels.domain.model.entities.SettingsType
-import com.orels.domain.util.RequiredPermission
-import com.orels.domain.util.common.Logger
+import com.orels.domain.util.permission.PermissionState
 import com.orels.presentation.R
 import com.orels.presentation.ui.components.OnLifecycleEvent
 import com.orels.presentation.ui.settings.components.DataSettings
@@ -99,12 +98,14 @@ fun SettingsScreen(
                             onDisabledClick = {
                                 it.getPermissionsNotGranted(context = context)
                                     .forEach { permission ->
-                                        val permissionState =
-                                            permission.isGranted(context = context)
-                                        if (permissionState == RequiredPermission.PermissionState.DeniedPermanently) {
-                                            Logger.v("Permanently not allowed") // ToDo
-                                        } else {
-                                            permission.requestPermission(context = context)
+                                        when (permission.getPermissionState(context = context)) {
+                                            PermissionState.Granted -> {}
+                                            PermissionState.NotAsked -> permission.requestPermission(
+                                                context = context)
+                                            PermissionState.DeniedOnce -> permission.requestPermission(
+                                                context = context) // Show rationale
+                                            PermissionState.DeniedPermanently -> permission.requestPermission(
+                                                context = context) // show dialog to open settings
                                         }
                                     }
                             }
