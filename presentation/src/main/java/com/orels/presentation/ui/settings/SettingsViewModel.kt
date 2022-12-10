@@ -61,7 +61,9 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun initData() {
+        state = state.copy(isLoadingSettings = true)
         val settingsList = settingsInteractor.getAll()
+        state = state.copy(isLoadingSettings = settingsList.isEmpty())
         setSettings(settingsList)
 
         val fetchSettingsJob = viewModelScope.async { settingsInteractor.init() }
@@ -70,6 +72,10 @@ class SettingsViewModel @Inject constructor(
                 fetchSettingsJob.await()
             } catch (e: Exception) {
                 e.log()
+            } finally {
+                withContext(Dispatchers.Main) {
+                    state = state.copy(isLoadingSettings = false)
+                }
             }
         }
     }
@@ -91,8 +97,6 @@ class SettingsViewModel @Inject constructor(
             settingsList = sortedSettingsList,
         )
     }
-
-    private fun isSettingsChanges(): Boolean = state.updatedSettings.isNotEmpty()
 
     private fun settingsChecked(settings: Settings) {
         val prevChecked: Boolean = settings.getRealValue() ?: true

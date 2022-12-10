@@ -1,4 +1,4 @@
-package com.orels.domain.util
+package com.orels.domain.util.permission
 
 import android.Manifest
 import android.app.Activity
@@ -9,9 +9,6 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.orels.domain.util.permission.PermissionMetaData
-import com.orels.domain.util.permission.PermissionPriority
-import com.orels.domain.util.permission.PermissionState
 
 /**
  * @author Orel Zilberman

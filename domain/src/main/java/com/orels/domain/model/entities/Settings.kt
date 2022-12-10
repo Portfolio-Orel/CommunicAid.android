@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.orels.domain.R
-import com.orels.domain.util.RequiredPermission
+import com.orels.domain.util.permission.RequiredPermission
 import com.orels.domain.util.extension.formatDayAndHours
 import com.orels.domain.util.extension.log
 import java.util.*
