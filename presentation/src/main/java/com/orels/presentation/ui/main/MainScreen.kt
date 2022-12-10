@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.orels.domain.util.Screen
-import com.orels.presentation.ui.components.OnLifecycleEvent
 import com.orels.presentation.ui.main.components.FoldersContainer
 import com.orels.presentation.ui.main.components.MessagesContainer
 
@@ -55,7 +54,8 @@ private fun Content(
         viewModel.navigated()
     }
 
-    OnLifecycleEvent(onResume = viewModel::onResume)
+//    OnLifecycleEvent(onResume = viewModel::onResume)
+
     Column(
         modifier = modifier
             .fillMaxSize(),
@@ -72,26 +72,24 @@ private fun Content(
             color = MaterialTheme.colorScheme.onBackground,
             isLoading = state.isLoading
         )
-        if (state.folders.isNotEmpty()) {
-            MessagesContainer(
-                messages = state.selectedFoldersMessages,
-                onClick = { viewModel.onMessageClick(it) },
-                onLongClick = { message, context ->
-                    viewModel.onMessageLongClick(
-                        message,
-                        context
-                    )
-                },
-                addNewMessage = {
-                    navController.navigate(Screen.DetailsMessage.route)
-                },
-                spaceBetweenMessages = spaceBetweenMessages.dp,
-                messageHeight = messageHeight,
-                messageWidth = messageWidth,
-                borderColor = MaterialTheme.colorScheme.onBackground,
-                isLoading = state.isLoading
-            )
-        }
+        MessagesContainer(
+            messages = state.selectedFoldersMessages,
+            onClick = { viewModel.onMessageClick(it) },
+            onLongClick = { message, context ->
+                viewModel.onMessageLongClick(
+                    message,
+                    context
+                )
+            },
+            addNewMessage = {
+                navController.navigate(Screen.DetailsMessage.route)
+            },
+            spaceBetweenMessages = spaceBetweenMessages.dp,
+            messageHeight = messageHeight,
+            messageWidth = messageWidth,
+            borderColor = MaterialTheme.colorScheme.onBackground,
+            isLoading = state.isLoading
+        )
     }
 }
 

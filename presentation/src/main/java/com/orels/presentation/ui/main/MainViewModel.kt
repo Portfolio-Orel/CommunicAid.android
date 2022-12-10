@@ -42,26 +42,10 @@ class MainViewModel @Inject constructor(
     init {
         state = state.copy(isLoading = true)
         analyticsInteractor.track(AnalyticsIdentifiers.ShowMainScreen)
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                fetchDataJob.await()
-            } catch (e: Exception) {
-                if (e !is CancellationException) {
-                    e.log()
-                }
-            } finally {
-                withContext(Dispatchers.Main) {
-                    setState(newState = state.copy(isLoading = false))
-                }
-            }
-        }
         observeMessages()
         observeFolders()
         observeNumberOnTheLine()
         observeNumberInBackground()
-    }
-
-    fun onResume() {
         initData()
     }
 
@@ -169,6 +153,19 @@ class MainViewModel @Inject constructor(
      * Init messages and folders to avoid first long loading.
      */
     private fun initData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                fetchDataJob.await()
+            } catch (e: Exception) {
+                if (e !is CancellationException) {
+                    e.log()
+                }
+            } finally {
+                withContext(Dispatchers.Main) {
+                    setState(newState = state.copy(isLoading = false))
+                }
+            }
+        }
         state = state.copy(isLoading = true)
         val messages =
             messageInteractor.getAllOnce(isActive = true).sortedByDescending { it.timesUsed }
@@ -178,12 +175,26 @@ class MainViewModel @Inject constructor(
             state.selectedFolder == null || folders.none { it.id == state.selectedFolder?.id }
         ) folders.firstOrNull() else state.selectedFolder
         state = state.copy(
-            isLoading = false,
+            isLoading = messages.isEmpty() && folders.isEmpty(),
             messages = messages,
             folders = folders,
             selectedFolder = selectedFolder,
             selectedFoldersMessages = getFoldersMessages(selectedFolder?.id ?: "")
         )
+    }
+
+    private fun setMessagesAndSelectedFolder() {
+        val selectedFolder = if (
+            state.selectedFolder == null || state.folders.none { folder -> folder.id == state.selectedFolder?.id }
+        ) state.folders.maxByOrNull { it.timesUsed } else state.selectedFolder
+        viewModelScope.launch {
+            setState(newState = state.copy(
+                messages = state.messages.sortedByDescending { it.timesUsed },
+                folders = state.folders.sortedByDescending { it.timesUsed },
+                selectedFolder = selectedFolder,
+                selectedFoldersMessages = getFoldersMessages(selectedFolder?.id ?: "")
+            ))
+        }
     }
 
     private fun navigateTo(screen: MainScreens) {
@@ -223,6 +234,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             folderInteractor.getFolders(isActive = true).collectLatest {
                 setState(newState = state.copy(folders = it))
+                setMessagesAndSelectedFolder()
             }
         }
     }
@@ -231,6 +243,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             messageInteractor.getMessages(isActive = true).collectLatest {
                 setState(newState = state.copy(messages = it))
+                setMessagesAndSelectedFolder()
             }
         }
     }
@@ -257,8 +270,17 @@ class MainViewModel @Inject constructor(
     }
 
     private suspend fun setState(newState: MainState) {
-        withContext(Dispatchers.Main) {
+        val setStateJob = viewModelScope.async {
             state = newState
+        }
+        withContext(Dispatchers.Main) {
+            try {
+                setStateJob.await()
+            } catch (e: Exception) {
+                if (e !is CancellationException) {
+                    e.log()
+                }
+            }
         }
     }
 

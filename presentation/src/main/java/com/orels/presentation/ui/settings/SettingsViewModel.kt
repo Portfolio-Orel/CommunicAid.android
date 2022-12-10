@@ -6,7 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orels.auth.domain.interactor.AuthInteractor
-import com.orels.domain.interactors.*
+import com.orels.domain.interactors.AnalyticsIdentifiers
+import com.orels.domain.interactors.AnalyticsInteractor
+import com.orels.domain.interactors.SettingsInteractor
 import com.orels.domain.model.entities.Settings
 import com.orels.domain.model.entities.SettingsType
 import com.orels.domain.util.common.Logger
@@ -14,18 +16,15 @@ import com.orels.domain.util.extension.launchCatching
 import com.orels.domain.util.extension.log
 import com.orels.domain.util.extension.notEqualsTo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val settingsInteractor: SettingsInteractor,
     private val authInteractor: AuthInteractor,
-    analyticsInteractor: AnalyticsInteractor
+    analyticsInteractor: AnalyticsInteractor,
 ) :
     ViewModel() {
     var state by mutableStateOf(SettingsState())
@@ -44,6 +43,9 @@ class SettingsViewModel @Inject constructor(
         state = state.copy(isLoadingSignOut = true)
         viewModelScope.launchCatching(Dispatchers.Main) {
             authInteractor.logout()
+            withContext(Dispatchers.Main) {
+                state = state.copy(isLoadingSignOut = false)
+            }
         }
     }
 

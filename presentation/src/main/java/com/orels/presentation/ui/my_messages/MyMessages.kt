@@ -46,10 +46,6 @@ fun MyMessagesApp(
     viewModel: MyMessagesViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state
-    val navHostControllerNotAuthorized = rememberNavController()
-    val navHostControllerAuthorized = rememberNavController()
-    val navControllerNotAuthorized = navHostControllerNotAuthorized as NavController
-    val navControllerAuthorized = navHostControllerAuthorized as NavController
 
     CompositionLocalProvider(
         LocalOverscrollConfiguration provides null
@@ -78,10 +74,14 @@ fun MyMessagesApp(
                     animationSpec = tween(durationMillis = 250, easing = EaseInOut)
                 )
             ) {
+                val navHostControllerNotAuthorized = rememberNavController()
+                val navControllerNotAuthorized = navHostControllerNotAuthorized as NavController
+
                 NavHost(
                     modifier = Modifier.padding(
                     ),
-                    navController = navHostControllerNotAuthorized, startDestination = Screen.Login.route
+                    navController = navHostControllerNotAuthorized,
+                    startDestination = Screen.Login.route
                 ) {
                     composable(route = Screen.Login.route) { LoginScreen(navController = navControllerNotAuthorized) }
                     composable(route = Screen.ForgotPassword.route) {
@@ -98,6 +98,9 @@ fun MyMessagesApp(
                     animationSpec = tween(durationMillis = 250, easing = EaseInOut)
                 )
             ) {
+                val navHostControllerAuthorized = rememberNavController()
+                val navControllerAuthorized = navHostControllerAuthorized as NavController
+
                 CustomScaffold(
                     navController = navHostControllerAuthorized,
                     topBar = { TopAppBar(navController = navControllerAuthorized) },
@@ -110,7 +113,8 @@ fun MyMessagesApp(
                             end = it.calculateEndPadding(LayoutDirection.Rtl),
                             start = it.calculateStartPadding(LayoutDirection.Rtl)
                         ),
-                        navController = navHostControllerAuthorized, startDestination = Screen.Main.route
+                        navController = navHostControllerAuthorized,
+                        startDestination = Screen.Main.route
                     ) {
                         composable(route = Screen.Main.route) { MainScreen(navController = navHostControllerAuthorized) }
                         composable(route = Screen.Login.route) { LoginScreen(navController = navControllerAuthorized) }
