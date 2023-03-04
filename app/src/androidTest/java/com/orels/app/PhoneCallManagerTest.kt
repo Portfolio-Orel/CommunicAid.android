@@ -7,15 +7,11 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.orels.app.StubCallLogInteractor
 import com.orels.app.StubRepository
-import com.orels.app.data.interactors.DataSourceCallsInteractorImpl
-import com.orels.app.domain.model.entities.CallLogEntity
-import com.orels.app.domain.managers.phonecall.CallState
-import com.orels.data.interactor.DataSourceCallsInteractorImpl
 import com.orels.data.interactor.PhoneCallsInteractorImpl
 import com.orels.data.local.LocalDatabase
 import com.orels.data.local.type_converters.Converters
-import com.orels.data.managers.phonecall.interactor.PhoneCallManagerImpl
 import com.orels.domain.interactors.CallType
 import com.orels.domain.interactors.PhoneCallsInteractor
 import com.orels.domain.managers.phonecall.CallState
@@ -54,12 +50,12 @@ class PhoneCallManagerTest {
         this.interactor =
             PhoneCallsInteractorImpl(repository = StubRepository(), database = db)
 
-        this.manager = PhoneCallManagerImpl(
-            phoneCallInteractor = this.interactor,
-            null,
-            DataSourceCallsInteractorImpl(context = mockContext),
-            callLogInteractor
-        )
+//        this.manager = PhoneCallManagerImpl(
+//            phoneCallInteractor = this.interactor,
+//            null,
+//            DataSourceCallsInteractorImpl(context = mockContext),
+//            callLogInteractor
+//        )
         idle(Numbers.OREL)
         db.clearAllTables()
     }

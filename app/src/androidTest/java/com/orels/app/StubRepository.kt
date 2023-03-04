@@ -1,15 +1,9 @@
 package com.orels.app
 
-import com.orels.app.data.remote.dto.body.create.*
-import com.orels.app.data.remote.dto.response.*
-import com.orels.app.domain.model.entities.Folder
-import com.orels.app.domain.model.entities.Message
-import com.orels.app.domain.repository.Repository
-import com.orels.domain.model.dto.body.create.CreateFolderBody
-import com.orels.domain.model.dto.body.create.CreateMessageBody
-import com.orels.domain.model.dto.response.GetFoldersResponse
-import com.orels.domain.model.dto.response.GetMessagesResponse
+import com.orels.domain.model.dto.body.create.*
+import com.orels.domain.model.dto.response.*
 import com.orels.domain.model.entities.Folder
+import com.orels.domain.model.entities.Message
 import com.orels.domain.repository.Repository
 import java.util.*
 
@@ -22,6 +16,10 @@ class StubRepository : Repository {
 
 
     override suspend fun createFolder(createFolderBody: CreateFolderBody): String? = null
+    override suspend fun deleteFolder(id: String) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getFolders(): List<GetFoldersResponse> = emptyList()
 
     override suspend fun deleteMessage(message: Message, folderId: String) = Unit
@@ -30,8 +28,6 @@ class StubRepository : Repository {
         oldFolderId: String?,
         newFolderId: String?
     ) = Unit
-
-    override suspend fun deleteFolder(folder: Folder) = Unit
 
     override suspend fun createPhoneCall(createPhoneCallBody: CreatePhoneCallBody): String? =
         null

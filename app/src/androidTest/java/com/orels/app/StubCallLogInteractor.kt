@@ -1,12 +1,12 @@
-package com.orels
+package com.orels.app
 
-import com.orels.app.domain.interactors.CallLogInteractor
-import com.orels.app.domain.model.entities.CallLogEntity
-import com.orels.app.domain.model.entities.PhoneCall
+import com.orels.domain.interactors.CallDetailsInteractor
+import com.orels.domain.model.entities.CallLogEntity
+import com.orels.domain.model.entities.PhoneCall
 import kotlinx.coroutines.delay
 import java.util.*
 
-class StubCallLogInteractor : CallLogInteractor {
+class StubCallLogInteractor : CallDetailsInteractor {
 
     private val callLog: ArrayList<CallLogEntity> = ArrayList()
 
@@ -28,6 +28,13 @@ class StubCallLogInteractor : CallLogInteractor {
         return callLog.last()
     }
 
+    override fun getLastCallLog(): CallLogEntity? {
+        TODO("Not yet implemented")
+    }
+
     override fun update(phoneCall: PhoneCall): PhoneCall? = null
+    override fun getContactName(number: String): String {
+        TODO("Not yet implemented")
+    }
 
 }
