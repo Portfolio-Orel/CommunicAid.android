@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ShimmeringComponent(
+fun SkeletonComponent(
     modifier: Modifier = Modifier,
     width: Dp = 100.dp,
     height: Dp = 20.dp,

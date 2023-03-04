@@ -27,8 +27,11 @@ interface AuthService {
     suspend fun login(username: String, password: String): AuthSignInResult
 
     /**
-     * Should be called to logout a user.
+     * Confirms user first sign in with temporary password.
+     * @param newPassword The new password of the user.
      */
+    suspend fun confirmSignInWithNewPassword(newPassword: String): AuthSignInResult
+
     suspend fun logout()
 
     /**

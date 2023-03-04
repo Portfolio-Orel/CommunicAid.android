@@ -43,6 +43,12 @@ interface AuthInteractor {
     suspend fun login(username: String, password: String): SignInStep
 
     /**
+     * Called after first login with temporary password to change the password.
+     * @param newPassword The new password.
+     */
+    suspend fun confirmSignInWithNewPassword(newPassword: String): SignInStep
+
+    /**
      * Should be called to logout a user.
      */
     suspend fun logout()
@@ -85,7 +91,6 @@ interface AuthInteractor {
 
     /**
      * Should be called after forgotPassword to restore the user's password with a code in the email.
-     * @param username The username of the user.
      * @param code The code sent to the user's email.
      * @param newPassword The new password.
      */

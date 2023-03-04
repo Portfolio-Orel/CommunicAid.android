@@ -75,6 +75,23 @@ class AuthInteractorImpl @Inject constructor(
         }
     }
 
+    override suspend fun confirmSignInWithNewPassword(newPassword: String): SignInStep {
+        val confirmationResult = service.confirmSignInWithNewPassword(newPassword)
+        return when (confirmationResult.nextStep.signInStep) {
+            AuthSignInStep.DONE -> {
+                val user = service.getUser()
+                if (user != null) {
+                    db.upsert(user)
+                    _userStateFlow.value = UserState.LoggedIn
+                    SignInStep.Done(user = user)
+                } else {
+                    SignInStep.Error(AuthException("Unknown exception", "Try to login again"))
+                }
+            }
+            else -> SignInStep.Error(AuthException("Unknown exception", "Try to login again"))
+        }
+    }
+
     override suspend fun logout() {
         try {
             service.logout()
@@ -113,14 +130,15 @@ class AuthInteractorImpl @Inject constructor(
                 else -> throw e
             }
         }
-
     }
 
     override suspend fun confirmUser(username: String, password: String, code: String): SignUpStep {
         try {
-            val registrationResult = service.confirmUserRegistration(username = username,
+            val registrationResult = service.confirmUserRegistration(
+                username = username,
                 password = password,
-                code = code)
+                code = code
+            )
             return when (registrationResult.nextStep.signUpStep) {
                 AuthSignUpStep.CONFIRM_SIGN_UP_STEP -> SignUpStep.ConfirmSignUpWithNewPassword
                 AuthSignUpStep.DONE -> SignUpStep.Done(user = service.getUser())

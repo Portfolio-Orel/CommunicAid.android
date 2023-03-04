@@ -1,9 +1,12 @@
 package com.orels.auth.data.remote
 
 import android.content.Context
+import com.amplifyframework.auth.AuthUser
 import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
+import com.amplifyframework.auth.cognito.options.AWSCognitoAuthSignInOptions
+import com.amplifyframework.auth.options.AuthSignInOptions
 import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.auth.result.AuthSignInResult
 import com.amplifyframework.auth.result.AuthSignUpResult
@@ -37,6 +40,12 @@ class AuthServiceImpl @Inject constructor(
 
     override suspend fun login(username: String, password: String): AuthSignInResult =
         Amplify.Auth.signIn(username, password)
+
+    override suspend fun confirmSignInWithNewPassword(
+        newPassword: String
+    ): AuthSignInResult =
+        Amplify.Auth.confirmSignIn(newPassword)
+
 
     override suspend fun logout() {
         try {

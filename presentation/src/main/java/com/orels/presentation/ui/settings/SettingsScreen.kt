@@ -20,7 +20,7 @@ import com.orels.domain.model.entities.SettingsType
 import com.orels.domain.util.permission.PermissionState
 import com.orels.presentation.R
 import com.orels.presentation.ui.components.OnLifecycleEvent
-import com.orels.presentation.ui.components.ShimmeringComponent
+import com.orels.presentation.ui.components.SkeletonComponent
 import com.orels.presentation.ui.settings.components.DataSettings
 import com.orels.presentation.ui.settings.components.ToggleSettings
 import com.orels.presentation.ui.settings.components.send_sms_settings.SendSMSSettings
@@ -55,7 +55,7 @@ fun SettingsScreen(
         ) {
             if (state.isLoadingSettings) {
                 repeat(4) {
-                    ShimmeringComponent(
+                    SkeletonComponent(
                         modifier = Modifier
                             .padding(vertical = 8.dp, horizontal = 8.dp)
                             .border(

@@ -2,10 +2,7 @@ package com.orels.presentation.ui.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -19,13 +16,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.orels.auth.domain.model.SignInStep
 import com.orels.domain.util.Screen
 import com.orels.presentation.R
 import com.orels.presentation.theme.fontsVarelaround
 import com.orels.presentation.theme.noRippleClickable
+import com.orels.presentation.ui.components.confirmation_pop_up.ConfirmationScreen
 import com.orels.presentation.ui.login.components.AuthenticationInput
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     navController: NavController,
@@ -60,7 +59,7 @@ fun LoginScreen(
             imeAction = ImeAction.Next,
             onImeAction = { passwordFocusRequester.requestFocus() },
             isError = state.usernameField.isError,
-            )
+        )
         AuthenticationInput(
             modifier = Modifier
                 .fillMaxWidth()
@@ -98,26 +97,26 @@ fun LoginScreen(
         }
 
         Spacer(modifier = Modifier.weight(1f))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.dont_have_an_account),
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Light,
-            )
-            Text(
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .noRippleClickable { },
-                text = stringResource(R.string.sign_up),
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Bold,
-            )
-        }
+/* Registration is disabled for now */
+//        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            horizontalArrangement = Arrangement.Center,
+//            verticalAlignment = Alignment.CenterVertically
+//        ) {
+//            Text(
+//                text = stringResource(R.string.dont_have_an_account),
+//                style = MaterialTheme.typography.bodySmall,
+//                fontWeight = FontWeight.Light,
+//            )
+//            Text(
+//                modifier = Modifier
+//                    .padding(horizontal = 8.dp)
+//                    .noRippleClickable { },
+//                text = stringResource(R.string.sign_up),
+//                style = MaterialTheme.typography.bodySmall,
+//                fontWeight = FontWeight.Bold,
+//            )
+//        }
         Button(
             modifier = Modifier
                 .fillMaxWidth()

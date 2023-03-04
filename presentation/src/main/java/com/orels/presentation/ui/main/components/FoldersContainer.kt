@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.orels.domain.model.entities.Folder
 import com.orels.presentation.R
-import com.orels.presentation.ui.components.ShimmeringComponent
+import com.orels.presentation.ui.components.SkeletonComponent
 import com.orels.presentation.ui.components.dropdown.Dropdown
 import com.orels.presentation.ui.components.dropdown.DropdownDecoratorStyle
 
@@ -43,7 +43,7 @@ fun FoldersContainer(
     isLoading: Boolean = false
 ) {
     if(isLoading){
-        ShimmeringComponent(
+        SkeletonComponent(
             modifier = Modifier
                 .border(
                     shape = MaterialTheme.shapes.medium,

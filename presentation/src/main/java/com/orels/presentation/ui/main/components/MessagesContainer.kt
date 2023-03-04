@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.orels.domain.model.entities.Message
 import com.orels.presentation.R
-import com.orels.presentation.ui.components.ShimmeringComponent
+import com.orels.presentation.ui.components.SkeletonComponent
 
 /**
  * @author Orel Zilberman
@@ -74,7 +74,7 @@ fun MessagesContainer(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    ShimmeringComponent(
+                    SkeletonComponent(
                         modifier = Modifier
                             .border(
                                 shape = MaterialTheme.shapes.medium,
@@ -86,7 +86,7 @@ fun MessagesContainer(
                         height = messageHeight * 0.7f,
                         width = messageWidth
                     )
-                    ShimmeringComponent(
+                    SkeletonComponent(
                         modifier = Modifier
                             .border(
                                 shape = MaterialTheme.shapes.medium,

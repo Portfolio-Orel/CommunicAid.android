@@ -7,9 +7,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.auth.domain.model.SignInStep
 import com.orels.auth.domain.model.exception.UserNotConfirmedException
 import com.orels.auth.domain.model.exception.UserNotFoundException
 import com.orels.auth.domain.model.exception.WrongCredentialsException
+import com.orels.domain.util.common.Logger
 import com.orels.domain.util.extension.log
 import com.orels.presentation.R
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,6 +28,7 @@ class LoginViewModel @Inject constructor(private val authInteractor: AuthInterac
 
     fun login() {
         @StringRes var error: Int? = null
+        var nextSignInStep: SignInStep? = null
         val isPasswordValid = authInteractor.isPasswordValid(state.password)
         val isUsernameValid = state.username.isNotBlank()
 
@@ -45,7 +48,23 @@ class LoginViewModel @Inject constructor(private val authInteractor: AuthInterac
         }
         viewModelScope.launch {
             try {
-                loginJob.await()
+                when (val nextStep = loginJob.await()) {
+                    is SignInStep.Error -> {
+                        Logger.e("Error in login: ${nextStep.error}")
+                        error = R.string.error_unknown
+                        nextSignInStep = nextStep
+                    }
+                    is SignInStep.Done -> {
+                        error = null
+                        nextSignInStep = null
+                    }
+                    else -> {
+                        nextSignInStep = nextStep
+                        if (nextSignInStep is SignInStep.ConfirmSignInWithNewPassword) {
+                            confirmSignInWithNewPassword(state.password, state.password)
+                        }
+                    }
+                }
                 withContext(Dispatchers.Main) {
                     state = state.copy(isLoading = false)
                 }
@@ -60,10 +79,47 @@ class LoginViewModel @Inject constructor(private val authInteractor: AuthInterac
                 e.log()
             } finally {
                 withContext(Dispatchers.Main) {
+                    state = state.copy(isLoading = false, error = error, nextStep = nextSignInStep)
+                }
+            }
+        }
+    }
+
+    fun confirmSignInWithNewPassword(
+        password: String,
+        confirmPassword: String
+    ) {
+        @StringRes var error: Int? = null
+        val isPasswordValid = authInteractor.isPasswordValid(password)
+        val isConfirmPasswordValid = authInteractor.isPasswordValid(confirmPassword)
+        val isPasswordMatching = password == confirmPassword
+
+        if (!isPasswordValid || !isConfirmPasswordValid || !isPasswordMatching) {
+            // TODO: Add error messages
+        }
+
+        state = state.copy(isLoading = true)
+
+        val confirmJob = viewModelScope.async {
+            authInteractor.confirmSignInWithNewPassword(password)
+        }
+        viewModelScope.launch {
+            try {
+                confirmJob.await()
+                error = null
+            } catch (e: Exception) {
+                error = R.string.error_unknown
+                e.log()
+            } finally {
+                withContext(Dispatchers.Main) {
                     state = state.copy(isLoading = false, error = error)
                 }
             }
         }
+    }
+
+    fun onDismissConfirmationScreen() {
+        state = state.copy(nextStep = null)
     }
 
     fun onUsernameChange(username: String) {
