@@ -106,6 +106,13 @@ interface AuthInteractor {
 
     fun getUser(): User?
 
+    /**
+     * Updates user in db and in remote.
+     * ONLY updates fields that are not null.
+     * @param user The user to update.
+     */
+    suspend fun updateUser(user: User)
+
     suspend fun isLoggedIn(): Boolean
 
     /**
@@ -118,6 +125,7 @@ interface AuthInteractor {
     fun isPasswordValid(password: String): Boolean
 }
 
+@Suppress("unused")
 enum class UserState {
     Loading,
     LoggedIn,

@@ -51,7 +51,7 @@ class AuthInteractorImpl @Inject constructor(
                 AuthSignInStep.DONE -> {
                     val user = service.getUser()
                     if (user != null) {
-                        db.upsert(user)
+                        db.deleteAndInsert(user)
                         _userStateFlow.value = UserState.LoggedIn
                         SignInStep.Done(user = user)
                     } else {
@@ -206,6 +206,9 @@ class AuthInteractorImpl @Inject constructor(
     }
 
     override fun getUser(): User? = db.get()
+    override suspend fun updateUser(user: User) {
+        db.updateFieldsNotNull(user)
+    }
 
     override suspend fun isLoggedIn(): Boolean = service.isLoggedIn()
 

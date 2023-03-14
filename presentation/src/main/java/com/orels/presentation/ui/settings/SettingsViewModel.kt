@@ -67,7 +67,8 @@ class SettingsViewModel @Inject constructor(
     private fun initData() {
         state = state.copy(isLoadingSettings = true)
         val settingsList = settingsInteractor.getAll()
-        state = state.copy(isLoadingSettings = settingsList.isEmpty())
+        val user = authInteractor.getUser()
+        state = state.copy(isLoadingSettings = settingsList.isEmpty(), user = user)
         setSettings(settingsList)
 
         val fetchSettingsJob = viewModelScope.async { settingsInteractor.init() }

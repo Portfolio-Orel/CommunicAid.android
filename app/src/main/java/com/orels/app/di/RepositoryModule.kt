@@ -75,6 +75,9 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideSettingsInteractor(interactorImpl: SettingsInteractorImpl): SettingsInteractor
+    
+    @Binds
+    abstract fun provideUserInteractor(interactorImpl: UserInteractorImpl): UserInteractor
 
     @Binds
     abstract fun provideUnhandledCallsManager(manager: UnhandledCallsManagerImpl): UnhandledCallsManager

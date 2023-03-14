@@ -1,9 +1,12 @@
 package com.orels.presentation.ui.settings
 
+import com.orels.auth.domain.model.User
 import com.orels.domain.model.entities.Settings
 import com.orels.domain.model.entities.SettingsKey
 
 data class SettingsState(
+    val user: User? = null,
+
     val settingsList: List<Settings> = emptyList(),
     val updatedSettings: List<Settings> = emptyList(),
 

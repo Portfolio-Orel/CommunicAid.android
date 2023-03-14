@@ -38,6 +38,23 @@ interface UserDao {
         }
     }
 
+    suspend fun updateFieldsNotNull(user: User) {
+        val oldUser = get() ?: return
+        val newUser = oldUser.copy(
+            token = if(user.token.isNullOrEmpty()) oldUser.token else user.token,
+            username = user.username ?: oldUser.username,
+            email = user.email ?: oldUser.email,
+            firstName = user.firstName ?: oldUser.firstName,
+            lastName = user.lastName ?: oldUser.lastName,
+        )
+        update(newUser)
+    }
+
+    suspend fun deleteAndInsert(user: User) {
+        clear()
+        insert(user)
+    }
+
     @Query(
         """
         DELETE 

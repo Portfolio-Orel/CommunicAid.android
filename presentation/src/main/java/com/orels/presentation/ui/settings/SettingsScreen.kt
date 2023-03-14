@@ -43,7 +43,7 @@ fun SettingsScreen(
         verticalArrangement = Arrangement.Top
     ) {
         Text(
-            text = stringResource(id = R.string.settings),
+            text = String.format(stringResource(id = R.string.hello_name), state.user?.firstName),
             modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 24.dp),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground

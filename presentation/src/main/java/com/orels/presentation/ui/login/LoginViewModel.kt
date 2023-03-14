@@ -11,6 +11,7 @@ import com.orels.auth.domain.model.SignInStep
 import com.orels.auth.domain.model.exception.UserNotConfirmedException
 import com.orels.auth.domain.model.exception.UserNotFoundException
 import com.orels.auth.domain.model.exception.WrongCredentialsException
+import com.orels.domain.interactors.UserInteractor
 import com.orels.domain.util.common.Logger
 import com.orels.domain.util.extension.log
 import com.orels.presentation.R
@@ -22,7 +23,10 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val authInteractor: AuthInteractor) : ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val authInteractor: AuthInteractor,
+    private val userInteractor: UserInteractor,
+    ) : ViewModel() {
     var state by mutableStateOf(LoginState())
         private set
 
@@ -57,6 +61,7 @@ class LoginViewModel @Inject constructor(private val authInteractor: AuthInterac
                     is SignInStep.Done -> {
                         error = null
                         nextSignInStep = null
+                        userInteractor.setUser()
                     }
                     else -> {
                         nextSignInStep = nextStep
