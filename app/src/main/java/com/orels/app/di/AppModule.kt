@@ -102,7 +102,7 @@ object AppModule {
     fun provideAuthConfigFile(
         environmentRepository: EnvironmentRepository
     ): ConfigFile = when (environmentRepository.currentEnvironment) {
-        Environments.Dev, Environments.LocalEmulator -> ConfigFile(fileResId = R.raw.dev_amplifyconfiguration)
+        Environments.Dev, Environments.LocalEmulator -> ConfigFile(fileResId = R.raw.prod_amplifyconfiguration)
         Environments.Prod -> ConfigFile(fileResId = R.raw.prod_amplifyconfiguration)
     }
 

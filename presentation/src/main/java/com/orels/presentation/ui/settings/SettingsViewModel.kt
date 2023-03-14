@@ -42,9 +42,13 @@ class SettingsViewModel @Inject constructor(
     fun logout() {
         state = state.copy(isLoadingSignOut = true)
         viewModelScope.launchCatching(Dispatchers.Main) {
-            authInteractor.logout()
-            withContext(Dispatchers.Main) {
-                state = state.copy(isLoadingSignOut = false)
+            try {
+                authInteractor.logout()
+                withContext(Dispatchers.Main) {
+                    state = state.copy(isLoadingSignOut = false)
+                }
+            } catch (e: Exception) {
+                e.log()
             }
         }
     }

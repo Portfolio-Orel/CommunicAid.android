@@ -25,7 +25,7 @@ import javax.inject.Inject
  */
 class AuthInteractorImpl @Inject constructor(
     private val service: AuthService,
-    localDatabase: AuthDatabase,
+    localDatabase: AuthDatabase
 ) : AuthInteractor {
 
     val db = localDatabase.userDao()
@@ -93,13 +93,9 @@ class AuthInteractorImpl @Inject constructor(
     }
 
     override suspend fun logout() {
-        try {
             service.logout()
             db.insert(User.LOGGED_OUT_USER)
             _userStateFlow.value = UserState.LoggedOut
-        } catch (e: Exception) {
-            println()
-        }
     }
 
     override suspend fun register(
