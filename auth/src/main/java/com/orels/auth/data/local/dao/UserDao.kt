@@ -30,14 +30,6 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(user: User)
 
-    suspend fun upsert(user: User) {
-        if (get() == null) {
-            insert(user)
-        } else {
-            update(user)
-        }
-    }
-
     suspend fun updateFieldsNotNull(user: User) {
         val oldUser = get() ?: return
         val newUser = oldUser.copy(

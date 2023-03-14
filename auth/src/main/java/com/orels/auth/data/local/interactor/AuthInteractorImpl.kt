@@ -40,7 +40,7 @@ class AuthInteractorImpl @Inject constructor(
         }
         val userFromService = service.getUser() ?: User.LOGGED_OUT_USER
         if (userFromService != user) {
-            db.upsert(userFromService)
+            db.updateFieldsNotNull(userFromService)
         }
     }
 
@@ -81,7 +81,7 @@ class AuthInteractorImpl @Inject constructor(
             AuthSignInStep.DONE -> {
                 val user = service.getUser()
                 if (user != null) {
-                    db.upsert(user)
+                    db.insert(user)
                     _userStateFlow.value = UserState.LoggedIn
                     SignInStep.Done(user = user)
                 } else {
