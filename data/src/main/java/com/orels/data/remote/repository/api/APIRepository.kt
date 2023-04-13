@@ -1,6 +1,7 @@
 package com.orels.data.remote.repository.api
 
 import com.orels.domain.model.dto.body.create.*
+import com.orels.domain.model.dto.body.delete.DeleteFolderBody
 import com.orels.domain.model.dto.body.update.UpdateFolderBody
 import com.orels.domain.model.dto.body.update.UpdateMessageBody
 import com.orels.domain.model.dto.response.*
@@ -36,7 +37,7 @@ class APIRepository @Inject constructor(
         )
 
     override suspend fun deleteMessagesFromFolder(folderId: String) {
-        api.deleteMessagesInFolder(folderId = folderId)
+        api.deleteMessagesInFolder(DeleteFolderBody(folderId = folderId))
     }
 
     override suspend fun getMessages(): List<GetMessagesResponse> {

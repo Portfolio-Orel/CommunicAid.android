@@ -1,6 +1,7 @@
 package com.orels.presentation.ui.main.components
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -42,7 +44,7 @@ fun FoldersContainer(
     modifier: Modifier = Modifier,
     isLoading: Boolean = false
 ) {
-    if(isLoading){
+    if (isLoading) {
         SkeletonComponent(
             modifier = Modifier
                 .border(
@@ -81,6 +83,13 @@ fun FoldersContainer(
                 dropdownDecoratorStyle = DropdownDecoratorStyle.Text
             )
             Spacer(modifier = Modifier.weight(0.5f))
+            Icon(
+                Icons.Filled.Edit,
+                stringResource(R.string.edit_folder),
+                modifier = Modifier.size(30.dp)
+                    .clickable { selected?.let { onEditClick(it) } },
+                tint = MaterialTheme.colorScheme.onBackground
+            )
         }
     }
 }

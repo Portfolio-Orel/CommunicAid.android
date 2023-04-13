@@ -22,4 +22,5 @@
     <string name="sign_up">הירשם</string>
     <string name="insert_code_and_create_password">הכנס את הקוד שנשלח לך למייל וצור סיסמא חדשה</string>
     <string name="error_invalid_passwords">יש בעיה באחת הסיסמאות</string>
+    <string name="edit_folder">ערוך תיקייה</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.orels.data.remote.repository.api
 
 import com.orels.domain.model.dto.body.create.*
+import com.orels.domain.model.dto.body.delete.DeleteFolderBody
 import com.orels.domain.model.dto.body.update.UpdateFolderBody
 import com.orels.domain.model.dto.body.update.UpdateMessageBody
 import com.orels.domain.model.dto.response.*
@@ -69,8 +70,8 @@ interface API {
     @GET("/settings")
     suspend fun getAllSettings(): Response<List<SettingsResponse>>
 
-    @DELETE("/messagesInFolders/{folder_id}")
-    suspend fun deleteMessagesInFolder(@Path("folder_id") folderId: String)
+    @DELETE("/messagesInFolders")
+    suspend fun deleteMessagesInFolder(@Body deleteFolderBody: DeleteFolderBody)
 
 
     // Statistics
