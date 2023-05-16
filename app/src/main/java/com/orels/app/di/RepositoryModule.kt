@@ -1,8 +1,8 @@
 package com.orels.app.di
 
-import com.orels.auth.data.local.interactor.AuthInteractorImpl
+import com.orels.auth.data.local.interactor.AuthImpl
 import com.orels.auth.data.remote.AuthServiceImpl
-import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.auth.domain.interactor.Auth
 import com.orels.auth.domain.service.AuthService
 import com.orels.data.interactor.*
 import com.orels.data.managers.phonecall.interactor.PhoneCallManagerImpl
@@ -36,12 +36,12 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindAuthInteractor(
-        authInteractorImpl: AuthInteractorImpl
-    ): AuthInteractor
+        authImpl: AuthImpl
+    ): Auth
 
     @Binds
     abstract fun provideConnectivityObserver(connectivityObserver: ConnectivityObserverObserverImpl): ConnectivityObserver
-    
+
     @Binds
     abstract fun provideRepository(repository: APIRepository): Repository
 
@@ -75,7 +75,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideSettingsInteractor(interactorImpl: SettingsInteractorImpl): SettingsInteractor
-    
+
     @Binds
     abstract fun provideUserInteractor(interactorImpl: UserInteractorImpl): UserInteractor
 
@@ -113,4 +113,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun provideAuthService(authService: AuthServiceImpl): AuthService
+
+    @Binds
+    @Singleton
+    abstract fun provideAuthInteractor(interactorImpl: AuthInteractorImpl): AuthInteractor
 }

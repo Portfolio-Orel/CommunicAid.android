@@ -1,19 +1,19 @@
 package com.orels.auth.data.remote
 
 import android.content.Context
-import com.amplifyframework.auth.AuthUser
+import android.telephony.PhoneNumberUtils
+import com.amplifyframework.auth.AuthUserAttribute
 import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
-import com.amplifyframework.auth.cognito.options.AWSCognitoAuthSignInOptions
-import com.amplifyframework.auth.options.AuthSignInOptions
 import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.auth.result.AuthSignInResult
 import com.amplifyframework.auth.result.AuthSignUpResult
 import com.amplifyframework.core.AmplifyConfiguration
 import com.amplifyframework.kotlin.core.Amplify
-import com.orels.auth.domain.model.User
+import com.orels.auth.domain.User
 import com.orels.auth.domain.service.AuthService
+import com.orels.auth.domain.util.PasswordGenerator
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -66,6 +66,33 @@ class AuthServiceImpl @Inject constructor(
             .build()
     )
 
+    override suspend fun registerWithPhone(phoneNumber: String, email: String): AuthSignUpResult {
+        val formattedPhoneNumber = PhoneNumberUtils.formatNumberToE164(phoneNumber, "IL")
+        val signUpOptions = AuthSignUpOptions.builder()
+            .userAttributes(
+                mutableListOf(
+                    AuthUserAttribute(AuthUserAttributeKey.email(), email),
+                    AuthUserAttribute(AuthUserAttributeKey.phoneNumber(), formattedPhoneNumber)
+                )
+            )
+            .build()
+        val step =  Amplify.Auth.signUp(
+            username = formattedPhoneNumber.formatToPhoneNumberUsername(),
+            password = PasswordGenerator.generateStrongPassword(),
+            options = signUpOptions
+        )
+        Amplify.Auth.resendSignUpCode(formattedPhoneNumber.formatToPhoneNumberUsername())
+        return step
+    }
+
+    override suspend fun confirmSignUpWithPhone(
+        phoneNumber: String,
+        code: String
+    ): AuthSignUpResult {
+        val formattedPhoneNumber = PhoneNumberUtils.formatNumberToE164(phoneNumber, "IL")
+        return Amplify.Auth.confirmSignUp(formattedPhoneNumber, code)
+    }
+
     override suspend fun confirmUserRegistration(
         username: String,
         password: String,
@@ -115,8 +142,15 @@ class AuthServiceImpl @Inject constructor(
         )
     }
 
-    override suspend fun resendConfirmationCode(username: String): AuthSignUpResult =
-        Amplify.Auth.resendSignUpCode(username)
+    override suspend fun resendConfirmationCode(phoneNumber: String): AuthSignUpResult =
+        Amplify.Auth.resendSignUpCode(phoneNumber.formatToPhoneNumberUsername())
 
     override suspend fun isLoggedIn(): Boolean = Amplify.Auth.getCurrentUser() != null
+
+    private fun String.formatToPhoneNumberUsername() = "mu_${
+        PhoneNumberUtils.formatNumberToE164(
+            this,
+            "IL"
+        )
+    }" // MyMessagesUser
 }

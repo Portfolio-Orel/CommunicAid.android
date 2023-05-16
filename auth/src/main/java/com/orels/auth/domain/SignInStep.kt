@@ -1,4 +1,4 @@
-package com.orels.auth.domain.model
+package com.orels.auth.domain
 
 abstract class SignInStep {
     object ConfirmSignUp : SignInStep()

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -16,6 +17,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -32,19 +34,23 @@ fun Input(
     initialText: String = "",
     minLines: Int = 1,
     maxLines: Int = 1,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    imeAction: ImeAction = ImeAction.Next,
+    keyboardActions: KeyboardActions = KeyboardActions(),
     isError: Boolean = false,
     isPassword: Boolean = false,
     shouldFocus: Boolean = false,
     leadingIcon: @Composable (() -> Unit) = { },
     trailingIcon: @Composable (() -> Unit) = { },
-    onTextChange: (String) -> Unit = {}
+    onTextChange: (String) -> String = { it },
+    enabled: Boolean = true,
+    focusRequester: FocusRequester = FocusRequester(),
 ) {
     val value = remember { mutableStateOf(initialText) }
     val passwordVisible = rememberSaveable { mutableStateOf(false) }
     val lineHeight = 40
-    val focusRequester = FocusRequester()
 
-    var inputModifier = if(shouldFocus) Modifier.focusRequester(focusRequester) else Modifier
+    var inputModifier = if (shouldFocus) Modifier.focusRequester(focusRequester) else Modifier
 
     inputModifier =
         if (maxLines == 1) inputModifier else inputModifier.height((lineHeight * minLines).dp)
@@ -70,8 +76,11 @@ fun Input(
                 singleLine = maxLines == 1,
                 visualTransformation = if (isPassword && !passwordVisible.value) PasswordVisualTransformation() else VisualTransformation.None,
                 keyboardOptions = if (isPassword) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions(
-                    keyboardType = KeyboardType.Text
+                    keyboardType = keyboardType,
+                    imeAction = imeAction
                 ),
+                keyboardActions = keyboardActions,
+                enabled = enabled,
                 trailingIcon = {
                     if (isPassword) {
                         PasswordIcon(

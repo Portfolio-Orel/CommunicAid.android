@@ -1,15 +1,15 @@
 package com.orels.data.interceptor
 
-import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.auth.domain.interactor.Auth
 import okhttp3.Interceptor
 import okhttp3.Response
 
 class AuthInterceptor(
-    private val authInteractor: AuthInteractor,
+    private val auth: Auth,
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response =
-        with(authInteractor.getUser()) {
+        with(auth.getUser()) {
             chain.request()
                 .newBuilder()
                 .addHeader("Authorization", this?.token ?: "")

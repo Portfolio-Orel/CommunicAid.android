@@ -1,9 +1,9 @@
 package com.orels.presentation.ui.login
 
 import androidx.annotation.StringRes
-import com.orels.auth.domain.model.ResetPasswordStep
-import com.orels.auth.domain.model.SignInStep
-import com.orels.auth.domain.model.SignUpStep
+import com.orels.domain.model.ResetPasswordStep
+import com.orels.domain.model.SignInStep
+import com.orels.domain.model.SignUpStep
 
 data class LoginState(
     val signInStep: SignInStep? = null,
@@ -12,6 +12,7 @@ data class LoginState(
 
     val usernameField: Fields = Fields.Username(),
     val passwordField: Fields = Fields.Password(),
+    val confirmPasswordField: Fields = Fields.ConfirmPassword(),
 
     val username: String = "",
     val password: String = "",
@@ -25,4 +26,5 @@ data class LoginState(
 sealed class Fields(val isError: Boolean) {
     class Username(isError: Boolean = false) : Fields(isError = isError)
     class Password(isError: Boolean = false) : Fields(isError = isError)
+    class ConfirmPassword(isError: Boolean = false) : Fields(isError = isError)
 }

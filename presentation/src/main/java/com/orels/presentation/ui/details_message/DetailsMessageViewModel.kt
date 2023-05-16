@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orels.auth.domain.interactor.AuthInteractor
 import com.orels.domain.interactors.FolderInteractor
 import com.orels.domain.interactors.MessageInFolderInteractor
 import com.orels.domain.interactors.MessageInteractor

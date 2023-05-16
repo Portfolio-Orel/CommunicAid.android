@@ -5,6 +5,7 @@ package com.orels.domain.util.extension
 import android.content.Context
 import com.orels.domain.R
 import com.orels.domain.util.common.DateUtils
+import java.text.SimpleDateFormat
 import java.util.*
 
 fun Date.compareToBallPark(date: Date): Boolean = time.epochTimeInSeconds > date.time.epochTimeInSeconds - 10
@@ -101,6 +102,9 @@ fun Date.getDayFormatted(context: Context? = null, withYear: Boolean = true): St
     }
     return dateString
 }
+
+val Date.registerString: String
+    get() = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(this)
 
 fun Calendar.toDate(): Date = Date(timeInMillis)
 

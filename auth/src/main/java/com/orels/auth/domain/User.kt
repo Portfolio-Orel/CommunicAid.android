@@ -1,7 +1,8 @@
-package com.orels.auth.domain.model
+package com.orels.auth.domain
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.orels.auth.domain.interactor.UserState
 
 /**
  * @author Orel Zilberman
@@ -15,6 +16,9 @@ data class User(
     var email: String? = null,
     var firstName: String? = null,
     var lastName: String? = null,
+    var phoneNumber: String? = null,
+    var gender: String? = null,
+    var state: UserState = UserState.LoggedOut
 ) {
 
     override fun equals(other: Any?): Boolean = other is User && (userId == other.userId
@@ -36,6 +40,6 @@ data class User(
 
 
     companion object {
-        val LOGGED_OUT_USER = User()
+        val LOGGED_OUT_USER = User(state = UserState.LoggedOut)
     }
 }

@@ -1,5 +1,6 @@
 package com.orels.domain.util.extension
 
+import java.text.SimpleDateFormat
 import java.util.*
 
 val Long.epochTimeInSeconds: Long
@@ -24,3 +25,6 @@ fun Long.toDate(): Date =
     } else {
         Date(this * 1000)
     }
+
+fun Long.toRegisterDate(): String =
+    SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(this))

@@ -3,6 +3,17 @@ package com.orels.domain.model.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+enum class Gender {
+    Male,
+    Female,
+    None;
+
+    companion object {
+        fun fromString(value: String?): Gender =
+            values().firstOrNull() { it.name.lowercase() == value?.lowercase() } ?: Male
+    }
+}
+
 @Entity
 data class User(
     @PrimaryKey var userId: String = "",
@@ -12,6 +23,7 @@ data class User(
     val firstName: String = "",
     val lastName: String = "",
     val phoneNumber: String = "",
+    val gender: Gender = Gender.None,
     var state: UserState = UserState.NotAuthorized
 ) {
 
@@ -40,6 +52,7 @@ data class User(
 enum class UserState {
     NotAuthorized,
     Authorized,
+    Loading,
     Blocked;
 }
 

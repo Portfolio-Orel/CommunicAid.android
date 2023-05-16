@@ -5,9 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orels.auth.domain.interactor.AuthInteractor
 import com.orels.domain.interactors.AnalyticsIdentifiers
 import com.orels.domain.interactors.AnalyticsInteractor
+import com.orels.domain.interactors.AuthInteractor
 import com.orels.domain.interactors.SettingsInteractor
 import com.orels.domain.model.entities.Settings
 import com.orels.domain.model.entities.SettingsType

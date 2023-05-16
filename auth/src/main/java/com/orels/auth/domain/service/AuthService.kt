@@ -4,7 +4,8 @@ import androidx.annotation.RawRes
 import com.amplifyframework.auth.result.AuthResetPasswordResult
 import com.amplifyframework.auth.result.AuthSignInResult
 import com.amplifyframework.auth.result.AuthSignUpResult
-import com.orels.auth.domain.model.User
+import com.orels.auth.domain.User
+import com.orels.auth.domain.exception.*
 
 /**
  * @author Orel Zilberman
@@ -46,6 +47,25 @@ interface AuthService {
     suspend fun register(email: String, username: String, password: String, firstName: String, lastName: String): AuthSignUpResult
 
     /**
+     * Should be called to register a user with a phone number.
+     * @param phoneNumber The phone number of the user.
+     * @param email The email of the user.
+     * @throws [UsernameExistsException] if the username already exists.
+     * @throws [CodeDeliveryFailureException] if the code delivery failed.
+     */
+    suspend fun registerWithPhone(phoneNumber: String, email: String): AuthSignUpResult
+
+    /**
+     * Called after a user was registered to confirm the phone number.
+     * @param phoneNumber The phone number of the user.
+     * @param code The code sent to the user's phone.
+     * @throws [CodeMismatchException] if the code is wrong.
+     * @throws [CodeExpiredException] if the code is expired.
+     * @throws [NotAuthorizedException] if the user is not authorized.
+     */
+    suspend fun confirmSignUpWithPhone(phoneNumber: String, code: String): AuthSignUpResult
+
+    /**
      * Called after a user was registered to confirm the email.
      * @param username The username of the user.
      * @param password The password of the user.
@@ -62,7 +82,6 @@ interface AuthService {
 
     /**
      * Should be called after forgotPassword to restore the user's password with a code in the email.
-     * @param username The username of the user.
      * @param code The code sent to the user's email.
      * @param newPassword The new password.
      */
@@ -77,10 +96,10 @@ interface AuthService {
     suspend fun getUser(): User?
 
     /**
-     * Resends a confirmation code to the [username]'s email.
-     * @param username The username of the user.
+     * Resends a confirmation code to the user's phone number.
+     * @param phoneNumber The phone number of the user.
      */
-    suspend fun resendConfirmationCode(username: String): AuthSignUpResult
+    suspend fun resendConfirmationCode(phoneNumber: String): AuthSignUpResult
 
     /**
      * Checks if the user the user is logged in.

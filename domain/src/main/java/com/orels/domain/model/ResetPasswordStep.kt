@@ -1,4 +1,6 @@
-package com.orels.auth.domain.model
+package com.orels.domain.model
+
+import com.orels.domain.model.entities.User
 
 /**
  * @author Orel Zilberman

@@ -99,7 +99,7 @@ dependencies {
     // FlowRow
     implementation "com.google.accompanist:accompanist-flowlayout:0.24.8-beta"
 
-    // Composeable foundation
+    // Composable foundation
     implementation "androidx.compose.foundation:foundation:1.3.0-alpha01"
 
     // Retrofit

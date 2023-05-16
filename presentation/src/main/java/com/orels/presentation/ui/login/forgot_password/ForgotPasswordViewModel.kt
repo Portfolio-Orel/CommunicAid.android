@@ -6,12 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orels.auth.domain.interactor.AuthInteractor
-import com.orels.auth.domain.model.ResetPasswordStep
-import com.orels.auth.domain.model.exception.CodeMismatchException
-import com.orels.auth.domain.model.exception.LimitExceededException
-import com.orels.auth.domain.model.exception.NotAuthorizedException
-import com.orels.auth.domain.model.exception.UserNotFoundException
+import com.orels.domain.interactors.AuthInteractor
+import com.orels.domain.model.ResetPasswordStep
+import com.orels.domain.model.exception.*
 import com.orels.domain.util.extension.log
 import com.orels.presentation.R
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -84,7 +81,7 @@ class ForgotPasswordViewModel @Inject constructor(
 
         if (!isCodeValid || !isPasswordValid || !isConfirmPasswordValid) {
             state = state.copy(state = State.ResetPassword(false),
-                error = R.string.error_invalid_passwords,
+                error = R.string.error_invalid_password,
                 codeField = Fields.Code(isError = !isCodeValid),
                 passwordField = Fields.Password(isError = !isPasswordValid),
                 confirmPasswordField = Fields.ConfirmPassword(isError = !isConfirmPasswordValid)

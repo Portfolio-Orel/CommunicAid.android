@@ -83,6 +83,7 @@ fun ConfirmationScreen(
                             password = password,
                             onUserConfirmed = onUserConfirmed
                         )
+                        it
                     })
             } else {
                 Column(

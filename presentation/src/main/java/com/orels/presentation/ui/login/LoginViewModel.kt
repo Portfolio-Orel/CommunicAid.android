@@ -6,12 +6,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orels.auth.domain.interactor.AuthInteractor
-import com.orels.auth.domain.model.SignInStep
-import com.orels.auth.domain.model.exception.UserNotConfirmedException
-import com.orels.auth.domain.model.exception.UserNotFoundException
-import com.orels.auth.domain.model.exception.WrongCredentialsException
+import com.orels.domain.interactors.AuthInteractor
 import com.orels.domain.interactors.UserInteractor
+import com.orels.domain.model.SignInStep
+import com.orels.domain.model.exception.UserNotConfirmedException
+import com.orels.domain.model.exception.UserNotFoundException
+import com.orels.domain.model.exception.WrongCredentialsException
 import com.orels.domain.util.common.Logger
 import com.orels.domain.util.extension.log
 import com.orels.presentation.R
@@ -26,7 +26,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val authInteractor: AuthInteractor,
     private val userInteractor: UserInteractor,
-    ) : ViewModel() {
+) : ViewModel() {
     var state by mutableStateOf(LoginState())
         private set
 
@@ -90,17 +90,28 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun confirmSignInWithNewPassword(
+    private fun confirmSignInWithNewPassword(
         password: String,
         confirmPassword: String
     ) {
-        @StringRes var error: Int? = null
+        @StringRes var error: Int?
         val isPasswordValid = authInteractor.isPasswordValid(password)
         val isConfirmPasswordValid = authInteractor.isPasswordValid(confirmPassword)
         val isPasswordMatching = password == confirmPassword
 
-        if (!isPasswordValid || !isConfirmPasswordValid || !isPasswordMatching) {
-            // TODO: Add error messages
+        error = when {
+            !isPasswordValid || !isConfirmPasswordValid -> R.string.error_invalid_password
+            !isPasswordMatching -> R.string.error_password_and_confirm_mismatch
+            else -> null
+        }
+        if(error != null) {
+            state = state.copy(
+                passwordField = Fields.Password(!isPasswordValid),
+                confirmPasswordField = Fields.ConfirmPassword(!isConfirmPasswordValid),
+                isLoading = false,
+                error = error
+            )
+            return
         }
 
         state = state.copy(isLoading = true)

@@ -33,7 +33,7 @@ class SendSMSSettingsViewModel
         state = state.copy(smsText = smsText)
     }
 
-    fun onSMSTextChange(value: String) {
+    fun onSMSTextChange(value: String): String {
         state = state.copy(smsText = value, isLoading = true)
         save?.cancel()
         save = viewModelScope.launch(SupervisorJob()) {
@@ -47,6 +47,7 @@ class SendSMSSettingsViewModel
                 }
             }
         }
+        return value
     }
 
     companion object {

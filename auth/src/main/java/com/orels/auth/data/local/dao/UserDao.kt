@@ -1,7 +1,7 @@
 package com.orels.auth.data.local.dao
 
 import androidx.room.*
-import com.orels.auth.domain.model.User
+import com.orels.auth.domain.User
 import kotlinx.coroutines.flow.Flow
 
 @Dao

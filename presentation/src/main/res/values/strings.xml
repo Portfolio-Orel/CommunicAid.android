@@ -21,6 +21,26 @@
     <string name="dont_have_an_account">אין לך משתמש?</string>
     <string name="sign_up">הירשם</string>
     <string name="insert_code_and_create_password">הכנס את הקוד שנשלח לך למייל וצור סיסמא חדשה</string>
-    <string name="error_invalid_passwords">יש בעיה באחת הסיסמאות</string>
+    <string name="error_invalid_password">יש בעיה בסיסמא</string>
     <string name="edit_folder">ערוך תיקייה</string>
+    <string name="lets_get_to_know">נכיר קצת?</string>
+    <string name="placeholder_first_name">ג\'ון</string>
+    <string name="placeholder_last_name">סמית\'</string>
+    <string name="date_of_birth">תאריך לידה</string>
+    <string name="default_date_of_birth">01/01/1990</string>
+    <string name="gender">מגדר</string>
+    <string name="next">הבא</string>
+    <string name="login_details">פרטי התחברות</string>
+    <string name="phone_number">מספר טלפון</string>
+    <string name="account_created_successfully">המשתמש נוצר בהצלחה!</string>
+    <string name="confirm">אישור</string>
+    <string name="insert_sms_code">הכנס את הקוד שקיבלת בSMS</string>
+    <string name="male">זכר</string>
+    <string name="female">נקבה</string>
+    <string name="none">אחר</string>
+    <string name="error_password_and_confirm_mismatch">הסיסמאות לא תואמות</string>
+    <string name="error_user_exists">כבר יש משתמש עם המספר הזה</string>
+    <string name="error_invalid_email">המייל לא תקין</string>
+    <string name="error_invalid_phone_number">המספר לא תקין</string>
+    <string name="error_code_delivery_failed">לא הצלחנו לשלוח קוד לטלפון שלך..</string>
 </resources>

@@ -24,7 +24,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.orels.auth.domain.interactor.UserState
+import com.orels.domain.model.entities.UserState
 import com.orels.domain.util.Screen
 import com.orels.presentation.ui.components.CustomScaffold
 import com.orels.presentation.ui.components.bottom_bar.BottomBar
@@ -34,6 +34,7 @@ import com.orels.presentation.ui.details_message.DetailsMessageScreen
 import com.orels.presentation.ui.login.LoginScreen
 import com.orels.presentation.ui.login.forgot_password.ForgotPasswordScreen
 import com.orels.presentation.ui.main.MainScreen
+import com.orels.presentation.ui.register.RegisterScreen
 import com.orels.presentation.ui.settings.SettingsScreen
 import com.orels.presentation.ui.statistics.StatisticsScreen
 import com.orels.presentation.ui.unhandled_calls.UnhandledCallsScreen
@@ -66,7 +67,7 @@ fun MyMessagesApp(
             }
         } else {
             AnimatedVisibility(
-                visible = (state.authState != UserState.LoggedIn),
+                visible = (state.authState != UserState.Authorized),
                 enter = fadeIn(
                     animationSpec = tween(durationMillis = 250, easing = EaseInOut)
                 ),
@@ -87,10 +88,13 @@ fun MyMessagesApp(
                     composable(route = Screen.ForgotPassword.route) {
                         ForgotPasswordScreen(navController = navControllerNotAuthorized)
                     }
+                    composable(route = Screen.Register.route) {
+                        RegisterScreen(navController = navControllerNotAuthorized)
+                    }
                 }
             }
             AnimatedVisibility(
-                visible = state.authState == UserState.LoggedIn,
+                visible = state.authState == UserState.Authorized,
                 enter = fadeIn(
                     animationSpec = tween(durationMillis = 250, easing = EaseInOut)
                 ),

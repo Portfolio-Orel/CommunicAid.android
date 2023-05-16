@@ -2,7 +2,7 @@ package com.orels.data.interactor
 
 import android.content.Context
 import com.mixpanel.android.mpmetrics.MixpanelAPI
-import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.auth.domain.interactor.Auth
 import com.orels.domain.annotation.MixpanelConfigFile
 import com.orels.domain.interactors.AnalyticsIdentifiers
 import com.orels.domain.interactors.AnalyticsInteractor
@@ -15,7 +15,7 @@ import javax.inject.Inject
 class AnalyticsInteractorImpl @Inject constructor(
     @ApplicationContext context: Context,
     @MixpanelConfigFile mixpanelConfigFile: ConfigFile,
-    private val authInteractor: AuthInteractor,
+    private val auth: Auth,
 ) : AnalyticsInteractor {
     private val mixpanel: MixpanelAPI
 
@@ -39,7 +39,7 @@ class AnalyticsInteractorImpl @Inject constructor(
             identifier.identifier,
             values.asJson(
                 extras = mapOf(
-                    "username" to (authInteractor.getUser()?.username ?: "")
+                    "username" to (auth.getUser()?.username ?: "")
                 )
             )
         )

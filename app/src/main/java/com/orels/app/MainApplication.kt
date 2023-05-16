@@ -12,9 +12,9 @@ import com.google.firebase.FirebaseApp
 import com.orels.data.remote.EnvironmentRepository
 import com.orels.domain.annotation.AuthConfigFile
 import com.orels.domain.annotation.DatadogConfigFile
-import com.orels.auth.domain.interactor.AuthInteractor
-import com.orels.auth.domain.interactor.UserState
+import com.orels.domain.interactors.AuthInteractor
 import com.orels.domain.model.entities.ConfigFile
+import com.orels.domain.model.entities.UserState
 import com.orels.domain.system.phone_call.PhonecallReceiver
 import com.orels.domain.util.extension.log
 import com.orels.domain.util.extension.rawResToStringMap
@@ -85,7 +85,7 @@ class MainApplication : Application(), Configuration.Provider {
             }
             authInteractor.getUserState().safeCollectLatest { state ->
                 try {
-                    if (state == UserState.LoggedIn) {
+                    if (state == UserState.Authorized) {
                         PhonecallReceiver.enable(context = applicationContext)
                         SettingsPhoneCallReceiver.enable(context = applicationContext)
                     } else {

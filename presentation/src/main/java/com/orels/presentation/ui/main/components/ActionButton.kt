@@ -16,20 +16,23 @@ import androidx.compose.ui.zIndex
 fun ActionButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    isPrimary: Boolean = true,
     text: String,
+    colors: ButtonColors? = null,
+    isPrimary: Boolean = true,
     isLoading: Boolean = false,
 ) {
     Button(
         modifier = modifier,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = if (isPrimary) MaterialTheme.colorScheme.primary else Color.Transparent,
-        ),
+        colors = colors
+            ?: ButtonDefaults.buttonColors(
+                containerColor = if (isPrimary) MaterialTheme.colorScheme.primary else Color.Transparent,
+            ),
         onClick = onClick,
     ) {
         if (isLoading) {
             Box(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .zIndex(2f),
                 contentAlignment = Alignment.Center
             )
@@ -43,7 +46,8 @@ fun ActionButton(
             }
         }
         Box(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .zIndex(1f),
             contentAlignment = Alignment.Center
         ) {

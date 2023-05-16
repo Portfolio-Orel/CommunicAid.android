@@ -1,8 +1,8 @@
 package com.orels.presentation.ui.my_messages
 
-import com.orels.auth.domain.interactor.UserState
+import com.orels.domain.model.entities.UserState
 
 data class MyMessagesState(
     val isLoading: Boolean = false,
-    val authState: UserState = UserState.LoggedOut
+    val authState: UserState = UserState.NotAuthorized
 )

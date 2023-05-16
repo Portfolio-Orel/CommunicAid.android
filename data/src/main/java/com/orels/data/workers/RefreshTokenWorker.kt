@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.auth.domain.interactor.Auth
 import com.orels.domain.util.common.Logger
 import com.orels.domain.util.extension.log
 import dagger.assisted.Assisted
@@ -22,12 +22,12 @@ import kotlinx.coroutines.launch
 class RefreshTokenWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val authInteractor: AuthInteractor
+    private val auth: Auth
 ) : Worker(context, workerParams) {
     override fun doWork(): Result {
         CoroutineScope(SupervisorJob()).launch {
             try {
-                authInteractor.refreshToken()
+                auth.refreshToken()
                 Logger.i("Token refreshed")
             } catch (e: Exception) {
                 e.log()

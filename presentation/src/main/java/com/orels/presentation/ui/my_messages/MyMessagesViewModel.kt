@@ -5,14 +5,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orels.auth.domain.interactor.AuthInteractor
-import com.orels.auth.domain.interactor.UserState
+import com.orels.domain.interactors.AuthInteractor
 import com.orels.domain.interactors.GeneralInteractor
 import com.orels.domain.interactors.SettingsInteractor
 import com.orels.domain.managers.phonecall.PhoneCallManager
 import com.orels.domain.managers.phonecall.isCallStateIdle
 import com.orels.domain.managers.worker.WorkerManager
 import com.orels.domain.managers.worker.WorkerType
+import com.orels.domain.model.entities.UserState
 import com.orels.domain.system.connectivity.ConnectivityObserver
 import com.orels.domain.system.connectivity.NetworkState
 import com.orels.domain.util.extension.log
@@ -97,7 +97,7 @@ class MyMessagesViewModel @Inject constructor(
 
     private fun userAuthenticated(userState: UserState) {
         if (userState == UserState.Loading) return
-        if (userState == UserState.LoggedIn) {
+        if (userState == UserState.Authorized) {
             observeCallState()
             observeInternetConnectivity()
             val initDataJob = viewModelScope.async { generalInteractor.initData() }
@@ -108,7 +108,7 @@ class MyMessagesViewModel @Inject constructor(
                     e.log()
                 }
             }
-        } else if (userState == UserState.LoggedOut) {
+        } else if (userState == UserState.NotAuthorized) {
             workerManager.clearAll()
             generalInteractor.clearAllDatabases()
         }

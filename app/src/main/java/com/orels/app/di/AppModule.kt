@@ -7,7 +7,7 @@ import com.google.gson.Gson
 import com.orels.R
 import com.orels.auth.data.local.AuthDatabase
 import com.orels.auth.data.local.dao.UserDao
-import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.auth.domain.interactor.Auth
 import com.orels.data.interceptor.AuthInterceptor
 import com.orels.data.interceptor.ErrorInterceptor
 import com.orels.data.interceptor.LogInterceptor
@@ -75,7 +75,7 @@ object AppModule {
         environmentRepository: EnvironmentRepository
     ): String = when (environmentRepository.currentEnvironment) {
         Environments.Dev -> "https://22jwmm93j9.execute-api.us-east-1.amazonaws.com/"
-        Environments.Prod -> "https://w5l4faau04.execute-api.us-east-1.amazonaws.com/"
+        Environments.Prod -> "https://rzbdt4g5jl.execute-api.us-east-1.amazonaws.com/"
         Environments.LocalEmulator -> "http://10.0.2.2:4000/"
     }
 
@@ -110,11 +110,11 @@ object AppModule {
     @Singleton
     fun provideOkHttpClient(
         @ApplicationContext context: Context,
-        authInteractor: AuthInteractor,
+        auth: Auth,
         gson: Gson
     ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(AuthInterceptor(authInteractor = authInteractor))
-        .addInterceptor(ErrorInterceptor(authInteractor = authInteractor))
+        .addInterceptor(AuthInterceptor(auth = auth))
+        .addInterceptor(ErrorInterceptor(auth = auth))
         .addInterceptor(LogInterceptor())
         .addInterceptor(ResponseInterceptor(gson = gson))
         .cache(

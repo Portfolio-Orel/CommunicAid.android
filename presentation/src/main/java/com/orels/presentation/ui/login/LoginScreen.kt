@@ -16,12 +16,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.orels.auth.domain.model.SignInStep
 import com.orels.domain.util.Screen
 import com.orels.presentation.R
 import com.orels.presentation.theme.fontsVarelaround
 import com.orels.presentation.theme.noRippleClickable
-import com.orels.presentation.ui.components.confirmation_pop_up.ConfirmationScreen
 import com.orels.presentation.ui.login.components.AuthenticationInput
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
@@ -97,26 +95,27 @@ fun LoginScreen(
         }
 
         Spacer(modifier = Modifier.weight(1f))
-/* Registration is disabled for now */
-//        Row(
-//            modifier = Modifier.fillMaxWidth(),
-//            horizontalArrangement = Arrangement.Center,
-//            verticalAlignment = Alignment.CenterVertically
-//        ) {
-//            Text(
-//                text = stringResource(R.string.dont_have_an_account),
-//                style = MaterialTheme.typography.bodySmall,
-//                fontWeight = FontWeight.Light,
-//            )
-//            Text(
-//                modifier = Modifier
-//                    .padding(horizontal = 8.dp)
-//                    .noRippleClickable { },
-//                text = stringResource(R.string.sign_up),
-//                style = MaterialTheme.typography.bodySmall,
-//                fontWeight = FontWeight.Bold,
-//            )
-//        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.dont_have_an_account),
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Light,
+            )
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .noRippleClickable {
+                        navController.navigate(Screen.Register.route)
+                    },
+                text = stringResource(R.string.sign_up),
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Bold,
+            )
+        }
         Button(
             modifier = Modifier
                 .fillMaxWidth()

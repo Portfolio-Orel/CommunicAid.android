@@ -1,13 +1,16 @@
-package com.orels.auth.domain.interactor
+package com.orels.domain.interactors
 
 import androidx.annotation.RawRes
-import com.orels.auth.domain.model.ResetPasswordStep
-import com.orels.auth.domain.model.SignInStep
-import com.orels.auth.domain.model.SignUpStep
-import com.orels.auth.domain.model.User
-import com.orels.auth.domain.model.exception.*
+import com.orels.domain.model.ResetPasswordStep
+import com.orels.domain.model.SignInStep
+import com.orels.domain.model.SignUpStep
+import com.orels.domain.model.entities.Gender
+import com.orels.domain.model.entities.User
+import com.orels.domain.model.entities.UserState
+import com.orels.domain.model.exception.*
 import kotlinx.coroutines.flow.Flow
 import java.security.InvalidParameterException
+
 
 /**
  * @author Orel Zilberman
@@ -48,6 +51,8 @@ interface AuthInteractor {
      */
     suspend fun confirmSignInWithNewPassword(newPassword: String): SignInStep
 
+    suspend fun resendConfirmationCode(phoneNumber: String)
+
     /**
      * Should be called to logout a user.
      */
@@ -57,12 +62,40 @@ interface AuthInteractor {
      * Should be called to register a user.
      * @param username The username of the user.
      * @param password The password of the user.
+     * @param phoneNumber The phone number of the user.
+     * @param gender The gender of the user.
      * @param email The email of the user.
      * @param firstName The first name of the user.
      * @param lastName The last name of the user.
-     * @return The user.
      */
-    suspend fun register(username: String, password: String, email: String, firstName: String, lastName: String): SignUpStep
+    suspend fun register(
+        username: String,
+        password: String,
+        phoneNumber: String,
+        gender: Gender,
+        email: String,
+        firstName: String,
+        lastName: String
+    ): SignUpStep
+
+    /**
+     * Should be called to register a user with a phone number.
+     * @param phoneNumber The phone number of the user.
+     * @param email The email of the user.
+     * @throws [UsernameExistsException] if the username already exists.
+     * @throws [CodeDeliveryFailureException] if the code delivery failed.
+     */
+    suspend fun registerWithPhone(phoneNumber: String, email: String): SignUpStep
+
+    /**
+     * Called after a user was registered to confirm the phone number.
+     * @param phoneNumber The phone number of the user.
+     * @param code The code sent to the user's phone.
+     * @throws [CodeMismatchException] if the code is wrong.
+     * @throws [CodeExpiredException] if the code is expired.
+     * @throws [NotAuthorizedException] if the user is not authorized.
+     */
+    suspend fun confirmSignUpWithPhone(phoneNumber: String, code: String): SignUpStep
 
     /**
      * Called after a user was registered to confirm the email.
@@ -117,18 +150,10 @@ interface AuthInteractor {
 
     /**
      *  Checks if user in db is not null.
-     *  If not null, returns as flow of [UserState.LoggedIn] else returns as flow of [UserState.LoggedOut]
+     *  If not null, returns as flow of [UserState.Authorized] else returns as flow of [UserState.NotAuthorized]
      *  @return Flow of UserState
      */
     suspend fun getUserState(): Flow<UserState>
 
     fun isPasswordValid(password: String): Boolean
-}
-
-@Suppress("unused")
-enum class UserState {
-    Loading,
-    LoggedIn,
-    LoggedOut,
-    Blocked;
 }

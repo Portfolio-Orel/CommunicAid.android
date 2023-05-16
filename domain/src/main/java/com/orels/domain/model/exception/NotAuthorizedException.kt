@@ -1,4 +1,4 @@
-package com.orels.auth.domain.model.exception
+package com.orels.domain.model.exception
 
 class NotAuthorizedException: Exception() {
 }
