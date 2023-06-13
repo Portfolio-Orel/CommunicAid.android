@@ -3,19 +3,19 @@
 Communic-Aid is a cutting-edge communication management application engineered to optimize your calls and enhance your productivity. It seamlessly integrates an advanced single-click message dispatch system, an insightful call statistics dashboard, an efficient unattended call tracker, and a customizable settings menu, all designed to deliver a superior communication experience.
 
 <img src="https://read-mes.s3.amazonaws.com/CommunicAid/login.jpg" alt="Communic-Aid Login" width="300" height="450">
-*The login screen of Communic-Aid. Register or log in to begin your seamless communication journey.*
+The login screen of Communic-Aid. Register or log in to begin your seamless communication journey. 
 
 <img src="https://read-mes.s3.amazonaws.com/CommunicAid/main.jpg" alt="Communic-Aid Main" width="300" height="450">
-*The main screen of Communic-Aid. Navigate through various features and manage your communication effortlessly.*
+The main screen of Communic-Aid. Navigate through various features and manage your communication effortlessly.
 
 <img src="https://read-mes.s3.amazonaws.com/CommunicAid/statistics.jpg" alt="Communic-Aid Statistics" width="300" height="450">
-*The Statistics screen provides detailed analytics of your call patterns, offering insights to help optimize your communication.*
+The Statistics screen provides detailed analytics of your call patterns, offering insights to help optimize your communication.
 
 <img src="https://read-mes.s3.amazonaws.com/CommunicAid/unhandled_calls.jpg" alt="Communic-Aid Unhandled Calls" width="300" height="450">
-*Stay on top of your calls with the Unhandled Calls screen that efficiently tracks and lists all your missed calls.*
+Stay on top of your calls with the Unhandled Calls screen that efficiently tracks and lists all your missed calls.
 
 <img src="https://read-mes.s3.amazonaws.com/CommunicAid/settings.jpg" alt="Communic-Aid Settings" width="300" height="450">
-*The Settings screen enables you to customize your Communic-Aid experience to suit your communication needs.*
+The Settings screen enables you to customize your Communic-Aid experience to suit your communication needs.
 
 ## Key Features
 1. **Single-click message dispatch**: Instantly send critical information with a single tap, without interrupting your ongoing calls.
@@ -28,4 +28,4 @@ Communic-Aid is a cutting-edge communication management application engineered t
 To get started with Communic-Aid, simply download the app from the App Store or Google Play Store, register or log in, and elevate your communication experience.
 
 ## Support
-For any inquiries, issues, or suggestions, feel free to reach out to our support team at [support@communic-aid.com](mailto:support@communic-aid.com).
+For any inquiries, issues, or suggestions, feel free to reach out to our support team at [orelsmail@gmail.com](mailto:orelsmail@gmail.com).
