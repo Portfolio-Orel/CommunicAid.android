@@ -3,19 +3,19 @@
 Communic-Aid is a state-of-the-art communication management application designed to streamline your calls and enhance productivity. The app features an innovative single-click message dispatch system, a detailed call statistics dashboard, a smart unattended call tracker, and a customizable settings menu, all aimed to provide a superior and efficient communication experience.
 
 Login screen:
-<img src="https://read-mes.s3.amazonaws.com/CommunicAid/login.jpg" alt="Communic-Aid Login" width="200" height="200">
+<img src="https://read-mes.s3.amazonaws.com/CommunicAid/login.jpg" alt="Communic-Aid Login" width="200" height="360">
 
 Main screen:
-<img src="https://read-mes.s3.amazonaws.com/CommunicAid/main.jpg" alt="Communic-Aid Main" width="200" height="200">
+<img src="https://read-mes.s3.amazonaws.com/CommunicAid/main.jpg" alt="Communic-Aid Main" width="200" height="360">
 
 Statistics screen:
-<img src="https://read-mes.s3.amazonaws.com/CommunicAid/statistics.jpg" alt="Communic-Aid Statistics" width="200" height="200">
+<img src="https://read-mes.s3.amazonaws.com/CommunicAid/statistics.jpg" alt="Communic-Aid Statistics" width="200" height="360">
 
 Unhandled Calls screen:
-<img src="https://read-mes.s3.amazonaws.com/CommunicAid/unhandled_calls.jpg" alt="Communic-Aid Unhandled Calls" width="200" height="200">
+<img src="https://read-mes.s3.amazonaws.com/CommunicAid/unhandled_calls.jpg" alt="Communic-Aid Unhandled Calls" width="200" height="360">
 
 Settings screen:
-<img src="https://read-mes.s3.amazonaws.com/CommunicAid/settings.jpg" alt="Communic-Aid Settings" width="200" height="200">
+<img src="https://read-mes.s3.amazonaws.com/CommunicAid/settings.jpg" alt="Communic-Aid Settings" width="200" height="360">
 
 ## Key Features
 1. **Single-click message dispatch**: Send crucial information with a single tap, without disrupting your ongoing calls.
