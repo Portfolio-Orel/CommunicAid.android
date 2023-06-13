@@ -2,20 +2,20 @@
 
 Communic-Aid is a state-of-the-art communication management application designed to streamline your calls and enhance productivity. The app features an innovative single-click message dispatch system, a detailed call statistics dashboard, a smart unattended call tracker, and a customizable settings menu, all aimed to provide a superior and efficient communication experience.
 
-![Communic-Aid Login](https://read-mes.s3.amazonaws.com/CommunicAid/login.jpg)
-*The login screen of Communic-Aid. Register or log in to start your seamless communication experience.*
+Login screen:
+<img src="https://read-mes.s3.amazonaws.com/CommunicAid/login.jpg" alt="Communic-Aid Login" width="200" height="200">
 
-![Communic-Aid Main](https://read-mes.s3.amazonaws.com/CommunicAid/main.jpg)
-*The main screen of Communic-Aid. Explore various features and manage your communication efficiently.*
+Main screen:
+<img src="https://read-mes.s3.amazonaws.com/CommunicAid/main.jpg" alt="Communic-Aid Main" width="200" height="200">
 
-![Communic-Aid Statistics](https://read-mes.s3.amazonaws.com/CommunicAid/statistics.jpg)
-*The Statistics screen offers detailed analytics of your call patterns, providing insights to optimize your communication.*
+Statistics screen:
+<img src="https://read-mes.s3.amazonaws.com/CommunicAid/statistics.jpg" alt="Communic-Aid Statistics" width="200" height="200">
 
-![Communic-Aid Unhandled Calls](https://read-mes.s3.amazonaws.com/CommunicAid/unhandled_calls.jpg)
-*Never miss a call again. The Unhandled Calls screen tracks and lists all your unattended calls.*
+Unhandled Calls screen:
+<img src="https://read-mes.s3.amazonaws.com/CommunicAid/unhandled_calls.jpg" alt="Communic-Aid Unhandled Calls" width="200" height="200">
 
-![Communic-Aid Settings](https://read-mes.s3.amazonaws.com/CommunicAid/settings.jpg)
-*The Settings screen allows you to customize your Communic-Aid experience to suit your needs.*
+Settings screen:
+<img src="https://read-mes.s3.amazonaws.com/CommunicAid/settings.jpg" alt="Communic-Aid Settings" width="200" height="200">
 
 ## Key Features
 1. **Single-click message dispatch**: Send crucial information with a single tap, without disrupting your ongoing calls.
