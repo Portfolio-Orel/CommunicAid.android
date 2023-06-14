@@ -9,6 +9,7 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.orels.domain.util.common.Logger
 
 /**
  * @author Orel Zilberman
@@ -31,7 +32,9 @@ enum class RequiredPermission(val permissionName: String, priority: PermissionPr
         permissionName = Manifest.permission.READ_CONTACTS,
         priority = PermissionPriority.Medium
     ),
+    @Deprecated("Not allowed in play store")
     SendSMS(permissionName = Manifest.permission.SEND_SMS, priority = PermissionPriority.Low),
+
     DrawOverlays(
         permissionName = Manifest.permission.SYSTEM_ALERT_WINDOW,
         priority = PermissionPriority.Low
@@ -82,7 +85,7 @@ enum class RequiredPermission(val permissionName: String, priority: PermissionPr
 
     fun requestPermission(context: Context) {
         if (context as? Activity == null) {
-            // ToDo: Do something
+            Logger.e("Context is not an activity in requestPermission")
             return
         }
         if (getPermissionState(context = context) == PermissionState.Granted) return

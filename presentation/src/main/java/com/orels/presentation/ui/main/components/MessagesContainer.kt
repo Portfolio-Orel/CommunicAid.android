@@ -73,7 +73,8 @@ fun MessagesContainer(
             items(12) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     SkeletonComponent(
                         modifier = Modifier
                             .border(
@@ -82,9 +83,9 @@ fun MessagesContainer(
                                 color = Color.Transparent
                             )
                             .clip(MaterialTheme.shapes.medium)
-                            .padding(0.dp),
-                        height = messageHeight * 0.7f,
-                        width = messageWidth
+                            .padding(0.dp)
+                            .height(messageHeight * 0.7f)
+                            .width(messageWidth),
                     )
                     SkeletonComponent(
                         modifier = Modifier
@@ -93,9 +94,9 @@ fun MessagesContainer(
                                 width = 1.dp,
                                 color = Color.Transparent
                             )
-                            .clip(MaterialTheme.shapes.medium),
-                        height = messageHeight * 0.1f,
-                        width = messageWidth * 0.95f
+                            .clip(MaterialTheme.shapes.medium)
+                            .height(messageHeight * 0.1f)
+                            .width(messageWidth * 0.95f),
                     )
                 }
             }

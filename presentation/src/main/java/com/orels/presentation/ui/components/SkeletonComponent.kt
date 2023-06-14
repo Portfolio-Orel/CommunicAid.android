@@ -3,22 +3,16 @@ package com.orels.presentation.ui.components
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 
 @Composable
 fun SkeletonComponent(
     modifier: Modifier = Modifier,
-    width: Dp = 100.dp,
-    height: Dp = 20.dp,
 ) {
     /*
  Create InfiniteTransition
@@ -62,8 +56,6 @@ fun SkeletonComponent(
 
     ShimmerItem(
         modifier = modifier,
-        width = width,
-        height = height,
         brush = brush,
     )
 }
@@ -72,8 +64,6 @@ fun SkeletonComponent(
 @Composable
 fun ShimmerItem(
     modifier: Modifier,
-    width: Dp,
-    height: Dp,
     brush: Brush,
 ) {
     // Column composable containing spacer shaped like a rectangle,
@@ -81,8 +71,6 @@ fun ShimmerItem(
     // Composable which is the Animation you are gonna create.
     Box(
         modifier = modifier
-            .height(height)
-            .width(width)
             .background(brush = brush)
 
     )

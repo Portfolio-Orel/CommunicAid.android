@@ -38,6 +38,8 @@ fun <T : DropdownItem> Dropdown(
     selected: T? = null,
     onClick: () -> Unit = {},
     dropdownDecoratorStyle: DropdownDecoratorStyle = DropdownDecoratorStyle.Default,
+    leadingIcon: @Composable () -> Unit = {},
+    trailingIcon: @Composable () -> Unit = {}
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedItem by remember {
@@ -54,11 +56,21 @@ fun <T : DropdownItem> Dropdown(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
+        Spacer(modifier = Modifier.width(8.dp))
+        leadingIcon()
+
         when (dropdownDecoratorStyle) {
             DropdownDecoratorStyle.Text -> DropdownDecoratorText(
                 selected = selectedItem,
                 onClick = { expanded = expanded != true },
                 defaultTitle = defaultTitle,
+                color = color
+            )
+            DropdownDecoratorStyle.NoBorder -> DropdownDecoratorDefault(
+                selected = selectedItem,
+                onClick = { expanded = expanded != true },
+                defaultTitle = defaultTitle,
+                border = false,
                 color = color
             )
             else -> DropdownDecoratorDefault(
@@ -112,6 +124,7 @@ fun <T : DropdownItem> Dropdown(
                 )
             }
         }
+        trailingIcon()
     }
 }
 
@@ -142,25 +155,31 @@ private fun <T : DropdownItem> DropdownDecoratorDefault(
     color: Color = MaterialTheme.colorScheme.onPrimaryContainer,
     expanded: Boolean = false,
     isError: Boolean = false,
+    border: Boolean = true,
 ) {
 
     val icon = if (expanded)
         Icons.Filled.KeyboardArrowUp
     else
         Icons.Filled.KeyboardArrowDown
+
+    val borderModifier = if (border) {
+        modifier.border(
+            width = 1.dp,
+            color = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onPrimaryContainer,
+            shape = RoundedCornerShape(5.dp)
+        )
+    } else {
+        modifier
+    }
     Row(
-        modifier = modifier
+        modifier = borderModifier
             .height(56.dp)
             .fillMaxWidth()
             .background(color = MaterialTheme.colorScheme.background)
             .clickable {
                 onClick()
-            }
-            .border(
-                width = 1.dp,
-                color = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onPrimaryContainer,
-                shape = RoundedCornerShape(5.dp)
-            ),
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -182,5 +201,6 @@ private fun <T : DropdownItem> DropdownDecoratorDefault(
 
 enum class DropdownDecoratorStyle {
     Default,
+    NoBorder,
     Text,
 }

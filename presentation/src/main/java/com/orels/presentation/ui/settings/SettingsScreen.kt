@@ -63,9 +63,9 @@ fun SettingsScreen(
                                 width = 1.dp,
                                 color = Color.Transparent
                             )
-                            .clip(MaterialTheme.shapes.small),
-                        width = 240.dp,
-                        height = 24.dp,
+                            .clip(MaterialTheme.shapes.small)
+                            .height(24.dp)
+                            .width(240.dp),
                     )
                 }
             } else {
@@ -80,7 +80,8 @@ fun SettingsScreen(
                                 checked = settings.getRealValue() ?: false,
                                 enabled = {
                                     settings.isEnabled() && settings.getPermissionsNotGranted(
-                                        context = context)
+                                        context = context
+                                    )
                                         .isEmpty()
                                 },
                                 contentIfCheck = if (settings.key == SettingsKey.SendSMSToBackgroundCall) {
@@ -96,19 +97,24 @@ fun SettingsScreen(
                                             when (permission.getPermissionState(context = context)) {
                                                 PermissionState.Granted -> {}
                                                 PermissionState.NotAsked -> permission.requestPermission(
-                                                    context = context)
+                                                    context = context
+                                                )
                                                 PermissionState.DeniedOnce -> permission.requestPermission(
-                                                    context = context) // Show rationale
+                                                    context = context
+                                                ) // Show rationale
                                                 PermissionState.DeniedPermanently -> permission.requestPermission(
-                                                    context = context) // show dialog to open settings
+                                                    context = context
+                                                ) // show dialog to open settings
                                             }
                                         }
                                 }
                             )
                             SettingsType.Data -> {
                                 DataSettings(
-                                    title = stringResource(settings.key.title
-                                        ?: R.string.empty_string),
+                                    title = stringResource(
+                                        settings.key.title
+                                            ?: R.string.empty_string
+                                    ),
                                     body = settings.getRealValue<String>().toString(),
                                     modifier = Modifier.padding(horizontal = 8.dp)
                                 )

@@ -74,8 +74,8 @@ object AppModule {
     fun provideBaseUrl(
         environmentRepository: EnvironmentRepository
     ): String = when (environmentRepository.currentEnvironment) {
-        Environments.Dev -> "https://22jwmm93j9.execute-api.us-east-1.amazonaws.com/"
-        Environments.Prod -> "https://w5l4faau04.execute-api.us-east-1.amazonaws.com/"
+        Environments.Dev -> "https://rzbdt4g5jl.execute-api.us-east-1.amazonaws.com/"
+        Environments.Prod -> "https://rzbdt4g5jl.execute-api.us-east-1.amazonaws.com/"
         Environments.LocalEmulator -> "http://10.0.2.2:4000/"
     }
 
@@ -102,7 +102,7 @@ object AppModule {
     fun provideAuthConfigFile(
         environmentRepository: EnvironmentRepository
     ): ConfigFile = when (environmentRepository.currentEnvironment) {
-        Environments.Dev, Environments.LocalEmulator -> ConfigFile(fileResId = R.raw.dev_amplifyconfiguration)
+        Environments.Dev, Environments.LocalEmulator -> ConfigFile(fileResId = R.raw.prod_amplifyconfiguration)
         Environments.Prod -> ConfigFile(fileResId = R.raw.prod_amplifyconfiguration)
     }
 

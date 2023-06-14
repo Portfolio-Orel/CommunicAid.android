@@ -5,7 +5,7 @@ import javax.inject.Singleton
 
 @Singleton
 class EnvironmentRepository @Inject constructor() {
-    val currentEnvironment: Environments = Environments.Prod
+    val currentEnvironment: Environments = Environments.LocalEmulator
 }
 
 enum class Environments {

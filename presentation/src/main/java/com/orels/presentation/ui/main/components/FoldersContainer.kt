@@ -1,15 +1,10 @@
 package com.orels.presentation.ui.main.components
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -52,26 +47,26 @@ fun FoldersContainer(
                     width = 1.dp,
                     color = Color.Transparent
                 )
-                .clip(MaterialTheme.shapes.medium),
-            height = 20.dp,
-            width = 80.dp
+                .clip(MaterialTheme.shapes.medium)
+                .fillMaxWidth(0.8f)
+                .height(25.dp),
         )
     } else {
         Row(
-            modifier = modifier,
+            modifier = modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.medium)
+                .border(
+                    shape = MaterialTheme.shapes.medium,
+                    width = 1.dp,
+                    color = Color.Transparent
+                )
+                .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            FloatingActionButton(
-                modifier = Modifier.size(30.dp),
-                onClick = addNewFolder,
-                shape = RoundedCornerShape(10),
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-                content = { Icon(Icons.Filled.Add, stringResource(id = R.string.add_folder)) }
-            )
-            Spacer(modifier = Modifier.weight(0.4f))
             Dropdown(
+                modifier = Modifier.fillMaxWidth(),
                 items = folders,
                 onSelected = onClick,
                 secondaryAction = onEditClick,
@@ -80,16 +75,24 @@ fun FoldersContainer(
                 selected = selected,
                 color = color,
                 onClick = onDropdownClick,
-                dropdownDecoratorStyle = DropdownDecoratorStyle.Text
+                dropdownDecoratorStyle = DropdownDecoratorStyle.NoBorder,
+                leadingIcon = {
+                    FloatingActionButton(
+                        modifier = Modifier.size(30.dp),
+                        onClick = addNewFolder,
+                        shape = RoundedCornerShape(10),
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        content = {
+                            Icon(
+                                Icons.Filled.Add,
+                                stringResource(id = R.string.add_folder)
+                            )
+                        }
+                    )
+                }
             )
-            Spacer(modifier = Modifier.weight(0.5f))
-            Icon(
-                Icons.Filled.Edit,
-                stringResource(R.string.edit_folder),
-                modifier = Modifier.size(30.dp)
-                    .clickable { selected?.let { onEditClick(it) } },
-                tint = MaterialTheme.colorScheme.onBackground
-            )
+            Spacer(modifier = Modifier.weight(0.6f))
         }
     }
 }

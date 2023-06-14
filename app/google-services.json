@@ -84,7 +84,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:670361895848:android:9858a089a73d2dac94939d",
         "android_client_info": {
-          "package_name": "com.orelzman.mymessages"
+          "package_name": "com.orels"
         }
       },
       "oauth_client": [
@@ -92,7 +92,7 @@
           "client_id": "670361895848-iu9md1m6m340oac7g49unc5igm6hkt26.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.orelzman.mymessages",
+            "package_name": "com.orels",
             "certificate_hash": "5d38aa8ba000b31646d0e7ec0238c1d9bf21eb4f"
           }
         },
@@ -100,7 +100,7 @@
           "client_id": "670361895848-spcuj4sd9vhj7hpqap8clel7ugg3nsat.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.orelzman.mymessages",
+            "package_name": "com.orels",
             "certificate_hash": "f324263bd2f85f3a201cc587f9d67334802b323a"
           }
         },
@@ -129,7 +129,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:670361895848:android:2252f71bdfd4735e94939d",
         "android_client_info": {
-          "package_name": "com.orelzman.mymessages.free"
+          "package_name": "com.orels.free"
         }
       },
       "oauth_client": [
@@ -137,7 +137,7 @@
           "client_id": "670361895848-b0ei3g8n6bnjjteeenghju3j6dpn1r2a.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.orelzman.mymessages.free",
+            "package_name": "com.orels.free",
             "certificate_hash": "5d38aa8ba000b31646d0e7ec0238c1d9bf21eb4f"
           }
         },

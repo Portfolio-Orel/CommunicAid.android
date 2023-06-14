@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">MyMessages</string>
-    <string name="title_activity_message">Message</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="local_db_name">mymessagesdb.db</string>
+    <string name="title_activity_message" translatable="false">Message</string>
+    <string name="title_activity_main" translatable="false">MainActivity</string>
+    <string name="local_db_name" translatable="false">mymessagesdb.db</string>
     <string name="add_message">הוסף הודעה</string>
     <string name="add_folder">הוסף תיקייה</string>
     <string name="unhandled_calls">שיחות</string>
@@ -18,7 +18,7 @@
     <string name="email">אימייל</string>
     <string name="insert_email_code">הכנס את הקוד שקיבלת במייל</string>
     <string name="confirmation_code">קוד אישור</string>
-    <string name="loging_out">מתנתק…</string>
+    <string name="login_out">מתנתק…</string>
     <string name="logout">התנתק</string>
     <string name="wrong_credentials">הפרטים שהוזנו לא נכונים…</string>
     <string name="no_unhandled_calls">אין שיחות שלא טופלו!</string>

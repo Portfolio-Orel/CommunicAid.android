@@ -23,7 +23,7 @@ fun TopAppBar(
     viewModel: TopAppBarViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
-    Box(modifier = Modifier.padding(vertical = 12.dp)) {
+    Column(modifier = Modifier.padding(vertical = 12.dp)) {
         CenterAlignedTopAppBar(
             title = {
                 Column(
@@ -65,5 +65,6 @@ fun TopAppBar(
             ),
             scrollBehavior = null
         )
+        Divider()
     }
 }

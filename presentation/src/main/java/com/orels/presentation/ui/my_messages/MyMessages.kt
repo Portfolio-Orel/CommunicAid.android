@@ -110,8 +110,8 @@ fun MyMessagesApp(
                         modifier = Modifier.padding(
                             top = it.calculateTopPadding(),
                             bottom = it.calculateBottomPadding(),
-                            end = it.calculateEndPadding(LayoutDirection.Rtl),
-                            start = it.calculateStartPadding(LayoutDirection.Rtl)
+                            end = it.calculateEndPadding(LayoutDirection.Ltr),
+                            start = it.calculateStartPadding(LayoutDirection.Ltr)
                         ),
                         navController = navHostControllerAuthorized,
                         startDestination = Screen.Main.route

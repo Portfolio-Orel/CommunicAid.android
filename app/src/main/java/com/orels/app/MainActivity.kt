@@ -42,14 +42,11 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
                     darkIcons = MaterialTheme.colorScheme.background.luminance() > 0.5f
                 )
-                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                     val permissionsState = rememberMultiplePermissionsState(
                         permissions = listOf(
-                            Manifest.permission.READ_CALL_LOG,
-                            Manifest.permission.CALL_PHONE,
                             Manifest.permission.READ_PHONE_STATE,
                             Manifest.permission.READ_CONTACTS,
-                            Manifest.permission.ANSWER_PHONE_CALLS
                         )
                     )
                     val lifecycleOwner = LocalLifecycleOwner.current

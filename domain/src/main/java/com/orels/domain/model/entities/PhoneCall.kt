@@ -1,11 +1,9 @@
 package com.orels.domain.model.entities
 
-import android.content.Context
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.Gson
 import com.orels.domain.interactors.CallType
-import com.orels.domain.util.common.ContactsUtil
 import com.orels.domain.util.extension.epochTimeInSeconds
 import java.util.*
 
