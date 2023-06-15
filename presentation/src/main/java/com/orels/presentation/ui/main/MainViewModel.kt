@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orels.domain.interactors.*
+import com.orels.domain.managers.phonecall.CallState
 import com.orels.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
 import com.orels.domain.model.entities.*
 import com.orels.domain.util.common.Logger
@@ -129,6 +130,9 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun setCallAfterWaiting(call: PhoneCall) =
+        phoneCallManagerInteractor.setCallAfterWaiting(call)
+
     private fun getFoldersMessages(folderId: String): List<Message> {
         val messageIds = messageInFolderInteractor.getMessagesInFoldersOnce()
             .filter { it.folderId == folderId }
@@ -199,6 +203,22 @@ class MainViewModel @Inject constructor(
 
     private fun navigateTo(screen: MainScreens) {
         state = state.copy(screenToShow = screen)
+    }
+
+    private fun observeCallState() {
+        viewModelScope.launch {
+            try {
+                phoneCallManagerInteractor.callsDataFlow.collectLatest {
+                    val callState = CallState.fromString(it.callState)
+                    setState(newState = state.copy(showWaitingCallChooser = callState == CallState.OnCallAfterWaiting))
+                }
+            } catch (e: Exception) {
+                if (e !is CancellationException) {
+                    e.log()
+                    Logger.e("observeCallState stopped")
+                }
+            }
+        }
     }
 
     private fun observeNumberInBackground() {

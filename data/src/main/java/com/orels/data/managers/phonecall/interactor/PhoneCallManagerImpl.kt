@@ -16,7 +16,6 @@ import com.orels.domain.managers.phonecall.PhoneCallManager
 import com.orels.domain.model.entities.CallLogEntity
 import com.orels.domain.model.entities.PhoneCall
 import com.orels.domain.model.entities.UploadState
-import com.orels.domain.util.common.Constants.TIME_TO_ADD_CALL_TO_CALL_LOG
 import com.orels.domain.util.common.Logger
 import com.orels.domain.util.extension.compareNumberTo
 import com.orels.domain.util.extension.epochTimeInSeconds
@@ -84,7 +83,7 @@ class PhoneCallManagerImpl @Inject constructor(
             CallState.Idle -> {
                 incomingCall(number = number)
             }
-            CallState.OnCall -> {
+            CallState.OnCall, CallState.OnCallAfterWaiting -> {
                 waitingCall(number = number)
             }
             else -> { // This state should not happen, but if it did it's an incoming call
@@ -147,7 +146,7 @@ class PhoneCallManagerImpl @Inject constructor(
     }
 
     private fun incomingAnswered() {
-        setStateValue(CallState.OnCall)
+        setStateValue(CallState.OnCallAfterWaiting)
     }
 
     private fun waitingCall(number: String) {
@@ -158,17 +157,17 @@ class PhoneCallManagerImpl @Inject constructor(
     }
 
     private fun checkWaitingCallState() {
-        setStateValue(CallState.OnCall)
-        CoroutineScope(Dispatchers.Main).launch {
-            val callLog =
-                callLogInteractor.getLastCallLog(delay = TIME_TO_ADD_CALL_TO_CALL_LOG)
-            val callInBackground = dataSource.getCallInTheBackground()
-            if (callInBackground != null && callInBackground.isEqualsToCallLog(callLog)) {
-                waitingCallNotAnswered()
-            } else {
-                waitingCallAnswered()
-            }
-        }
+        setStateValue(CallState.OnCallAfterWaiting)
+//        CoroutineScope(Dispatchers.Main).launch { - REQUIRES READ_CALL_LOG PERMISSION
+//            val callLog =
+//                callLogInteractor.getLastCallLog(delay = TIME_TO_ADD_CALL_TO_CALL_LOG)
+//            val callInBackground = dataSource.getCallInTheBackground()
+//            if (callInBackground != null && callInBackground.isEqualsToCallLog(callLog)) {
+//                waitingCallNotAnswered()
+//            } else {
+//                waitingCallAnswered()
+//            }
+//        }
     }
 
     private fun waitingCallAnswered() {
@@ -209,6 +208,15 @@ class PhoneCallManagerImpl @Inject constructor(
         setStateValue(CallState.Idle)
         setCallOnLine(null)
         setBackgroundCall(null)
+    }
+
+    override fun setCallAfterWaiting(call: PhoneCall) {
+        Logger.i("Set call after waiting: ${call.number}")
+        CoroutineScope(Dispatchers.Main).launch {
+            setStateValue(CallState.OnCall)
+            setCallOnLine(call)
+            setBackgroundCall(null)
+        }
     }
 }
 

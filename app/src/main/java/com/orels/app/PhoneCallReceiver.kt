@@ -1,4 +1,4 @@
-package com.orels.domain.system.phone_call
+package com.orels.app
 
 import android.content.BroadcastReceiver
 import android.content.ComponentName
@@ -21,7 +21,7 @@ class PhonecallReceiver : BroadcastReceiver() {
         when (intent?.action) {
             PHONE_STATE -> {
                 val stateStr = intent.extras?.getString(TelephonyManager.EXTRA_STATE)
-                @Suppress("DEPRECATION") val number =
+                val number =
                     intent.extras?.getString(TelephonyManager.EXTRA_INCOMING_NUMBER)
                         ?: return
                 Logger.i("Receiver number: $number, with state: $stateStr")

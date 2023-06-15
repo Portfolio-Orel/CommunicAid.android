@@ -15,7 +15,6 @@ import com.orels.domain.annotation.DatadogConfigFile
 import com.orels.auth.domain.interactor.AuthInteractor
 import com.orels.auth.domain.interactor.UserState
 import com.orels.domain.model.entities.ConfigFile
-import com.orels.domain.system.phone_call.PhonecallReceiver
 import com.orels.domain.util.extension.log
 import com.orels.domain.util.extension.rawResToStringMap
 import com.orels.domain.util.extension.safeCollectLatest

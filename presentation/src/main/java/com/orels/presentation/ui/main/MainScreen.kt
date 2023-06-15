@@ -18,6 +18,7 @@ import androidx.navigation.NavController
 import com.orels.domain.util.Screen
 import com.orels.presentation.ui.main.components.FoldersContainer
 import com.orels.presentation.ui.main.components.MessagesContainer
+import com.orels.presentation.ui.main.components.WaitingCallChooser
 
 
 @ExperimentalFoundationApi
@@ -60,11 +61,21 @@ private fun Content(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 16.dp)
-        ,
+            .padding(top = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        if (state.showWaitingCallChooser) {
+            WaitingCallChooser(
+                options = listOf(
+                    state.callInBackground,
+                    state.activeCall,
+                ), onOptionSelected = {
+                    it?.let { phoneCall ->
+                        viewModel.setCallAfterWaiting(phoneCall)
+                    }
+                })
+        }
         FoldersContainer(
             folders = state.folders,
             onClick = { viewModel.onFolderClick(it) },

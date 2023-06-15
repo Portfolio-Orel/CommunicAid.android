@@ -2,6 +2,7 @@ package com.orels.domain.managers.phonecall
 
 import android.content.Context
 import com.orels.domain.interactors.CallPreferences
+import com.orels.domain.model.entities.PhoneCall
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -14,11 +15,13 @@ interface PhoneCallManager {
     fun onStateChanged(state: String, number: String, context: Context? = null)
     fun hangupCall(context: Context)
     fun resetIfNoActiveCall()
+    fun setCallAfterWaiting(call: PhoneCall)
 }
 
 enum class CallState(val value: String) {
     OnCall("OnCall"),
     Waiting("Waiting"),
+    OnCallAfterWaiting("OnCallAfterWaiting"),
     Ringing("Ringing"),
     Idle("Idle");
 

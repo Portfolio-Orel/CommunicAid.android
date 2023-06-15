@@ -14,16 +14,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.orels.domain.model.entities.PhoneCall
 import com.orels.presentation.R
 
 @Composable
 fun WaitingCallChooser(
-    options: List<String>,
-    onOptionSelected: (String) -> Unit,
+    options: List<PhoneCall?>,
+    onOptionSelected: (PhoneCall?) -> Unit,
     onDismissRequest: () -> Unit = {},
 ) {
     Dialog(
@@ -47,15 +47,15 @@ fun WaitingCallChooser(
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.headlineMedium
             )
-            options.forEach { option ->
+            options.forEach { phoneCall ->
                 Button(
-                    onClick = { onOptionSelected(option) },
+                    onClick = { onOptionSelected(phoneCall) },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.inverseOnSurface,
                     )
                 ) {
                     Text(
-                        text = option,
+                        text = phoneCall?.getNameOrNumber() ?: stringResource(R.string.no_active_call),
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.titleLarge
                     )
@@ -63,14 +63,4 @@ fun WaitingCallChooser(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun WaitingCallChooserPreview() {
-    WaitingCallChooser(
-        options = listOf("Option 1", "Option 2"),
-        onOptionSelected = {},
-        onDismissRequest = {}
-    )
 }

@@ -1,8 +1,10 @@
-package com.orels.domain.managers.phonecall.interactor
+package com.orels.data.managers.phonecall.interactor
 
 import android.content.Context
 import com.orels.domain.interactors.CallPreferences
 import com.orels.domain.managers.phonecall.PhoneCallManager
+import com.orels.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
+import com.orels.domain.model.entities.PhoneCall
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -15,6 +17,9 @@ class PhoneCallManagerInteractorImpl @Inject constructor(
         get() = phoneCallManager.callsDataFlow
     override val callsData: CallPreferences
         get() = phoneCallManager.callsData
+
+    override fun setCallAfterWaiting(call: PhoneCall) =
+        phoneCallManager.setCallAfterWaiting(call)
 
     override fun resetIfNoActiveCall() = phoneCallManager.resetIfNoActiveCall()
 
