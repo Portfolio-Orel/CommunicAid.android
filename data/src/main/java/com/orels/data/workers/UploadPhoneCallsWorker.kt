@@ -10,7 +10,6 @@ import com.orels.domain.interactors.SettingsInteractor
 import com.orels.domain.model.entities.*
 import com.orels.domain.util.common.Constants
 import com.orels.domain.util.common.Logger
-import com.orels.domain.util.extension.appendAll
 import com.orels.domain.util.extension.compareToBallPark
 import com.orels.domain.util.extension.log
 import dagger.assisted.Assisted
@@ -54,14 +53,15 @@ class UploadPhoneCallsWorker @AssistedInject constructor(
                     it.uploadState == UploadState.NotUploaded
                             || it.uploadState == UploadState.BeingUploaded
                 }
-                .appendAll(checkCallsNotRecorded())
-                .mapNotNull {
+//                .appendAll(checkCallsNotRecorded()) - REQUIRES NOT ALLOWED PERMISSION
+                .map {
                     it.setUploadState(UploadState.BeingUploaded)
                     phoneCallsInteractor.updateCallUploadState(
                         it,
                         UploadState.BeingUploaded
                     )
-                    callLogInteractor.update(it)
+                    it
+//                    callLogInteractor.update(it) - REQUIRES NOT ALLOWED PERMISSION
                 }
             if (phoneCalls.isNotEmpty()) {
                 Logger.v("phone calls to upload: $phoneCalls")
@@ -90,6 +90,8 @@ class UploadPhoneCallsWorker @AssistedInject constructor(
         }
     }
 
+    @Suppress("unused")
+    @Deprecated("Requires not allowed permission")
     private suspend fun checkCallsNotRecorded(): PhoneCalls {
         val phoneCalls = ArrayList<PhoneCall>()
         val lastUpdateAt = settingsInteractor.getSettings(SettingsKey.CallsUpdateAt).value

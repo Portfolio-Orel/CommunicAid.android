@@ -2,11 +2,17 @@ package com.orels.presentation.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Shapes
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import com.orels.presentation.R
 
+private val fontsVarelaround = FontFamily(
+    Font(R.font.varelaround)
+)
 
 private val LightColors = lightColorScheme(
     primary = md_theme_light_primary,
@@ -80,9 +86,31 @@ fun MyMessagesTheme(
         LightColors
     }
 
+    val tempType = Typography()
+
     MaterialTheme(
         colorScheme = colors,
-//        typography = Typography,
+        typography = Typography().copy(
+            displayLarge = tempType.displayLarge.copy(fontFamily = fontsVarelaround),
+            displayMedium = tempType.displayMedium.copy(fontFamily = fontsVarelaround),
+            displaySmall = tempType.displaySmall.copy(fontFamily = fontsVarelaround),
+
+            headlineLarge = tempType.headlineLarge.copy(fontFamily = fontsVarelaround),
+            headlineMedium = tempType.headlineMedium.copy(fontFamily = fontsVarelaround),
+            headlineSmall = tempType.headlineSmall.copy(fontFamily = fontsVarelaround),
+
+            titleLarge = tempType.titleLarge.copy(fontFamily = fontsVarelaround),
+            titleMedium = tempType.titleMedium.copy(fontFamily = fontsVarelaround),
+            titleSmall = tempType.titleSmall.copy(fontFamily = fontsVarelaround),
+
+            bodyLarge = tempType.bodyLarge.copy(fontFamily = fontsVarelaround),
+            bodyMedium = tempType.bodyMedium.copy(fontFamily = fontsVarelaround),
+            bodySmall = tempType.bodySmall.copy(fontFamily = fontsVarelaround),
+
+            labelLarge = tempType.labelLarge.copy(fontFamily = fontsVarelaround),
+            labelMedium = tempType.labelMedium.copy(fontFamily = fontsVarelaround),
+            labelSmall = tempType.labelSmall.copy(fontFamily = fontsVarelaround)
+        ),
         content = content
     )
 }

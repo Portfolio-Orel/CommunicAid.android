@@ -16,12 +16,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.orels.auth.domain.model.SignInStep
 import com.orels.domain.util.Screen
 import com.orels.presentation.R
-import com.orels.presentation.theme.fontsVarelaround
 import com.orels.presentation.theme.noRippleClickable
-import com.orels.presentation.ui.components.confirmation_pop_up.ConfirmationScreen
 import com.orels.presentation.ui.login.components.AuthenticationInput
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
@@ -46,7 +43,7 @@ fun LoginScreen(
         Text(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
             text = stringResource(R.string.welcome_back),
-            style = MaterialTheme.typography.headlineLarge.copy(fontFamily = fontsVarelaround),
+            style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
         )
 
