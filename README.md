@@ -30,4 +30,4 @@ Communic-Aid is a cutting-edge communication management application engineered t
 5. **Settings menu**: Customize your app preferences to align with your communication style.
 
 ## Getting Started
-To get started with Communic-Aid contact as at [orelsmail@gmail.com](mailto:orelsmail@gmail.com).
+To get started with Communic-Aid contact me at [orelsmail@gmail.com](mailto:orelsmail@gmail.com).
