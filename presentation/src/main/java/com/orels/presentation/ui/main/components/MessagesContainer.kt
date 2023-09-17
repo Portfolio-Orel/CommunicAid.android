@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -52,6 +53,8 @@ fun MessagesContainer(
     messageWidth: Dp,
     isLoading: Boolean = false,
 ) {
+    val screen = LocalConfiguration.current
+    val screenHeight = screen.screenHeightDp
 
     val listState = rememberLazyGridState()
     val fabVisibility by remember {
@@ -134,13 +137,15 @@ fun MessagesContainer(
                     )
                 }
             }
-            AddNewMessageFab(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 40.dp),
-                onClick = addNewMessage,
-                visible = fabVisibility
-            )
+            if (screenHeight > 500) {
+                AddNewMessageFab(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 40.dp),
+                    onClick = addNewMessage,
+                    visible = fabVisibility
+                )
+            }
         }
     }
 }

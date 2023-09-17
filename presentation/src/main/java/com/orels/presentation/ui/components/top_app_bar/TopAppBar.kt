@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -22,8 +23,15 @@ fun TopAppBar(
     navController: NavController,
     viewModel: TopAppBarViewModel = hiltViewModel()
 ) {
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp
+    val modifier = if (screenHeight > 500) {
+        Modifier.padding(vertical = 12.dp)
+    } else {
+        Modifier.padding(vertical = 2.dp)
+    }
     val state = viewModel.state
-    Column(modifier = Modifier.padding(vertical = 12.dp)) {
+    Column(modifier = modifier) {
         CenterAlignedTopAppBar(
             title = {
                 Column(

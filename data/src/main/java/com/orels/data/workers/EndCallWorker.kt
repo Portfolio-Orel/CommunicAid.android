@@ -1,4 +1,4 @@
-package com.orels.domain.workers
+package com.orels.data.workers
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker

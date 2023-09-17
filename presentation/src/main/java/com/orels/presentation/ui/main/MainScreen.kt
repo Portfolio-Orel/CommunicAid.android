@@ -37,6 +37,8 @@ private fun Content(
 ) {
     val state = viewModel.state
     val screen = LocalConfiguration.current
+    val screenHeight = screen.screenHeightDp
+
     val spaceBetweenMessages = 18
     val messageWidth =
         getMessageWidth(screenWidth = screen.screenWidthDp, spaceBetween = spaceBetweenMessages)
@@ -65,16 +67,18 @@ private fun Content(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        FoldersContainer(
-            folders = state.folders,
-            onClick = { viewModel.onFolderClick(it) },
-            onEditClick = { viewModel.editFolder(it) },
-            onDropdownClick = viewModel::onFoldersDropdownClick,
-            addNewFolder = { navController.navigate(Screen.DetailsFolder.route) },
-            selected = state.selectedFolder,
-            color = MaterialTheme.colorScheme.onBackground,
-            isLoading = state.isLoading
-        )
+        if (screenHeight > 500) {
+            FoldersContainer(
+                folders = state.folders,
+                onClick = { viewModel.onFolderClick(it) },
+                onEditClick = { viewModel.editFolder(it) },
+                onDropdownClick = viewModel::onFoldersDropdownClick,
+                addNewFolder = { navController.navigate(Screen.DetailsFolder.route) },
+                selected = state.selectedFolder,
+                color = MaterialTheme.colorScheme.onBackground,
+                isLoading = state.isLoading
+            )
+        }
         MessagesContainer(
             messages = state.selectedFoldersMessages,
             onClick = { viewModel.onMessageClick(it) },
