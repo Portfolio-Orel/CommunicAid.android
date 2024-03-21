@@ -50,6 +50,9 @@ fun MyMessagesApp(
     CompositionLocalProvider(
         LocalOverscrollConfiguration provides null
     ) {
+        // Request Manifest.Read_call_log permission
+
+
         if (state.isLoading) {
             Box(
                 modifier = Modifier

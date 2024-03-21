@@ -47,6 +47,11 @@ class MainActivity : ComponentActivity() {
                         permissions = listOf(
                             Manifest.permission.READ_PHONE_STATE,
                             Manifest.permission.READ_CONTACTS,
+                            Manifest.permission.SEND_SMS,
+                            Manifest.permission.READ_PHONE_STATE,
+                            Manifest.permission.CALL_PHONE,
+                            Manifest.permission.READ_CALL_LOG
+
                         )
                     )
                     val lifecycleOwner = LocalLifecycleOwner.current
