@@ -1,11 +1,9 @@
 package com.orels.domain.model.entities
 
-import android.content.Context
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.Gson
 import com.orels.domain.interactors.CallType
-import com.orels.domain.util.common.ContactsUtil
 import com.orels.domain.util.extension.epochTimeInSeconds
 import java.util.*
 
@@ -15,7 +13,7 @@ data class PhoneCall(
     var number: String = "",
     var startDate: Date, // The date the call was registered in the phone
     var endDate: Date, // startDate + call duration
-    var name: String = "",
+    var name: String? = null,
     var isWaiting: Boolean = false,
     var type: String = CallType.INCOMING.name,
     var actualEndDate: Date? = null, // The time the call ended
@@ -30,17 +28,14 @@ data class PhoneCall(
         }
     }
 
-    fun getNameOrNumber(): String {
-        if (name == "") return number
-        return name
-    }
+    fun getNameOrNumber(): String = name ?: number
 
     override val data: Map<String, Any>
         get() = mapOf(
             "number" to number,
             "start_date" to "startDate.time",
             "end_date" to "endDate.time",
-            "name" to name,
+            "name" to (name ?: ""),
             "is_waiting" to isWaiting,
             "messages_sent" to messagesSent.map { it.data },
             "type" to type
@@ -48,10 +43,6 @@ data class PhoneCall(
 
     val isAnswered: Boolean
         get() = (startDate.time.epochTimeInSeconds != endDate.time.epochTimeInSeconds)
-
-    fun getName(context: Context): String =
-        ContactsUtil.getContactName(number, context)
-
 
     fun missed() {
         type = CallType.MISSED.name

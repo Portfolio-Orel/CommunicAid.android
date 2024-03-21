@@ -18,6 +18,7 @@ import com.orels.presentation.ui.components.util.SnackbarController
 import com.orels.presentation.ui.delete_button.DeleteButton
 import com.orels.presentation.ui.main.components.ActionButton
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailsFolderScreen(
     navController: NavController,

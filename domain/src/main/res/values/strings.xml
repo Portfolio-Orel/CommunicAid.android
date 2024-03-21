@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">MyMessages</string>
-    <string name="title_activity_message">Message</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="local_db_name">mymessagesdb.db</string>
+    <string name="title_activity_message" translatable="false">Message</string>
+    <string name="title_activity_main" translatable="false">MainActivity</string>
+    <string name="local_db_name" translatable="false">mymessagesdb.db</string>
     <string name="add_message">הוסף הודעה</string>
     <string name="add_folder">הוסף תיקייה</string>
     <string name="unhandled_calls">שיחות</string>
@@ -18,7 +18,7 @@
     <string name="email">אימייל</string>
     <string name="insert_email_code">הכנס את הקוד שקיבלת במייל</string>
     <string name="confirmation_code">קוד אישור</string>
-    <string name="loging_out">מתנתק…</string>
+    <string name="login_out">מתנתק…</string>
     <string name="logout">התנתק</string>
     <string name="wrong_credentials">הפרטים שהוזנו לא נכונים…</string>
     <string name="no_unhandled_calls">אין שיחות שלא טופלו!</string>
@@ -37,6 +37,7 @@
     <string name="main">ראשי</string>
     <string name="details_message">details_message</string>
     <string name="details_folder">details_folder</string>
+    <string name="forgot_password">forgot_password</string>
     <string name="sign_out">Sign out</string>
     <string name="folder">תיקייה</string>
     <string name="incoming_calls">נכנסות</string>
@@ -60,7 +61,7 @@
     <string name="error_user_not_confirmed">עוד לא הגענו לאישור המשתמש שלך.. אוטוטו אנחנו שם!</string>
     <string name="error_user_not_signed_in">המשתמש לא מוכר לנו…</string>
     <string name="error_unknown">קרתה שגיאה לא צפויה. אנחנו מטפלים בזה</string>
-    <string name="empty_string"/>
+    <string name="empty_string" />
     <string name="delete_message">מחק הודעה</string>
     <string name="message_deleted_successfully">ההודעה נמחקה בהצלחה</string>
     <string name="messages_restored_successfully">ההודעה שוחזרה בהצלחה</string>
@@ -75,6 +76,7 @@
     <string name="error_code_expired">הקוד כבר לא תקף.. שלחנו לך חדש</string>
     <string name="confirming_code">בודקים את הקוד..</string>
     <string name="settings">הגדרות</string>
+    <string name="hello_name">היי, %1$s!</string>
     <string name="last_calls_update">עדכון שיחות אחרון</string>
     <string name="show_app_on_call">הצג אפליקציה בעת שיחה</string>
     <string name="ignore_list">רשימת התעלמות</string>

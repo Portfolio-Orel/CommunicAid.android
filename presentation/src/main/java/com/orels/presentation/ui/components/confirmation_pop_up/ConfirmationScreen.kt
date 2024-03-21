@@ -15,7 +15,7 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orels.presentation.R
 import com.orels.presentation.theme.MyMessagesTheme
-import com.orels.presentation.ui.login.components.Input
+import com.orels.presentation.ui.components.Input
 
 @ExperimentalMaterial3Api
 @Composable

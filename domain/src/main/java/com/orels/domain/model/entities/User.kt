@@ -9,6 +9,9 @@ data class User(
     var token: String = "",
     var email: String = "",
     var username: String = "",
+    val firstName: String = "",
+    val lastName: String = "",
+    val phoneNumber: String = "",
     var state: UserState = UserState.NotAuthorized
 ) {
 
@@ -23,6 +26,7 @@ data class User(
         return result
     }
 
+    @Suppress("unused")
     companion object {
         fun blocked(): User =
             User(state = UserState.Blocked)
@@ -32,6 +36,7 @@ data class User(
     }
 }
 
+@Suppress("unused")
 enum class UserState {
     NotAuthorized,
     Authorized,

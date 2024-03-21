@@ -24,7 +24,7 @@ fun CustomScaffold(
 
     val screenHeight = configuration.screenHeightDp
 
-    if(screenHeight > 300) {
+    if(screenHeight > 500) {
     Scaffold(
         topBar = topBar ,
         bottomBar = { bottomBar(navController) },
@@ -37,7 +37,11 @@ fun CustomScaffold(
     )
     } else {
         Scaffold(
+            topBar = topBar,
             content = content,
+            snackbarHost = {
+                SnackbarHost(hostState = SnackbarController.getInstance().snackbarHostState.value)
+            }
         )
     }
 }

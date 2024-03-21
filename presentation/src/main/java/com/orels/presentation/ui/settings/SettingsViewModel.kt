@@ -5,7 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orels.domain.interactors.*
+import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.domain.interactors.AnalyticsIdentifiers
+import com.orels.domain.interactors.AnalyticsInteractor
+import com.orels.domain.interactors.SettingsInteractor
 import com.orels.domain.model.entities.Settings
 import com.orels.domain.model.entities.SettingsType
 import com.orels.domain.util.common.Logger
@@ -13,19 +16,15 @@ import com.orels.domain.util.extension.launchCatching
 import com.orels.domain.util.extension.log
 import com.orels.domain.util.extension.notEqualsTo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val settingsInteractor: SettingsInteractor,
     private val authInteractor: AuthInteractor,
-    private val generalInteractor: GeneralInteractor,
-    analyticsInteractor: AnalyticsInteractor
+    analyticsInteractor: AnalyticsInteractor,
 ) :
     ViewModel() {
     var state by mutableStateOf(SettingsState())
@@ -40,11 +39,17 @@ class SettingsViewModel @Inject constructor(
         initData()
     }
 
-    fun signOut() {
+    fun logout() {
         state = state.copy(isLoadingSignOut = true)
         viewModelScope.launchCatching(Dispatchers.Main) {
-            authInteractor.signOut()
-            generalInteractor.clearAllDatabases()
+            try {
+                authInteractor.logout()
+                withContext(Dispatchers.Main) {
+                    state = state.copy(isLoadingSignOut = false)
+                }
+            } catch (e: Exception) {
+                e.log()
+            }
         }
     }
 
@@ -60,15 +65,22 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun initData() {
+        state = state.copy(isLoadingSettings = true)
         val settingsList = settingsInteractor.getAll()
+        val user = authInteractor.getUser()
+        state = state.copy(isLoadingSettings = settingsList.isEmpty(), user = user)
         setSettings(settingsList)
 
         val fetchSettingsJob = viewModelScope.async { settingsInteractor.init() }
-        viewModelScope.launch(SupervisorJob()) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 fetchSettingsJob.await()
             } catch (e: Exception) {
                 e.log()
+            } finally {
+                withContext(Dispatchers.Main) {
+                    state = state.copy(isLoadingSettings = false)
+                }
             }
         }
     }
@@ -90,8 +102,6 @@ class SettingsViewModel @Inject constructor(
             settingsList = sortedSettingsList,
         )
     }
-
-    private fun isSettingsChanges(): Boolean = state.updatedSettings.isNotEmpty()
 
     private fun settingsChecked(settings: Settings) {
         val prevChecked: Boolean = settings.getRealValue() ?: true

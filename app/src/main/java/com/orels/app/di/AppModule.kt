@@ -5,14 +5,14 @@ import android.content.Context
 import androidx.room.Room
 import com.google.gson.Gson
 import com.orels.R
-import com.orels.data.interactor.UserInteractorImpl
+import com.orels.auth.data.local.AuthDatabase
+import com.orels.auth.data.local.dao.UserDao
+import com.orels.auth.domain.interactor.AuthInteractor
 import com.orels.data.interceptor.AuthInterceptor
 import com.orels.data.interceptor.ErrorInterceptor
 import com.orels.data.interceptor.LogInterceptor
 import com.orels.data.interceptor.ResponseInterceptor
-import com.orels.data.local.AuthDatabase
 import com.orels.data.local.LocalDatabase
-import com.orels.data.local.dao.UserDao
 import com.orels.data.local.type_converters.Converters
 import com.orels.data.remote.EnvironmentRepository
 import com.orels.data.remote.Environments
@@ -21,8 +21,6 @@ import com.orels.domain.annotation.AuthConfigFile
 import com.orels.domain.annotation.BaseProjectUrl
 import com.orels.domain.annotation.DatadogConfigFile
 import com.orels.domain.annotation.MixpanelConfigFile
-import com.orels.domain.interactors.AuthInteractor
-import com.orels.domain.interactors.UserInteractor
 import com.orels.domain.model.entities.ConfigFile
 import dagger.Module
 import dagger.Provides
@@ -58,10 +56,6 @@ object AppModule {
         db.userDao()
 
     @Provides
-    @Singleton
-    fun provideUserInteractor(userInteractor: UserInteractorImpl): UserInteractor = userInteractor
-
-    @Provides
     fun provideLocalDatabase(context: Application): LocalDatabase =
         with(context) {
             Room.databaseBuilder(
@@ -80,8 +74,8 @@ object AppModule {
     fun provideBaseUrl(
         environmentRepository: EnvironmentRepository
     ): String = when (environmentRepository.currentEnvironment) {
-        Environments.Dev -> "https://22jwmm93j9.execute-api.us-east-1.amazonaws.com/"
-        Environments.Prod -> "https://w5l4faau04.execute-api.us-east-1.amazonaws.com/"
+        Environments.Dev -> "https://rzbdt4g5jl.execute-api.us-east-1.amazonaws.com/"
+        Environments.Prod -> "https://rzbdt4g5jl.execute-api.us-east-1.amazonaws.com/"
         Environments.LocalEmulator -> "http://10.0.2.2:4000/"
     }
 
@@ -108,7 +102,7 @@ object AppModule {
     fun provideAuthConfigFile(
         environmentRepository: EnvironmentRepository
     ): ConfigFile = when (environmentRepository.currentEnvironment) {
-        Environments.Dev, Environments.LocalEmulator -> ConfigFile(fileResId = R.raw.dev_amplifyconfiguration)
+        Environments.Dev, Environments.LocalEmulator -> ConfigFile(fileResId = R.raw.prod_amplifyconfiguration)
         Environments.Prod -> ConfigFile(fileResId = R.raw.prod_amplifyconfiguration)
     }
 

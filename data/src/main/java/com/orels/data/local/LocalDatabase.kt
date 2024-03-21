@@ -17,7 +17,7 @@ import com.orels.domain.model.entities.*
         Settings::class,
         Statistics::class,
     ],
-    version = 29
+    version = 30
 )
 @TypeConverters(Converters::class)
 abstract class LocalDatabase : RoomDatabase() {

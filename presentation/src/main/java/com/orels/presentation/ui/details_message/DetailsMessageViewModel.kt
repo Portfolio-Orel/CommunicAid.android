@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orels.domain.interactors.AuthInteractor
+import com.orels.auth.domain.interactor.AuthInteractor
 import com.orels.domain.interactors.FolderInteractor
 import com.orels.domain.interactors.MessageInFolderInteractor
 import com.orels.domain.interactors.MessageInteractor
@@ -24,16 +24,13 @@ class DetailsMessageViewModel @Inject constructor(
     private val messageInteractor: MessageInteractor,
     private val folderInteractor: FolderInteractor,
     private val messageInFolderInteractor: MessageInFolderInteractor,
-    private val authInteractor: AuthInteractor
 ) : ViewModel() {
     var state by mutableStateOf(DetailsMessageState())
 
     init {
         viewModelScope.launch(Dispatchers.Main) {
-            authInteractor.getUser()?.userId?.let {
-                folderInteractor.getFolders().collectLatest {
-                    state = state.copy(folders = it)
-                }
+            folderInteractor.getFolders().collectLatest {
+                state = state.copy(folders = it)
             }
         }
     }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="first_name">First Name</string>
+    <string name="what_is_your_name">What is your name?</string>
+    <string name="finish">Finish</string>
+    <string name="last_name">Last Name</string>
+    <string name="welcome_back">Welcome back</string>
+    <string name="forgot_password_message">Don\'t worry, it happens to all of us. Enter your username, and we will send you a code to reset your password.</string>
+    <string name="change_the_password">Change the Password</string>
+    <string name="code">Code</string>
+    <string name="done_exclamation">Done!</string>
+    <string name="your_password_has_been_changed">Your password has been changed</string>
+    <string name="lets_go">Let\'s go</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="insert_code_and_create_password">Enter the code sent to your email and create a new password</string>
+    <string name="error_invalid_passwords">There is an issue with one of the passwords</string>
+    <string name="edit_folder">Edit Folder</string>
+    <string name="dont_have_an_account">Don\'t have an account?</string>
+
+</resources>

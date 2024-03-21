@@ -56,7 +56,7 @@ fun StatisticsTabs(
             ) {
                 Text(
                     text = stringResource(tab.title),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.titleMedium,
                     color = if (selected == tab) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground
                 )
             }

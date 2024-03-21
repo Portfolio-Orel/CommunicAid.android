@@ -1,247 +1,142 @@
 package com.orels.presentation.ui.login
 
-import android.app.Activity
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.orels.auth.domain.model.SignInStep
+import com.orels.domain.util.Screen
 import com.orels.presentation.R
+import com.orels.presentation.theme.fontsVarelaround
+import com.orels.presentation.theme.noRippleClickable
 import com.orels.presentation.ui.components.confirmation_pop_up.ConfirmationScreen
-import com.orels.presentation.ui.components.login_button.LoginButton
-import com.orels.presentation.ui.components.register_button.RegisterButton
-import com.orels.presentation.ui.login.components.Input
-import com.orels.presentation.ui.login.components.forgot_password.ForgotPasswordComponent
-import com.orels.presentation.ui.main.components.ActionButton
+import com.orels.presentation.ui.login.components.AuthenticationInput
 
-@ExperimentalMaterial3Api
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state
-    if (state.isLoading) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .height(48.dp)
-                    .width(48.dp),
-                strokeWidth = 2.dp,
-                color = MaterialTheme.colorScheme.inversePrimary
-            )
-        }
-    } else {
-        when (state.event) {
-            Event.NotAuthorized -> ContentView(viewModel = viewModel)
-            Event.RegistrationRequired -> RegistrationScreen(onRegister = { firstName, lastName ->
-                viewModel.createUser(
-                    firstName = firstName,
-                    lastName = lastName
-                )
-            })
-            Event.Authorized -> {}
-        }
-    }
-}
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-@ExperimentalMaterial3Api
-@Composable
-private fun ContentView(viewModel: LoginViewModel) {
-    val state = viewModel.state
-    val context = LocalContext.current
-
-    if (state.showCodeConfirmation) {
-        Column(
-            modifier =
-            Modifier
-                .zIndex(2f)
-                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.7f))
-        ) {
-            ConfirmationScreen(
-                username = state.username,
-                password = state.password,
-                onDismiss = {
-                    viewModel.hideRegistrationConfirmation()
-                }, onUserConfirmed = {
-                    viewModel.onEvent(LoginEvents.OnLoginCompleted(true, null))
-                })
-        }
-    }
-    Column(
-        modifier = Modifier
-            .zIndex(1f)
-            .fillMaxSize()
-            .padding(20.dp)
-            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.3f)),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Column(
-            modifier = Modifier.zIndex(1f),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-        ) {
-            Input(
-                title = stringResource(R.string.username),
-                placeholder = stringResource(R.string.username),
-                initialText = "",
-                isPassword = false,
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Person,
-                        stringResource(R.string.username)
-                    )
-                },
-                onTextChange = { viewModel.onUsernameChange(it) }
-            )
-            Input(
-                title = stringResource(R.string.password),
-                placeholder = stringResource(R.string.password),
-                initialText = "",
-                isPassword = true,
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Lock,
-                        stringResource(R.string.password_icon)
-                    )
-                },
-                onTextChange = { viewModel.onPasswordChange(it) })
-            if (state.isRegister) {
-                Input(
-                    title = stringResource(R.string.email),
-                    placeholder = stringResource(R.string.email),
-                    initialText = "",
-                    isPassword = false,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Lock,
-                            stringResource(R.string.email)
-                        )
-                    },
-                    onTextChange = { viewModel.onEmailChange(it) })
-
-                RegisterButton(
-                    username = state.username,
-                    password = state.password,
-                    email = state.email,
-                    onRegisterComplete = { viewModel.onEvent(LoginEvents.UserRegisteredSuccessfully) })
-            }
-            ForgotPasswordComponent()
-            LoginButton(
-                username = state.username,
-                password = state.password,
-                onLoginComplete = { isAuthorized, exception ->
-                    viewModel.onEvent(
-                        LoginEvents.OnLoginCompleted(
-                            isAuthorized = isAuthorized,
-                            exception = exception
-                        )
-                    )
-                },
-                onLoginClick = { viewModel.onLoginClick() }
-            )
-            if ((context as? Activity) != null) {
-                GoogleButton(onClick = { viewModel.googleAuth(activity = context) })
-            }
-            Text(
-                text = stringResource(state.error ?: R.string.empty_string),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.error
-            )
-        }
-    }
-}
-
-@Composable
-fun GoogleButton(onClick: () -> Unit) {
-    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center)
-    {
-        Button(
-            onClick = onClick,
-            modifier = Modifier.size(75.dp),
-            shape = CircleShape,
-            contentPadding = PaddingValues(),
-            colors = ButtonDefaults.buttonColors(
-                contentColor = MaterialTheme.colorScheme.background,
-                containerColor = MaterialTheme.colorScheme.onBackground
-            )
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_logo_google),
-                contentDescription = ""
-            )
-        }
-    }
-}
-
-@Composable
-fun RegistrationScreen(
-    onRegister: (firstName: String, lastName: String) -> Unit
-) {
-    var firstName by remember { mutableStateOf("") }
-    var firstNameError by remember { mutableStateOf(false) }
-    var lastName by remember { mutableStateOf("") }
-    var lastNameError by remember { mutableStateOf(false) }
+    val passwordFocusRequester = remember { FocusRequester() }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(top = 16.dp)
             .background(MaterialTheme.colorScheme.background),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top)
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Top,
     ) {
         Text(
-            text = stringResource(R.string.what_is_your_name),
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onBackground
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
+            text = stringResource(R.string.welcome_back),
+            style = MaterialTheme.typography.headlineLarge.copy(fontFamily = fontsVarelaround),
+            fontWeight = FontWeight.Bold,
         )
-        Input(
-            title = stringResource(R.string.first_name),
-            minLines = 1,
-            maxLines = 1,
-            isError = firstNameError,
-            isPassword = false,
-            onTextChange = {
-                firstName = it
-                firstNameError = false
+
+        AuthenticationInput(
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            placeholder = stringResource(R.string.username),
+            value = state.username,
+            onValueChange = viewModel::onUsernameChange,
+            imeAction = ImeAction.Next,
+            onImeAction = { passwordFocusRequester.requestFocus() },
+            isError = state.usernameField.isError,
+        )
+        AuthenticationInput(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            placeholder = stringResource(R.string.password),
+            value = state.password,
+            onValueChange = viewModel::onPasswordChange,
+            onImeAction = {
+                keyboardController?.hide()
+                viewModel.login()
+            },
+            imeAction = ImeAction.Done,
+            isPassword = true,
+            focusRequester = passwordFocusRequester,
+            isError = state.passwordField.isError,
+        )
+        Text(
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .noRippleClickable {
+                    navController.navigate(Screen.ForgotPassword.route)
+                },
+            text = stringResource(R.string.did_forget_password),
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.SemiBold,
+        )
+
+        state.error?.let {
+            Text(
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
+                text = stringResource(it),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+/* Registration is disabled for now */
+//        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            horizontalArrangement = Arrangement.Center,
+//            verticalAlignment = Alignment.CenterVertically
+//        ) {
+//            Text(
+//                text = stringResource(R.string.dont_have_an_account),
+//                style = MaterialTheme.typography.bodySmall,
+//                fontWeight = FontWeight.Light,
+//            )
+//            Text(
+//                modifier = Modifier
+//                    .padding(horizontal = 8.dp)
+//                    .noRippleClickable { },
+//                text = stringResource(R.string.sign_up),
+//                style = MaterialTheme.typography.bodySmall,
+//                fontWeight = FontWeight.Bold,
+//            )
+//        }
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 8.dp),
+            onClick = viewModel::login,
+            shape = MaterialTheme.shapes.medium,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.onBackground,
+                contentColor = MaterialTheme.colorScheme.background,
+            ),
+        ) {
+            if (state.isLoading) {
+                Loading(size = 24.dp, color = MaterialTheme.colorScheme.background, width = 1.dp)
+            } else {
+                Text(
+                    text = stringResource(R.string.login),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Normal,
+                )
             }
-        )
-        Input(
-            title = stringResource(R.string.last_name),
-            minLines = 1,
-            maxLines = 1,
-            isError = lastNameError,
-            isPassword = false,
-            onTextChange = {
-                lastName = it
-                lastNameError = false
-            }
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-        ActionButton(
-            onClick = {
-                if (firstName.isNotBlank() && lastName.isNotBlank()) {
-                    onRegister(firstName, lastName)
-                } else {
-                    firstNameError = firstName.isBlank()
-                    lastNameError = lastName.isBlank()
-                }
-            }, text = stringResource(R.string.finish)
-        )
+        }
     }
 }

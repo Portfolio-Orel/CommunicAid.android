@@ -7,9 +7,9 @@ import androidx.room.PrimaryKey
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.orels.domain.R
-import com.orels.domain.util.RequiredPermission
 import com.orels.domain.util.extension.formatDayAndHours
 import com.orels.domain.util.extension.log
+import com.orels.domain.util.permission.RequiredPermission
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -84,14 +84,16 @@ enum class SettingsKey(
     val defaultValue: String,
     val defaultEditEnabled: Boolean = true,
     val requiredPermissions: List<RequiredPermission> = emptyList(),
-    @StringRes val title: Int? = null
+    @StringRes val title: Int? = null,
+    val visibleToUser: Boolean = true,
 ) {
     CallsUpdateAt(
         keyInServer = "calls_update_at",
         type = SettingsType.Data,
         valueType = Long::class,
         defaultValue = Date().time.toString(),
-        title = R.string.last_calls_update
+        title = R.string.last_calls_update,
+        visibleToUser = false,
     ),
     IsDataInit(
         keyInServer = "is_data_init",
@@ -133,7 +135,8 @@ enum class SettingsKey(
         valueType = Boolean::class,
         defaultValue = false.toString(),
         requiredPermissions = listOf(RequiredPermission.SendSMS),
-        title = R.string.send_sms_to_background_call
+        title = R.string.send_sms_to_background_call,
+        visibleToUser = false, // Not allowed in play store
     ),
     SMSToSendToBackgroundCall(
         keyInServer = "sms_to_send_to_background_call",

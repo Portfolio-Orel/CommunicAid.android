@@ -1,7 +1,7 @@
 package com.orels.data.interceptor
 
-import com.orels.domain.model.exception.CouldNotRefreshTokenException
-import com.orels.domain.interactors.AuthInteractor
+import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.auth.domain.model.exception.CouldNotRefreshTokenException
 import com.orels.domain.util.extension.log
 import kotlinx.coroutines.*
 import okhttp3.Interceptor
@@ -15,13 +15,15 @@ class ErrorInterceptor(
         var response = chain.proceed(chain.request())
         when (response.code()) {
             401 -> {
+                runBlocking {
+                    authInteractor.refreshToken()
+                }
                 val job = GlobalScope.async { authInteractor.refreshToken() }
                 CoroutineScope(SupervisorJob()).launch {
                     try {
                         job.join()
                     } catch (e: CouldNotRefreshTokenException) {
                         e.log()
-                        authInteractor.signOut()
                     }
                 }
                 response.close()

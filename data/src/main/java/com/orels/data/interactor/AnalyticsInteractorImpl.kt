@@ -2,12 +2,12 @@ package com.orels.data.interactor
 
 import android.content.Context
 import com.mixpanel.android.mpmetrics.MixpanelAPI
+import com.orels.auth.domain.interactor.AuthInteractor
 import com.orels.domain.annotation.MixpanelConfigFile
 import com.orels.domain.interactors.AnalyticsIdentifiers
 import com.orels.domain.interactors.AnalyticsInteractor
 import com.orels.domain.model.entities.ConfigFile
 import com.orels.domain.util.extension.rawResToStringMap
-import com.orels.domain.interactors.AuthInteractor
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.json.JSONObject
 import javax.inject.Inject
@@ -15,7 +15,7 @@ import javax.inject.Inject
 class AnalyticsInteractorImpl @Inject constructor(
     @ApplicationContext context: Context,
     @MixpanelConfigFile mixpanelConfigFile: ConfigFile,
-    private val authInteractor: AuthInteractor
+    private val authInteractor: AuthInteractor,
 ) : AnalyticsInteractor {
     private val mixpanel: MixpanelAPI
 
@@ -33,13 +33,13 @@ class AnalyticsInteractorImpl @Inject constructor(
 
     private fun trackWithUsername(
         identifier: AnalyticsIdentifiers,
-        values: List<Map<String, Any>>
+        values: List<Map<String, Any>>,
     ) {
         mixpanel.track(
             identifier.identifier,
             values.asJson(
                 extras = mapOf(
-                    "username" to ((authInteractor.getUser()?.username) ?: "")
+                    "username" to (authInteractor.getUser()?.username ?: "")
                 )
             )
         )

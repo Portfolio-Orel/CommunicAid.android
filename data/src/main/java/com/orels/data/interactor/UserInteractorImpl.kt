@@ -1,33 +1,25 @@
 package com.orels.data.interactor
 
+import com.orels.auth.domain.interactor.AuthInteractor
 import com.orels.domain.interactors.UserInteractor
-import com.orels.domain.model.entities.User
-import kotlinx.coroutines.flow.Flow
+import com.orels.domain.model.dto.response.toUser
+import com.orels.domain.model.exception.UserNotFoundException
+import com.orels.domain.repository.Repository
 import javax.inject.Inject
 
 class UserInteractorImpl @Inject constructor(
-    private val db: com.orels.data.local.dao.UserDao
-) : UserInteractor {
-    override fun save(user: User) {
-        val currentUser = db.get()
-        if (currentUser != user) {
-            if(currentUser?.userId == user.userId) {
-                db.update(user)
-            } else {
-                db.clear()
-                db.insert(user)
-            }
-        }
+    private val repository: Repository,
+    private val authInteractor: AuthInteractor,
+): UserInteractor {
+
+    override suspend fun setUser() {
+        val user = repository.getUser()?.toUser() ?: throw UserNotFoundException()
+        val authUser = com.orels.auth.domain.model.User(
+            userId = user.userId,
+            email = user.email,
+            firstName = user.firstName,
+            lastName = user.lastName,
+        )
+        authInteractor.updateUser(authUser)
     }
-
-
-    override fun get(): User? =
-        db.get()
-
-    override fun getFlow(): Flow<User?> = db.getUserFlow()
-
-    override fun clear() {
-        db.clear()
-    }
-
 }

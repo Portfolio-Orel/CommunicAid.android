@@ -8,63 +8,71 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.orels.domain.util.Screen
 import com.orels.presentation.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBar(
     navController: NavController,
     viewModel: TopAppBarViewModel = hiltViewModel()
 ) {
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp
+    val modifier = if (screenHeight > 500) {
+        Modifier.padding(vertical = 12.dp)
+    } else {
+        Modifier.padding(vertical = 2.dp)
+    }
     val state = viewModel.state
-    CenterAlignedTopAppBar(
-        title = {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = if (state.callOnTheLine?.number == "" || state.callOnTheLine == null)
-                        stringResource(R.string.no_active_call)
-                    else
-                        state.callOnTheLine.getNameOrNumber(),
-                    style = MaterialTheme.typography.titleSmall,
-                )
-//                if (BuildConfig.DEBUG) {
-//                    Text(
-//                        text = "Debug_new",
-//                        style = MaterialTheme.typography.bodySmall,
-//                        color = MaterialTheme.colorScheme.error
-//                    )
-//                }
-            }
-        },
-        navigationIcon = {
-            Box(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .size(32.dp)
-                    .clickable {
-                        navController.navigate(Screen.Settings.route)
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Person,
-                    contentDescription = stringResource(R.string.icon_settings),
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-        },
-        actions = {},
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.background,
-            titleContentColor = MaterialTheme.colorScheme.onBackground,
-        ),
-        scrollBehavior = null
-    )
+    Column(modifier = modifier) {
+        CenterAlignedTopAppBar(
+            title = {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = if (state.callOnTheLine?.number == "" || state.callOnTheLine == null)
+                            stringResource(R.string.no_active_call)
+                        else
+                            state.callOnTheLine.getNameOrNumber(),
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+            },
+            navigationIcon = {
+                Box(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .size(32.dp)
+                        .clickable {
+                            navController.navigate(Screen.Settings.route)
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        imageVector = Icons.Rounded.Person,
+                        contentDescription = stringResource(R.string.icon_settings),
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            },
+            actions = {},
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background,
+                titleContentColor = MaterialTheme.colorScheme.onBackground,
+            ),
+            scrollBehavior = null
+        )
+        Divider()
+    }
 }

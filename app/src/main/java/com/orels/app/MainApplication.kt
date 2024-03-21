@@ -12,11 +12,10 @@ import com.google.firebase.FirebaseApp
 import com.orels.data.remote.EnvironmentRepository
 import com.orels.domain.annotation.AuthConfigFile
 import com.orels.domain.annotation.DatadogConfigFile
-import com.orels.domain.interactors.AuthInteractor
-import com.orels.domain.interactors.UserInteractor
+import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.auth.domain.interactor.UserState
 import com.orels.domain.model.entities.ConfigFile
 import com.orels.domain.system.phone_call.PhonecallReceiver
-import com.orels.domain.util.common.Logger
 import com.orels.domain.util.extension.log
 import com.orels.domain.util.extension.rawResToStringMap
 import com.orels.domain.util.extension.safeCollectLatest
@@ -46,9 +45,6 @@ class MainApplication : Application(), Configuration.Provider {
 
     @Inject
     lateinit var authInteractor: AuthInteractor
-
-    @Inject
-    lateinit var userInteractor: UserInteractor
 
     override fun onCreate() {
 
@@ -83,13 +79,13 @@ class MainApplication : Application(), Configuration.Provider {
     private fun observeUser() {
         CoroutineScope(SupervisorJob()).launch {
             try {
-                authInteractor.init(configFileResourceId = authConfigFile.fileResId, Logger())
+                authInteractor.initialize(configFileResourceId = authConfigFile.fileResId)
             } catch (e: Exception) {
                 e.log()
             }
-            userInteractor.getFlow().safeCollectLatest { user ->
+            authInteractor.getUserState().safeCollectLatest { state ->
                 try {
-                    if (authInteractor.isAuthorized(user, "MainApp")) {
+                    if (state == UserState.LoggedIn) {
                         PhonecallReceiver.enable(context = applicationContext)
                         SettingsPhoneCallReceiver.enable(context = applicationContext)
                     } else {

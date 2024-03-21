@@ -1,5 +1,9 @@
 package com.orels.app.di
 
+import com.orels.auth.data.local.interactor.AuthInteractorImpl
+import com.orels.auth.data.remote.AuthServiceImpl
+import com.orels.auth.domain.interactor.AuthInteractor
+import com.orels.auth.domain.service.AuthService
 import com.orels.data.interactor.*
 import com.orels.data.managers.phonecall.interactor.PhoneCallManagerImpl
 import com.orels.data.managers.system_service.SystemServiceManagerImpl
@@ -30,6 +34,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
     @Binds
+    @Singleton
     abstract fun bindAuthInteractor(
         authInteractorImpl: AuthInteractorImpl
     ): AuthInteractor
@@ -70,6 +75,9 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideSettingsInteractor(interactorImpl: SettingsInteractorImpl): SettingsInteractor
+    
+    @Binds
+    abstract fun provideUserInteractor(interactorImpl: UserInteractorImpl): UserInteractor
 
     @Binds
     abstract fun provideUnhandledCallsManager(manager: UnhandledCallsManagerImpl): UnhandledCallsManager
@@ -78,7 +86,7 @@ abstract class RepositoryModule {
     abstract fun provideDataSourceCallsInteractor(interactorImpl: DataSourceCallsInteractorImpl): DataSourceCallsInteractor
 
     @Binds
-    abstract fun provideCallLogInteractor(interactorImpl: CallLogInteractorImpl): CallLogInteractor
+    abstract fun provideCallDetailsInteractor(interactorImpl: CallDetailsInteractorImpl): CallDetailsInteractor
 
     @Binds
     @Singleton
@@ -101,4 +109,8 @@ abstract class RepositoryModule {
     @Binds
     @AuthRepository
     abstract fun provideAuthRepository(authRepository: AuthRepository): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun provideAuthService(authService: AuthServiceImpl): AuthService
 }

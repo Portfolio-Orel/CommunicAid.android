@@ -79,48 +79,6 @@ private fun AnimatedOuterCircle(size: Dp, color: Color) {
     }
 }
 
-//@Composable
-//fun DonutCircles(item: DonutItem) {
-//    val animatedFloat = remember { Animatable(0f) }
-//
-//    LaunchedEffect(animatedFloat) {
-//        animatedFloat.animateTo(
-//            targetValue = 1f,
-//            animationSpec = tween(durationMillis = 1000, easing = LinearEasing))
-//    }
-//
-//    Canvas(
-//        modifier = Modifier
-//            .padding(12.dp)
-//            .size(100.dp)
-//    ) {
-//        drawArc(
-//            color = item.outerColor,
-//            startAngle = 0f,
-//            sweepAngle = 360f * animatedFloat.value,
-//            useCenter = false,
-//            style = Stroke(width = 25f, cap = StrokeCap.Round),
-//        )
-//
-//        drawCircle(
-//            color = item.innerColor,
-//            radius = item.innerRadius,
-//        )
-//        drawContext.canvas.nativeCanvas.apply {
-//            drawText(
-//                "Hey, Himanshu",
-//                size.width / 2,
-//                size.height / 2,
-//                Paint().apply {
-//                    textSize = 100f
-//                    color = android.graphics.Color.BLUE
-//                    textAlign = Paint.Align.CENTER
-//                }
-//            )
-//        }
-//    }
-//}
-
 private fun Modifier.outerCircle(radius: Dp = 100.dp, color: Color = Color.Red): Modifier = this
     .clip(CircleShape)
     .size(radius)

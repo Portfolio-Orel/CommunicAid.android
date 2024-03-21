@@ -1,5 +1,10 @@
 package com.orels.presentation.ui.my_messages
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.layout.*
@@ -19,14 +24,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.orels.auth.domain.interactor.UserState
 import com.orels.domain.util.Screen
 import com.orels.presentation.ui.components.CustomScaffold
-import com.orels.presentation.ui.components.OnLifecycleEvent
 import com.orels.presentation.ui.components.bottom_bar.BottomBar
 import com.orels.presentation.ui.components.top_app_bar.TopAppBar
 import com.orels.presentation.ui.details_folder.DetailsFolderScreen
 import com.orels.presentation.ui.details_message.DetailsMessageScreen
 import com.orels.presentation.ui.login.LoginScreen
+import com.orels.presentation.ui.login.forgot_password.ForgotPasswordScreen
 import com.orels.presentation.ui.main.MainScreen
 import com.orels.presentation.ui.settings.SettingsScreen
 import com.orels.presentation.ui.statistics.StatisticsScreen
@@ -37,15 +43,9 @@ import com.orels.presentation.ui.unhandled_calls.UnhandledCallsScreen
 )
 @Composable
 fun MyMessagesApp(
-    viewModel: MyMessagesViewModel = hiltViewModel()
+    viewModel: MyMessagesViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state
-    val navHostController = rememberNavController()
-    val navController = navHostController as NavController
-
-    OnLifecycleEvent(
-        onResume = viewModel::onResume,
-    )
 
     CompositionLocalProvider(
         LocalOverscrollConfiguration provides null
@@ -65,31 +65,68 @@ fun MyMessagesApp(
                 )
             }
         } else {
-            if (!state.isAuthenticated) {
-                LoginScreen()
-            } else {
+            AnimatedVisibility(
+                visible = (state.authState != UserState.LoggedIn),
+                enter = fadeIn(
+                    animationSpec = tween(durationMillis = 250, easing = EaseInOut)
+                ),
+                exit = fadeOut(
+                    animationSpec = tween(durationMillis = 250, easing = EaseInOut)
+                )
+            ) {
+                val navHostControllerNotAuthorized = rememberNavController()
+                val navControllerNotAuthorized = navHostControllerNotAuthorized as NavController
+
+                NavHost(
+                    modifier = Modifier.padding(
+                    ),
+                    navController = navHostControllerNotAuthorized,
+                    startDestination = Screen.Login.route
+                ) {
+                    composable(route = Screen.Login.route) { LoginScreen(navController = navControllerNotAuthorized) }
+                    composable(route = Screen.ForgotPassword.route) {
+                        ForgotPasswordScreen(navController = navControllerNotAuthorized)
+                    }
+                }
+            }
+            AnimatedVisibility(
+                visible = state.authState == UserState.LoggedIn,
+                enter = fadeIn(
+                    animationSpec = tween(durationMillis = 250, easing = EaseInOut)
+                ),
+                exit = fadeOut(
+                    animationSpec = tween(durationMillis = 250, easing = EaseInOut)
+                )
+            ) {
+                val navHostControllerAuthorized = rememberNavController()
+                val navControllerAuthorized = navHostControllerAuthorized as NavController
+
                 CustomScaffold(
-                    navController = navHostController,
-                    topBar = { TopAppBar(navController = navController) },
+                    navController = navHostControllerAuthorized,
+                    topBar = { TopAppBar(navController = navControllerAuthorized) },
                     bottomBar = { BottomBar(navController = it) },
                 ) {
                     NavHost(
                         modifier = Modifier.padding(
                             top = it.calculateTopPadding(),
                             bottom = it.calculateBottomPadding(),
-                            end = it.calculateEndPadding(LayoutDirection.Rtl),
-                            start = it.calculateStartPadding(LayoutDirection.Rtl)
+                            end = it.calculateEndPadding(LayoutDirection.Ltr),
+                            start = it.calculateStartPadding(LayoutDirection.Ltr)
                         ),
-                        navController = navHostController, startDestination = Screen.Main.route
+                        navController = navHostControllerAuthorized,
+                        startDestination = Screen.Main.route
                     ) {
-                        composable(route = Screen.Main.route) { MainScreen(navController = navHostController) }
-                        composable(route = Screen.Login.route) { LoginScreen() }
+                        composable(route = Screen.Main.route) { MainScreen(navController = navHostControllerAuthorized) }
+                        composable(route = Screen.Login.route) { LoginScreen(navController = navControllerAuthorized) }
                         composable(route = Screen.UnhandledCalls.route) { UnhandledCallsScreen() }
                         composable(route = Screen.Statistics.route) { StatisticsScreen() }
                         composable(route = Screen.Settings.route) { SettingsScreen() }
+                        composable(route = Screen.ForgotPassword.route) {
+                            ForgotPasswordScreen(navController = navControllerAuthorized)
+                        }
                         composable(route = Screen.DetailsMessage.route) {
                             DetailsMessageScreen(
-                                navController = navHostController
+                                navController = navControllerAuthorized
                             )
                         }
                         composable(
@@ -102,12 +139,12 @@ fun MyMessagesApp(
                             )
                         ) { navBackStack ->
                             DetailsMessageScreen(
-                                navController = navHostController,
+                                navController = navControllerAuthorized,
                                 messageId = navBackStack.arguments?.getString("messageId")
                             )
                         }
                         composable(route = Screen.DetailsFolder.route) {
-                            DetailsFolderScreen(navController = navHostController)
+                            DetailsFolderScreen(navController = navControllerAuthorized)
                         }
                         composable(
                             route = Screen.DetailsFolder.route + "/{folderId}",
@@ -118,7 +155,7 @@ fun MyMessagesApp(
                                 }
                             )) { navBackStack ->
                             DetailsFolderScreen(
-                                navController = navHostController,
+                                navController = navControllerAuthorized,
                                 folderId = navBackStack.arguments?.getString("folderId")
                             )
                         }

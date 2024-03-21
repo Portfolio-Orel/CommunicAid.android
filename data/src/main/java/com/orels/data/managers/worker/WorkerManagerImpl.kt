@@ -7,7 +7,7 @@ import com.orels.data.workers.UploadNotUploadedObjectsWorker
 import com.orels.data.workers.UploadPhoneCallsWorker
 import com.orels.domain.managers.worker.WorkerManager
 import com.orels.domain.managers.worker.WorkerType
-import com.orels.domain.workers.EndCallWorker
+import com.orels.data.workers.EndCallWorker
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject

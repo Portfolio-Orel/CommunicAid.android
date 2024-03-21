@@ -9,7 +9,8 @@ import androidx.compose.runtime.*
 fun BackPressHandler(
     backPressedDispatcher: OnBackPressedDispatcher? =
         LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher,
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
+    shouldRemove: Boolean = false
 ) {
     val currentOnBackPressed by rememberUpdatedState(newValue = onBackPressed)
 
@@ -19,6 +20,10 @@ fun BackPressHandler(
                 currentOnBackPressed()
             }
         }
+    }
+
+    if(shouldRemove) {
+        backCallback.remove()
     }
 
     DisposableEffect(key1 = backPressedDispatcher) {
