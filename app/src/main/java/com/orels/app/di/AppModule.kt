@@ -74,8 +74,8 @@ object AppModule {
     fun provideBaseUrl(
         environmentRepository: EnvironmentRepository
     ): String = when (environmentRepository.currentEnvironment) {
-        Environments.Dev -> "https://rzbdt4g5jl.execute-api.us-east-1.amazonaws.com/"
-        Environments.Prod -> "https://rzbdt4g5jl.execute-api.us-east-1.amazonaws.com/"
+        Environments.Dev -> "https://38fdl6yd3a.execute-api.us-east-1.amazonaws.com/"
+        Environments.Prod -> "https://38fdl6yd3a.execute-api.us-east-1.amazonaws.com/"
         Environments.LocalEmulator -> "http://10.0.2.2:4000/"
     }
 

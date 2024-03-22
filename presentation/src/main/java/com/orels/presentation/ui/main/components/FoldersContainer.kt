@@ -61,7 +61,7 @@ fun FoldersContainer(
                     width = 1.dp,
                     color = Color.Transparent
                 )
-                .padding(vertical = 8.dp),
+                .padding(vertical = 2.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {

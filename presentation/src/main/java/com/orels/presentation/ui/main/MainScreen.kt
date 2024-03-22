@@ -65,7 +65,7 @@ private fun Content(
             .padding(top = 16.dp)
         ,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         if (screenHeight > 500) {
             FoldersContainer(

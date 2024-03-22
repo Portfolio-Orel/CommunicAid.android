@@ -50,9 +50,6 @@ fun MyMessagesApp(
     CompositionLocalProvider(
         LocalOverscrollConfiguration provides null
     ) {
-        // Request Manifest.Read_call_log permission
-
-
         if (state.isLoading) {
             Box(
                 modifier = Modifier
@@ -111,7 +108,7 @@ fun MyMessagesApp(
                 ) {
                     NavHost(
                         modifier = Modifier.padding(
-                            top = it.calculateTopPadding(),
+                            top = it.calculateTopPadding() - 10.dp,
                             bottom = it.calculateBottomPadding(),
                             end = it.calculateEndPadding(LayoutDirection.Ltr),
                             start = it.calculateStartPadding(LayoutDirection.Ltr)

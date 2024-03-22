@@ -55,4 +55,7 @@ class PhoneCallsInteractorImpl @Inject constructor(
 
     override fun remove(phoneCalls: List<PhoneCall>) = db.remove(phoneCalls)
     override fun clear() = db.clear()
+    override fun clearToDate(date: Date) {
+        db.clearToDate(date)
+    }
 }

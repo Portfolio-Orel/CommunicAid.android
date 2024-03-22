@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
                     darkIcons = MaterialTheme.colorScheme.background.luminance() > 0.5f
                 )
-                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                CompositionLocalProvider() {
                     val permissionsState = rememberMultiplePermissionsState(
                         permissions = listOf(
                             Manifest.permission.READ_PHONE_STATE,

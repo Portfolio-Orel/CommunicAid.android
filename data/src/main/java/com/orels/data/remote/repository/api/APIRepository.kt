@@ -97,11 +97,6 @@ class APIRepository @Inject constructor(
     /* Folders */
 
     /* Phone Calls */
-    override suspend fun createPhoneCall(createPhoneCallBody: CreatePhoneCallBody): String {
-        val result = api.createPhoneCall(createPhoneCallBody)
-        return result.body
-    }
-
     override suspend fun createPhoneCalls(createPhoneCallBody: List<CreatePhoneCallBody>): List<String> {
         val result = api.createPhoneCalls(createPhoneCallBody)
         return result.body

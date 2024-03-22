@@ -23,12 +23,17 @@ class Logger : AuthLogger {
             throwable: Throwable? = null,
             attributes: Map<String, Any?> = emptyMap()
         ) {
-            Log.v(TAG, "$message\n$attributes")
-            logger.v(
-                message = message,
-                throwable = throwable,
-                attributes = attributes
-            )
+            try {
+                Log.v(TAG, "$message\n$attributes")
+
+                logger.v(
+                    message = message,
+                    throwable = throwable,
+                    attributes = attributes
+                )
+            } catch (e: Exception) {
+                Log.e(TAG, "Error in Logger.v: $e")
+            }
         }
 
         @Suppress("unused")
@@ -44,10 +49,14 @@ class Logger : AuthLogger {
             tag: String? = null
         ) {
             Log.i(tag ?: TAG, "$message\n$attributes")
-            logger.i(
-                message = message,
-                attributes = attributes
-            )
+            try {
+                logger.i(
+                    message = message,
+                    attributes = attributes
+                )
+            } catch (e: Exception) {
+                Log.e(TAG, "Error in Logger.i: $e")
+            }
         }
 
         fun e(
@@ -57,11 +66,15 @@ class Logger : AuthLogger {
             tag: String? = null
         ) {
             Log.e(tag ?: TAG, "$message\n$throwable\n${attributes}")
-            logger.e(
-                message = message,
-                throwable = throwable,
-                attributes = attributes
-            )
+            try {
+                logger.e(
+                    message = message,
+                    throwable = throwable,
+                    attributes = attributes
+                )
+            } catch (e: Exception) {
+                Log.e(TAG, "Error in Logger.e: $e")
+            }
         }
     }
 

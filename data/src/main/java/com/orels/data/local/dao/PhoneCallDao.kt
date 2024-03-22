@@ -71,6 +71,14 @@ interface PhoneCallDao {
     )
     fun clear()
 
+    @Query(
+        """
+        DELETE FROM PhoneCall
+        WHERE startDate <= :date
+    """
+    )
+    fun clearToDate(date: Date)
+
     @Delete
     fun remove(phoneCalls: List<PhoneCall>)
 }

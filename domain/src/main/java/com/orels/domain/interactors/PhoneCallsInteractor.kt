@@ -15,5 +15,6 @@ interface PhoneCallsInteractor {
     fun getAll(): List<PhoneCall>
     fun getAllFromDate(fromDate: Date): List<PhoneCall>
     fun clear()
+    fun clearToDate(date: Date)
     fun remove(phoneCalls: List<PhoneCall>)
 }

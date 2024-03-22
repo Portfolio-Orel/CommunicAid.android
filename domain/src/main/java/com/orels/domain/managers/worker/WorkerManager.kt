@@ -10,5 +10,6 @@ enum class WorkerType {
     UploadCallsOnce,
     UploadNotUploadedObjectsOnce,
     EndCallOnce,
+    ClearPhoneCalls,
     RefreshToken;
 }

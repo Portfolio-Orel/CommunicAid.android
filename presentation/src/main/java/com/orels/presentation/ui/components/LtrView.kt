@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.LayoutDirection
 fun LtrView(
     content: @Composable () -> Unit
 ) {
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+    CompositionLocalProvider() {
         content()
     }
 }

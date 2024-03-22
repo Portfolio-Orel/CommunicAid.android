@@ -31,7 +31,6 @@ interface Repository {
     /* Folders */
 
     /* Phone Calls */
-    suspend fun createPhoneCall(createPhoneCallBody: CreatePhoneCallBody): String?
     suspend fun createPhoneCalls(createPhoneCallBody: List<CreatePhoneCallBody>): List<String>
     /* Phone Calls */
 

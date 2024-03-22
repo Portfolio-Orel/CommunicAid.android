@@ -36,7 +36,7 @@ private val Screen.label: Int
 fun BottomBar(
     navController: NavHostController,
 ) {
-    val bottomBarDestinations = listOf(Screen.Statistics, Screen.Main)
+    val bottomBarDestinations = listOf(Screen.Statistics, Screen.Main, Screen.UnhandledCalls)
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 

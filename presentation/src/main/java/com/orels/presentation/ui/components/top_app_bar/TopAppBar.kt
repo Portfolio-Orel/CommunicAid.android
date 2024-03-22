@@ -23,14 +23,9 @@ fun TopAppBar(
     navController: NavController,
     viewModel: TopAppBarViewModel = hiltViewModel()
 ) {
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp
-    val modifier = if (screenHeight > 500) {
-        Modifier.padding(vertical = 12.dp)
-    } else {
-        Modifier.padding(vertical = 2.dp)
-    }
+    val modifier = Modifier.padding(vertical = 2.dp)
     val state = viewModel.state
+
     Column(modifier = modifier) {
         CenterAlignedTopAppBar(
             title = {

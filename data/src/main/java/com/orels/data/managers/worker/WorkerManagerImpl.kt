@@ -2,6 +2,7 @@ package com.orels.data.managers.worker
 
 import android.content.Context
 import androidx.work.*
+import com.orels.data.workers.ClearPhoneCallsCacheWorker
 import com.orels.data.workers.RefreshTokenWorker
 import com.orels.data.workers.UploadNotUploadedObjectsWorker
 import com.orels.data.workers.UploadPhoneCallsWorker
@@ -22,20 +23,29 @@ class WorkerManagerImpl @Inject constructor(
                 worker = buildPeriodicUploadWorker(),
                 type = type
             )
+
             WorkerType.UploadCallsOnce -> queueOneTimeWorker(
                 worker = buildOneTimeWorker<UploadPhoneCallsWorker>(),
                 type = type
             )
+
             WorkerType.UploadNotUploadedObjectsOnce -> queueOneTimeWorker(
                 worker = buildOneTimeWorker<UploadNotUploadedObjectsWorker>(),
                 type = type
             )
+
             WorkerType.RefreshToken -> queuePeriodicWorker(
                 worker = buildPeriodicRefreshTokenWorker(),
                 type = type
             )
+
             WorkerType.EndCallOnce -> queueOneTimeWorker(
                 worker = buildOneTimeWorker<EndCallWorker>(),
+                type = type
+            )
+
+            WorkerType.ClearPhoneCalls -> queueOneTimeWorker(
+                worker = buildOneTimeWorker<ClearPhoneCallsCacheWorker>(),
                 type = type
             )
         }

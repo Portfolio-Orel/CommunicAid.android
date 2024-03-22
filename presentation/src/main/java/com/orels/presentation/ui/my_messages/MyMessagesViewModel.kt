@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.orels.auth.domain.interactor.AuthInteractor
 import com.orels.auth.domain.interactor.UserState
 import com.orels.domain.interactors.GeneralInteractor
+import com.orels.domain.interactors.PhoneCallsInteractor
 import com.orels.domain.interactors.SettingsInteractor
 import com.orels.domain.managers.phonecall.PhoneCallManager
 import com.orels.domain.managers.phonecall.isCallStateIdle
@@ -29,12 +30,14 @@ class MyMessagesViewModel @Inject constructor(
     private val workerManager: WorkerManager,
     private val connectivityObserver: ConnectivityObserver,
     private val generalInteractor: GeneralInteractor,
+    private val phoneCallsInteractor: PhoneCallsInteractor,
 ) : ViewModel() {
     var state by mutableStateOf(MyMessagesState())
         private set
 
     init {
         observeUserAuthentication()
+        workerManager.startWorker(WorkerType.ClearPhoneCalls)
     }
 
     private fun observeUserAuthentication() {

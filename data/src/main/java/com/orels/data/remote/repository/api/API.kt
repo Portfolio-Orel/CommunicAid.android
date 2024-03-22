@@ -49,9 +49,6 @@ interface API {
     ): Response<List<GetDeletedCallsResponse>>
 
     // Phone Calls
-    @POST("/phoneCall")
-    suspend fun createPhoneCall(@Body phoneCallBody: CreatePhoneCallBody): Response<String>
-
     @POST("/phoneCalls")
     suspend fun createPhoneCalls(@Body phoneCallsBody: List<CreatePhoneCallBody>): Response<List<String>>
 

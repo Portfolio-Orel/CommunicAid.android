@@ -56,7 +56,10 @@ class SettingsInteractorImpl @Inject constructor(
                 value = it.value
             )
         }
-        repository.createOrUpdateSettings(createOrUpdateSettingsBody)
+        try {
+            repository.createOrUpdateSettings(createOrUpdateSettingsBody)
+        } catch (e: Exception) {
+        }
         settings.forEach { it.setUploadState(UploadState.Uploaded) }
         db.insert(settings)
     }
