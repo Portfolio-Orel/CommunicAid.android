@@ -1,7 +1,7 @@
-package com.orels.features.customer_state.presentation.customer_details
+package com.orels.features.customer_status.presentation
 
 import com.orels.domain.model.entities.PhoneCall
-import com.orels.features.customer_state.domain.model.CustomerState
+import com.orels.features.customer_status.domain.model.CustomerState
 
 /**
  * Created by Orel Zilberman on 30/03/2024.

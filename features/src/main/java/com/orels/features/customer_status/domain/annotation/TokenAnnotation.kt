@@ -1,4 +1,4 @@
-package com.orels.features.customer_state.domain.annotation
+package com.orels.features.customer_status.domain.annotation
 
 /**
  * Created by Orel Zilberman on 30/03/2024.

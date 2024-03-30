@@ -1,4 +1,4 @@
-package com.orels.features.customer_state.domain.annotation
+package com.orels.features.customer_status.domain.annotation
 
 import javax.inject.Qualifier
 

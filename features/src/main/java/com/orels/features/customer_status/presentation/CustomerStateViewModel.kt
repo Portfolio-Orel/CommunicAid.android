@@ -1,19 +1,14 @@
-package com.orels.features.customer_state.presentation.customer_details
+package com.orels.features.customer_status.presentation
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orels.domain.interactors.PhoneCallsInteractor
-import com.orels.domain.managers.phonecall.PhoneCallManager
 import com.orels.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
 import com.orels.domain.model.entities.toPhoneCall
 import com.orels.domain.util.extension.log
-import com.orels.features.customer_state.data.remote.API
-import com.orels.features.customer_state.domain.repostiory.CustomerStateRepository
+import com.orels.features.customer_status.domain.repostiory.CustomerStatusRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
@@ -29,7 +24,7 @@ import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
 class CustomerStateViewModel @Inject constructor(
-    private val repository: CustomerStateRepository,
+    private val repository: CustomerStatusRepository,
     private val phoneCallManagerInteractor: PhoneCallManagerInteractor,
 ) : ViewModel() {
     var state by mutableStateOf(CustomerStateState())

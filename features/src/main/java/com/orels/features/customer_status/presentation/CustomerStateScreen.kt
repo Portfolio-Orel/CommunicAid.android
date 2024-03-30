@@ -1,4 +1,4 @@
-package com.orels.features.customer_state.presentation.customer_details
+package com.orels.features.customer_status.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel

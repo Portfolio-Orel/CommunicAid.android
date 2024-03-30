@@ -1,5 +1,5 @@
-package com.orels.features.customer_state.data.remote
-import com.orels.features.customer_state.domain.model.CustomerState
+package com.orels.features.customer_status.data.remote
+import com.orels.features.customer_status.domain.model.CustomerState
 import retrofit2.http.GET
 import retrofit2.http.Query
 

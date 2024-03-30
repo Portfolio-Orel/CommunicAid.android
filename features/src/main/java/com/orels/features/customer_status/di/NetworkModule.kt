@@ -1,15 +1,14 @@
-package com.orels.features.customer_state.di
+package com.orels.features.customer_status.di
 
-import com.orels.features.customer_state.data.remote.API
-import com.orels.features.customer_state.data.remote.CustomerStateRepositoryImpl
-import com.orels.features.customer_state.domain.annotation.CustomerStateOkHttp
-import com.orels.features.customer_state.domain.annotation.Token
-import com.orels.features.customer_state.domain.repostiory.CustomerStateRepository
+import com.orels.features.customer_status.data.remote.API
+import com.orels.features.customer_status.data.remote.CustomerStatusRepositoryImpl
+import com.orels.features.customer_status.domain.annotation.CustomerStateOkHttp
+import com.orels.features.customer_status.domain.annotation.Token
+import com.orels.features.customer_status.domain.repostiory.CustomerStatusRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -57,5 +56,5 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAPIRepository(api: API): CustomerStateRepository = CustomerStateRepositoryImpl(api)
+    fun provideAPIRepository(api: API): CustomerStatusRepository = CustomerStatusRepositoryImpl(api)
 }

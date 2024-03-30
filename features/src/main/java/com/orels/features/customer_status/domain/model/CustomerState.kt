@@ -1,4 +1,4 @@
-package com.orels.features.customer_state.domain.model
+package com.orels.features.customer_status.domain.model
 
 import com.google.gson.annotations.SerializedName
 
