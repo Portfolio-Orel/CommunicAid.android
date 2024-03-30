@@ -47,7 +47,6 @@ class MainApplication : Application(), Configuration.Provider {
     lateinit var authInteractor: AuthInteractor
 
     override fun onCreate() {
-
         FirebaseApp.initializeApp(this)
         super.onCreate()
         val configuration = com.datadog.android.core.configuration.Configuration.Builder(

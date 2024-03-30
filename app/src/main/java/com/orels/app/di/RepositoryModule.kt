@@ -16,7 +16,7 @@ import com.orels.domain.interactors.*
 import com.orels.domain.managers.SystemServiceManager
 import com.orels.domain.managers.phonecall.PhoneCallManager
 import com.orels.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
-import com.orels.domain.managers.phonecall.interactor.PhoneCallManagerInteractorImpl
+import com.orels.data.managers.phonecall.interactor.PhoneCallManagerInteractorImpl
 import com.orels.domain.managers.system_service.SystemService
 import com.orels.domain.managers.unhandled_calls.UnhandledCallsManager
 import com.orels.domain.managers.worker.WorkerManager

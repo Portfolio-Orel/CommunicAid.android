@@ -21,16 +21,16 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-<!--    <queries>-->
-<!--        <intent>-->
-<!--            <action android:name="android.intent.action.VIEW" />-->
-<!--            <data android:scheme="https" />-->
-<!--        </intent>-->
-<!--        <intent>-->
-<!--            <action android:name="android.support.customtabs.action.CustomTabsService" />-->
-<!--        </intent>-->
+    <!--    <queries>-->
+    <!--        <intent>-->
+    <!--            <action android:name="android.intent.action.VIEW" />-->
+    <!--            <data android:scheme="https" />-->
+    <!--        </intent>-->
+    <!--        <intent>-->
+    <!--            <action android:name="android.support.customtabs.action.CustomTabsService" />-->
+    <!--        </intent>-->
 
-<!--    </queries>-->
+    <!--    </queries>-->
     <application
         android:name=".app.MainApplication"
         android:allowBackup="true"
@@ -43,13 +43,12 @@
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
-            tools:node="remove">
-        </provider>
+            tools:node="remove" />
 
         <activity
             android:name="com.orels.app.MainActivity"
-            android:theme="@style/Theme.MyMessages.NoActionBar"
-        android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.MyMessages.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -59,8 +58,8 @@
 
         <receiver
             android:name=".domain.system.phone_call.PhonecallReceiver"
-            android:exported="false"
-            android:enabled="false">
+            android:enabled="false"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
@@ -70,8 +69,8 @@
 
         <receiver
             android:name=".app.SettingsPhoneCallReceiver"
-            android:exported="false"
-            android:enabled="false">
+            android:enabled="false"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
@@ -79,16 +78,16 @@
             </intent-filter>
         </receiver>
 
-<!--        <activity-->
-<!--            android:name="com.amplifyframework.auth.cognito.activities.HostedUIRedirectActivity"-->
-<!--            android:exported="true">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.VIEW" />-->
-<!--                <category android:name="android.intent.category.DEFAULT" />-->
-<!--                <category android:name="android.intent.category.BROWSABLE" />-->
-<!--                <data android:scheme="myapp" />-->
-<!--            </intent-filter>-->
-<!--        </activity>-->
+        <!--        <activity-->
+        <!--            android:name="com.amplifyframework.auth.cognito.activities.HostedUIRedirectActivity"-->
+        <!--            android:exported="true">-->
+        <!--            <intent-filter>-->
+        <!--                <action android:name="android.intent.action.VIEW" />-->
+        <!--                <category android:name="android.intent.category.DEFAULT" />-->
+        <!--                <category android:name="android.intent.category.BROWSABLE" />-->
+        <!--                <data android:scheme="myapp" />-->
+        <!--            </intent-filter>-->
+        <!--        </activity>-->
     </application>
 
 </manifest>

@@ -167,4 +167,6 @@ dependencies {
     implementation project(':data')
     implementation project(':auth')
 
+    // features
+    implementation project(':features')
 }
