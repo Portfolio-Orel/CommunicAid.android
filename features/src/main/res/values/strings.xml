@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="full_name">שם מלא</string>
+    <string name="last_dive">צלילה אחרונה</string>
+    <string name="last_insurance_expiration">תוקף ביטוח</string>
+    <string name="balance">יתרה</string>
+</resources>

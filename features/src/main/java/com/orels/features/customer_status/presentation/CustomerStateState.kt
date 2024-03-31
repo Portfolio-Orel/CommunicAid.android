@@ -11,5 +11,9 @@ data class CustomerStateState(
     val isLoading: Boolean = true,
     val error: String? = null,
 
+    val name: String? = null,
+    val lastInsuranceExpirationDate: String? = null,
+    val lastDiveDate: String? = null,
+    val balance: Number? = null,
     val callOnTheLine: PhoneCall? = null,
 )

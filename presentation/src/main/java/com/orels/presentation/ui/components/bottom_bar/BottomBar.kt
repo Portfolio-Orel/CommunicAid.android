@@ -1,6 +1,10 @@
 package com.orels.presentation.ui.components.bottom_bar
 
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.painterResource
@@ -36,7 +40,7 @@ private val Screen.label: Int
 fun BottomBar(
     navController: NavHostController,
 ) {
-    val bottomBarDestinations = listOf(Screen.Statistics, Screen.Main, Screen.UnhandledCalls)
+    val bottomBarDestinations = listOf(Screen.Main, Screen.Statistics, Screen.UnhandledCalls)
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 

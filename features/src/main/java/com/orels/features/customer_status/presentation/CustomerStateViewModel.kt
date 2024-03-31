@@ -27,6 +27,7 @@ class CustomerStateViewModel @Inject constructor(
     private val repository: CustomerStatusRepository,
     private val phoneCallManagerInteractor: PhoneCallManagerInteractor,
 ) : ViewModel() {
+
     var state by mutableStateOf(CustomerStateState())
     private var callOnTheLineJob: Deferred<Unit>? = null
 
@@ -42,7 +43,19 @@ class CustomerStateViewModel @Inject constructor(
                 val call = it.callOnTheLine?.toPhoneCall()
                 if (state.callOnTheLine != call) {
                     state = state.copy(callOnTheLine = call)
-                    repository.getCustomerState(call?.number ?: "")
+                    if (call == null) return@collectLatest
+                    try {
+                        val customer = repository.getCustomerState("0527328777")
+                        state = state.copy(
+                            name = customer.personal.personalDetails.name,
+                            lastInsuranceExpirationDate = customer.personal.insurance.last().end,
+                            lastDiveDate = customer.personal.lastDive.wasAt,
+                            balance = customer.finances.balance,
+                        )
+                    } catch (e: Exception) {
+                        state = state.copy(error = "המשתמש לא נמצא")
+                        e.log()
+                    }
                 }
             }
         }
