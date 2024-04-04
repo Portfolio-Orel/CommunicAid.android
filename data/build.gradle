@@ -18,6 +18,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            // Enables R8 for the debug build type
+            minifyEnabled false
+            // Specifies the ProGuard rules file to use, which R8 will use for minification and obfuscation
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
         release {
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'

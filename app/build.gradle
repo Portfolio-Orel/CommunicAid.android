@@ -39,6 +39,12 @@ android {
 //    }
 
     buildTypes {
+        debug {
+            // Enables R8 for the debug build type
+            minifyEnabled false
+            // Specifies the ProGuard rules file to use, which R8 will use for minification and obfuscation
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
         release {
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -80,7 +86,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.0' // May cause 1.5 - 1.7 exceptions
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.0'
+    // May cause 1.5 - 1.7 exceptions
     implementation 'androidx.activity:activity-compose:1.5.0' // May cause 1.5 - 1.7 exceptions
     implementation 'androidx.test:monitor:1.5.0'
     implementation 'androidx.hilt:hilt-work:1.0.0'
