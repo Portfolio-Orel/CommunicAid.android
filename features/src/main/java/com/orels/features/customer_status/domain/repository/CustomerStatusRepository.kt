@@ -1,4 +1,4 @@
-package com.orels.features.customer_status.domain.repostiory
+package com.orels.features.customer_status.domain.repository
 
 import com.orels.features.customer_status.domain.model.CustomerState
 

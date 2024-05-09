@@ -16,7 +16,7 @@ import com.orels.domain.util.extension.log
 import com.orels.domain.util.extension.toDate
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 class CallDetailsInteractorImpl @Inject constructor(@ApplicationContext private val context: Context) :
@@ -38,7 +38,8 @@ class CallDetailsInteractorImpl @Inject constructor(@ApplicationContext private 
             CallLog.Calls.TYPE,
             CallLog.Calls.DURATION,
             CallLog.Calls.CACHED_NAME,
-            CallLog.Calls.DATE
+            CallLog.Calls.DATE,
+            CallLog.Calls.CACHED_PHOTO_URI
         )
         context.contentResolver
             .query(
@@ -55,13 +56,15 @@ class CallDetailsInteractorImpl @Inject constructor(@ApplicationContext private 
                     val duration = it.getString(2) ?: ""
                     val name = it.getString(3) ?: ""
                     val date = it.getString(4) ?: ""
+                    val photoUri = it.getString(5) ?: ""
                     val callLogType: Int = type.toInt()
                     val callLogEntity = CallLogEntity(
                         number = number,
                         duration = duration.toLong(),
                         name = name,
                         time = date.toLong(),
-                        callLogType = CallType.fromInt(callLogType)
+                        callLogType = CallType.fromInt(callLogType),
+                        photoUri = photoUri
                     )
                     if (callLogEntity.time.toDate() < startDate) {
                         break
@@ -81,7 +84,8 @@ class CallDetailsInteractorImpl @Inject constructor(@ApplicationContext private 
             CallLog.Calls.TYPE,
             CallLog.Calls.DURATION,
             CallLog.Calls.CACHED_NAME,
-            CallLog.Calls.DATE
+            CallLog.Calls.DATE,
+            CallLog.Calls.CACHED_PHOTO_URI
         )
         context.contentResolver
             ?.query(
@@ -98,13 +102,15 @@ class CallDetailsInteractorImpl @Inject constructor(@ApplicationContext private 
                     val duration = it.getString(2) ?: ""
                     val name = it.getString(3) ?: ""
                     val date = it.getString(4) ?: ""
+                    val photoUri = it.getString(5) ?: ""
                     val callLogType: Int = type.toInt()
                     callLog = CallLogEntity(
                         number = number,
                         duration = duration.toLong(),
                         name = name,
                         time = date.toLong(),
-                        callLogType = CallType.fromInt(callLogType)
+                        callLogType = CallType.fromInt(callLogType),
+                        photoUri = photoUri
                     )
                 }
             }
@@ -118,7 +124,8 @@ class CallDetailsInteractorImpl @Inject constructor(@ApplicationContext private 
             CallLog.Calls.TYPE,
             CallLog.Calls.DURATION,
             CallLog.Calls.CACHED_NAME,
-            CallLog.Calls.DATE
+            CallLog.Calls.DATE,
+            CallLog.Calls.CACHED_PHOTO_URI
         )
         context.contentResolver
             ?.query(
@@ -135,13 +142,15 @@ class CallDetailsInteractorImpl @Inject constructor(@ApplicationContext private 
                     val duration = it.getString(2) ?: ""
                     val name = it.getString(3) ?: ""
                     val date = it.getString(4) ?: ""
+                    val photoUri = it.getString(5) ?: ""
                     val callLogType: Int = type.toInt()
                     callLog = CallLogEntity(
                         number = number,
                         duration = duration.toLong(),
                         name = name,
                         time = date.toLong(),
-                        callLogType = CallType.fromInt(callLogType)
+                        callLogType = CallType.fromInt(callLogType),
+                        photoUri = photoUri
                     )
                 }
             }
@@ -190,6 +199,26 @@ class CallDetailsInteractorImpl @Inject constructor(@ApplicationContext private 
         return null
     }
 
+    override fun getContactImage(number: String): String {
+        val uri = Uri.withAppendedPath(
+            ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
+            Uri.encode(number)
+        )
+
+        val projection = arrayOf(ContactsContract.PhoneLookup.PHOTO_URI)
+
+        var photoUri = ""
+        val cursor: Cursor? = context.contentResolver.query(uri, projection, null, null, null)
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                photoUri = cursor.getString(0) ?: ""
+            }
+            cursor.close()
+        }
+        return photoUri
+    }
+
     override fun getContactName(number: String): String {
         try {
             val uri = Uri.withAppendedPath(
@@ -217,5 +246,4 @@ class CallDetailsInteractorImpl @Inject constructor(@ApplicationContext private 
             return number
         }
     }
-
 }

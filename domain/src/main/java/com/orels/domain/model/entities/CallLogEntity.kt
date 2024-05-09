@@ -1,15 +1,20 @@
 package com.orels.domain.model.entities
 
 import com.orels.domain.interactors.CallType
-import com.orels.domain.util.extension.*
-import java.util.*
+import com.orels.domain.util.extension.containsNumber
+import com.orels.domain.util.extension.epochTimeInMilliseconds
+import com.orels.domain.util.extension.epochTimeInSeconds
+import com.orels.domain.util.extension.toDate
+import com.orels.domain.util.extension.withoutPrefix
+import java.util.Date
 
 class CallLogEntity(
     var number: String = "",
     var duration: Long = 0,
     var name: String = "",
     var time: Long = 0,
-    var callLogType: CallType? = null
+    var callLogType: CallType? = null,
+    var photoUri: String = ""
 ) {
 
     fun isMissed(): Boolean = callLogType == CallType.MISSED

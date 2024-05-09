@@ -3,8 +3,9 @@ package com.orels.features.customer_status.di
 import com.orels.features.customer_status.data.remote.API
 import com.orels.features.customer_status.data.remote.CustomerStatusRepositoryImpl
 import com.orels.features.customer_status.domain.annotation.CustomerStateOkHttp
+import com.orels.features.customer_status.domain.annotation.CustomerStatusRetrofit
 import com.orels.features.customer_status.domain.annotation.Token
-import com.orels.features.customer_status.domain.repostiory.CustomerStatusRepository
+import com.orels.features.customer_status.domain.repository.CustomerStatusRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,6 +43,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @CustomerStatusRetrofit
     fun provideRetrofit(@CustomerStateOkHttp okHttpClient: OkHttpClient): Retrofit =
         Retrofit.Builder()
             .baseUrl("https://deepsiam.club/") // Replace with your base URL
@@ -51,7 +53,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAPI(retrofit: Retrofit): API =
+    fun provideAPI(@CustomerStatusRetrofit retrofit: Retrofit): API =
         retrofit.create(API::class.java)
 
     @Provides

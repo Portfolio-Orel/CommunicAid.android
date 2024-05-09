@@ -1,10 +1,17 @@
 package com.orels.features.customer_status.domain.model
 
+import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+import com.google.gson.reflect.TypeToken
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Base64
+import kotlin.text.Charsets.UTF_8
 
 data class CustomerState(
     @SerializedName("Personal") val personal: PersonalInfo,
-    @SerializedName("Finances") val finances: Finances
+    @SerializedName("Finances") val finances: Finances,
+    @SerializedName("DOB") val dob: String
 )
 
 data class PersonalInfo(
@@ -65,3 +72,95 @@ data class OutstandingAccount(
     @SerializedName("balance") val balance: String,
     @SerializedName("title") val title: String
 )
+
+fun Finances.isPositive(): Boolean {
+    return balance <= 0
+}
+
+fun Finances.isNegative(): Boolean {
+    return balance > 0
+}
+
+fun decrypt(encStr: String, key: String): String {
+    val keyChars = key.toCharArray()
+    val encryptedData: List<Int> = decodeBase64AndParseJson(encStr)
+    if (keyChars.isEmpty() || keyChars.size < encryptedData.size) {
+        return ""
+    }
+    val result = mutableListOf<Char>()
+    for (i in encryptedData.indices) {
+        val decrValue = encryptedData[i] - (keyChars.getOrNull(i)?.toInt() ?: 0)
+        result.add(decrValue.toChar())
+    }
+    return result.joinToString("")
+}
+
+fun decodeBase64AndParseJson(base64Str: String): List<Int> {
+    val json = String(Base64.getDecoder().decode(base64Str), UTF_8)
+    return Gson().fromJson(json, object : TypeToken<List<Int>>() {}.type)
+}
+
+val CustomerState.dateOfBirth: String
+    get() {
+        return decrypt(dob, "ALX0003-12-LAX%")
+    }
+val CustomerState.age: Int
+    get() {
+        try {
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            val dob = LocalDate.parse(dateOfBirth, formatter)
+            val now = LocalDate.now()
+            val month = now.monthValue - dob.monthValue
+            if (month < 0 || (month == 0 && now.dayOfMonth < dob.dayOfMonth)) {
+                return now.year - dob.year - 1
+            }
+            return now.year - dob.year
+        } catch (e: Exception) {
+            return 0
+        }
+    }
+
+val Finances.balanceFormatted: String
+    get() {
+        val unsignedBalance = if (balance < 0) balance * -1 else balance
+        return if (balance < 0) {
+            "$unsignedBalance"
+        } else {
+            "-$unsignedBalance"
+        }
+    }
+
+fun LastDive.isValid(): Boolean {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    val now = LocalDate.now().toEpochDay()
+    val lastDiveValidDate = LocalDate.parse(validUntil, formatter).toEpochDay()
+    return lastDiveValidDate > now
+}
+
+val LastDive.wasAtFormatted: String
+    get() {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val date = LocalDate.parse(wasAt, formatter)
+        return date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+    }
+
+
+fun Insurance.isValid(): Boolean {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val now = LocalDate.now().toEpochDay()
+    val insuranceStart = LocalDate.parse(start, formatter).toEpochDay()
+    val insuranceEnd = LocalDate.parse(end, formatter).toEpochDay()
+    return now in insuranceStart..insuranceEnd
+}
+
+val Insurance.endFormatted: String
+    get() {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val date = LocalDate.parse(end, formatter)
+        return date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+    }
+
+val Finances.outstandingAccountsFormatted: String
+    get() {
+        return outstandingAccounts.entries.joinToString("\n") { "${it.value.title}: ${it.value.balance}" }
+    }

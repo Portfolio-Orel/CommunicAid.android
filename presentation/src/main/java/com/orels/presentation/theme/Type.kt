@@ -15,10 +15,45 @@ val fontsVarelaround = FontFamily(
 )
 
 val Typography = Typography(
+    displaySmall = TextStyle(
+        fontFamily = fontsVarelaround,
+        fontWeight = FontWeight.Thin,
+        fontSize = 12.sp
+    ),
+    displayMedium = TextStyle(
+        fontFamily = fontsVarelaround,
+        fontWeight = FontWeight.Thin,
+        fontSize = 16.sp
+    ),
+    displayLarge = TextStyle(
+        fontFamily = fontsVarelaround,
+        fontWeight = FontWeight.Thin,
+        fontSize = 18.sp
+    ),
+    headlineSmall = TextStyle(
+        fontFamily = fontsVarelaround,
+        fontWeight = FontWeight.Thin,
+        fontSize = 24.sp
+    ),
+    headlineMedium = TextStyle(
+        fontFamily = fontsVarelaround,
+        fontWeight = FontWeight.Thin,
+        fontSize = 32.sp
+    ),
+    headlineLarge = TextStyle(
+        fontFamily = fontsVarelaround,
+        fontWeight = FontWeight.Thin,
+        fontSize = 38.sp
+    ),
     bodySmall = TextStyle(
         fontFamily = fontsVarelaround,
         fontWeight = FontWeight.Thin,
         fontSize = 12.sp
+    ),
+    bodyMedium = TextStyle(
+        fontFamily = fontsVarelaround,
+        fontWeight = FontWeight.Thin,
+        fontSize = 16.sp
     ),
     bodyLarge = TextStyle(
         fontFamily = fontsVarelaround,

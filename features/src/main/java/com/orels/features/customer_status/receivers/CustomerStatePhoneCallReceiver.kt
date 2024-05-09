@@ -21,7 +21,10 @@ class CustomerStatePhoneCallReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (context == null) return
         val state = intent?.extras?.getString(TelephonyManager.EXTRA_STATE) ?: return
-        startCustomerStatusService(context)
+//
+//        val intent1 = Intent(context, CustomerStateActivity::class.java)
+//        intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//        context.startActivity(intent1)
     }
 
 

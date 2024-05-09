@@ -3,9 +3,7 @@ package com.orels.features.customer_status.data.service
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import android.view.View
-import android.view.WindowManager
-import com.orels.features.customer_status.domain.repostiory.CustomerStatusRepository
+import com.orels.features.customer_status.domain.repository.CustomerStatusRepository
 import com.orels.features.customer_status.presentation.CustomerStateActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -16,13 +14,11 @@ class CustomerStatusService : Service() {
     @Inject
     lateinit var customerStatusRepository: CustomerStatusRepository
 
-    private lateinit var windowManager: WindowManager
-    private var overlayView: View? = null
-
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onCreate() {
         super.onCreate()
+        isServiceRunning = true
         startCustomerStateActivity()
     }
 
@@ -34,7 +30,10 @@ class CustomerStatusService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        overlayView?.let { windowManager.removeViewImmediate(it) }
-        overlayView = null
+        isServiceRunning = false
+    }
+
+    companion object {
+        var isServiceRunning = false
     }
 }

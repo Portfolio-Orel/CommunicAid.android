@@ -5,10 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
+import com.orels.domain.interactors.CallDetailsInteractor
 import com.orels.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
 import com.orels.domain.model.entities.toPhoneCall
+import com.orels.domain.util.common.Logger
 import com.orels.domain.util.extension.log
-import com.orels.features.customer_status.domain.repostiory.CustomerStatusRepository
+import com.orels.features.customer_status.domain.repository.CustomerStatusRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
@@ -25,6 +28,7 @@ import kotlin.coroutines.cancellation.CancellationException
 @HiltViewModel
 class CustomerStateViewModel @Inject constructor(
     private val repository: CustomerStatusRepository,
+    private val callDetailsInteractor: CallDetailsInteractor,
     private val phoneCallManagerInteractor: PhoneCallManagerInteractor,
 ) : ViewModel() {
 
@@ -42,18 +46,26 @@ class CustomerStateViewModel @Inject constructor(
             phoneCallManagerInteractor.callsDataFlow.collectLatest {
                 val call = it.callOnTheLine?.toPhoneCall()
                 if (state.callOnTheLine != call) {
-                    state = state.copy(callOnTheLine = call)
                     if (call == null) return@collectLatest
+                    state = state.copy(callOnTheLine = call, isLoading = true, error = null)
                     try {
-                        val customer = repository.getCustomerState("0527328777")
+                        val customer = repository.getCustomerState(call.number)
+                        val customerImage = callDetailsInteractor.getContactImage(call.number)
                         state = state.copy(
+                            insurance = customer.personal.insurance.firstOrNull(),
                             name = customer.personal.personalDetails.name,
-                            lastInsuranceExpirationDate = customer.personal.insurance.last().end,
-                            lastDiveDate = customer.personal.lastDive.wasAt,
-                            balance = customer.finances.balance,
+                            lastDive = customer.personal.lastDive,
+                            finances = customer.finances,
+                            customerState = customer,
+                            image = customerImage,
+                            isLoading = false
+                        )
+                        Logger.i(
+                            "CustomerStateViewModel",
+                            mapOf("customer" to Gson().toJson(customer))
                         )
                     } catch (e: Exception) {
-                        state = state.copy(error = "המשתמש לא נמצא")
+                        state = state.copy(error = "הלקוח לא נמצא", isLoading = false)
                         e.log()
                     }
                 }

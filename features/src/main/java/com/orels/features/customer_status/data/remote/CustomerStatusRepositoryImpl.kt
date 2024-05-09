@@ -1,7 +1,7 @@
 package com.orels.features.customer_status.data.remote
 
 import com.orels.features.customer_status.domain.model.CustomerState
-import com.orels.features.customer_status.domain.repostiory.CustomerStatusRepository
+import com.orels.features.customer_status.domain.repository.CustomerStatusRepository
 import javax.inject.Inject
 
 /**

@@ -4,4 +4,7 @@
     <string name="last_dive">צלילה אחרונה</string>
     <string name="last_insurance_expiration">תוקף ביטוח</string>
     <string name="balance">יתרה</string>
+    <string name="no_dive">אין צלילה</string>
+    <string name="no_insurance">אין ביטוח</string>
+    <string name="age">גיל</string>
 </resources>

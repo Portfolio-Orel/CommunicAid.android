@@ -3,7 +3,7 @@ package com.orels.domain.interactors
 import android.provider.CallLog
 import com.orels.domain.model.entities.CallLogEntity
 import com.orels.domain.model.entities.PhoneCall
-import java.util.*
+import java.util.Date
 
 interface CallDetailsInteractor {
 
@@ -31,7 +31,10 @@ interface CallDetailsInteractor {
      */
     fun update(phoneCall: PhoneCall): PhoneCall?
 
+    fun getContactImage(number: String): String
+
     fun getContactName(number: String): String
+
 }
 
 enum class CallType(val value: Int) {

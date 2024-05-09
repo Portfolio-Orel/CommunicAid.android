@@ -144,7 +144,7 @@ dependencies {
     implementation "com.datadoghq:dd-sdk-android:1.13.0"
 
     // Modules
-    implementation project(':domain')
     implementation project(':auth')
-
+    implementation project(':domain')
+    implementation(project(':features'))
 }
