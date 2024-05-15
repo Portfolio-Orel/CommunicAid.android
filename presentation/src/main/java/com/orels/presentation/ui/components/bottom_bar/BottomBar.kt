@@ -56,7 +56,10 @@ fun BottomBar(
                     }
                 },
                 label = {
-                    Text(stringResource(screen.label))
+                    Text(
+                        text = stringResource(screen.label),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
                 },
                 alwaysShowLabel = false,
                 selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,

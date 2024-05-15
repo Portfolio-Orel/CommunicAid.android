@@ -16,7 +16,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,8 +31,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.compose.ui.window.SecureFlagPolicy
@@ -77,7 +78,7 @@ fun CustomerStateScreen(
 @Composable
 fun Content(
     isLoading: Boolean,
-    fullName: String,
+    fullName: String?,
     imageUri: String?,
     lastDive: LastDive?,
     insurance: Insurance?,
@@ -100,40 +101,6 @@ fun Content(
         if (insurance?.isValid() == true) goodModifier else badModifier
     val balanceModifier = if (finances?.isPositive() == true) goodModifier else badModifier
 
-    if (isLoading) {
-        Dialog(
-            onDismissRequest = {
-                onDismiss()
-            },
-            properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true),
-
-            ) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .size(50.dp),
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
-        return
-    }
-    if (error != null) {
-        Dialog(
-            onDismissRequest = {
-                onDismiss()
-            },
-            properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true),
-
-            ) {
-            Text(
-                text = error,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Red
-            )
-        }
-        return
-    }
 
     Popup(
         onDismissRequest = { onDismiss() },
@@ -141,14 +108,15 @@ fun Content(
             focusable = true,
             dismissOnBackPress = true,
             dismissOnClickOutside = true,
-            securePolicy = SecureFlagPolicy.SecureOn
+            securePolicy = SecureFlagPolicy.SecureOff
         )
     ) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f))
+//                .background(Color.Black.copy(alpha = 0.5f))
+//                .shadow(elevation = 8.dp, shape = RoundedCornerShape(12.dp))
                 .clickable { onDismiss() }
         ) {
             Column(
@@ -161,111 +129,143 @@ fun Content(
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Row(
+                Box(
                     modifier = Modifier
+                        .fillMaxWidth()
+                        .height(96.dp)
                         .background(
                             color = MaterialTheme.colorScheme.primary,
                             shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
                         )
-                        .height(96.dp)
-                        .padding(all = 16.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        text = fullName,
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 32.sp
-                        ),
-                        color = Color.White
+                    Row(
+                        modifier = Modifier
+                            .padding(all = 16.dp)
+                            .fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = if (fullName == null || fullName == "null") "" else fullName,
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 32.sp
+                            ),
+                            color = Color.White
+                        )
+                    }
+                    Icon(
+                        imageVector = Icons.Rounded.Close,
+                        contentDescription = "Close",
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(8.dp)
+                            .size(24.dp)
+                            .clickable { onDismiss() },
+                        tint = Color.White
                     )
                 }
-                Spacer(modifier = Modifier.height(24.dp))
-                Column(
-                    modifier = Modifier.padding(all = 16.dp),
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.SpaceEvenly,
-                ) {
-                    DataRow(
-                        title = "ערך נכס",
-                        value = finances?.revenue.toString(),
-                        modifier = goodModifier,
-                        isGood = true
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    DataRow(
-                        stringResource(R.string.last_dive),
-                        lastDive?.wasAtFormatted ?: stringResource(R.string.no_dive),
-                        lastDiveModifier,
-                        isGood = lastDive?.isValid() == true
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    DataRow(
-                        stringResource(R.string.last_insurance_expiration),
-                        insurance?.endFormatted ?: stringResource(R.string.no_insurance),
-                        lastInsuranceExpirationModifier,
-                        isGood = insurance?.isValid() == true
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    DataRow(
-                        title = stringResource(R.string.age),
-                        value = customerState?.age?.toString() ?: "0",
-                        modifier = goodModifier,
-                        isGood = true
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-                    DataRow(
-                        stringResource(R.string.balance), finances?.balanceFormatted ?: "0",
-                        modifier = balanceModifier,
-                        isGood = finances?.isPositive() == true
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .size(16.dp),
+                        color = MaterialTheme.colorScheme.primary
                     )
-                    if (finances?.isNegative() == true) {
-                        Box(
-                            modifier = Modifier
-                                .heightIn(max = 200.dp)
-                                .fillMaxWidth()
-                                .padding(4.dp)
-                                .verticalScroll(rememberScrollState())
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(8.dp),
-                                verticalArrangement = Arrangement.spacedBy(
-                                    12.dp,
-                                    Alignment.CenterVertically
-                                )
+                } else if (error != null) {
+                    Text(
+                        text = error,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Red
+                    )
+                } else {
+                    Column(
+                        modifier = Modifier.padding(all = 16.dp),
+                        horizontalAlignment = Alignment.End,
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                    ) {
+                        DataRow(
+                            title = "ערך נכס",
+                            value = finances?.revenue.toString(),
+                            modifier = goodModifier,
+                            isGood = true
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        DataRow(
+                            stringResource(R.string.last_dive),
+                            lastDive?.wasAtFormatted ?: stringResource(R.string.no_dive),
+                            lastDiveModifier,
+                            isGood = lastDive?.isValid() == true
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        DataRow(
+                            stringResource(R.string.last_insurance_expiration),
+                            insurance?.endFormatted ?: stringResource(R.string.no_insurance),
+                            lastInsuranceExpirationModifier,
+                            isGood = insurance?.isValid() == true
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        DataRow(
+                            title = stringResource(R.string.age),
+                            value = customerState?.age?.toString() ?: "0",
+                            modifier = goodModifier,
+                            isGood = true
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        DataRow(
+                            stringResource(R.string.balance), finances?.balanceFormatted ?: "0",
+                            modifier = balanceModifier,
+                            isGood = finances?.isPositive() == true
+                        )
+                        if (finances?.isNegative() == true) {
+                            Box(
+                                modifier = Modifier
+                                    .heightIn(max = 200.dp)
+                                    .fillMaxWidth()
+                                    .padding(4.dp)
+                                    .verticalScroll(rememberScrollState())
                             ) {
-                                finances?.outstandingAccounts?.forEach { accountEntry ->
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .shadow(
-                                                elevation = 2.dp,
-                                                shape = RoundedCornerShape(8.dp)
-                                            )
-                                            .background(color = Color.White)
-                                            .padding(vertical = 4.dp),
-                                        horizontalArrangement = Arrangement.SpaceBetween
-                                    ) {
-                                        Text(
-                                            text = accountEntry.value.balance,
-                                            fontSize = 14.sp,
-                                            fontWeight = FontWeight.Medium
-                                        )
-                                        Row {
+                                Column(
+                                    modifier = Modifier.padding(8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(
+                                        12.dp,
+                                        Alignment.CenterVertically
+                                    )
+                                ) {
+                                    finances.outstandingAccounts?.forEach { accountEntry ->
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .shadow(
+                                                    elevation = 2.dp,
+                                                    shape = RoundedCornerShape(8.dp)
+                                                )
+                                                .background(color = Color.White)
+                                                .padding(vertical = 4.dp),
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
                                             Text(
-                                                text = accountEntry.value.title,
+                                                text = accountEntry.value.balance,
                                                 fontSize = 14.sp,
-                                                fontWeight = FontWeight.Bold
+                                                fontWeight = FontWeight.Medium
                                             )
-                                            Text(
-                                                text = " •",
-                                                fontSize = 14.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                color = Color.Black
-                                            )
+                                            Row {
+                                                Text(
+                                                    text = accountEntry.value.title,
+                                                    fontSize = 14.sp,
+                                                    fontWeight = FontWeight.Bold
+                                                )
+                                                Text(
+                                                    text = " •",
+                                                    fontSize = 14.sp,
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = Color.Black
+                                                )
+                                            }
                                         }
                                     }
                                 }

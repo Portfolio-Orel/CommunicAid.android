@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.telephony.TelephonyManager
 import com.orels.domain.interactors.SettingsInteractor
-import com.orels.features.customer_status.data.service.CustomerStatusService
+import com.orels.domain.model.entities.SettingsKey
+import com.orels.domain.util.common.Logger
+import com.orels.features.customer_status.presentation.CustomerStateActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -20,16 +22,19 @@ class CustomerStatePhoneCallReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         if (context == null) return
-        val state = intent?.extras?.getString(TelephonyManager.EXTRA_STATE) ?: return
-//
-//        val intent1 = Intent(context, CustomerStateActivity::class.java)
-//        intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//        context.startActivity(intent1)
-    }
-
-
-    private fun startCustomerStatusService(context: Context) {
-        val serviceIntent = Intent(context, CustomerStatusService::class.java)
-        context.startForegroundService(serviceIntent)
+        if (settingsInteractor.getSettings(SettingsKey.ShowCustomerStateOnCall)
+                .getRealValue<Boolean>() == false
+        ) return
+        val state = intent?.extras?.getString(TelephonyManager.EXTRA_STATE)
+        val intent = Intent(context, CustomerStateActivity::class.java)
+        if (state == TelephonyManager.EXTRA_STATE_RINGING) {
+            Logger.i("CustomerStatePhoneCallReceiver onReceive")
+            intent.addFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP or
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP
+            )
+            context.startActivity(intent)
+        }
     }
 }

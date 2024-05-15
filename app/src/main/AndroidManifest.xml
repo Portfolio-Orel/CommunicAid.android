@@ -17,7 +17,9 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <!--  For Mixpanel  -->
 
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission
+        android:name="android.permission.SYSTEM_ALERT_WINDOW"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
@@ -91,29 +93,28 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
         <activity
             android:name=".features.customer_status.presentation.CustomerStateActivity"
-            android:theme="@style/Theme.AppCompat.Dialog.Alert"
             android:exported="true"
-            />
+            android:theme="@style/Theme.AppCompat.Dialog.Alert" />
         <service
             android:name=".features.customer_status.data.service.CustomerStatusService"
             android:enabled="true"
             android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"
             android:foregroundServiceType="mediaPlayback"
-            />
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
-<!--                <activity-->
-<!--                    android:name="com.amplifyframework.auth.cognito.activities.HostedUIRedirectActivity"-->
-<!--                    android:exported="true">-->
-<!--                    <intent-filter>-->
-<!--                        <action android:name="android.intent.action.VIEW" />-->
-<!--                        <category android:name="android.intent.category.DEFAULT" />-->
-<!--                        <category android:name="android.intent.category.BROWSABLE" />-->
-<!--                        <data android:scheme="myapp" />-->
-<!--                    </intent-filter>-->
-<!--                </activity>-->
+        <!--                <activity-->
+        <!--                    android:name="com.amplifyframework.auth.cognito.activities.HostedUIRedirectActivity"-->
+        <!--                    android:exported="true">-->
+        <!--                    <intent-filter>-->
+        <!--                        <action android:name="android.intent.action.VIEW" />-->
+        <!--                        <category android:name="android.intent.category.DEFAULT" />-->
+        <!--                        <category android:name="android.intent.category.BROWSABLE" />-->
+        <!--                        <data android:scheme="myapp" />-->
+        <!--                    </intent-filter>-->
+        <!--                </activity>-->
     </application>
 
 </manifest>

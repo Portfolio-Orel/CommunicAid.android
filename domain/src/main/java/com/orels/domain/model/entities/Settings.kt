@@ -101,6 +101,14 @@ enum class SettingsKey(
         valueType = Boolean::class,
         defaultValue = false.toString()
     ),
+    ShowCustomerStateOnCall(
+        keyInServer = "show_customer_state_on_call",
+        type = SettingsType.Toggle,
+        valueType = Boolean::class,
+        defaultValue = false.toString(),
+        requiredPermissions = listOf(RequiredPermission.DrawOverlays),
+        title = R.string.show_customer_state_on_call
+    ),
     ShowAppOnCall(
         keyInServer = "show_app_on_call",
         type = SettingsType.Toggle,

@@ -2,7 +2,12 @@ package com.orels.presentation.ui.unhandled_calls.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Icon
@@ -20,7 +25,7 @@ import com.orels.domain.model.entities.PhoneCall
 import com.orels.domain.util.extension.formatDayAndHours
 import com.orels.presentation.R
 import com.orels.presentation.theme.MyMessagesTheme
-import java.util.*
+import java.util.Date
 
 @Composable
 fun UnhandledCallRow(
@@ -53,11 +58,11 @@ fun UnhandledCallRow(
             Text(
                 text = phoneCall.getNameOrNumber(),
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleSmall
             )
             Text(
                 phoneCall.startDate.formatDayAndHours(context),
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f),
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
                 style = MaterialTheme.typography.bodyMedium
             )
         }

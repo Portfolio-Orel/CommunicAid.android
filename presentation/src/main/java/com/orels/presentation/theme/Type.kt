@@ -16,77 +16,77 @@ val fontsVarelaround = FontFamily(
 
 val Typography = Typography(
     displaySmall = TextStyle(
-        fontFamily = fontsVarelaround,
-        fontWeight = FontWeight.Thin,
+
+        fontWeight = FontWeight.Normal,
         fontSize = 12.sp
     ),
     displayMedium = TextStyle(
-        fontFamily = fontsVarelaround,
-        fontWeight = FontWeight.Thin,
+
+        fontWeight = FontWeight.Normal,
         fontSize = 16.sp
     ),
     displayLarge = TextStyle(
-        fontFamily = fontsVarelaround,
-        fontWeight = FontWeight.Thin,
+
+        fontWeight = FontWeight.Normal,
         fontSize = 18.sp
     ),
     headlineSmall = TextStyle(
-        fontFamily = fontsVarelaround,
-        fontWeight = FontWeight.Thin,
+
+        fontWeight = FontWeight.Normal,
         fontSize = 24.sp
     ),
     headlineMedium = TextStyle(
-        fontFamily = fontsVarelaround,
-        fontWeight = FontWeight.Thin,
+
+        fontWeight = FontWeight.Normal,
         fontSize = 32.sp
     ),
     headlineLarge = TextStyle(
-        fontFamily = fontsVarelaround,
-        fontWeight = FontWeight.Thin,
+
+        fontWeight = FontWeight.Normal,
         fontSize = 38.sp
     ),
     bodySmall = TextStyle(
-        fontFamily = fontsVarelaround,
-        fontWeight = FontWeight.Thin,
+
+        fontWeight = FontWeight.Normal,
         fontSize = 12.sp
     ),
     bodyMedium = TextStyle(
-        fontFamily = fontsVarelaround,
-        fontWeight = FontWeight.Thin,
+
+        fontWeight = FontWeight.Normal,
         fontSize = 16.sp
     ),
     bodyLarge = TextStyle(
-        fontFamily = fontsVarelaround,
-        fontWeight = FontWeight.Thin,
+
+        fontWeight = FontWeight.Normal,
         fontSize = 18.sp
     ),
     titleSmall = TextStyle(
-        fontFamily = fontsVarelaround,
+
         fontWeight = FontWeight.Normal,
         fontSize = 22.sp
     ),
     titleMedium = TextStyle(
-        fontFamily = fontsVarelaround,
+
         fontWeight = FontWeight.Normal,
         fontSize = 32.sp
     ),
     titleLarge = TextStyle(
-        fontFamily = fontsVarelaround,
+
         fontWeight = FontWeight.Normal,
         fontSize = 38.sp
     ),
     labelSmall = TextStyle(
-        fontFamily = fontsVarelaround,
+
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
     ),
     labelMedium = TextStyle(
-        fontFamily = fontsVarelaround,
+
         fontWeight = FontWeight.Normal,
         fontSize = 18.sp
     ),
     labelLarge = TextStyle(
-        fontFamily = fontsVarelaround,
+
         fontWeight = FontWeight.Normal,
         fontSize = 24.sp
     ),

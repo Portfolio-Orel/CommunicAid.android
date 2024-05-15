@@ -117,5 +117,6 @@
     <string name="new_password">New Password</string>
     <string name="change_password">Change Password</string>
     <string name="error_limit_exceeded_operation">You tried too many times… try again later</string>
+    <string name="show_customer_state_on_call">Show customer state on call</string>
 
 </resources>

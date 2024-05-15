@@ -74,11 +74,11 @@ data class OutstandingAccount(
 )
 
 fun Finances.isPositive(): Boolean {
-    return balance <= 0
+    return balance.toInt() <= 0
 }
 
 fun Finances.isNegative(): Boolean {
-    return balance > 0
+    return balance.toInt() > 0
 }
 
 fun decrypt(encStr: String, key: String): String {
@@ -122,8 +122,8 @@ val CustomerState.age: Int
 
 val Finances.balanceFormatted: String
     get() {
-        val unsignedBalance = if (balance < 0) balance * -1 else balance
-        return if (balance < 0) {
+        val unsignedBalance = if (balance.toInt() < 0) balance.toInt() * -1 else balance
+        return if (balance.toInt() < 0) {
             "$unsignedBalance"
         } else {
             "-$unsignedBalance"

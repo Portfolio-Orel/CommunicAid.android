@@ -65,7 +65,8 @@ class CustomerStateViewModel @Inject constructor(
                             mapOf("customer" to Gson().toJson(customer))
                         )
                     } catch (e: Exception) {
-                        state = state.copy(error = "הלקוח לא נמצא", isLoading = false)
+//                        state = state.copy(error = "הלקוח לא נמצא", isLoading = false)
+                        state = state.copy(error = e.message, isLoading = false)
                         e.log()
                     }
                 }

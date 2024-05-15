@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import com.orels.domain.util.common.Logger
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -15,12 +16,17 @@ class CustomerStateActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        Logger.i("CustomerStateActivity onCreate")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(false)
             setTurnScreenOn(true)
         }
         setContent {
-            CustomerStateScreen()
+            CustomerStateScreen(
+                onDismiss = {
+                    finish()
+                }
+            )
         }
     }
 }

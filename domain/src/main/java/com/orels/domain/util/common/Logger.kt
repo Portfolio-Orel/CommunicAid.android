@@ -46,7 +46,7 @@ class Logger : AuthLogger {
         fun i(
             message: String,
             attributes: Map<String, Any?> = emptyMap(),
-            tag: String? = null
+            tag: String? = null,
         ) {
             Log.i(tag ?: TAG, "$message\n$attributes")
             try {
