@@ -62,8 +62,8 @@ data class LicenceCopy(
 )
 
 data class Finances(
-    @SerializedName("Balance") val balance: Int,
-    @SerializedName("Revenue") val revenue: Int,
+    @SerializedName("Balance") val balance: String,
+    @SerializedName("Revenue") val revenue: String,
     @SerializedName("OutstandingAccounts") val outstandingAccounts: Map<String, OutstandingAccount>
 )
 
@@ -74,11 +74,11 @@ data class OutstandingAccount(
 )
 
 fun Finances.isPositive(): Boolean {
-    return balance.toInt() <= 0
+    return balance.toFloat().toInt() <= 0
 }
 
 fun Finances.isNegative(): Boolean {
-    return balance.toInt() > 0
+    return balance.toFloat().toInt() > 0
 }
 
 fun decrypt(encStr: String, key: String): String {
@@ -99,6 +99,15 @@ fun decodeBase64AndParseJson(base64Str: String): List<Int> {
     val json = String(Base64.getDecoder().decode(base64Str), UTF_8)
     return Gson().fromJson(json, object : TypeToken<List<Int>>() {}.type)
 }
+
+val Finances.revenueFormatted: String
+    get() {
+        return try {
+            revenue.toFloat().toInt().toString()
+        } catch (e: Exception) {
+            0.toString()
+        }
+    }
 
 val CustomerState.dateOfBirth: String
     get() {
@@ -122,8 +131,9 @@ val CustomerState.age: Int
 
 val Finances.balanceFormatted: String
     get() {
-        val unsignedBalance = if (balance.toInt() < 0) balance.toInt() * -1 else balance
-        return if (balance.toInt() < 0) {
+        val balanceInt = balance.toFloat().toInt()
+        val unsignedBalance = if (balanceInt < 0) balanceInt * -1 else balanceInt
+        return if (balance.toFloat().toInt() < 0) {
             "$unsignedBalance"
         } else {
             "-$unsignedBalance"
@@ -158,9 +168,4 @@ val Insurance.endFormatted: String
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val date = LocalDate.parse(end, formatter)
         return date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-    }
-
-val Finances.outstandingAccountsFormatted: String
-    get() {
-        return outstandingAccounts.entries.joinToString("\n") { "${it.value.title}: ${it.value.balance}" }
     }

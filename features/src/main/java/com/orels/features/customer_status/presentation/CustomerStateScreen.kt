@@ -46,6 +46,7 @@ import com.orels.features.customer_status.domain.model.endFormatted
 import com.orels.features.customer_status.domain.model.isNegative
 import com.orels.features.customer_status.domain.model.isPositive
 import com.orels.features.customer_status.domain.model.isValid
+import com.orels.features.customer_status.domain.model.revenueFormatted
 import com.orels.features.customer_status.domain.model.wasAtFormatted
 
 /**
@@ -63,7 +64,6 @@ fun CustomerStateScreen(
         isLoading = state.isLoading,
         error = state.error,
         fullName = state.name.toString(),
-        imageUri = state.image,
         lastDive = state.lastDive,
         insurance = state.insurance,
         finances = state.finances,
@@ -79,7 +79,6 @@ fun CustomerStateScreen(
 fun Content(
     isLoading: Boolean,
     fullName: String?,
-    imageUri: String?,
     lastDive: LastDive?,
     insurance: Insurance?,
     finances: Finances?,
@@ -107,7 +106,7 @@ fun Content(
         properties = PopupProperties(
             focusable = true,
             dismissOnBackPress = true,
-            dismissOnClickOutside = true,
+            dismissOnClickOutside = false,
             securePolicy = SecureFlagPolicy.SecureOff
         )
     ) {
@@ -189,7 +188,7 @@ fun Content(
                     ) {
                         DataRow(
                             title = "ערך נכס",
-                            value = finances?.revenue.toString(),
+                            value = finances?.revenueFormatted ?: "0",
                             modifier = goodModifier,
                             isGood = true
                         )
@@ -236,7 +235,7 @@ fun Content(
                                         Alignment.CenterVertically
                                     )
                                 ) {
-                                    finances.outstandingAccounts?.forEach { accountEntry ->
+                                    finances.outstandingAccounts.forEach { accountEntry ->
                                         Row(
                                             modifier = Modifier
                                                 .fillMaxWidth()
