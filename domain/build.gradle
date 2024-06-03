@@ -110,6 +110,9 @@ dependencies {
     implementation "androidx.work:work-runtime-ktx:$work_version"
     androidTestImplementation "androidx.work:work-testing:$work_version"
 
+    // Mongo
+    implementation 'org.mongodb:mongodb-driver-sync:4.6.0'
+
     api "org.jetbrains.kotlin:kotlin-reflect:1.7.10"
 
 }

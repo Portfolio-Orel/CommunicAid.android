@@ -10,7 +10,7 @@ import com.orels.domain.model.entities.Folder
 import com.orels.domain.model.entities.UploadState
 import com.orels.domain.repository.Repository
 import kotlinx.coroutines.flow.Flow
-import java.util.*
+import org.bson.types.ObjectId
 import javax.inject.Inject
 
 
@@ -48,7 +48,7 @@ class FolderInteractorImpl @Inject constructor(
     }
 
     override suspend fun createFolder(folder: Folder): String? {
-        val tempFolder = Folder(folder, UUID.randomUUID().toString())
+        val tempFolder = Folder(folder, ObjectId().toHexString())
         tempFolder.setUploadState(UploadState.BeingUploaded)
         db.insert(tempFolder)
         val folderId = repository.createFolder(

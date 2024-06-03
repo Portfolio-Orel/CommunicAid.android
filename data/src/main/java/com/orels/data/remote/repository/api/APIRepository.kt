@@ -1,14 +1,24 @@
 package com.orels.data.remote.repository.api
 
-import com.orels.domain.model.dto.body.create.*
-import com.orels.domain.model.dto.body.delete.DeleteFolderBody
+import com.orels.domain.model.dto.body.create.CreateDeletedCallBody
+import com.orels.domain.model.dto.body.create.CreateFolderBody
+import com.orels.domain.model.dto.body.create.CreateMessageBody
+import com.orels.domain.model.dto.body.create.CreateOrUpdateSettingsBody
+import com.orels.domain.model.dto.body.create.CreatePhoneCallBody
+import com.orels.domain.model.dto.body.create.CreateUserBody
 import com.orels.domain.model.dto.body.update.UpdateFolderBody
 import com.orels.domain.model.dto.body.update.UpdateMessageBody
-import com.orels.domain.model.dto.response.*
+import com.orels.domain.model.dto.response.GetCallsCountResponse
+import com.orels.domain.model.dto.response.GetDeletedCallsResponse
+import com.orels.domain.model.dto.response.GetFoldersResponse
+import com.orels.domain.model.dto.response.GetMessagesResponse
+import com.orels.domain.model.dto.response.GetMessagesSentCountResponse
+import com.orels.domain.model.dto.response.GetUserResponse
+import com.orels.domain.model.dto.response.SettingsResponse
 import com.orels.domain.model.entities.Folder
 import com.orels.domain.model.entities.Message
 import com.orels.domain.repository.Repository
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 class APIRepository @Inject constructor(
@@ -37,7 +47,7 @@ class APIRepository @Inject constructor(
         )
 
     override suspend fun deleteMessagesFromFolder(folderId: String) {
-        api.deleteMessagesInFolder(DeleteFolderBody(folderId = folderId))
+        api.deleteMessagesInFolder(folderId = folderId)
     }
 
     override suspend fun getMessages(): List<GetMessagesResponse> {
@@ -72,6 +82,7 @@ class APIRepository @Inject constructor(
             val result = api.createFolder(createFolderBody)
             result.body
         } catch (e: Exception) {
+            val x = e
             null
         }
     }
@@ -130,8 +141,12 @@ class APIRepository @Inject constructor(
         api.createOrUpdateSettings(createOrUpdateSettingsBody)
 
     override suspend fun getAllSettings(): List<SettingsResponse> {
-        val result = api.getAllSettings()
-        return result.body
+        try {
+            val result = api.getAllSettings()
+            return result.body
+        } catch (e: Exception) {
+            return emptyList()
+        }
     }
 
     override suspend fun getSettings(

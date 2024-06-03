@@ -176,7 +176,7 @@ fun ForgotPasswordContent(
             } else {
                 Text(
                     text = stringResource(R.string.reset_password),
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Normal,
                 )
             }
@@ -284,7 +284,7 @@ fun ResetPasswordContent(
             } else {
                 Text(
                     text = stringResource(R.string.reset_password),
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Normal,
                 )
             }
@@ -327,7 +327,7 @@ fun DoneContent(onDone: () -> Unit) {
         ) {
             Text(
                 text = stringResource(R.string.lets_go),
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Normal,
             )
         }

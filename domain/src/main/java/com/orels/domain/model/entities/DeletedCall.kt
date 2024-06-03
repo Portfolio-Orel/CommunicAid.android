@@ -2,14 +2,16 @@ package com.orels.domain.model.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.*
+import org.bson.types.ObjectId
+import java.util.Date
+
 
 /**
  * Calls that were deleted by the user and left unhandled.
  */
 @Entity
 data class DeletedCall(
-    @PrimaryKey var id: String = UUID.randomUUID().toString(),
+    @PrimaryKey var id: String = ObjectId().toHexString(),
     var number: String = "",
     var deleteDate: Long = Date().time,
 ) : Loggable, Uploadable() {

@@ -105,7 +105,7 @@ private fun CallTypesStatistics(
                 title = {
                     Text(
                         text = stringResource(id = StatisticsTypes.IncomingCount.label),
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 },
@@ -238,7 +238,7 @@ fun DonutText(text: String, isLoading: Boolean = false) {
     } else {
         Text(
             text = text,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground
         )
     }

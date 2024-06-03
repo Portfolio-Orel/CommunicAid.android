@@ -127,6 +127,9 @@ dependencies {
     // Datadog
     implementation "com.datadoghq:dd-sdk-android:1.13.0"
 
+    // Mongo
+    implementation 'org.mongodb:mongodb-driver-sync:4.6.0'
+
     implementation project(':domain')
     implementation project(':auth')
 }

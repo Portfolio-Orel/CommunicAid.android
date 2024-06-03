@@ -1,7 +1,19 @@
 package com.orels.presentation.ui.settings
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,7 +48,7 @@ fun SettingsScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxHeight(0.9f)
+            .fillMaxHeight(0.8f)
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.Start,
@@ -44,8 +56,8 @@ fun SettingsScreen(
     ) {
         Text(
             text = String.format(stringResource(id = R.string.hello_name), state.user?.firstName),
-            modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 24.dp),
-            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 24.dp, top = 12.dp),
+            style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onBackground
         )
         Column(
@@ -148,7 +160,7 @@ fun SettingsScreen(
                             viewModel.logout()
                         },
                     text = stringResource(id = R.string.logout),
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.error
                 )
             }

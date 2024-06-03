@@ -233,7 +233,7 @@ fun Dropdown(
             if (selectedFolder.title == "") stringResource(R.string.folder) else selectedFolder.title,
             modifier = Modifier
                 .padding(horizontal = 18.dp),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimaryContainer
         )
         Spacer(Modifier.weight(1f))

@@ -1,8 +1,17 @@
 package com.orels.presentation.ui.login
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -16,12 +25,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.orels.auth.domain.model.SignInStep
 import com.orels.domain.util.Screen
 import com.orels.presentation.R
 import com.orels.presentation.theme.fontsVarelaround
 import com.orels.presentation.theme.noRippleClickable
-import com.orels.presentation.ui.components.confirmation_pop_up.ConfirmationScreen
 import com.orels.presentation.ui.login.components.AuthenticationInput
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
@@ -133,7 +140,7 @@ fun LoginScreen(
             } else {
                 Text(
                     text = stringResource(R.string.login),
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Normal,
                 )
             }

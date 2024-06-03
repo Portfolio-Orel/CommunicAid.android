@@ -3,7 +3,11 @@ package com.orels.presentation.ui.main.components
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,7 +53,7 @@ fun ActionButton(
         ) {
             Text(
                 text = text,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodyMedium,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 color =

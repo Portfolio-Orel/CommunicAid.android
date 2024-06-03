@@ -80,7 +80,7 @@ fun ToggleSettings(
         Text(
             modifier = Modifier.fillMaxWidth(0.85f),
             text = stringResource(id = settings.key.title ?: R.string.empty_string),
-            style = MaterialTheme.typography.titleSmall,
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground,
             overflow = TextOverflow.Ellipsis
         )

@@ -78,7 +78,7 @@ fun UnhandledCallsScreen(
                             )
                             Text(
                                 stringResource(R.string.no_unhandled_calls),
-                                style = MaterialTheme.typography.titleMedium,
+                                style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
                         }

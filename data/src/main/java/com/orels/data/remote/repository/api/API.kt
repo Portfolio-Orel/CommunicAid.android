@@ -1,11 +1,29 @@
 package com.orels.data.remote.repository.api
 
-import com.orels.domain.model.dto.body.create.*
-import com.orels.domain.model.dto.body.delete.DeleteFolderBody
+import com.orels.domain.model.dto.body.create.CreateDeletedCallBody
+import com.orels.domain.model.dto.body.create.CreateFolderBody
+import com.orels.domain.model.dto.body.create.CreateMessageBody
+import com.orels.domain.model.dto.body.create.CreateOrUpdateSettingsBody
+import com.orels.domain.model.dto.body.create.CreatePhoneCallBody
+import com.orels.domain.model.dto.body.create.CreateUserBody
 import com.orels.domain.model.dto.body.update.UpdateFolderBody
 import com.orels.domain.model.dto.body.update.UpdateMessageBody
-import com.orels.domain.model.dto.response.*
-import retrofit2.http.*
+import com.orels.domain.model.dto.response.GetCallsCountResponse
+import com.orels.domain.model.dto.response.GetDeletedCallsResponse
+import com.orels.domain.model.dto.response.GetFoldersResponse
+import com.orels.domain.model.dto.response.GetMessagesResponse
+import com.orels.domain.model.dto.response.GetMessagesSentCountResponse
+import com.orels.domain.model.dto.response.GetUserResponse
+import com.orels.domain.model.dto.response.Response
+import com.orels.domain.model.dto.response.SettingsResponse
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface API {
 
@@ -67,8 +85,8 @@ interface API {
     @GET("/settings")
     suspend fun getAllSettings(): Response<List<SettingsResponse>>
 
-    @DELETE("/messagesInFolders")
-    suspend fun deleteMessagesInFolder(@Body deleteFolderBody: DeleteFolderBody)
+    @DELETE("/messagesInFolders/{folder_id}")
+    suspend fun deleteMessagesInFolder(@Path("folder_id") folderId: String)
 
 
     // Statistics
@@ -77,7 +95,7 @@ interface API {
         @Query("start_date") startDate: Long? = null,
         @Query("end_date") endDate: Long? = null,
         @Header("If-None-Match") vararg eTags: String
-        ): Response<GetCallsCountResponse>
+    ): Response<GetCallsCountResponse>
 
     @GET("/statistics/messagesSentCount")
     suspend fun getMessagesSentCount(

@@ -5,11 +5,13 @@ import androidx.room.PrimaryKey
 import com.google.gson.Gson
 import com.orels.domain.interactors.CallType
 import com.orels.domain.util.extension.epochTimeInSeconds
-import java.util.*
+import org.bson.types.ObjectId
+import java.util.Date
+
 
 @Entity
 data class PhoneCall(
-    @PrimaryKey var id: String = UUID.randomUUID().toString(),
+    @PrimaryKey var id: String = ObjectId().toHexString(),
     var number: String = "",
     var startDate: Date, // The date the call was registered in the phone
     var endDate: Date, // startDate + call duration

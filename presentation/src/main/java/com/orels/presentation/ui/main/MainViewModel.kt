@@ -6,16 +6,32 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orels.domain.interactors.*
+import com.orels.domain.interactors.AnalyticsIdentifiers
+import com.orels.domain.interactors.AnalyticsInteractor
+import com.orels.domain.interactors.FolderInteractor
+import com.orels.domain.interactors.MessageInFolderInteractor
+import com.orels.domain.interactors.MessageInteractor
+import com.orels.domain.interactors.PhoneCallsInteractor
+import com.orels.domain.interactors.WhatsappInteractor
 import com.orels.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
-import com.orels.domain.model.entities.*
+import com.orels.domain.model.entities.Folder
+import com.orels.domain.model.entities.Message
+import com.orels.domain.model.entities.MessageSent
+import com.orels.domain.model.entities.PhoneCall
+import com.orels.domain.model.entities.toPhoneCall
 import com.orels.domain.util.common.Logger
 import com.orels.domain.util.extension.copyToClipboard
 import com.orels.domain.util.extension.log
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
-import java.util.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -46,6 +62,10 @@ class MainViewModel @Inject constructor(
         observeFolders()
         observeNumberOnTheLine()
         observeNumberInBackground()
+        initData()
+    }
+
+    fun onResume() {
         initData()
     }
 
@@ -188,12 +208,14 @@ class MainViewModel @Inject constructor(
             state.selectedFolder == null || state.folders.none { folder -> folder.id == state.selectedFolder?.id }
         ) state.folders.maxByOrNull { it.timesUsed } else state.selectedFolder
         viewModelScope.launch {
-            setState(newState = state.copy(
-                messages = state.messages.sortedByDescending { it.timesUsed },
-                folders = state.folders.sortedByDescending { it.timesUsed },
-                selectedFolder = selectedFolder,
-                selectedFoldersMessages = getFoldersMessages(selectedFolder?.id ?: "")
-            ))
+            setState(
+                newState = state.copy(
+                    messages = state.messages.sortedByDescending { it.timesUsed },
+                    folders = state.folders.sortedByDescending { it.timesUsed },
+                    selectedFolder = selectedFolder,
+                    selectedFoldersMessages = getFoldersMessages(selectedFolder?.id ?: "")
+                )
+            )
         }
     }
 
@@ -233,7 +255,8 @@ class MainViewModel @Inject constructor(
     private fun observeFolders() {
         viewModelScope.launch {
             folderInteractor.getFolders(isActive = true).collectLatest {
-                setState(newState = state.copy(folders = it))
+                val activeFolders = it.filter { folder -> folder.isActive }
+                setState(newState = state.copy(folders = activeFolders))
                 setMessagesAndSelectedFolder()
             }
         }
@@ -242,7 +265,8 @@ class MainViewModel @Inject constructor(
     private fun observeMessages() {
         viewModelScope.launch {
             messageInteractor.getMessages(isActive = true).collectLatest {
-                setState(newState = state.copy(messages = it))
+                val activeMessages = it.filter { message -> message.isActive }
+                setState(newState = state.copy(messages = activeMessages))
                 setMessagesAndSelectedFolder()
             }
         }

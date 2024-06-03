@@ -11,7 +11,7 @@ import com.orels.domain.model.entities.MessageInFolder
 import com.orels.domain.model.entities.UploadState
 import com.orels.domain.repository.Repository
 import kotlinx.coroutines.flow.Flow
-import java.util.*
+import org.bson.types.ObjectId
 import javax.inject.Inject
 
 
@@ -49,7 +49,7 @@ class MessageInteractorImpl @Inject constructor(
         message: Message,
         folderId: String
     ) {
-        val tempId = UUID.randomUUID().toString()
+        val tempId = ObjectId().toHexString()
         val tempMessage = Message(message, tempId)
         val tempMessageInFolder = MessageInFolder(tempId, folderId, isActive = true)
 
@@ -61,6 +61,7 @@ class MessageInteractorImpl @Inject constructor(
 
         val messageIds =
             repository.createMessage(CreateMessageBody.fromMessage(message, folderId))
+
         messageIds?.forEach { messageId ->
             val messageWithId = Message(message, messageId)
 
