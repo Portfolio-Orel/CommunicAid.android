@@ -8,28 +8,37 @@ import androidx.lifecycle.viewModelScope
 import com.orels.auth.domain.interactor.AuthInteractor
 import com.orels.domain.interactors.AnalyticsIdentifiers
 import com.orels.domain.interactors.AnalyticsInteractor
+import com.orels.domain.interactors.PhoneCallsInteractor
 import com.orels.domain.interactors.SettingsInteractor
 import com.orels.domain.model.entities.Settings
 import com.orels.domain.model.entities.SettingsType
+import com.orels.domain.repository.EnvironmentRepository
 import com.orels.domain.util.common.Logger
 import com.orels.domain.util.extension.launchCatching
 import com.orels.domain.util.extension.log
 import com.orels.domain.util.extension.notEqualsTo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val settingsInteractor: SettingsInteractor,
+    private val phoneCallsInteractor: PhoneCallsInteractor,
     private val authInteractor: AuthInteractor,
+    private val environment: EnvironmentRepository,
     analyticsInteractor: AnalyticsInteractor,
 ) :
     ViewModel() {
     var state by mutableStateOf(SettingsState())
 
     init {
+        state = state.copy(environment = environment.currentEnvironment)
         analyticsInteractor.track(AnalyticsIdentifiers.SettingsScreenShow)
         initData()
         observeSettings()
@@ -112,6 +121,12 @@ class SettingsViewModel @Inject constructor(
             settingsInteractor.createOrUpdate(settings)
             loadingSettings = loadingSettings - settings.key
             state = state.copy(loadingSettings = loadingSettings)
+        }
+    }
+
+    fun clearPhonecalls() {
+        viewModelScope.launch {
+            phoneCallsInteractor.clear()
         }
     }
 

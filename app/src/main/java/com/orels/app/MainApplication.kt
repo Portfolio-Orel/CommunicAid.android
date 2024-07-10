@@ -9,7 +9,7 @@ import com.datadog.android.privacy.TrackingConsent
 import com.datadog.android.rum.GlobalRum
 import com.datadog.android.rum.RumMonitor
 import com.google.firebase.FirebaseApp
-import com.orels.data.remote.EnvironmentRepository
+import com.orels.data.remote.EnvironmentRepositoryImpl
 import com.orels.domain.annotation.AuthConfigFile
 import com.orels.domain.annotation.DatadogConfigFile
 import com.orels.auth.domain.interactor.AuthInteractor
@@ -41,7 +41,7 @@ class MainApplication : Application(), Configuration.Provider {
     lateinit var workerFactory: HiltWorkerFactory
 
     @Inject
-    lateinit var environmentRepository: EnvironmentRepository
+    lateinit var environmentRepositoryImpl: EnvironmentRepositoryImpl
 
     @Inject
     lateinit var authInteractor: AuthInteractor
@@ -60,7 +60,7 @@ class MainApplication : Application(), Configuration.Provider {
         val applicationId = resolveDatadogApplicationId(dataDogConfig)
         val credentials = Credentials(
             clientToken = clientToken,
-            envName = environmentRepository.currentEnvironment.name,
+            envName = environmentRepositoryImpl.currentEnvironment.name,
             variant = "MyMessagesVariant",
             rumApplicationId = applicationId,
             serviceName = "MyMessagesService"

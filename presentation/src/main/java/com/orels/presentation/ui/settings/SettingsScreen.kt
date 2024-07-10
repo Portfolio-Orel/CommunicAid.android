@@ -1,5 +1,6 @@
 package com.orels.presentation.ui.settings
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -65,6 +66,7 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            Text(text = state.environment?.name ?: "")
             if (state.isLoadingSettings) {
                 repeat(4) {
                     SkeletonComponent(
@@ -111,6 +113,7 @@ fun SettingsScreen(
                                                 PermissionState.NotAsked -> permission.requestPermission(
                                                     context = context
                                                 )
+
                                                 PermissionState.DeniedOnce -> permission.requestPermission(
                                                     context = context
                                                 ) // Show rationale
@@ -121,6 +124,7 @@ fun SettingsScreen(
                                         }
                                 }
                             )
+
                             SettingsType.Data -> {
                                 DataSettings(
                                     title = stringResource(
@@ -131,15 +135,36 @@ fun SettingsScreen(
                                     modifier = Modifier.padding(horizontal = 8.dp)
                                 )
                             }
+
                             SettingsType.PopUp -> {
 
                             }
+
                             else -> {}
                         }
                     }
             }
         }
+        Spacer(Modifier.height(24.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                modifier = Modifier
+                    .clickable {
+                        viewModel.clearPhonecalls()
+                        Toast.makeText(context,
+                            context.getString(R.string.calls_cleared), Toast.LENGTH_SHORT).show()
+                    },
+                text = stringResource(R.string.clear_calls),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.secondary,
+            )
+        }
         Spacer(Modifier.weight(1f))
+
         Box(
             modifier = Modifier
                 .fillMaxWidth(),

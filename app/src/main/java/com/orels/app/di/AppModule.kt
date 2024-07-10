@@ -14,14 +14,14 @@ import com.orels.data.interceptor.LogInterceptor
 import com.orels.data.interceptor.ResponseInterceptor
 import com.orels.data.local.LocalDatabase
 import com.orels.data.local.type_converters.Converters
-import com.orels.data.remote.EnvironmentRepository
-import com.orels.data.remote.Environments
+import com.orels.data.remote.EnvironmentRepositoryImpl
 import com.orels.data.remote.repository.api.API
 import com.orels.domain.annotation.AuthConfigFile
 import com.orels.domain.annotation.BaseProjectUrl
 import com.orels.domain.annotation.DatadogConfigFile
 import com.orels.domain.annotation.MixpanelConfigFile
 import com.orels.domain.model.entities.ConfigFile
+import com.orels.domain.repository.Environments
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -72,19 +72,19 @@ object AppModule {
     @Provides
     @BaseProjectUrl
     fun provideBaseUrl(
-        environmentRepository: EnvironmentRepository
-    ): String = when (environmentRepository.currentEnvironment) {
-        Environments.Dev -> "https://22jwmm93j9.execute-api.us-east-1.amazonaws.com/"
-        Environments.Prod -> "https://38fdl6yd3a.execute-api.us-east-1.amazonaws.com/"
+        environmentRepositoryImpl: EnvironmentRepositoryImpl
+    ): String = when (environmentRepositoryImpl.currentEnvironment) {
+        Environments.Dev -> "https://yrwk8oskf9.execute-api.us-east-1.amazonaws.com/"
+        Environments.Prod -> "https://yrwk8oskf9.execute-api.us-east-1.amazonaws.com/"
 //        Environments.LocalEmulator -> "http://10.0.2.2:4000/"
-        Environments.LocalEmulator -> "http://10.100.102.12:4000/"
+        Environments.LocalEmulator -> "http://10.100.102.7:4000/"
     }
 
     @Provides
     @MixpanelConfigFile
     fun provideMixpanelToken(
-        environmentRepository: EnvironmentRepository
-    ): ConfigFile = when (environmentRepository.currentEnvironment) {
+        environmentRepositoryImpl: EnvironmentRepositoryImpl
+    ): ConfigFile = when (environmentRepositoryImpl.currentEnvironment) {
         Environments.Dev, Environments.LocalEmulator -> ConfigFile(fileResId = R.raw.dev_mixpanel_config)
         Environments.Prod -> ConfigFile(fileResId = R.raw.prod_mixpanel_config)
     }
@@ -92,8 +92,8 @@ object AppModule {
     @Provides
     @DatadogConfigFile
     fun provideDatadogConfig(
-        environmentRepository: EnvironmentRepository
-    ): ConfigFile = when (environmentRepository.currentEnvironment) {
+        environmentRepositoryImpl: EnvironmentRepositoryImpl
+    ): ConfigFile = when (environmentRepositoryImpl.currentEnvironment) {
         Environments.Dev, Environments.LocalEmulator -> ConfigFile(fileResId = R.raw.dev_datadog_config)
         Environments.Prod -> ConfigFile(fileResId = R.raw.prod_datadog_config)
     }
@@ -101,8 +101,8 @@ object AppModule {
     @Provides
     @AuthConfigFile
     fun provideAuthConfigFile(
-        environmentRepository: EnvironmentRepository
-    ): ConfigFile = when (environmentRepository.currentEnvironment) {
+        environmentRepositoryImpl: EnvironmentRepositoryImpl
+    ): ConfigFile = when (environmentRepositoryImpl.currentEnvironment) {
         Environments.Dev, Environments.LocalEmulator -> ConfigFile(fileResId = R.raw.prod_amplifyconfiguration)
         Environments.Prod -> ConfigFile(fileResId = R.raw.prod_amplifyconfiguration)
     }

@@ -4,22 +4,48 @@ import com.orels.auth.data.local.interactor.AuthInteractorImpl
 import com.orels.auth.data.remote.AuthServiceImpl
 import com.orels.auth.domain.interactor.AuthInteractor
 import com.orels.auth.domain.service.AuthService
-import com.orels.data.interactor.*
+import com.orels.data.interactor.AnalyticsInteractorImpl
+import com.orels.data.interactor.CallDetailsInteractorImpl
+import com.orels.data.interactor.DataSourceCallsInteractorImpl
+import com.orels.data.interactor.DeletedCallsInteractorImpl
+import com.orels.data.interactor.FolderInteractorImpl
+import com.orels.data.interactor.GeneralInteractorImpl
+import com.orels.data.interactor.MessageInFolderInteractorImpl
+import com.orels.data.interactor.MessageInteractorImpl
+import com.orels.data.interactor.PhoneCallsInteractorImpl
+import com.orels.data.interactor.SettingsInteractorImpl
+import com.orels.data.interactor.StatisticsInteractorImpl
+import com.orels.data.interactor.UserInteractorImpl
 import com.orels.data.managers.phonecall.interactor.PhoneCallManagerImpl
+import com.orels.data.managers.phonecall.interactor.PhoneCallManagerInteractorImpl
 import com.orels.data.managers.system_service.SystemServiceManagerImpl
 import com.orels.data.managers.unhandled_calls.UnhandledCallsManagerImpl
 import com.orels.data.managers.worker.WorkerManagerImpl
+import com.orels.data.remote.EnvironmentRepositoryImpl
 import com.orels.data.remote.repository.api.APIRepository
 import com.orels.domain.annotation.AuthRepository
 import com.orels.domain.annotation.Proximity
-import com.orels.domain.interactors.*
+import com.orels.domain.interactors.AnalyticsInteractor
+import com.orels.domain.interactors.CallDetailsInteractor
+import com.orels.domain.interactors.DataSourceCallsInteractor
+import com.orels.domain.interactors.DeletedCallsInteractor
+import com.orels.domain.interactors.FolderInteractor
+import com.orels.domain.interactors.GeneralInteractor
+import com.orels.domain.interactors.MessageInFolderInteractor
+import com.orels.domain.interactors.MessageInteractor
+import com.orels.domain.interactors.PhoneCallsInteractor
+import com.orels.domain.interactors.SettingsInteractor
+import com.orels.domain.interactors.StatisticsInteractor
+import com.orels.domain.interactors.UserInteractor
+import com.orels.domain.interactors.WhatsappInteractor
+import com.orels.domain.interactors.WhatsappInteractorImpl
 import com.orels.domain.managers.SystemServiceManager
 import com.orels.domain.managers.phonecall.PhoneCallManager
 import com.orels.domain.managers.phonecall.interactor.PhoneCallManagerInteractor
-import com.orels.data.managers.phonecall.interactor.PhoneCallManagerInteractorImpl
 import com.orels.domain.managers.system_service.SystemService
 import com.orels.domain.managers.unhandled_calls.UnhandledCallsManager
 import com.orels.domain.managers.worker.WorkerManager
+import com.orels.domain.repository.EnvironmentRepository
 import com.orels.domain.repository.Repository
 import com.orels.domain.system.connectivity.ConnectivityObserver
 import com.orels.domain.system.connectivity.ConnectivityObserverObserverImpl
@@ -41,9 +67,12 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideConnectivityObserver(connectivityObserver: ConnectivityObserverObserverImpl): ConnectivityObserver
-    
+
     @Binds
     abstract fun provideRepository(repository: APIRepository): Repository
+
+    @Binds
+    abstract fun provideEnvironmentRepository(environmentRepository: EnvironmentRepositoryImpl): EnvironmentRepository
 
     @Binds
     abstract fun provideMessageInteractor(interactorImpl: MessageInteractorImpl): MessageInteractor
@@ -75,7 +104,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideSettingsInteractor(interactorImpl: SettingsInteractorImpl): SettingsInteractor
-    
+
     @Binds
     abstract fun provideUserInteractor(interactorImpl: UserInteractorImpl): UserInteractor
 

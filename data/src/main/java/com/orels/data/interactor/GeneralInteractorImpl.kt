@@ -1,7 +1,11 @@
 package com.orels.data.interactor
 
 import com.orels.data.local.LocalDatabase
-import com.orels.domain.interactors.*
+import com.orels.domain.interactors.DeletedCallsInteractor
+import com.orels.domain.interactors.FolderInteractor
+import com.orels.domain.interactors.GeneralInteractor
+import com.orels.domain.interactors.MessageInteractor
+import com.orels.domain.interactors.SettingsInteractor
 import com.orels.domain.model.entities.Settings
 import com.orels.domain.model.entities.SettingsKey
 import com.orels.domain.util.common.DateUtils
@@ -13,7 +17,6 @@ class GeneralInteractorImpl @Inject constructor(
     private val messageInteractor: MessageInteractor,
     private val folderInteractor: FolderInteractor,
     private val deletedCallsInteractor: DeletedCallsInteractor,
-    private val DataSourceCallsInteractor: DataSourceCallsInteractor,
     private val settingsInteractor: SettingsInteractor,
 ) : GeneralInteractor {
 

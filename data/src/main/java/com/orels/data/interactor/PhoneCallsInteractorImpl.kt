@@ -8,7 +8,7 @@ import com.orels.domain.model.entities.PhoneCall
 import com.orels.domain.model.entities.UploadState
 import com.orels.domain.repository.Repository
 import com.orels.domain.util.extension.addUniqueIf
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 class PhoneCallsInteractorImpl @Inject constructor(
@@ -51,6 +51,10 @@ class PhoneCallsInteractorImpl @Inject constructor(
 
     override fun getAllFromDate(fromDate: Date): List<PhoneCall> =
         db.getAllFromDate(fromDate)
+
+    override fun deletePhoneCalls(phoneCalls: List<PhoneCall>) {
+        db.delete(phoneCalls)
+    }
 
 
     override fun remove(phoneCalls: List<PhoneCall>) = db.remove(phoneCalls)

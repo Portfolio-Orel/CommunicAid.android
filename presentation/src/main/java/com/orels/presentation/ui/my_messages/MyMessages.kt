@@ -7,7 +7,13 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -108,7 +114,7 @@ fun MyMessagesApp(
                 ) {
                     NavHost(
                         modifier = Modifier.padding(
-                            top = it.calculateTopPadding() - 10.dp,
+                            top = (if (it.calculateBottomPadding() < 10.dp) 10.dp else it.calculateBottomPadding()) - 10.dp,
                             bottom = it.calculateBottomPadding(),
                             end = it.calculateEndPadding(LayoutDirection.Ltr),
                             start = it.calculateStartPadding(LayoutDirection.Ltr)

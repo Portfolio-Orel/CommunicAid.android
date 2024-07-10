@@ -17,5 +17,6 @@
     <string name="error_invalid_passwords">There is an issue with one of the passwords</string>
     <string name="edit_folder">Edit Folder</string>
     <string name="dont_have_an_account">Don\'t have an account?</string>
+    <string name="calls_cleared">Calls cleared</string>
 
 </resources>

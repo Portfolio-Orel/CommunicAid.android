@@ -3,7 +3,7 @@ package com.orels.domain.interactors
 import com.orels.domain.model.entities.MessageSent
 import com.orels.domain.model.entities.PhoneCall
 import com.orels.domain.model.entities.UploadState
-import java.util.*
+import java.util.Date
 
 interface PhoneCallsInteractor {
     suspend fun createPhoneCalls(phoneCalls: List<PhoneCall>)
@@ -14,6 +14,7 @@ interface PhoneCallsInteractor {
     fun updateCallUploadState(phoneCall: PhoneCall, uploadState: UploadState)
     fun getAll(): List<PhoneCall>
     fun getAllFromDate(fromDate: Date): List<PhoneCall>
+    fun deletePhoneCalls(phoneCalls: List<PhoneCall>)
     fun clear()
     fun clearToDate(date: Date)
     fun remove(phoneCalls: List<PhoneCall>)

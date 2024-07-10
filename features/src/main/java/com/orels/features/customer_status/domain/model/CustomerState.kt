@@ -169,3 +169,10 @@ val Insurance.endFormatted: String
         val date = LocalDate.parse(end, formatter)
         return date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
     }
+
+val Finances.outstandingAccountsNames: List<String>
+    get() {
+        // Divide each key in each item and .split(",") into several different keys
+        val allTitles = outstandingAccounts.map { it.value.title }
+        return allTitles.map { it.split(",") }.flatten()
+    }

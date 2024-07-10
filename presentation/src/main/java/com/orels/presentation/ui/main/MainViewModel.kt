@@ -134,18 +134,18 @@ class MainViewModel @Inject constructor(
 
     fun onMessageLongClick(message: Message, context: Context) {
         val phoneCall = state.activeCall
+        context.copyToClipboard(label = message.title, value = message.body)
         if (phoneCall != null) {
             analyticsInteractor.track(
                 AnalyticsIdentifiers.MessageLongClickOnCall,
                 mapOf("title" to message.title)
             )
-            goToEditMessage(message)
         } else {
             analyticsInteractor.track(
                 AnalyticsIdentifiers.MessageLongNotOnCall,
                 mapOf("title" to message.title)
             )
-            context.copyToClipboard(label = message.title, value = message.body)
+
         }
     }
 
@@ -266,6 +266,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             messageInteractor.getMessages(isActive = true).collectLatest {
                 val activeMessages = it.filter { message -> message.isActive }
+                    .sortedByDescending { activeMessage -> activeMessage.timesUsed }
                 setState(newState = state.copy(messages = activeMessages))
                 setMessagesAndSelectedFolder()
             }

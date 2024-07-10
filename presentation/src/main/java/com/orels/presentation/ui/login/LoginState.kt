@@ -13,8 +13,8 @@ data class LoginState(
     val usernameField: Fields = Fields.Username(),
     val passwordField: Fields = Fields.Password(),
 
-    val username: String = "orelz7",
-    val password: String = "002200oO",
+    val username: String = "",
+    val password: String = "",
 
     val nextStep: SignInStep? = null,
 

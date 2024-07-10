@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -46,6 +45,7 @@ import com.orels.features.customer_status.domain.model.endFormatted
 import com.orels.features.customer_status.domain.model.isNegative
 import com.orels.features.customer_status.domain.model.isPositive
 import com.orels.features.customer_status.domain.model.isValid
+import com.orels.features.customer_status.domain.model.outstandingAccountsNames
 import com.orels.features.customer_status.domain.model.revenueFormatted
 import com.orels.features.customer_status.domain.model.wasAtFormatted
 
@@ -58,7 +58,6 @@ fun CustomerStateScreen(
     viewModel: CustomerStateViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
-//    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
 
     Content(
         isLoading = state.isLoading,
@@ -73,8 +72,6 @@ fun CustomerStateScreen(
     }
 }
 
-//}
-
 @Composable
 fun Content(
     isLoading: Boolean,
@@ -86,9 +83,10 @@ fun Content(
     error: String? = null,
     onDismiss: () -> Unit
 ) {
+    val scrollState = rememberScrollState()
+
     val goodModifier =
         Modifier
-//            .background(Color.Green.copy(alpha = 0.3f), shape = RoundedCornerShape(6.dp))
             .padding(horizontal = 6.dp, vertical = 6.dp)
     val badModifier =
         Modifier
@@ -114,9 +112,6 @@ fun Content(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .fillMaxSize()
-//                .background(Color.Black.copy(alpha = 0.5f))
-//                .shadow(elevation = 8.dp, shape = RoundedCornerShape(12.dp))
-                .clickable { onDismiss() }
         ) {
             Column(
                 modifier = Modifier
@@ -124,8 +119,7 @@ fun Content(
                         color = Color.White,
                         shape = RoundedCornerShape(12.dp)
                     )
-                    .fillMaxWidth(0.9f)
-                    .verticalScroll(rememberScrollState()),
+                    .fillMaxWidth(0.9f),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Box(
@@ -182,7 +176,9 @@ fun Content(
                     )
                 } else {
                     Column(
-                        modifier = Modifier.padding(all = 16.dp),
+                        modifier = Modifier
+                            .padding(all = 16.dp)
+                            .verticalScroll(scrollState),
                         horizontalAlignment = Alignment.End,
                         verticalArrangement = Arrangement.SpaceEvenly,
                     ) {
@@ -221,53 +217,34 @@ fun Content(
                             isGood = finances?.isPositive() == true
                         )
                         if (finances?.isNegative() == true) {
-                            Box(
-                                modifier = Modifier
-                                    .heightIn(max = 200.dp)
-                                    .fillMaxWidth()
-                                    .padding(4.dp)
-                                    .verticalScroll(rememberScrollState())
-                            ) {
-                                Column(
-                                    modifier = Modifier.padding(8.dp),
-                                    verticalArrangement = Arrangement.spacedBy(
-                                        12.dp,
-                                        Alignment.CenterVertically
-                                    )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            finances.outstandingAccountsNames.forEach { accountEntry ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .shadow(
+                                            elevation = 2.dp,
+                                            shape = RoundedCornerShape(8.dp)
+                                        )
+                                        .background(color = Color.White)
+                                        .padding(vertical = 4.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    finances.outstandingAccounts.forEach { accountEntry ->
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .shadow(
-                                                    elevation = 2.dp,
-                                                    shape = RoundedCornerShape(8.dp)
-                                                )
-                                                .background(color = Color.White)
-                                                .padding(vertical = 4.dp),
-                                            horizontalArrangement = Arrangement.SpaceBetween
-                                        ) {
-                                            Text(
-                                                text = accountEntry.value.balance,
-                                                fontSize = 14.sp,
-                                                fontWeight = FontWeight.Medium
-                                            )
-                                            Row {
-                                                Text(
-                                                    text = accountEntry.value.title,
-                                                    fontSize = 14.sp,
-                                                    fontWeight = FontWeight.Bold
-                                                )
-                                                Text(
-                                                    text = " •",
-                                                    fontSize = 14.sp,
-                                                    fontWeight = FontWeight.Bold,
-                                                    color = Color.Black
-                                                )
-                                            }
-                                        }
+                                    Row {
+                                        Text(
+                                            text = accountEntry,
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Text(
+                                            text = " •",
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.Black
+                                        )
                                     }
                                 }
+                                Spacer(modifier = Modifier.height(4.dp))
                             }
                         }
                     }

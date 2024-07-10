@@ -18,9 +18,11 @@
     <string name="edit_folder">ערוך תיקייה</string>
     <string name="dont_have_an_account">אין לך משתמש?</string>
     <string name="did_forget_password">שכחת את הסיסמא?</string>
-    <string name="forgot_password">Forgot password</string>
+    <string name="forgot_password">שכחת את הסיסמא</string>
     <string name="reset_password">אפס סיסמא</string>
     <string name="confirm_password">אשר סיסמא</string>
     <string name="hide_password">הסתר סיסמא</string>
     <string name="show_password">הצג סיסמא</string>
+    <string name="clear_calls" translatable="false">נקה שיחות</string>
+    <string name="calls_cleared">השיחות נוקו</string>
 </resources>
