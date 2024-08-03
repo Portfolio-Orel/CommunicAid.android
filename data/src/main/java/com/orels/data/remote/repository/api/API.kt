@@ -3,6 +3,7 @@ package com.orels.data.remote.repository.api
 import com.orels.domain.model.dto.body.create.CreateDeletedCallBody
 import com.orels.domain.model.dto.body.create.CreateFolderBody
 import com.orels.domain.model.dto.body.create.CreateMessageBody
+import com.orels.domain.model.dto.body.create.CreateOngoingCallBody
 import com.orels.domain.model.dto.body.create.CreateOrUpdateSettingsBody
 import com.orels.domain.model.dto.body.create.CreatePhoneCallBody
 import com.orels.domain.model.dto.body.create.CreateUserBody
@@ -69,6 +70,12 @@ interface API {
     // Phone Calls
     @POST("/phoneCalls")
     suspend fun createPhoneCalls(@Body phoneCallsBody: List<CreatePhoneCallBody>): Response<List<String>>
+
+    // Ongoing Calls
+    @POST("/ongoing-call")
+    suspend fun createOngoingCall(
+        @Body createOngoingCallBody: CreateOngoingCallBody
+    )
 
     // Settings
     @PATCH("/settings")

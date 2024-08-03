@@ -3,7 +3,13 @@ package com.orels.data.managers.phonecall.interactor
 import android.annotation.SuppressLint
 import android.content.Context
 import android.media.AudioManager
-import android.media.AudioManager.*
+import android.media.AudioManager.MODE_CALL_SCREENING
+import android.media.AudioManager.MODE_CURRENT
+import android.media.AudioManager.MODE_INVALID
+import android.media.AudioManager.MODE_IN_CALL
+import android.media.AudioManager.MODE_IN_COMMUNICATION
+import android.media.AudioManager.MODE_NORMAL
+import android.media.AudioManager.MODE_RINGTONE
 import android.os.Build
 import android.telephony.TelephonyManager
 import androidx.annotation.RequiresApi
@@ -16,6 +22,7 @@ import com.orels.domain.managers.phonecall.PhoneCallManager
 import com.orels.domain.model.entities.CallLogEntity
 import com.orels.domain.model.entities.PhoneCall
 import com.orels.domain.model.entities.UploadState
+import com.orels.domain.repository.Repository
 import com.orels.domain.util.common.Constants.TIME_TO_ADD_CALL_TO_CALL_LOG
 import com.orels.domain.util.common.Logger
 import com.orels.domain.util.extension.compareNumberTo
@@ -24,7 +31,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 
@@ -33,7 +40,8 @@ class PhoneCallManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val phoneCallInteractor: PhoneCallsInteractor,
     private val dataSource: DataSourceCallsInteractor,
-    private val callLogInteractor: CallDetailsInteractor
+    private val callLogInteractor: CallDetailsInteractor,
+    private val repository: Repository
 ) : PhoneCallManager {
 
     override val callsDataFlow
@@ -84,9 +92,11 @@ class PhoneCallManagerImpl @Inject constructor(
             CallState.Idle -> {
                 incomingCall(number = number)
             }
+
             CallState.OnCall -> {
                 waitingCall(number = number)
             }
+
             else -> { // This state should not happen, but if it did it's an incoming call
                 incomingCall(number = number)
             }
@@ -99,12 +109,15 @@ class PhoneCallManagerImpl @Inject constructor(
             CallState.Waiting -> {
                 checkWaitingCallState()
             }
+
             CallState.Idle -> {
                 outgoingCall(number = number)
             }
+
             CallState.Ringing -> {
                 incomingAnswered()
             }
+
             else -> { // This state should not happen, but if it did it's an outgoing call
                 outgoingCall(number = number)
             }
@@ -122,6 +135,16 @@ class PhoneCallManagerImpl @Inject constructor(
         Logger.i("Set call on line: ${phoneCall?.number}")
         CoroutineScope(Dispatchers.Main).launch {
             dataSource.updateCallOnTheLine(phoneCall)
+            try {
+                if (phoneCall == null) return@launch
+                repository.createOngoingCall(
+                    number = phoneCall.number,
+                    contactName = phoneCall.getNameOrNumber(),
+                    date = phoneCall.startDate.time
+                )
+            } catch (e: Exception) {
+                Logger.e("Error creating ongoing call: ${e.message}")
+            }
         }
     }
 

@@ -7,7 +7,11 @@ import androidx.work.WorkerParameters
 import com.orels.domain.interactors.CallDetailsInteractor
 import com.orels.domain.interactors.PhoneCallsInteractor
 import com.orels.domain.interactors.SettingsInteractor
-import com.orels.domain.model.entities.*
+import com.orels.domain.model.entities.PhoneCall
+import com.orels.domain.model.entities.Settings
+import com.orels.domain.model.entities.SettingsKey
+import com.orels.domain.model.entities.UploadState
+import com.orels.domain.model.entities.toPhoneCalls
 import com.orels.domain.util.common.Constants
 import com.orels.domain.util.common.Logger
 import com.orels.domain.util.extension.appendAll
@@ -15,8 +19,13 @@ import com.orels.domain.util.extension.compareToBallPark
 import com.orels.domain.util.extension.log
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.*
-import java.util.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.util.Date
 
 typealias PhoneCalls = List<PhoneCall>
 
@@ -65,12 +74,18 @@ class UploadPhoneCallsWorker @AssistedInject constructor(
                 }
             if (phoneCalls.isNotEmpty()) {
                 Logger.v("phone calls to upload: $phoneCalls")
-                phoneCallsInteractor.createPhoneCalls(
+                val successfulPhoneCallIds: List<String> = phoneCallsInteractor.createPhoneCalls(
                     phoneCalls
                 )
-                phoneCalls.forEach { call ->
-                    phoneCallsInteractor.updateCallUploadState(call, UploadState.Uploaded)
-                }
+                phoneCalls
+                    .filter { it.id in successfulPhoneCallIds }
+                    .forEach { call ->
+                        phoneCallsInteractor.updateCallUploadState(call, UploadState.Uploaded)
+                    }
+                phoneCalls.filter { it.id !in successfulPhoneCallIds }
+                    .forEach { call ->
+                        phoneCallsInteractor.updateCallUploadState(call, UploadState.CantBeUploaded)
+                    }
             }
         }
         CoroutineScope(SupervisorJob()).launch {

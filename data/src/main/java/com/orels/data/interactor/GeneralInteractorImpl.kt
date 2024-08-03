@@ -29,7 +29,7 @@ class GeneralInteractorImpl @Inject constructor(
     override suspend fun initData() {
         supervisorScope {
 //        clearAllDatabases()
-            messageInteractor.initWithMessagesInFolders()
+            messageInteractor.initWithMessagesInFolders(false)
             folderInteractor.init()
 //        DataSourceCallsInteractor.init()
             settingsInteractor.init()

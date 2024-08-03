@@ -3,6 +3,7 @@ package com.orels.data.remote.repository.api
 import com.orels.domain.model.dto.body.create.CreateDeletedCallBody
 import com.orels.domain.model.dto.body.create.CreateFolderBody
 import com.orels.domain.model.dto.body.create.CreateMessageBody
+import com.orels.domain.model.dto.body.create.CreateOngoingCallBody
 import com.orels.domain.model.dto.body.create.CreateOrUpdateSettingsBody
 import com.orels.domain.model.dto.body.create.CreatePhoneCallBody
 import com.orels.domain.model.dto.body.create.CreateUserBody
@@ -18,6 +19,7 @@ import com.orels.domain.model.dto.response.SettingsResponse
 import com.orels.domain.model.entities.Folder
 import com.orels.domain.model.entities.Message
 import com.orels.domain.repository.Repository
+import com.orels.domain.util.extension.log
 import java.util.Date
 import javax.inject.Inject
 
@@ -82,7 +84,6 @@ class APIRepository @Inject constructor(
             val result = api.createFolder(createFolderBody)
             result.body
         } catch (e: Exception) {
-            val x = e
             null
         }
     }
@@ -109,8 +110,19 @@ class APIRepository @Inject constructor(
 
     /* Phone Calls */
     override suspend fun createPhoneCalls(createPhoneCallBody: List<CreatePhoneCallBody>): List<String> {
-        val result = api.createPhoneCalls(createPhoneCallBody)
-        return result.body
+        try {
+            val result = api.createPhoneCalls(createPhoneCallBody)
+            return result.body
+        } catch (e: Exception) {
+            e.log()
+            return emptyList()
+        }
+    }
+
+    override suspend fun createOngoingCall(number: String, contactName: String, date: Long) {
+        val body =
+            CreateOngoingCallBody(number = number, contactName = contactName, startDate = date)
+        api.createOngoingCall(body)
     }
     /* Phone Calls */
 

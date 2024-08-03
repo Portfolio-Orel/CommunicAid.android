@@ -69,6 +69,21 @@ class MainViewModel @Inject constructor(
         initData()
     }
 
+    fun refresh() {
+        // clean the cache of folders and messages and fetch them again
+        state = state.copy(isRefreshing = true, isLoading = true)
+        fetchDataJob = viewModelScope.async {
+            try {
+                folderInteractor.init(clearFirst = true)
+                messageInteractor.initWithMessagesInFolders(clearFirst = true)
+            } finally {
+                withContext(Dispatchers.Main) {
+                    state = state.copy(isRefreshing = false, isLoading = false)
+                }
+            }
+        }
+    }
+
     /* States */
 
     fun navigated() {

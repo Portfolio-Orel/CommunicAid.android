@@ -15,6 +15,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.orels.domain.util.Screen
 import com.orels.presentation.ui.components.OnLifecycleEvent
 import com.orels.presentation.ui.main.components.FoldersContainer
@@ -45,59 +47,67 @@ private fun Content(
         getMessageWidth(screenWidth = screen.screenWidthDp, spaceBetween = spaceBetweenMessages)
     val messageHeight = (messageWidth * 1.5f)
 
+    val refreshSwipeState = rememberSwipeRefreshState(state.isRefreshing)
+
     LaunchedEffect(key1 = state.screenToShow) {
         when (state.screenToShow) {
             MainScreens.DetailsFolder -> {
                 navController.navigate(Screen.DetailsFolder.withArgs(state.folderToEdit?.id))
             }
+
             MainScreens.DetailsMessage -> {
                 navController.navigate(Screen.DetailsMessage.withArgs(state.messageToEdit?.id))
             }
+
             else -> {}
         }
         viewModel.navigated()
     }
 
     OnLifecycleEvent(onResume = viewModel::onResume)
-
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(top = 16.dp)
-        ,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(6.dp)
+    SwipeRefresh(
+        modifier = Modifier.fillMaxSize(),
+        state = refreshSwipeState,
+        onRefresh = viewModel::refresh,
     ) {
-        if (screenHeight > 500) {
-            FoldersContainer(
-                folders = state.folders,
-                onClick = { viewModel.onFolderClick(it) },
-                onEditClick = { viewModel.editFolder(it) },
-                onDropdownClick = viewModel::onFoldersDropdownClick,
-                addNewFolder = { navController.navigate(Screen.DetailsFolder.route) },
-                selected = state.selectedFolder,
-                color = MaterialTheme.colorScheme.onBackground,
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(top = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            if (screenHeight > 500) {
+                FoldersContainer(
+                    folders = state.folders,
+                    onClick = { viewModel.onFolderClick(it) },
+                    onEditClick = { viewModel.editFolder(it) },
+                    onDropdownClick = viewModel::onFoldersDropdownClick,
+                    addNewFolder = { navController.navigate(Screen.DetailsFolder.route) },
+                    selected = state.selectedFolder,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    isLoading = state.isLoading
+                )
+            }
+            MessagesContainer(
+                messages = state.selectedFoldersMessages,
+                onClick = { viewModel.onMessageClick(it) },
+                onLongClick = { message, context ->
+                    viewModel.onMessageLongClick(
+                        message,
+                        context
+                    )
+                },
+                addNewMessage = {
+                    navController.navigate(Screen.DetailsMessage.route)
+                },
+                spaceBetweenMessages = spaceBetweenMessages.dp,
+                messageHeight = messageHeight,
+                messageWidth = messageWidth,
+                borderColor = MaterialTheme.colorScheme.onBackground,
                 isLoading = state.isLoading
             )
         }
-        MessagesContainer(
-            messages = state.selectedFoldersMessages,
-            onClick = { viewModel.onMessageClick(it) },
-            onLongClick = { message, context ->
-                viewModel.onMessageLongClick(
-                    message,
-                    context
-                )
-            },
-            addNewMessage = {
-                navController.navigate(Screen.DetailsMessage.route)
-            },
-            spaceBetweenMessages = spaceBetweenMessages.dp,
-            messageHeight = messageHeight,
-            messageWidth = messageWidth,
-            borderColor = MaterialTheme.colorScheme.onBackground,
-            isLoading = state.isLoading
-        )
     }
 }
 

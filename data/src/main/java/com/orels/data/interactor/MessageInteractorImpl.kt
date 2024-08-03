@@ -23,7 +23,8 @@ class MessageInteractorImpl @Inject constructor(
 
     private val db = database.messageDao
 
-    override suspend fun initWithMessagesInFolders(): List<Message> {
+    override suspend fun initWithMessagesInFolders(clearFirst: Boolean): List<Message> {
+        if (clearFirst) db.clear()
         val response = repository.getMessages()
         val messages = response
             .map { it.toMessage() }

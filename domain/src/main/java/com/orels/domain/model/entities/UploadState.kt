@@ -1,6 +1,6 @@
 package com.orels.domain.model.entities
 
-import java.util.*
+import java.util.Date
 
 abstract class Uploadable {
     var uploadState: UploadState = UploadState.NotUploaded
@@ -34,7 +34,8 @@ abstract class Uploadable {
 enum class UploadState(val value: String) {
     NotUploaded("NotUploaded"),
     BeingUploaded("BeingUploaded"),
-    Uploaded("Uploaded");
+    Uploaded("Uploaded"),
+    CantBeUploaded("CantBeUploaded");
 
     companion object {
         fun fromString(value: String): UploadState {

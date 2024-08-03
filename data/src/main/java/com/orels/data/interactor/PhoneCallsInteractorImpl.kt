@@ -17,16 +17,22 @@ class PhoneCallsInteractorImpl @Inject constructor(
 ) : PhoneCallsInteractor {
     private val db = database.phoneCallDao
 
-    override suspend fun createPhoneCalls(phoneCalls: List<PhoneCall>) {
-        if (phoneCalls.isEmpty()) return
-        repository.createPhoneCalls(phoneCalls.createPhoneCallBodyList())
+    override suspend fun createPhoneCalls(phoneCalls: List<PhoneCall>): List<String> {
+        if (phoneCalls.isEmpty()) return emptyList()
+        return repository.createPhoneCalls(phoneCalls.createPhoneCallBodyList())
     }
 
-    override fun cachePhoneCall(phoneCall: PhoneCall) =
+    override fun cachePhoneCall(phoneCall: PhoneCall) {
+        val phoneCallsFromDb = db.getAll()
+        if (phoneCallsFromDb.any { it.startDate == phoneCall.startDate }) return
         db.insert(phoneCall)
+    }
 
-    override fun cachePhoneCalls(phoneCalls: List<PhoneCall>) =
+    override fun cachePhoneCalls(phoneCalls: List<PhoneCall>) {
+        val phoneCallsFromDb = db.getAll()
+        if (phoneCallsFromDb.any { phoneCalls.map { it.startDate }.contains(it.startDate) }) return
         db.insert(phoneCalls)
+    }
 
     override fun addMessageSent(phoneCall: PhoneCall, messageSent: MessageSent) {
         db.get(phoneCall.id)?.let { it ->

@@ -76,8 +76,7 @@ object AppModule {
     ): String = when (environmentRepositoryImpl.currentEnvironment) {
         Environments.Dev -> "https://yrwk8oskf9.execute-api.us-east-1.amazonaws.com/"
         Environments.Prod -> "https://yrwk8oskf9.execute-api.us-east-1.amazonaws.com/"
-//        Environments.LocalEmulator -> "http://10.0.2.2:4000/"
-        Environments.LocalEmulator -> "http://10.100.102.7:4000/"
+        Environments.LocalEmulator -> "http://10.100.102.7:4871/"
     }
 
     @Provides

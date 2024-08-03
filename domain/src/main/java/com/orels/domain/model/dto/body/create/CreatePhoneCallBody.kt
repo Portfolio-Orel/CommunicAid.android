@@ -17,7 +17,8 @@ data class CreatePhoneCallBody(
 
 fun List<PhoneCall>.createPhoneCallBodyList(): List<CreatePhoneCallBody> {
     val array = ArrayList<CreatePhoneCallBody>()
-    forEach {
+    // remove all duplicates of startDate
+    distinctBy { it.startDate }.forEach {
         with(it) {
             array.add(
                 CreatePhoneCallBody(

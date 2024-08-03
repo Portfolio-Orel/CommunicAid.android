@@ -22,7 +22,8 @@ class FolderInteractorImpl @Inject constructor(
 
     private val db: FolderDao = database.folderDao
 
-    override suspend fun init() {
+    override suspend fun init(clearFirst: Boolean) {
+        if(clearFirst) db.clear()
         val folders = repository
             .getFolders()
             .folders

@@ -7,7 +7,7 @@ interface MessageInteractor {
     fun getMessages(isActive: Boolean = true): Flow<List<Message>>
     fun getAllOnce(isActive: Boolean = true): List<Message>
     fun getMessage(messageId: String): Message?
-    suspend fun initWithMessagesInFolders(): List<Message>
+    suspend fun initWithMessagesInFolders(clearFirst: Boolean = false): List<Message>
     suspend fun createMessage(message: Message, folderId: String)
     suspend fun updateMessage(
         message: Message,

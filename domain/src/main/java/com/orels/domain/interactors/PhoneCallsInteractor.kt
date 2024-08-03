@@ -6,7 +6,7 @@ import com.orels.domain.model.entities.UploadState
 import java.util.Date
 
 interface PhoneCallsInteractor {
-    suspend fun createPhoneCalls(phoneCalls: List<PhoneCall>)
+    suspend fun createPhoneCalls(phoneCalls: List<PhoneCall>): List<String>
     fun cachePhoneCall(phoneCall: PhoneCall)
     fun cachePhoneCalls(phoneCalls: List<PhoneCall>)
     fun addMessageSent(phoneCall: PhoneCall, messageSent: MessageSent)
