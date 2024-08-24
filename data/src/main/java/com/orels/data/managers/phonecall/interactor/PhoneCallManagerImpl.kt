@@ -137,9 +137,10 @@ class PhoneCallManagerImpl @Inject constructor(
             dataSource.updateCallOnTheLine(phoneCall)
             try {
                 if (phoneCall == null) return@launch
+                val contactName = callLogInteractor.getContactName(number = phoneCall.number)
                 repository.createOngoingCall(
                     number = phoneCall.number,
-                    contactName = phoneCall.getNameOrNumber(),
+                    contactName = contactName,
                     date = phoneCall.startDate.time
                 )
             } catch (e: Exception) {
@@ -149,7 +150,7 @@ class PhoneCallManagerImpl @Inject constructor(
     }
 
     private fun setStateValue(callState: CallState) {
-        Logger.i("Set state: ${callState.value}")
+        Logger.i("Set state: ${callState.value}" )
         CoroutineScope(Dispatchers.Main).launch {
             dataSource.updateState(callState)
         }
