@@ -114,7 +114,7 @@ fun MyMessagesApp(
                 ) {
                     NavHost(
                         modifier = Modifier.padding(
-                            top = (if (it.calculateBottomPadding() < 10.dp) 10.dp else it.calculateBottomPadding()) - 10.dp,
+                            top = it.calculateTopPadding(),
                             bottom = it.calculateBottomPadding(),
                             end = it.calculateEndPadding(LayoutDirection.Ltr),
                             start = it.calculateStartPadding(LayoutDirection.Ltr)

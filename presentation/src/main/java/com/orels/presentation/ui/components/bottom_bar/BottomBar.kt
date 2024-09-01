@@ -1,5 +1,6 @@
 package com.orels.presentation.ui.components.bottom_bar
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -7,8 +8,11 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -40,11 +44,24 @@ private val Screen.label: Int
 fun BottomBar(
     navController: NavHostController,
 ) {
-    val bottomBarDestinations = listOf(Screen.Main, Screen.Statistics, Screen.UnhandledCalls)
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp
+    val isSmallScreen = screenHeight < 500
+
+    val bottomBarDestinations =
+        if (isSmallScreen) {
+            listOf(Screen.Main, Screen.UnhandledCalls)
+        } else {
+            listOf(Screen.Main, Screen.Statistics, Screen.UnhandledCalls)
+        }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    NavigationBar(containerColor = MaterialTheme.colorScheme.background) {
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.background,
+        modifier = if (isSmallScreen) Modifier.height(40.dp) // 56dp is the default height of the bottom bar
+        else Modifier
+    ) {
         bottomBarDestinations.forEach { screen ->
             NavigationBarItem(
                 icon = {
@@ -57,7 +74,7 @@ fun BottomBar(
                 },
                 label = {
                     Text(
-                        text = stringResource(screen.label),
+                        text = if (isSmallScreen) "" else stringResource(screen.label),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 },

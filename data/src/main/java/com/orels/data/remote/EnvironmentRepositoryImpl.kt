@@ -7,5 +7,5 @@ import javax.inject.Singleton
 
 @Singleton
 class EnvironmentRepositoryImpl @Inject constructor() : EnvironmentRepository {
-    override val currentEnvironment: Environments = Environments.Prod
+    override val currentEnvironment: Environments = Environments.LocalEmulator
 }

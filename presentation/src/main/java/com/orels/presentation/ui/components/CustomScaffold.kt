@@ -38,6 +38,7 @@ fun CustomScaffold(
     } else {
         Scaffold(
             topBar = topBar,
+            bottomBar = { bottomBar(navController) },
             content = content,
             snackbarHost = {
                 SnackbarHost(hostState = SnackbarController.getInstance().snackbarHostState.value)

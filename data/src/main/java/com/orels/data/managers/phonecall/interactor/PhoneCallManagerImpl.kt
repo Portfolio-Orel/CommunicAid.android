@@ -76,7 +76,7 @@ class PhoneCallManagerImpl @Inject constructor(
 
     private fun onIdleState() {
         updateActualEndDate()
-        resetIfNoActiveCall()
+        resetState()
     }
 
     private fun updateActualEndDate() =
@@ -124,6 +124,9 @@ class PhoneCallManagerImpl @Inject constructor(
         }
     }
 
+    /**
+     * Set the call that's currently in the background, waiting.
+     */
     private fun setBackgroundCall(phoneCall: PhoneCall?) {
         Logger.i("Set call in the background: ${phoneCall?.number}")
         CoroutineScope(Dispatchers.Main).launch {
@@ -131,10 +134,16 @@ class PhoneCallManagerImpl @Inject constructor(
         }
     }
 
+    /**
+     * Set the call that's currently active on the line.
+     */
     private fun setCallOnLine(phoneCall: PhoneCall?) {
         Logger.i("Set call on line: ${phoneCall?.number}")
         CoroutineScope(Dispatchers.Main).launch {
             dataSource.updateCallOnTheLine(phoneCall)
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
             try {
                 if (phoneCall == null) return@launch
                 val contactName = callLogInteractor.getContactName(number = phoneCall.number)
@@ -150,7 +159,7 @@ class PhoneCallManagerImpl @Inject constructor(
     }
 
     private fun setStateValue(callState: CallState) {
-        Logger.i("Set state: ${callState.value}" )
+        Logger.i("Set state: ${callState.value}")
         CoroutineScope(Dispatchers.Main).launch {
             dataSource.updateState(callState)
         }
@@ -228,15 +237,18 @@ class PhoneCallManagerImpl @Inject constructor(
 
     }
 
-    override fun resetIfNoActiveCall() {
+    override fun resetState() {
         Logger.i("reset phonecall manager")
         setStateValue(CallState.Idle)
         setCallOnLine(null)
         setBackgroundCall(null)
+        CoroutineScope(Dispatchers.IO).launch {
+            repository.clearOngoingCall()
+        }
     }
 }
 
-fun PhoneCall.isEqualsToCallLog(callLog: CallLogEntity?): Boolean =
+private fun PhoneCall.isEqualsToCallLog(callLog: CallLogEntity?): Boolean =
     callLog != null &&
             callLog.number.compareNumberTo(number)
             && (

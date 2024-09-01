@@ -124,6 +124,10 @@ class APIRepository @Inject constructor(
             CreateOngoingCallBody(number = number, contactName = contactName, startDate = date)
         api.createOngoingCall(body)
     }
+
+    override suspend fun clearOngoingCall() {
+        api.clearOngoingCall()
+    }
     /* Phone Calls */
 
     /* Deleted Phone Calls */

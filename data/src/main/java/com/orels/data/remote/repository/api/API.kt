@@ -77,6 +77,9 @@ interface API {
         @Body createOngoingCallBody: CreateOngoingCallBody
     )
 
+    @DELETE("/ongoing-call")
+    suspend fun clearOngoingCall()
+
     // Settings
     @PATCH("/settings")
     suspend fun createOrUpdateSettings(

@@ -47,6 +47,9 @@ interface Repository {
 
     /* Ongoing Calls */
     suspend fun createOngoingCall(number: String, contactName: String, date: Long)
+    suspend fun clearOngoingCall()
+
+    /* Ongoing Calls */
 
     /*Deleted Phone Calls*/
     suspend fun createDeletedCall(createDeletedCallBody: CreateDeletedCallBody): String?
