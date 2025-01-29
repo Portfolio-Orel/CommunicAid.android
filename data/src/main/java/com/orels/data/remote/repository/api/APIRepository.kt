@@ -120,31 +120,62 @@ class APIRepository @Inject constructor(
     }
 
     override suspend fun createOngoingCall(number: String, contactName: String, date: Long) {
-        val body =
-            CreateOngoingCallBody(number = number, contactName = contactName, startDate = date)
-        api.createOngoingCall(body)
+        try {
+            val body =
+                CreateOngoingCallBody(number = number, contactName = contactName, startDate = date)
+            api.createOngoingCall(body)
+        } catch (e: Exception) {
+            e.log(
+                mapOf(
+                    "error" to "Error creating ongoing call",
+                    "number" to number,
+                    "contactName" to contactName,
+                    "date" to date.toString()
+                )
+            )
+        }
     }
 
     override suspend fun clearOngoingCall() {
-        api.clearOngoingCall()
+        try {
+            api.clearOngoingCall()
+        } catch (e: Exception) {
+            e.log()
+        }
     }
     /* Phone Calls */
 
     /* Deleted Phone Calls */
     override suspend fun createDeletedCall(createDeletedCallBody: CreateDeletedCallBody): String? {
-        val result = api.createDeletedCall(createDeletedCallBody)
-        return result.body
+        try {
+            val result = api.createDeletedCall(createDeletedCallBody)
+            return result.body
+        } catch (e: Exception) {
+            e.log()
+        }
+        return null
     }
 
     override suspend fun getDeletedCalls(fromDate: Date): List<GetDeletedCallsResponse> {
-        val result = api.getDeletedCalls(fromDate = fromDate.time)
-        return result.body
+        try {
+            val result = api.getDeletedCalls(fromDate = fromDate.time)
+            return result.body
+        } catch (e: Exception) {
+            e.log()
+        }
+        return emptyList()
     }
     /* Deleted Phone Calls */
 
     /* User */
-    override suspend fun createUser(createUserBody: CreateUserBody) =
-        api.createUser(createUserBody)
+    override suspend fun createUser(createUserBody: CreateUserBody) {
+        try {
+
+            api.createUser(createUserBody)
+        } catch (e: Exception) {
+            e.log()
+        }
+    }
 
     override suspend fun getUser(): GetUserResponse? {
         val response = api.getUser()

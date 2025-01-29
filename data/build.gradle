@@ -18,20 +18,16 @@ android {
     }
 
     buildTypes {
-        debug {
-            // Enables R8 for the debug build type
-            minifyEnabled false
-            // Specifies the ProGuard rules file to use, which R8 will use for minification and obfuscation
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-        release {
-            debuggable false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        debug {}
+        release {}
+        beta {
+            initWith debug // or release, depending on your needs
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
     }
     kotlinOptions {
         jvmTarget = '1.8'
@@ -43,7 +39,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.0' // May cause 1.5 - 1.7 exceptions
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.0'
+    // May cause 1.5 - 1.7 exceptions
     implementation 'androidx.activity:activity-compose:1.5.0' // May cause 1.5 - 1.7 exceptions
     implementation 'androidx.test:monitor:1.5.0'
     implementation 'androidx.hilt:hilt-work:1.0.0'
@@ -88,7 +85,9 @@ dependencies {
 
     // AWS
     implementation 'com.amplifyframework:core:1.36.0'
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.0'
+    implementation 'androidx.window:window:1.0.0'
+    implementation 'androidx.window:window-java:1.0.0'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
     implementation 'com.amplifyframework:aws-auth-cognito:1.36.0'
     implementation 'com.amplifyframework:core-kotlin:0.20.0'
 
@@ -101,6 +100,9 @@ dependencies {
 
     // SwipeRefreshLayout
     implementation "com.google.accompanist:accompanist-swiperefresh:0.24.8-beta"
+
+    // Fix Desugaring error in build
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
 
     // FlowRow
     implementation "com.google.accompanist:accompanist-flowlayout:0.24.8-beta"
@@ -128,7 +130,7 @@ dependencies {
     implementation "com.datadoghq:dd-sdk-android:1.13.0"
 
     // Mongo
-    implementation 'org.mongodb:mongodb-driver-sync:4.6.0'
+//    implementation 'org.mongodb:mongodb-driver-sync:4.6.0'
 
     implementation project(':domain')
     implementation project(':auth')

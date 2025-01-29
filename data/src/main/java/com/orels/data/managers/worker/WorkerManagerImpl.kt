@@ -1,14 +1,23 @@
 package com.orels.data.managers.worker
 
 import android.content.Context
-import androidx.work.*
-import com.orels.data.workers.ClearPhoneCallsCacheWorker
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.ListenableWorker
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequest
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import com.orels.data.workers.ClearPhoneCallsWorker
+import com.orels.data.workers.EndCallWorker
 import com.orels.data.workers.RefreshTokenWorker
 import com.orels.data.workers.UploadNotUploadedObjectsWorker
 import com.orels.data.workers.UploadPhoneCallsWorker
 import com.orels.domain.managers.worker.WorkerManager
 import com.orels.domain.managers.worker.WorkerType
-import com.orels.data.workers.EndCallWorker
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -44,8 +53,8 @@ class WorkerManagerImpl @Inject constructor(
                 type = type
             )
 
-            WorkerType.ClearPhoneCalls -> queueOneTimeWorker(
-                worker = buildOneTimeWorker<ClearPhoneCallsCacheWorker>(),
+            WorkerType.ClearPhoneCalls -> queuePeriodicWorker(
+                worker = buildClearPhoneCallsWorker(),
                 type = type
             )
         }
@@ -83,6 +92,17 @@ class WorkerManagerImpl @Inject constructor(
             .addTag(TAG)
             .build()
 
+    private fun buildClearPhoneCallsWorker(): PeriodicWorkRequest =
+        PeriodicWorkRequestBuilder<ClearPhoneCallsWorker>(
+            repeatInterval = ClearCacheWorkerIntervalTime,
+            repeatIntervalTimeUnit = ClearCacheWorkerIntervalTimeUnit,
+            flexTimeInterval = ClearCacheWorkerFlexibleTime,
+            flexTimeIntervalUnit = ClearCacheWorkerFlexibleTimeUnit
+        )
+            .addTag(TAG)
+            .build()
+
+
     private fun buildPeriodicUploadWorker(): PeriodicWorkRequest =
         PeriodicWorkRequestBuilder<UploadPhoneCallsWorker>(
             repeatInterval = UploadWorkerIntervalTime,
@@ -90,11 +110,6 @@ class WorkerManagerImpl @Inject constructor(
             flexTimeInterval = UploadWorkerFlexibleTime,
             flexTimeIntervalUnit = UploadWorkerFlexibleTimeUnit
         )
-            .setConstraints(
-                Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build()
-            )
             .addTag(TAG)
             .build()
 
@@ -120,5 +135,11 @@ class WorkerManagerImpl @Inject constructor(
         const val RefreshTokenWorkerFlexibleTime: Long = 1
         val RefreshTokenWorkerIntervalTimeUnit = TimeUnit.HOURS
         val RefreshTokenWorkerFlexibleTimeUnit = TimeUnit.HOURS
+
+        const val ClearCacheWorkerIntervalTime: Long = 4
+        const val ClearCacheWorkerFlexibleTime: Long = 0
+        val ClearCacheWorkerIntervalTimeUnit = TimeUnit.HOURS
+        val ClearCacheWorkerFlexibleTimeUnit = TimeUnit.HOURS
+
     }
 }

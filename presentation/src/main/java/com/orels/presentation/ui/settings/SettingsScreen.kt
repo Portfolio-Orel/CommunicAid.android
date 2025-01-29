@@ -154,9 +154,13 @@ fun SettingsScreen(
             Text(
                 modifier = Modifier
                     .clickable {
-                        viewModel.clearPhonecalls()
-                        Toast.makeText(context,
-                            context.getString(R.string.calls_cleared), Toast.LENGTH_SHORT).show()
+                        val cleanedCallsCount = viewModel.clearPhonecalls()
+                        // Add int value to string resource
+                        Toast.makeText(
+                            context,
+                            "$cleanedCallsCount שיחות נמחקו",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     },
                 text = stringResource(R.string.clear_calls),
                 style = MaterialTheme.typography.bodyMedium,

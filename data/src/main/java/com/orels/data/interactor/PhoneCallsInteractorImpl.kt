@@ -7,6 +7,7 @@ import com.orels.domain.model.entities.MessageSent
 import com.orels.domain.model.entities.PhoneCall
 import com.orels.domain.model.entities.UploadState
 import com.orels.domain.repository.Repository
+import com.orels.domain.util.common.Logger
 import com.orels.domain.util.extension.addUniqueIf
 import java.util.Date
 import javax.inject.Inject
@@ -19,6 +20,7 @@ class PhoneCallsInteractorImpl @Inject constructor(
 
     override suspend fun createPhoneCalls(phoneCalls: List<PhoneCall>): List<String> {
         if (phoneCalls.isEmpty()) return emptyList()
+        Logger.i("createPhoneCalls: ${phoneCalls.size}")
         return repository.createPhoneCalls(phoneCalls.createPhoneCallBodyList())
     }
 

@@ -40,11 +40,18 @@ class UploadPhoneCallsWorker @AssistedInject constructor(
 
     override fun doWork(): Result {
         try {
+            if (isRunning) {
+                Logger.v("Upload phone calls worker is already running")
+                return Result.success()
+            }
+            isRunning = true
             Logger.v("Upload phone calls worker called")
             uploadCalls()
         } catch (e: Exception) {
             Logger.e("Upload phone calls worker failed with an error: ${e.message ?: e.localizedMessage}")
             Result.failure()
+        } finally {
+            isRunning = false
         }
         return Result.success()
     }
@@ -73,19 +80,19 @@ class UploadPhoneCallsWorker @AssistedInject constructor(
                     callLogInteractor.update(it)
                 }
             if (phoneCalls.isNotEmpty()) {
-                Logger.v("phone calls to upload: $phoneCalls")
+                Logger.v("phone calls to upload: ${phoneCalls.size}")
                 val successfulPhoneCallIds: List<String> = phoneCallsInteractor.createPhoneCalls(
                     phoneCalls
                 )
                 phoneCalls
-                    .filter { it.id in successfulPhoneCallIds }
+//                    .filter { it.id in successfulPhoneCallIds }
                     .forEach { call ->
-                        phoneCallsInteractor.updateCallUploadState(call, UploadState.Uploaded)
+                        phoneCallsInteractor.deletePhoneCalls(listOf(call))
                     }
-                phoneCalls.filter { it.id !in successfulPhoneCallIds }
-                    .forEach { call ->
-                        phoneCallsInteractor.updateCallUploadState(call, UploadState.CantBeUploaded)
-                    }
+//                phoneCalls.filter { it.id !in successfulPhoneCallIds }
+//                    .forEach { call ->
+//                        phoneCallsInteractor.updateCallUploadState(call, UploadState.CantBeUploaded)
+//                    }
             }
         }
         CoroutineScope(SupervisorJob()).launch {
@@ -94,13 +101,9 @@ class UploadPhoneCallsWorker @AssistedInject constructor(
                 Logger.v("Upload phone calls worker done.")
             } catch (e: Exception) {
                 e.log(phoneCalls)
-                Logger.e("Worker failed, reason: $e")
-                phoneCalls.forEach {
-                    phoneCallsInteractor.updateCallUploadState(
-                        it,
-                        uploadState = UploadState.NotUploaded
-                    )
-                }
+            } finally {
+                phoneCallsInteractor.clear()
+                isRunning = false
             }
         }
     }
@@ -121,8 +124,8 @@ class UploadPhoneCallsWorker @AssistedInject constructor(
                 phoneCalls.add(potentiallyMissedPhoneCall)
             }
         }
-        phoneCallsInteractor.cachePhoneCalls(phoneCalls)
         updateCallsUpdateTime()
+        Logger.v("Number of new calls: ${phoneCalls.size}")
         return phoneCalls
     }
 
@@ -139,5 +142,9 @@ class UploadPhoneCallsWorker @AssistedInject constructor(
                 )
             )
         )
+    }
+
+    companion object {
+        var isRunning = false
     }
 }

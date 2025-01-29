@@ -74,8 +74,11 @@ class MainViewModel @Inject constructor(
         state = state.copy(isRefreshing = true, isLoading = true)
         fetchDataJob = viewModelScope.async {
             try {
+                Logger.v("About to fetch messages and folders")
                 folderInteractor.init(clearFirst = true)
                 messageInteractor.initWithMessagesInFolders(clearFirst = true)
+            } catch (e: Exception) {
+                Logger.e("Error fetching messages", e)
             } finally {
                 withContext(Dispatchers.Main) {
                     state = state.copy(isRefreshing = false, isLoading = false)
@@ -171,7 +174,7 @@ class MainViewModel @Inject constructor(
 
         return messageInteractor.getAllOnce(isActive = true)
             .filter { messageIds.contains(it.id) }
-            .sortedByDescending { it.timesUsed }
+            .sortedBy { it.position }
     }
 
     private fun goToEditFolder(folder: Folder) {
@@ -203,7 +206,7 @@ class MainViewModel @Inject constructor(
         }
         state = state.copy(isLoading = true)
         val messages =
-            messageInteractor.getAllOnce(isActive = true).sortedByDescending { it.timesUsed }
+            messageInteractor.getAllOnce(isActive = true).sortedBy { it.position }
         val folders =
             folderInteractor.getAllOnce(isActive = true).sortedByDescending { it.timesUsed }
         val selectedFolder = if (
@@ -225,7 +228,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             setState(
                 newState = state.copy(
-                    messages = state.messages.sortedByDescending { it.timesUsed },
+                    messages = state.messages.sortedBy { it.position },
                     folders = state.folders.sortedByDescending { it.timesUsed },
                     selectedFolder = selectedFolder,
                     selectedFoldersMessages = getFoldersMessages(selectedFolder?.id ?: "")
@@ -281,7 +284,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             messageInteractor.getMessages(isActive = true).collectLatest {
                 val activeMessages = it.filter { message -> message.isActive }
-                    .sortedByDescending { activeMessage -> activeMessage.timesUsed }
+                    .sortedBy { activeMessage -> activeMessage.position }
                 setState(newState = state.copy(messages = activeMessages))
                 setMessagesAndSelectedFolder()
             }

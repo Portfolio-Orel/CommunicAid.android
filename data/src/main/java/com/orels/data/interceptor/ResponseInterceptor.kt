@@ -10,12 +10,16 @@ import okio.Buffer
 
 class ResponseInterceptor(private val gson: Gson = Gson()) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val response = chain.proceed(chain.request())
-        val responseString: String = response.body()?.string() ?: ""
-        if (response.isSuccessful) {
-            try {
+        var response: Response? = null
+        try {
+            response = chain.proceed(chain.request())
+            val responseString: String = response.body()?.string() ?: ""
+            if (response.isSuccessful) {
                 val newResponse = response.newBuilder()
-                val responseBody = Gson().fromJson(responseString, com.orels.domain.model.dto.response.Response::class.java)
+                val responseBody = Gson().fromJson(
+                    responseString,
+                    com.orels.domain.model.dto.response.Response::class.java
+                )
                 if (responseBody != null) {
                     val contentType =
                         response.header("Content-Type") ?: "application/json; charset=utf-8"
@@ -24,20 +28,26 @@ class ResponseInterceptor(private val gson: Gson = Gson()) : Interceptor {
                     newResponse.body(ResponseBody.create(MediaType.parse(contentType), jsonBody))
                     return newResponse.build()
                 }
-            } catch (e: Exception) {
-                val request = chain.request()
-                val buffer = Buffer()
-                request.body()?.writeTo(buffer)
-                e.log(values =
-                    mapOf(
-                        "HTTP Request" to "${response.request().url()}",
-                        "method" to response.request().method(),
-                        "status" to "${response.code()}",
-                        "request body" to buffer.readUtf8()
-                    )
-                )
-                return response
             }
+        } catch (e: Exception) {
+            val request = chain.request()
+            val buffer = Buffer()
+            request.body()?.writeTo(buffer)
+            if (response == null) {
+                return chain.proceed(request)
+            }
+            e.log(
+                values =
+                mapOf(
+                    "HTTP Request" to "${response.request().url()}",
+                    "method" to response.request().method(),
+                    "status" to "${response.code()}",
+                    "request body" to buffer.readUtf8()
+                )
+            )
+        }
+        if (response == null) {
+            return chain.proceed(chain.request())
         }
         return response
     }

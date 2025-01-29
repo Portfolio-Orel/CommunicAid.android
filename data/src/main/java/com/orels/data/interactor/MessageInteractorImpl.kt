@@ -11,7 +11,6 @@ import com.orels.domain.model.entities.MessageInFolder
 import com.orels.domain.model.entities.UploadState
 import com.orels.domain.repository.Repository
 import kotlinx.coroutines.flow.Flow
-import org.bson.types.ObjectId
 import javax.inject.Inject
 
 
@@ -50,7 +49,7 @@ class MessageInteractorImpl @Inject constructor(
         message: Message,
         folderId: String
     ) {
-        val tempId = ObjectId().toHexString()
+        val tempId = "temp" + System.currentTimeMillis()
         val tempMessage = Message(message, tempId)
         val tempMessageInFolder = MessageInFolder(tempId, folderId, isActive = true)
 
@@ -135,7 +134,8 @@ fun GetMessagesResponse.toMessage(): Message =
         body = body,
         timesUsed = timesUsed,
         isActive = isActive,
-        id = messageId
+        id = messageId,
+        position = position
     )
 
 fun List<GetMessagesResponse>.toMessagesInFolders(): List<MessageInFolder> {

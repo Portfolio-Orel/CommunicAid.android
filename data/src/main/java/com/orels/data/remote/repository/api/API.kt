@@ -37,7 +37,7 @@ interface API {
 
     // Messages
     @GET("/messages")
-    suspend fun getMessages(@Header("If-None-Match") vararg eTags: String): Response<List<GetMessagesResponse>>
+    suspend fun getMessages(): Response<List<GetMessagesResponse>>
 
     @POST("/messages")
     suspend fun createMessage(@Body messageBody: CreateMessageBody): Response<List<String>>

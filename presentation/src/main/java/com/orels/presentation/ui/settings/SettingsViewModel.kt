@@ -124,10 +124,10 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun clearPhonecalls() {
-        viewModelScope.launch {
-            phoneCallsInteractor.clear()
-        }
+    fun clearPhonecalls(): Int {
+        val phoneCallsCount = phoneCallsInteractor.getAll().size
+        phoneCallsInteractor.clear()
+        return phoneCallsCount
     }
 
 }

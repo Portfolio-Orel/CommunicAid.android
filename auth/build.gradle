@@ -10,27 +10,21 @@ android {
     defaultConfig {
         minSdk 23
         targetSdk 32
-        versionCode 2
-        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
-        debug {
-            // Enables R8 for the debug build type
-            minifyEnabled false
-            // Specifies the ProGuard rules file to use, which R8 will use for minification and obfuscation
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-        release {
-            debuggable false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        debug { }
+        release { }
+        beta {
+            initWith debug // or release, depending on your needs
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
     }
     kotlinOptions {
         jvmTarget = '1.8'
@@ -49,8 +43,10 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
 
     // AWS
+    implementation 'androidx.window:window:1.0.0'
+    implementation 'androidx.window:window-java:1.0.0'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
     implementation 'com.amplifyframework:core:1.36.0'
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.0'
     implementation 'com.amplifyframework:aws-auth-cognito:1.36.0'
     implementation 'com.amplifyframework:core-kotlin:0.20.0'
 
@@ -60,6 +56,8 @@ dependencies {
     implementation "com.google.dagger:hilt-android:$hilt_version"
     implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
 
+    implementation "androidx.window:window:1.0.0-rc01"
+    implementation "androidx.window:window-java:1.0.0-rc01"
     // Room
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-runtime:$room_version"

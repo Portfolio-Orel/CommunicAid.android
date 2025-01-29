@@ -18,24 +18,19 @@ android {
     }
 
     buildTypes {
-        debug {
-            // Enables R8 for the debug build type
-            minifyEnabled false
-            // Specifies the ProGuard rules file to use, which R8 will use for minification and obfuscation
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-        release {
-            debuggable false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        debug { }
+        release { }
+        beta {
+            initWith debug // or release, depending on your needs
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
     }
     composeOptions {
         kotlinCompilerExtensionVersion '1.3.0'
-        kotlinCompilerVersion '1.5.30'
     }
 
     kotlinOptions {
@@ -46,7 +41,6 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion '1.3.0'
-        kotlinCompilerVersion '1.5.30'
     }
     packagingOptions {
         resources {
@@ -111,7 +105,10 @@ dependencies {
     androidTestImplementation "androidx.work:work-testing:$work_version"
 
     // Mongo
-    implementation 'org.mongodb:mongodb-driver-sync:4.6.0'
+//    implementation 'org.mongodb:mongodb-driver-sync:4.6.0'
+
+    // Fix Desugaring error in build
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
 
     api "org.jetbrains.kotlin:kotlin-reflect:1.7.10"
 

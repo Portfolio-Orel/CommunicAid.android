@@ -170,5 +170,6 @@ enum class SettingsType {
     Toggle,
     Data,
     NotVisibleToUser,
+    ClearPhonecalls,
     PopUp;
 }

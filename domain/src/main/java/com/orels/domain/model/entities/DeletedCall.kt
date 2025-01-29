@@ -2,7 +2,6 @@ package com.orels.domain.model.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import org.bson.types.ObjectId
 import java.util.Date
 
 
@@ -11,7 +10,7 @@ import java.util.Date
  */
 @Entity
 data class DeletedCall(
-    @PrimaryKey var id: String = ObjectId().toHexString(),
+    @PrimaryKey var id: String =  "",
     var number: String = "",
     var deleteDate: Long = Date().time,
 ) : Loggable, Uploadable() {
