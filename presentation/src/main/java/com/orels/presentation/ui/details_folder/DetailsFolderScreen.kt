@@ -12,11 +12,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.orels.presentation.R
+import com.orels.presentation.ui.components.filledFieldColors
 import com.orels.presentation.ui.components.restore.restore_button.RestoreButton
 import com.orels.presentation.ui.components.restore.restore_button.RestoreType
+import com.orels.presentation.ui.components.save_button.SaveButton
 import com.orels.presentation.ui.components.util.SnackbarController
 import com.orels.presentation.ui.delete_button.DeleteButton
-import com.orels.presentation.ui.main.components.ActionButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,44 +76,55 @@ fun DetailsFolderScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(18.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        OutlinedTextField(
+        TextField(
             value = state.title,
             onValueChange = { viewModel.setTitle(it) },
             modifier = Modifier
                 .fillMaxWidth(),
             placeholder = {
-                Text(text = stringResource(R.string.title))
+                Text(text = stringResource(R.string.title), style = MaterialTheme.typography.bodyLarge)
             },
+            textStyle = MaterialTheme.typography.bodyLarge,
+            singleLine = true,
+            shape = MaterialTheme.shapes.medium,
+            colors = filledFieldColors(isError = state.emptyFields.contains(FolderFields.Title)),
             isError = state.emptyFields.contains(FolderFields.Title)
         )
         if (state.isEdit) {
-            DeleteButton(isLoading = state.isLoadingDelete, deleteText = R.string.delete_folder) {
+            DeleteButton(
+                modifier = Modifier.fillMaxWidth(),
+                isLoading = state.isLoadingDelete,
+                deleteText = R.string.delete_folder
+            ) {
                 viewModel.deleteFolder()
             }
         } else {
             RestoreButton(restoreType = RestoreType.Folder)
         }
         Spacer(Modifier.weight(1f))
-        Row(horizontalArrangement = Arrangement.SpaceAround) {
-            ActionButton(
-                modifier = Modifier
-                    .width(120.dp)
-                    .height(48.dp),
-                text = stringResource(R.string.save),
-                isLoading = state.isLoading,
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            SaveButton(
                 onClick = { viewModel.onSaveClick() },
+                isLoading = state.isLoading,
             )
-            Spacer(modifier = Modifier.weight(1f))
-            ActionButton(
+            TextButton(
                 modifier = Modifier
-                    .width(120.dp)
+                    .fillMaxWidth()
                     .height(48.dp),
-                isPrimary = false,
-                text = stringResource(R.string.cancel),
+                shape = MaterialTheme.shapes.large,
                 onClick = { navController.navigateUp() },
-            )
+            ) {
+                Text(
+                    text = stringResource(R.string.cancel),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }

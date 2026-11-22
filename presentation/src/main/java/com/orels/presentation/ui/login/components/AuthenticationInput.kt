@@ -9,10 +9,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import com.orels.presentation.ui.components.filledFieldColors
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -43,16 +44,12 @@ fun AuthenticationInput(
     val passwordVisible = rememberSaveable { mutableStateOf(false) }
 
     Row(modifier = modifier) {
-        OutlinedTextField(
+        TextField(
             modifier = Modifier
                 .focusRequester(focusRequester)
                 .fillMaxWidth()
-                .drawBehind {
-                    drawRect(
-                        color = Color.Transparent,
-                        size = size,
-                    )
-                },
+                .heightIn(min = 56.dp),
+            textStyle = MaterialTheme.typography.bodyLarge,
             value = text,
             onValueChange = {
                 val strippedText = it.stripSpacesTabsAndNewLines()
@@ -79,22 +76,15 @@ fun AuthenticationInput(
             placeholder = {
                 Text(
                     text = placeholder,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
 
             maxLines = maxLines,
             minLines = minLines,
             shape = MaterialTheme.shapes.medium,
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
-                unfocusedIndicatorColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
-                errorIndicatorColor = MaterialTheme.colorScheme.error,
-                textColor = MaterialTheme.colorScheme.onBackground,
-                containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.6f),
-                cursorColor = MaterialTheme.colorScheme.onBackground,
-                focusedLabelColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-            ),
+            colors = filledFieldColors(isError = isError),
             leadingIcon = leadingIcon,
             trailingIcon = {
                 if (isPassword) {

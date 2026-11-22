@@ -109,8 +109,18 @@ fun MyMessagesApp(
 
                 CustomScaffold(
                     navController = navHostControllerAuthorized,
-                    topBar = { TopAppBar(navController = navControllerAuthorized) },
-                    bottomBar = { BottomBar(navController = it) },
+                    topBar = { drawerState ->
+                        TopAppBar(
+                            navController = navControllerAuthorized,
+                            drawerState = drawerState
+                        )
+                    },
+                    drawerContent = { drawerState ->
+                        BottomBar(
+                            navController = navHostControllerAuthorized,
+                            drawerState = drawerState
+                        )
+                    }
                 ) {
                     NavHost(
                         modifier = Modifier.padding(

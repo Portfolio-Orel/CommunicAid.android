@@ -28,7 +28,7 @@ fun DonutChart(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically)
     ) {
         DonutCircles(item)
         Column(content = item.title)
@@ -69,12 +69,17 @@ private fun AnimatedOuterCircle(size: Dp, color: Color) {
             .padding(12.dp)
             .size(size)
     ) {
+        val strokeWidth = 6.dp.toPx()
+        drawCircle(
+            color = color.copy(alpha = 0.15f),
+            style = Stroke(width = strokeWidth),
+        )
         drawArc(
             color = color,
-            startAngle = 0f,
+            startAngle = -90f,
             sweepAngle = 360f * animatedFloat.value,
             useCenter = false,
-            style = Stroke(width = 6f, cap = StrokeCap.Round),
+            style = Stroke(width = strokeWidth, cap = StrokeCap.Round),
         )
     }
 }

@@ -1,18 +1,19 @@
 package com.orels.presentation.ui.statistics.components
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.orels.domain.util.common.DateUtils
@@ -24,30 +25,33 @@ fun StatisticsTabs(
     onClick: (StatisticsTabs) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val configuration = LocalConfiguration.current
     val tabs = StatisticsTabs.values()
     var selected by remember { mutableStateOf(tabs.first()) }
-    var tabWidth = configuration.screenWidthDp / tabs.size
 
     Row(
         modifier = modifier
-            .padding(vertical = 8.dp)
-            .fillMaxSize(),
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .padding(4.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         tabs.forEach { tab ->
+            val isSelected = selected == tab
+            val containerColor by animateColorAsState(
+                targetValue = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
+                animationSpec = tween(durationMillis = 250)
+            )
+            val contentColor by animateColorAsState(
+                targetValue = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                animationSpec = tween(durationMillis = 250)
+            )
             Box(
                 modifier = Modifier
-                    .onGloballyPositioned { layoutCoordinates ->
-                        tabWidth = layoutCoordinates.size.width / tabs.size
-                    }
-                    .width(tabWidth.dp)
+                    .weight(1f)
                     .fillMaxHeight()
-                    .shadow(elevation = 3.dp, shape = RoundedCornerShape(4.dp), clip = true)
-                    .background(
-                        if (selected == tab) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background
-                    )
+                    .clip(CircleShape)
+                    .background(containerColor)
                     .clickable {
                         selected = tab
                         onClick(tab)
@@ -56,12 +60,11 @@ fun StatisticsTabs(
             ) {
                 Text(
                     text = stringResource(tab.title),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = if (selected == tab) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground
+                    style = MaterialTheme.typography.labelLarge,
+                    color = contentColor
                 )
             }
         }
-
     }
 }
 

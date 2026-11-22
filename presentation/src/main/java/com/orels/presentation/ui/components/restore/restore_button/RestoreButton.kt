@@ -2,7 +2,6 @@ package com.orels.presentation.ui.components.restore.restore_button
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,11 +16,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -67,34 +70,74 @@ fun RestoreButton(
         }
     }
 
+    val restoreTitle = when (restoreType) {
+        RestoreType.Message -> stringResource(R.string.restore_message)
+        RestoreType.Folder -> stringResource(R.string.restore_folder)
+    }
+
     if (shouldShowContent) {
         Dialog(onDismissRequest = {
             shouldShowContent = false
         }) {
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(6.dp))
-                    .heightIn(min = 100.dp, max = 400.dp)
-                    .background(MaterialTheme.colorScheme.background)
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.extraLarge,
+                color = MaterialTheme.colorScheme.surface,
+                tonalElevation = 0.dp,
+                shadowElevation = 6.dp
             ) {
-                content()
+                Column(
+                    modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
+                ) {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 24.dp),
+                        text = restoreTitle,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(Modifier.height(16.dp))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 60.dp, max = 400.dp)
+                            .padding(horizontal = 12.dp)
+                    ) {
+                        content()
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        TextButton(onClick = { shouldShowContent = false }) {
+                            Text(
+                                text = stringResource(R.string.cancel),
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                }
             }
         }
     }
-    Box(
+    TextButton(
         modifier = modifier,
-        contentAlignment = Alignment.CenterStart,
+        shape = MaterialTheme.shapes.large,
+        onClick = { shouldShowContent = true },
+        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
     ) {
+        Icon(
+            modifier = Modifier.size(20.dp),
+            painter = painterResource(id = R.drawable.ic_round_restore),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Spacer(Modifier.width(8.dp))
         Text(
-            modifier = Modifier
-                .noRippleClickable {
-                    shouldShowContent = true
-                },
-            text = when (restoreType) {
-                RestoreType.Message -> stringResource(R.string.restore_message)
-                RestoreType.Folder -> stringResource(R.string.restore_folder)
-            },
-            style = MaterialTheme.typography.bodyMedium,
+            text = restoreTitle,
+            style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.primary
         )
     }
@@ -109,11 +152,11 @@ fun RestoreFolder(
     if (state.deletedFolders.isNotEmpty()) {
         LazyColumn(
             modifier = modifier,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(state.deletedFolders) { folder ->
                 ItemDetails(
-                    modifier = Modifier.padding(horizontal = 12.dp),
+                    modifier = Modifier,
                     item = folder,
                     title = folder.title,
                     restore = viewModel::restore,
@@ -130,16 +173,16 @@ fun RestoreFolder(
                                 viewModel.getFoldersMessages(folderId = folder.id).forEach {
                                     Text(
                                         text = it.title,
-                                        style = MaterialTheme.typography.labelMedium,
-                                        color = MaterialTheme.colorScheme.background
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             }
                         } else {
                             Text(
                                 text = stringResource(R.string.dash),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.background
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     })
@@ -147,9 +190,10 @@ fun RestoreFolder(
         }
     } else {
         Text(
+            modifier = Modifier.padding(horizontal = 12.dp),
             text = stringResource(R.string.no_deleted_folders),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onBackground
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
@@ -164,11 +208,11 @@ fun RestoreMessage(
     if (state.deletedMessages.isNotEmpty()) {
         LazyColumn(
             modifier = modifier,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(state.deletedMessages) { message ->
                 ItemDetails(
-                    modifier = Modifier.padding(horizontal = 8.dp),
+                    modifier = Modifier,
                     item = message,
                     title = message.title,
                     restore = viewModel::restore,
@@ -180,14 +224,13 @@ fun RestoreMessage(
                                     ?: stringResource(
                                         id = R.string.empty_string
                                     ),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.background.copy(alpha = 0.4f)
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.primary
                             )
                             Text(
-                                modifier = Modifier.padding(horizontal = 16.dp),
                                 text = message.body,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.background
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -196,9 +239,10 @@ fun RestoreMessage(
         }
     } else {
         Text(
+            modifier = Modifier.padding(horizontal = 12.dp),
             text = stringResource(R.string.no_deleted_folders),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onBackground
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
@@ -214,44 +258,63 @@ fun <T> ItemDetails(
 ) {
     var showDetails by remember { mutableStateOf(false) }
 
-    Column(modifier = modifier) {
-        Row(modifier = modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(MaterialTheme.shapes.medium)
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f))
+            .animateContentSize()
+            .padding(start = 16.dp, end = 8.dp, top = 6.dp, bottom = 6.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
-                modifier = Modifier.noRippleClickable {
-                    showDetails = !showDetails
-                },
+                modifier = Modifier
+                    .weight(1f)
+                    .noRippleClickable {
+                        showDetails = !showDetails
+                    },
                 text = title,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onBackground
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
             )
-            Spacer(Modifier.weight(1f))
-            if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .height(24.dp)
-                        .width(24.dp),
-                    strokeWidth = 1.dp,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            } else {
-                Icon(
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clickable {
-                            restore(item)
-                        },
-                    painter = painterResource(id = R.drawable.ic_round_restore),
-                    contentDescription = stringResource(
-                        R.string.restore
-                    ),
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
+            Box(
+                modifier = Modifier.size(40.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(22.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                } else {
+                    FilledTonalIconButton(
+                        modifier = Modifier.size(40.dp),
+                        onClick = { restore(item) },
+                        colors = IconButtonDefaults.filledTonalIconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.primary
+                        )
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(20.dp),
+                            painter = painterResource(id = R.drawable.ic_round_restore),
+                            contentDescription = stringResource(
+                                R.string.restore
+                            ),
+                        )
+                    }
+                }
             }
         }
         if (showDetails) {
             Box(
-                modifier = modifier
-                    .animateContentSize()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 6.dp, end = 8.dp)
             ) {
                 contentOnExpand()
             }

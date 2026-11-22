@@ -129,6 +129,9 @@ dependencies {
     // Data Store
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 
+    // Coil (contact photos) – same version as :features
+    implementation 'io.coil-kt:coil-compose:2.0.0'
+
     // Mixpanel
     implementation 'com.mixpanel.android:mixpanel-android:6.0.0'
 

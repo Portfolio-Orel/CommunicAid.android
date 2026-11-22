@@ -1,10 +1,12 @@
 package com.orels.presentation.ui.components
 
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -14,6 +16,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -22,6 +25,30 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.orels.presentation.R
+
+/**
+ * Shared colors for the app's rounded, filled text fields: surfaceVariant container,
+ * no indicator lines, and a soft error tint when [isError] is true.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun filledFieldColors(isError: Boolean = false): TextFieldColors =
+    TextFieldDefaults.textFieldColors(
+        containerColor = if (isError) MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.6f)
+        else MaterialTheme.colorScheme.surfaceVariant,
+        textColor = MaterialTheme.colorScheme.onSurface,
+        cursorColor = MaterialTheme.colorScheme.primary,
+        errorCursorColor = MaterialTheme.colorScheme.error,
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        disabledIndicatorColor = Color.Transparent,
+        errorIndicatorColor = Color.Transparent,
+        placeholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
+        unfocusedLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
+        unfocusedTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,10 +76,20 @@ fun Input(
     inputModifier =
         if (maxLines == 1) inputModifier else inputModifier.height((lineHeight * minLines).dp)
 
-    Column(modifier = modifier.fillMaxWidth()) {
-        Text(title)
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        if (title.isNotEmpty()) {
+            Text(
+                text = title,
+                modifier = Modifier.padding(horizontal = 4.dp),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
         Box(modifier = Modifier.zIndex(1f)) {
-            OutlinedTextField(
+            TextField(
                 modifier = inputModifier
                     .fillMaxWidth()
                     .focusable(enabled = shouldFocus),
@@ -64,9 +101,10 @@ fun Input(
                 placeholder = {
                     Text(
                         text = placeholder,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                 },
+                textStyle = MaterialTheme.typography.bodyLarge,
                 singleLine = maxLines == 1,
                 visualTransformation = if (isPassword && !passwordVisible.value) PasswordVisualTransformation() else VisualTransformation.None,
                 keyboardOptions = if (isPassword) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions(
@@ -81,7 +119,9 @@ fun Input(
                         trailingIcon()
                     }
                 },
-                isError = isError
+                isError = isError,
+                shape = MaterialTheme.shapes.medium,
+                colors = filledFieldColors(isError = isError)
             )
         }
     }

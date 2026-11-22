@@ -117,4 +117,6 @@
     <string name="change_password">שנה סיסמא</string>
     <string name="error_limit_exceeded_operation">ניסית יותר מידי פעמים.. תנסה שוב עוד מעט</string>
     <string name="show_customer_state_on_call">הצג לקוח בעת שיחה</string>
+    <string name="folders">תיקיות</string>
+    <string name="choose_folder">בחר תיקייה</string>
 </resources>

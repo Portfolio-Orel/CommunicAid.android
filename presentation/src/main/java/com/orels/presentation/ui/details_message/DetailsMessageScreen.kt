@@ -1,6 +1,14 @@
 package com.orels.presentation.ui.details_message
 
 import android.widget.Toast
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import com.orels.presentation.ui.components.filledFieldColors
+import com.orels.presentation.ui.components.save_button.SaveButton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,19 +21,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
@@ -48,7 +52,6 @@ import com.orels.presentation.ui.components.restore.restore_button.RestoreButton
 import com.orels.presentation.ui.components.restore.restore_button.RestoreType
 import com.orels.presentation.ui.components.util.SnackbarController
 import com.orels.presentation.ui.delete_button.DeleteButton
-import com.orels.presentation.ui.main.components.ActionButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -107,31 +110,39 @@ fun DetailsMessageScreen(
             .fillMaxSize()
             .verticalScroll(scrollState)
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(18.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(18.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            OutlinedTextField(
+            TextField(
                 value = state.title,
                 onValueChange = { viewModel.setTitle(it) },
                 modifier = Modifier
                     .fillMaxWidth(),
                 placeholder = {
-                    Text(text = stringResource(R.string.title))
+                    Text(text = stringResource(R.string.title), style = MaterialTheme.typography.bodyLarge)
                 },
+                textStyle = MaterialTheme.typography.bodyLarge,
+                singleLine = true,
+                shape = MaterialTheme.shapes.medium,
+                colors = filledFieldColors(isError = state.emptyFields.contains(MessageFields.Body)),
                 isError = state.emptyFields.contains(MessageFields.Body)
             )
 
             Column {
-                OutlinedTextField(
+                TextField(
                     value = state.shortTitle,
                     onValueChange = { viewModel.setShortTitle(it) },
                     modifier = Modifier
                         .fillMaxWidth(),
                     placeholder = {
-                        Text(text = stringResource(R.string.message_symbol))
+                        Text(text = stringResource(R.string.message_symbol), style = MaterialTheme.typography.bodyLarge)
                     },
+                    textStyle = MaterialTheme.typography.bodyLarge,
+                    singleLine = true,
+                    shape = MaterialTheme.shapes.medium,
+                    colors = filledFieldColors(isError = state.emptyFields.contains(MessageFields.Body)),
                     isError = state.emptyFields.contains(MessageFields.Body)
                 )
             }
@@ -141,21 +152,28 @@ fun DetailsMessageScreen(
                 selected = state.selectedFolder ?: Folder()
             )
 
-            OutlinedTextField(
+            TextField(
                 value = state.body,
                 onValueChange = { viewModel.setBody(it) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 650.dp),
                 placeholder = {
-                    Text(text = stringResource(R.string.message))
+                    Text(text = stringResource(R.string.message), style = MaterialTheme.typography.bodyLarge)
                 },
+                textStyle = MaterialTheme.typography.bodyLarge,
                 maxLines = 30,
+                shape = MaterialTheme.shapes.medium,
+                colors = filledFieldColors(isError = state.emptyFields.contains(MessageFields.Body)),
                 isError = state.emptyFields.contains(MessageFields.Body)
             )
         }
         if (state.isEdit) {
-            DeleteButton(isLoading = state.isLoadingDelete, deleteText = R.string.delete_message) {
+            DeleteButton(
+                modifier = Modifier.fillMaxWidth(),
+                isLoading = state.isLoadingDelete,
+                deleteText = R.string.delete_message
+            ) {
                 viewModel.deleteMessage()
             }
         } else {
@@ -163,34 +181,35 @@ fun DetailsMessageScreen(
         }
         if (state.error != R.string.empty_string) {
             Text(
-                modifier = Modifier.padding(8.dp),
+                modifier = Modifier.padding(horizontal = 4.dp),
                 text = stringResource(id = state.error),
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.error,
             )
         }
 
         Spacer(Modifier.weight(1f))
-        Row(
-            horizontalArrangement = Arrangement.SpaceAround
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            ActionButton(
-                modifier = Modifier
-                    .width(120.dp)
-                    .height(48.dp),
-                text = stringResource(R.string.save),
-                isLoading = state.isLoading,
+            SaveButton(
                 onClick = { viewModel.saveMessage() },
+                isLoading = state.isLoading,
             )
-            Spacer(modifier = Modifier.weight(1f))
-            ActionButton(
+            TextButton(
                 modifier = Modifier
-                    .width(120.dp)
+                    .fillMaxWidth()
                     .height(48.dp),
-                isPrimary = false,
-                text = stringResource(R.string.cancel),
+                shape = MaterialTheme.shapes.large,
                 onClick = { navController.navigateUp() },
-            )
+            ) {
+                Text(
+                    text = stringResource(R.string.cancel),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }
@@ -210,66 +229,73 @@ fun Dropdown(
         selectedFolder = selected
     }
 
-    val icon = if (expanded)
-        Icons.Filled.KeyboardArrowUp
-    else
-        Icons.Filled.KeyboardArrowDown
-    Row(
-        modifier = modifier
-            .height(56.dp)
-            .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.background)
-            .clickable {
-                expanded = expanded != true
-            }
-            .border(
-                width = 1.dp,
-                color = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onPrimaryContainer,
-                shape = RoundedCornerShape(5.dp)
-            ),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            if (selectedFolder.title == "") stringResource(R.string.folder) else selectedFolder.title,
+    val chevronRotation by animateFloatAsState(targetValue = if (expanded) 180f else 0f)
+    val fieldShape = MaterialTheme.shapes.medium
+    val isPlaceholder = selectedFolder.title == ""
+    Box(modifier = modifier.fillMaxWidth()) {
+        Row(
             modifier = Modifier
-                .padding(horizontal = 18.dp),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
-        )
-        Spacer(Modifier.weight(1f))
-        Icon(
-            imageVector = icon,
-            contentDescription = stringResource(R.string.expansion_button),
-            tint = MaterialTheme.colorScheme.onPrimaryContainer
-        )
-    }
-
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = { expanded = false },
-        modifier = Modifier
-            .height(400.dp)
-            .fillMaxWidth()
-            .background(
-                MaterialTheme.colorScheme.background
+                .height(56.dp)
+                .fillMaxWidth()
+                .clip(fieldShape)
+                .background(
+                    color = if (isError) MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.6f)
+                    else MaterialTheme.colorScheme.surfaceVariant
+                )
+                .then(
+                    if (isError) Modifier.border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.error,
+                        shape = fieldShape
+                    ) else Modifier
+                )
+                .clickable {
+                    expanded = expanded != true
+                }
+                .padding(start = 16.dp, end = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                if (isPlaceholder) stringResource(R.string.folder) else selectedFolder.title,
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyLarge,
+                color = if (isPlaceholder) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+                maxLines = 1
             )
-    ) {
-        folders.forEach {
-            DropdownMenuItem(
-                modifier = Modifier
-                    .padding(horizontal = 18.dp),
-                text = {
-                    Text(
-                        text = it.title,
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                },
-                onClick = {
-                    onSelected(it)
-                    selectedFolder = it
-                    expanded = false
-                })
+            Icon(
+                modifier = Modifier.rotate(chevronRotation),
+                imageVector = Icons.Filled.KeyboardArrowDown,
+                contentDescription = stringResource(R.string.expansion_button),
+                tint = if (expanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .heightIn(max = 400.dp)
+                .fillMaxWidth(0.9f)
+                .background(MaterialTheme.colorScheme.surface)
+        ) {
+            folders.forEach {
+                DropdownMenuItem(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp),
+                    text = {
+                        Text(
+                            text = it.title,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = if (it.id == selectedFolder.id && !isPlaceholder) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.onSurface
+                        )
+                    },
+                    onClick = {
+                        onSelected(it)
+                        selectedFolder = it
+                        expanded = false
+                    })
+            }
         }
     }
 }

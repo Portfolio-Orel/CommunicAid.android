@@ -1,6 +1,8 @@
 package com.orels.presentation.ui.components.save_button
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -10,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.orels.presentation.R
-import com.orels.presentation.theme.noRippleClickable
 
 /**
  * @author Orel Zilberman
@@ -23,31 +24,30 @@ fun SaveButton(
     isLoading: Boolean,
     modifier: Modifier = Modifier
 ) {
-    Box(
+    Button(
         modifier = modifier
-            .padding(8.dp),
-        contentAlignment = Alignment.CenterStart,
+            .fillMaxWidth()
+            .height(56.dp),
+        shape = MaterialTheme.shapes.large,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+        ),
+        onClick = { if (!isLoading) onClick() },
     ) {
-        if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .height(16.dp)
-                    .width(16.dp),
-                strokeWidth = 2.dp,
-                color = MaterialTheme.colorScheme.primary,
-            )
-        } else {
-            Text(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .noRippleClickable {
-                        onClick()
-                    },
-                text = stringResource(id = R.string.save),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
+        Box(contentAlignment = Alignment.Center) {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    strokeWidth = 2.dp,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
+            } else {
+                Text(
+                    text = stringResource(id = R.string.save),
+                    style = MaterialTheme.typography.labelLarge,
+                )
+            }
         }
-
     }
 }

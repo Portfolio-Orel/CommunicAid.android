@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -63,8 +62,8 @@ fun Bar(
 ) {
     val animatedFloat = remember { Animatable(0f) }
     val color = Brush.verticalGradient(
-        0f to MaterialTheme.colorScheme.primary,
-        1000f to MaterialTheme.colorScheme.onPrimary
+        0f to barItem.color,
+        1f to barItem.color.copy(alpha = 0.45f)
     )
 
     LaunchedEffect(animatedFloat) {
@@ -89,10 +88,10 @@ fun Bar(
                 .width(width.dp)
                 .shadow(
                     elevation = 0.dp, shape = RoundedCornerShape(
-                        topStart = 30.dp,
-                        topEnd = 30.dp,
-                        bottomEnd = 0.dp,
-                        bottomStart = 0.dp
+                        topStart = 10.dp,
+                        topEnd = 10.dp,
+                        bottomEnd = 4.dp,
+                        bottomStart = 4.dp
                     ), clip = true
                 )
                 .background(color),
@@ -100,8 +99,9 @@ fun Bar(
         Text(
             text = barItem.title,
             overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
             style = MaterialTheme.typography.labelSmall,
-            color = barItem.color
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
@@ -112,12 +112,12 @@ fun BarPreview() {
     Box(modifier = Modifier.fillMaxSize()) {
         BarChart(
             listOf(
-                BarItem("1", 23f, Color.Red),
-                BarItem("2", 22f, Color.Blue),
-                BarItem("3", 21f, Color.Red),
-                BarItem("4", 20f, Color.Blue),
-                BarItem("5", 65f, Color.Red),
-                BarItem("6", 89f, Color.Blue),
+                BarItem("1", 23f, MaterialTheme.colorScheme.primary),
+                BarItem("2", 22f, MaterialTheme.colorScheme.tertiary),
+                BarItem("3", 21f, MaterialTheme.colorScheme.primary),
+                BarItem("4", 20f, MaterialTheme.colorScheme.tertiary),
+                BarItem("5", 65f, MaterialTheme.colorScheme.primary),
+                BarItem("6", 89f, MaterialTheme.colorScheme.tertiary),
             )
         )
     }

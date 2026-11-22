@@ -5,13 +5,17 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
@@ -66,7 +70,7 @@ fun ToggleSettings(
 
     Row(
         modifier = modifier
-            .height(48.dp)
+            .heightIn(min = 56.dp)
             .fillMaxWidth()
             .noRippleClickable {
                 if (!disabled) {
@@ -75,16 +79,17 @@ fun ToggleSettings(
                 }
             },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Start
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
-            modifier = Modifier.fillMaxWidth(0.85f),
+            modifier = Modifier
+                .weight(1f)
+                .padding(vertical = 8.dp),
             text = stringResource(id = settings.key.title ?: R.string.empty_string),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.bodyLarge,
+            color = if (disabled) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
             overflow = TextOverflow.Ellipsis
         )
-        Spacer(modifier = Modifier.weight(1f))
         if (!disabled) {
             Switch(
                 checked = checkedState,
@@ -92,12 +97,20 @@ fun ToggleSettings(
                     checkedState = !checkedState
                     onChecked(settings)
                 },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                    checkedTrackColor = MaterialTheme.colorScheme.primary,
+                    checkedBorderColor = MaterialTheme.colorScheme.primary,
+                    uncheckedThumbColor = MaterialTheme.colorScheme.outline,
+                    uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    uncheckedBorderColor = MaterialTheme.colorScheme.outline,
+                ),
                 thumbContent = {
                     if (isLoading) {
                         CircularProgressIndicator(
                             modifier = Modifier.padding(3.dp),
-                            color = if (checked) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.background,
-                            strokeWidth = 1.dp
+                            color = if (checked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                            strokeWidth = 1.5.dp
                         )
                     } else {
                         Spacer(modifier = Modifier)
@@ -106,42 +119,57 @@ fun ToggleSettings(
                 enabled = true
             )
         } else {
-            Icon(
+            Box(
                 modifier = Modifier
-                    .size(48.dp)
-                    .padding(end = 8.dp)
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primaryContainer)
                     .noRippleClickable {
                         onDisabledClick(settings)
                     },
-                painter = painterResource(id = R.drawable.ic_lock),
-                contentDescription = stringResource(
-                    R.string.ask_permissions
-                ),
-                tint = MaterialTheme.colorScheme.primary
-            )
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    modifier = Modifier.size(20.dp),
+                    painter = painterResource(id = R.drawable.ic_lock),
+                    contentDescription = stringResource(
+                        R.string.ask_permissions
+                    ),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
     if (contentIfCheck != null && checked) {
         var visible by remember { mutableStateOf(false) }
         val icon =
             if (visible) painterResource(id = R.drawable.ic_arrow_up) else painterResource(id = R.drawable.ic_arrow_down)
-        Column {
-            Icon(
-                painter = icon,
-                contentDescription = stringResource(R.string.show_hide_settings),
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Box(
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(horizontal = 12.dp, vertical = 4.dp)
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .noRippleClickable {
                         visible = !visible
-                    }
-            )
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = icon,
+                    contentDescription = stringResource(R.string.show_hide_settings),
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
             AnimatedVisibility(
                 visible = visible,
                 enter = slideInVertically(initialOffsetY = { -40 })
                         + fadeIn(initialAlpha = 0.3f),
                 exit = slideOutVertically() + fadeOut()
             ) {
-                Box(modifier = Modifier.padding(horizontal = 4.dp)) {
+                Box(modifier = Modifier.padding(start = 12.dp, end = 12.dp, bottom = 12.dp)) {
                     contentIfCheck()
                 }
             }

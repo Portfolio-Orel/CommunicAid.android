@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,6 +27,8 @@ import com.orels.domain.util.Screen
 import com.orels.presentation.R
 import com.orels.presentation.theme.fontsVarelaround
 import com.orels.presentation.theme.noRippleClickable
+import com.orels.presentation.ui.login.components.AppBadge
+import com.orels.presentation.ui.login.components.AuthPrimaryButton
 import com.orels.presentation.ui.login.components.AuthenticationInput
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
@@ -45,21 +45,24 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 16.dp)
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
+            .padding(top = 32.dp),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top,
     ) {
+        AppBadge(modifier = Modifier.padding(horizontal = 16.dp))
         Text(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 20.dp),
             text = stringResource(R.string.welcome_back),
             style = MaterialTheme.typography.headlineLarge.copy(fontFamily = fontsVarelaround),
             fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
         )
 
         AuthenticationInput(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 6.dp),
             placeholder = stringResource(R.string.username),
             value = state.username,
             onValueChange = viewModel::onUsernameChange,
@@ -70,7 +73,7 @@ fun LoginScreen(
         AuthenticationInput(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(horizontal = 16.dp, vertical = 6.dp),
             placeholder = stringResource(R.string.password),
             value = state.password,
             onValueChange = viewModel::onPasswordChange,
@@ -85,13 +88,13 @@ fun LoginScreen(
         )
         Text(
             modifier = Modifier
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 20.dp, vertical = 10.dp)
                 .noRippleClickable {
                     navController.navigate(Screen.ForgotPassword.route)
                 },
             text = stringResource(R.string.did_forget_password),
-            style = MaterialTheme.typography.bodySmall,
-            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary,
         )
 
         state.error?.let {
@@ -124,26 +127,12 @@ fun LoginScreen(
 //                fontWeight = FontWeight.Bold,
 //            )
 //        }
-        Button(
+        AuthPrimaryButton(
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 8.dp),
+            text = stringResource(R.string.login),
             onClick = viewModel::login,
-            shape = MaterialTheme.shapes.medium,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.onBackground,
-                contentColor = MaterialTheme.colorScheme.background,
-            ),
-        ) {
-            if (state.isLoading) {
-                Loading(size = 24.dp, color = MaterialTheme.colorScheme.background, width = 1.dp)
-            } else {
-                Text(
-                    text = stringResource(R.string.login),
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Normal,
-                )
-            }
-        }
+            isLoading = state.isLoading,
+        )
     }
 }

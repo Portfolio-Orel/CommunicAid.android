@@ -1,7 +1,7 @@
 package com.orels.presentation.ui.main
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -19,7 +19,14 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.orels.domain.util.Screen
 import com.orels.presentation.ui.components.OnLifecycleEvent
-import com.orels.presentation.ui.main.components.FoldersContainer
+import com.orels.presentation.ui.components.multi_fab.QuickActionsSpeedDial
+import com.orels.presentation.ui.main.components.FoldersSheet
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Box
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import com.orels.presentation.ui.main.components.MessagesContainer
 
 
@@ -40,12 +47,11 @@ private fun Content(
 ) {
     val state = viewModel.state
     val screen = LocalConfiguration.current
-    val screenHeight = screen.screenHeightDp
 
     val spaceBetweenMessages = 18
     val messageWidth =
         getMessageWidth(screenWidth = screen.screenWidthDp, spaceBetween = spaceBetweenMessages)
-    val messageHeight = (messageWidth * 1.5f)
+    val messageHeight = (messageWidth * 1.4f)
 
     val refreshSwipeState = rememberSwipeRefreshState(state.isRefreshing)
 
@@ -64,50 +70,73 @@ private fun Content(
         viewModel.navigated()
     }
 
+    var showFolders by rememberSaveable { mutableStateOf(false) }
+    BackHandler(enabled = showFolders) { showFolders = false }
+
     OnLifecycleEvent(onResume = viewModel::onResume)
-    SwipeRefresh(
-        modifier = Modifier.fillMaxSize(),
-        state = refreshSwipeState,
-        onRefresh = viewModel::refresh,
-    ) {
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(top = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+    Box(modifier = modifier.fillMaxSize()) {
+        SwipeRefresh(
+            modifier = Modifier.fillMaxSize(),
+            state = refreshSwipeState,
+            onRefresh = viewModel::refresh,
         ) {
-            if (screenHeight > 500) {
-                FoldersContainer(
-                    folders = state.folders,
-                    onClick = { viewModel.onFolderClick(it) },
-                    onEditClick = { viewModel.editFolder(it) },
-                    onDropdownClick = viewModel::onFoldersDropdownClick,
-                    addNewFolder = { navController.navigate(Screen.DetailsFolder.route) },
-                    selected = state.selectedFolder,
-                    color = MaterialTheme.colorScheme.onBackground,
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(top = 4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                MessagesContainer(
+                    modifier = Modifier.weight(1f),
+                    messages = state.selectedFoldersMessages,
+                    onClick = { viewModel.onMessageClick(it) },
+                    onLongClick = { message, context ->
+                        viewModel.onMessageLongClick(
+                            message,
+                            context
+                        )
+                    },
+                    spaceBetweenMessages = spaceBetweenMessages.dp,
+                    messageHeight = messageHeight,
+                    messageWidth = messageWidth,
+                    borderColor = MaterialTheme.colorScheme.onBackground,
                     isLoading = state.isLoading
                 )
             }
-            MessagesContainer(
-                messages = state.selectedFoldersMessages,
-                onClick = { viewModel.onMessageClick(it) },
-                onLongClick = { message, context ->
-                    viewModel.onMessageLongClick(
-                        message,
-                        context
-                    )
-                },
-                addNewMessage = {
-                    navController.navigate(Screen.DetailsMessage.route)
-                },
-                spaceBetweenMessages = spaceBetweenMessages.dp,
-                messageHeight = messageHeight,
-                messageWidth = messageWidth,
-                borderColor = MaterialTheme.colorScheme.onBackground,
-                isLoading = state.isLoading
-            )
         }
+
+        QuickActionsSpeedDial(
+            modifier = Modifier.fillMaxSize(),
+            folderTitle = state.selectedFolder?.title,
+            onFoldersClick = {
+                viewModel.onFoldersDropdownClick()
+                showFolders = true
+            },
+            onAddMessage = { navController.navigate(Screen.DetailsMessage.route) },
+            onAddFolder = { navController.navigate(Screen.DetailsFolder.route) },
+            onUnhandledCalls = { navController.navigate(Screen.UnhandledCalls.route) },
+            onStatistics = { navController.navigate(Screen.Statistics.route) },
+        )
+
+        FoldersSheet(
+            visible = showFolders,
+            folders = state.folders,
+            selected = state.selectedFolder,
+            onSelect = {
+                viewModel.onFolderClick(it)
+                showFolders = false
+            },
+            onEdit = {
+                showFolders = false
+                viewModel.editFolder(it)
+            },
+            onAddFolder = {
+                showFolders = false
+                navController.navigate(Screen.DetailsFolder.route)
+            },
+            onDismiss = { showFolders = false },
+        )
     }
 }
 

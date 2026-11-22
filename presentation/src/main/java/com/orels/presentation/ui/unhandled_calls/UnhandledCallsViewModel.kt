@@ -59,7 +59,7 @@ class UnhandledCallsViewModel @Inject constructor(
                 deletedCalls = deletedCallsInteractor.getAllOnce(getStartOfDay()),
                 callLogs = getCallsFromCallLog(),
                 countRejectedAsUnhandled = isCountRejectedAsUnhandled()
-            )
+            ).withContactDetails()
             state = state.copy(callsToHandle = callsToHandle, isLoading = false)
         }
     }
@@ -107,10 +107,7 @@ class UnhandledCallsViewModel @Inject constructor(
             deletedCalls = deletedCallsInteractor.getAllOnce(getStartOfDay()),
             callLogs = getCallsFromCallLog(),
             countRejectedAsUnhandled = isCountRejectedAsUnhandled()
-        ).map {
-            it.name = callLogInteractor.getContactName(it.number)
-            it
-        }
+        ).withContactDetails()
         state = state.copy(
             callsToHandle = callsToHandle,
             canDeleteCalls = canDeleteCalls,
@@ -126,9 +123,27 @@ class UnhandledCallsViewModel @Inject constructor(
                         deletedCalls = it,
                         callLogs = getCallsFromCallLog(),
                         countRejectedAsUnhandled = isCountRejectedAsUnhandled()
-                    )
+                    ).withContactDetails()
                     state = state.copy(callsToHandle = callsToHandle, isLoading = false)
                 }
+        }
+    }
+
+    /**
+     * Fills in the caller identification (contact name and photo) for every call.
+     * Falls back to the number / no photo when the number has no matching contact.
+     */
+    private fun List<CallLogEntity>.withContactDetails(): List<CallLogEntity> = onEach { call ->
+        // getContactName() returns the number itself when there is no matching contact; in that
+        // case keep the name cached in the call log (if any) instead of overwriting it.
+        val contactName = callLogInteractor.getContactName(call.number)
+        if (contactName != call.number || call.name.isBlank()) {
+            call.name = contactName
+        }
+        if (call.photoUri.isBlank()) {
+            // Private / unknown numbers can be rejected by the contacts provider
+            call.photoUri = runCatching { callLogInteractor.getContactImage(call.number) }
+                .getOrDefault("")
         }
     }
 

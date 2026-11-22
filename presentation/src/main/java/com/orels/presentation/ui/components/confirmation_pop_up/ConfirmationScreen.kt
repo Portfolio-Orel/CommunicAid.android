@@ -1,6 +1,5 @@
 package com.orels.presentation.ui.components.confirmation_pop_up
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -33,45 +32,51 @@ fun ConfirmationScreen(
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Box(modifier = Modifier.zIndex(1f)) {
-            MaterialTheme.colorScheme.primary
-        }
-        Card(
+        Surface(
             modifier = Modifier
                 .padding(16.dp)
-                .heightIn(min = 220.dp, max = 300.dp)
-                .width(300.dp)
+                .heightIn(min = 220.dp, max = 320.dp)
+                .width(320.dp)
                 .zIndex(2f),
+            shape = MaterialTheme.shapes.extraLarge,
+            color = MaterialTheme.colorScheme.surface,
+            shadowElevation = 8.dp,
         ) {
+          Column(modifier = Modifier.padding(bottom = 24.dp)) {
             if (!state.isLoading) {
-                Icon(
+                Row(
                     modifier = Modifier
-                        .clickable {
-                            onDismiss()
-                        }
-                        .height(60.dp)
-                        .width(60.dp)
-                        .padding(16.dp),
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = "Close window",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    stringResource(R.string.insert_email_code),
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
+                        .fillMaxWidth()
+                        .padding(start = 24.dp, end = 8.dp, top = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        stringResource(R.string.insert_email_code),
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(top = 12.dp),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    IconButton(onClick = { onDismiss() }) {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Close window",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+                Spacer(Modifier.height(16.dp))
                 if (state.error != null) {
                     Text(
                         stringResource(state.error),
-                        modifier = Modifier.padding(horizontal = 16.dp),
+                        modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 8.dp),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.error
                     )
                 }
                 Input(
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = 24.dp),
                     title = "",
                     placeholder = stringResource(R.string.confirmation_code),
                     initialText = "",
@@ -94,19 +99,21 @@ fun ConfirmationScreen(
                 ) {
                     CircularProgressIndicator(
                         modifier = Modifier
-                            .height(36.dp)
-                            .width(36.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onBackground
+                            .height(40.dp)
+                            .width(40.dp),
+                        strokeWidth = 3.dp,
+                        color = MaterialTheme.colorScheme.primary
                     )
+                    Spacer(Modifier.height(16.dp))
                     Text(
                         text = stringResource(R.string.confirming_code),
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onBackground
+                        modifier = Modifier.padding(horizontal = 24.dp),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
+          }
         }
     }
 }

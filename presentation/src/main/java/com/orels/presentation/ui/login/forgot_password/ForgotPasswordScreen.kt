@@ -7,8 +7,15 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.Icon
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextAlign
+import com.orels.presentation.theme.AppTheme
+import com.orels.presentation.ui.login.components.AppBadge
+import com.orels.presentation.ui.login.components.AuthPrimaryButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -25,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.orels.presentation.R
-import com.orels.presentation.ui.login.Loading
 import com.orels.presentation.ui.login.components.AuthenticationInput
 
 @Composable
@@ -134,22 +140,25 @@ fun ForgotPasswordContent(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top,
     ) {
+        AppBadge(modifier = Modifier.padding(horizontal = 16.dp))
         Text(
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 6.dp),
             text = stringResource(R.string.did_forget_password),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
         )
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = stringResource(R.string.forgot_password_message),
             style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Thin,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
         AuthenticationInput(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 24.dp),
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 6.dp),
             placeholder = stringResource(R.string.username),
             value = username,
             imeAction = ImeAction.Done,
@@ -160,27 +169,13 @@ fun ForgotPasswordContent(
             onValueChange = { onUsernameChange(it) },
             isError = isError,
         )
-        Button(
+        AuthPrimaryButton(
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 16.dp),
+            text = stringResource(R.string.reset_password),
             onClick = { if (!isLoading) onForgotPassword(username) },
-            shape = MaterialTheme.shapes.medium,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.onBackground,
-                contentColor = MaterialTheme.colorScheme.background,
-            ),
-        ) {
-            if (isLoading) {
-                Loading(size = 16.dp, color = MaterialTheme.colorScheme.background)
-            } else {
-                Text(
-                    text = stringResource(R.string.reset_password),
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Normal,
-                )
-            }
-        }
+            isLoading = isLoading,
+        )
     }
 }
 
@@ -213,22 +208,25 @@ fun ResetPasswordContent(
         verticalArrangement = Arrangement.Top,
     ) {
 
+        AppBadge(modifier = Modifier.padding(horizontal = 16.dp))
         Text(
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 6.dp),
             text = stringResource(R.string.change_the_password),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
         )
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = stringResource(R.string.insert_code_and_create_password),
             style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Thin,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
         AuthenticationInput(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 24.dp),
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 6.dp),
             placeholder = stringResource(R.string.code),
             value = code,
             imeAction = ImeAction.Next,
@@ -241,7 +239,8 @@ fun ResetPasswordContent(
 
         AuthenticationInput(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 24.dp),
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 6.dp),
             placeholder = stringResource(R.string.password),
             value = password,
             onValueChange = { if (!isLoading) onPasswordChange(it) },
@@ -255,7 +254,8 @@ fun ResetPasswordContent(
         )
         AuthenticationInput(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 24.dp),
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 6.dp),
             placeholder = stringResource(R.string.confirm_password),
             value = confirmPassword,
             onValueChange = { if (!isLoading) onConfirmPasswordChange(it) },
@@ -268,27 +268,13 @@ fun ResetPasswordContent(
             focusRequester = confirmPasswordFocusRequest,
             isError = isConfirmPasswordError,
         )
-        Button(
+        AuthPrimaryButton(
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 16.dp),
+            text = stringResource(R.string.reset_password),
             onClick = { onResetPassword?.invoke(code, password, confirmPassword) },
-            shape = MaterialTheme.shapes.medium,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.onBackground,
-                contentColor = MaterialTheme.colorScheme.background,
-            ),
-        ) {
-            if (isLoading) {
-                Loading(size = 16.dp, color = MaterialTheme.colorScheme.background)
-            } else {
-                Text(
-                    text = stringResource(R.string.reset_password),
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Normal,
-                )
-            }
-        }
+            isLoading = isLoading,
+        )
     }
 }
 
@@ -302,34 +288,39 @@ fun DoneContent(onDone: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
+        Box(
+            modifier = Modifier
+                .size(96.dp)
+                .clip(CircleShape)
+                .background(AppTheme.extended.successContainer),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                modifier = Modifier.size(48.dp),
+                imageVector = Icons.Filled.Done,
+                contentDescription = null,
+                tint = AppTheme.extended.success
+            )
+        }
         Text(
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 6.dp),
             text = stringResource(R.string.done_exclamation),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
         )
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = stringResource(R.string.your_password_has_been_changed),
             style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Thin,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
         )
-        Button(
+        AuthPrimaryButton(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 16.dp),
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 24.dp),
+            text = stringResource(R.string.lets_go),
             onClick = { onDone() },
-            shape = MaterialTheme.shapes.medium,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.onBackground,
-                contentColor = MaterialTheme.colorScheme.background,
-            ),
-        ) {
-            Text(
-                text = stringResource(R.string.lets_go),
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Normal,
-            )
-        }
+        )
     }
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="full_name">Full Name</string>
+    <string name="last_dive">Last Dive</string>
+    <string name="last_insurance_expiration">Insurance Expiration</string>
+    <string name="balance">Balance</string>
+    <string name="no_dive">No Dive</string>
+    <string name="no_insurance">No Insurance</string>
+    <string name="age">Age</string>
+</resources>

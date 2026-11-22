@@ -46,9 +46,9 @@ fun SkeletonComponent(
     */
     val brush = Brush.linearGradient(
         colors = listOf(
-            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f),
-            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f),
-            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f),
+            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.05f),
+            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.12f),
+            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.05f),
         ),
         start = Offset(10f, 10f),
         end = Offset(translateAnim, translateAnim)

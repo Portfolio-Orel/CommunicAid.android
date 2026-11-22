@@ -8,98 +8,39 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.orels.presentation.R
 
-// Set of Material typography styles to start with
-
 val fontsVarelaround = FontFamily(
     Font(R.font.varelaround)
 )
 
-val Typography = Typography(
-    displaySmall = TextStyle(
+private val AppFont = fontsVarelaround
 
-        fontWeight = FontWeight.Normal,
-        fontSize = 12.sp
-    ),
-    displayMedium = TextStyle(
-
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
-    ),
-    displayLarge = TextStyle(
-
-        fontWeight = FontWeight.Normal,
-        fontSize = 18.sp
-    ),
-    headlineSmall = TextStyle(
-
-        fontWeight = FontWeight.Normal,
-        fontSize = 24.sp
-    ),
-    headlineMedium = TextStyle(
-
-        fontWeight = FontWeight.Normal,
-        fontSize = 32.sp
-    ),
-    headlineLarge = TextStyle(
-
-        fontWeight = FontWeight.Normal,
-        fontSize = 38.sp
-    ),
-    bodySmall = TextStyle(
-
-        fontWeight = FontWeight.Normal,
-        fontSize = 12.sp
-    ),
-    bodyMedium = TextStyle(
-
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
-    ),
-    bodyLarge = TextStyle(
-
-        fontWeight = FontWeight.Normal,
-        fontSize = 18.sp
-    ),
-    titleSmall = TextStyle(
-
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp
-    ),
-    titleMedium = TextStyle(
-
-        fontWeight = FontWeight.Normal,
-        fontSize = 32.sp
-    ),
-    titleLarge = TextStyle(
-
-        fontWeight = FontWeight.Normal,
-        fontSize = 38.sp
-    ),
-    labelSmall = TextStyle(
-
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
-    ),
-    labelMedium = TextStyle(
-
-        fontWeight = FontWeight.Normal,
-        fontSize = 18.sp
-    ),
-    labelLarge = TextStyle(
-
-        fontWeight = FontWeight.Normal,
-        fontSize = 24.sp
-    ),
-    /* Other default text styles to override
-    button = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.W500,
-        fontSize = 14.sp
-    ),
-    caption = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 12.sp
+private fun style(size: Int, line: Int, weight: FontWeight = FontWeight.Normal, spacing: Float = 0f) =
+    TextStyle(
+        fontFamily = AppFont,
+        fontWeight = weight,
+        fontSize = size.sp,
+        lineHeight = line.sp,
+        letterSpacing = spacing.sp,
     )
-    */
+
+/**
+ * Coherent Material 3 type scale on top of Varela Round (Hebrew friendly).
+ * Sizes are kept slightly larger than the M3 defaults for readability.
+ */
+val Typography = Typography(
+    displayLarge = style(48, 56, FontWeight.Bold),
+    displayMedium = style(40, 48, FontWeight.Bold),
+    displaySmall = style(34, 42, FontWeight.Bold),
+    headlineLarge = style(32, 40, FontWeight.Bold),
+    headlineMedium = style(28, 36, FontWeight.SemiBold),
+    headlineSmall = style(24, 32, FontWeight.SemiBold),
+    titleLarge = style(22, 28, FontWeight.SemiBold),
+    titleMedium = style(18, 24, FontWeight.SemiBold),
+    titleSmall = style(16, 22, FontWeight.Medium),
+    bodyLarge = style(17, 24),
+    bodyMedium = style(15, 22),
+    bodySmall = style(13, 18),
+    labelLarge = style(15, 20, FontWeight.Medium),
+    labelMedium = style(13, 18, FontWeight.Medium),
+    labelSmall = style(11, 16, FontWeight.Medium, 0.2f),
 )
